@@ -99,6 +99,11 @@ EXCLUDED_DIRS = (".git", ".cursor", ".github", "venv", ".venv", "__pycache__",
 SCORING_OUTPUT_DIRS = (".complexipy_cache", ".grimp_cache")
 SCORING_OUTPUT_NAMES = (".coverage", "complexipy.json")
 
+# Per-user caches a trial's environment can write into its workspace, each
+# known by the directory it holds: pip's download cache and PowerShell's
+# module cache. They hold the workspace's path, and are not the trial's code.
+USER_CACHE_DIRS = (("pip", "cache"), ("Microsoft", "Windows"))
+
 # Tokens that would tell the judge which arm it is reading. Masked in place,
 # with the count recorded: a bundle that needed many of them is itself a
 # finding about the arm.
@@ -285,10 +290,19 @@ def mask_markers(text):
     return text, count
 
 
-def copied_dir(name):
+def copied_dir(base, name):
     """Whether a directory of the trial's tree belongs in its bundle."""
-    return not (name in EXCLUDED_DIRS or name in SCORING_OUTPUT_DIRS
-                or name.endswith(".egg-info"))
+    if (name in EXCLUDED_DIRS or name in SCORING_OUTPUT_DIRS
+            or name.endswith(".egg-info")):
+        return False
+    path = os.path.join(base, name)
+
+    # A virtual environment is known by its configuration file, not its name:
+    # a trial may call one anything, and every one records its own path.
+    if os.path.isfile(os.path.join(path, "pyvenv.cfg")):
+        return False
+    return not any(name == cache and os.path.isdir(os.path.join(path, inner))
+                   for cache, inner in USER_CACHE_DIRS)
 
 
 def build_bundle(tree, target):
@@ -303,7 +317,7 @@ def build_bundle(tree, target):
     os.makedirs(target)
     removed, masked = [], 0
     for base, directories, names in os.walk(tree):
-        directories[:] = [d for d in directories if copied_dir(d)]
+        directories[:] = [d for d in directories if copied_dir(base, d)]
         for name in names:
             source = os.path.join(base, name)
             relative = os.path.relpath(source, tree)
@@ -900,6 +914,13 @@ def bundle_checks(scratch):
             json.dumps(scored),
         os.path.join(".grimp_cache", "data.json"): scored,
         os.path.join("src", "tariff.egg-info", "SOURCES.txt"): scored,
+
+        # What the trial's environment leaves beside its code: a virtual
+        # environment under a name of its own, and two per-user caches.
+        os.path.join(".venv-clean", "pyvenv.cfg"): "home = %s\n" % scored,
+        os.path.join(".venv-clean", "Scripts", "activate"): scored,
+        os.path.join("pip", "cache", "selfcheck", "state"): scored,
+        os.path.join("Microsoft", "Windows", "PowerShell", "cache"): scored,
     }
     plant(tree, output)
 
@@ -909,7 +930,7 @@ def bundle_checks(scratch):
               for base, _, names in os.walk(bundle) for name in names}
     checks = [
         ("the trial's code reaches the bundle", code in copied),
-        ("scoring's output stays out of the bundle",
+        ("scoring's output and the environment's stay out of the bundle",
          not any(relative in copied for relative in output)),
         ("a bundle holding neither has no leak", stripped["leaks"] == []),
     ]
