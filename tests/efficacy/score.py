@@ -53,6 +53,12 @@ HIDDEN_SUITE = "braboj/tariff-hidden-suite"
 # The package every arm is asked to produce, fixed by the specification.
 PACKAGE = "tariff"
 
+# The specification seeds an empty database when the application starts, and
+# seeding refuses without an administrator password. Every command scoring
+# runs is given one, so the boot check and the probes reach the application.
+ADMIN_PASSWORD_VARIABLE = "TARIFF_ADMIN_PASSWORD"
+ADMIN_PASSWORD = "scoring-admin-password"
+
 # Files nobody asked for. The prompt asks for an application; a trial that
 # also writes a decision record or a changelog spent budget on it, which is a
 # metric the design reports rather than a fault it punishes.
@@ -91,9 +97,12 @@ def run(argv, cwd=None, env=None, timeout=TOOL_TIMEOUT, stdin=None):
     Every invocation is recorded with its argv, so the report can state what
     produced a number. A command that does not exist or does not finish is an
     outcome, not an exception: the caller turns it into a missing metric.
-    `stdin` is text written to the command's standard input.
+    `stdin` is text written to the command's standard input. The command's
+    environment carries the administrator password unless it sets its own.
     """
     record = {"argv": list(argv), "cwd": cwd}
+    env = dict(os.environ if env is None else env)
+    env.setdefault(ADMIN_PASSWORD_VARIABLE, ADMIN_PASSWORD)
     try:
         proc = subprocess.run(argv, cwd=cwd, env=env, input=stdin,
                               capture_output=True, text=True,
@@ -1416,6 +1425,48 @@ def security_checks(scratch):
              owed == ["hand-1", "none-1"])]
 
 
+PLANTED_SEEDING_APP = '''\
+import os
+
+
+class App(object):
+    def test_client(self):
+        return self
+
+    def get(self, path):
+        return type("Answer", (), {"status_code": 200})()
+
+
+def create_app(database):
+    if not os.environ.get("TARIFF_ADMIN_PASSWORD"):
+        raise RuntimeError("seeding refuses without TARIFF_ADMIN_PASSWORD")
+    return App()
+'''
+
+
+def boot_checks(scratch, venv):
+    """Prove the boot check reaches an application that seeds on start.
+
+    The planted application refuses to build without the administrator
+    password, as the specification's seeding does. The launching process's
+    own value is taken away first, so only scoring can have supplied one.
+    """
+    planted = os.path.join(scratch, "seeding")
+    os.makedirs(os.path.join(planted, PACKAGE))
+    with io.open(os.path.join(planted, PACKAGE, "__init__.py"), "w",
+                 encoding="utf-8") as handle:
+        handle.write(PLANTED_SEEDING_APP)
+    inherited = os.environ.pop(ADMIN_PASSWORD_VARIABLE, None)
+    try:
+        booted = boot_check(venv, planted)["value"] or {}
+    finally:
+        if inherited is not None:
+            os.environ[ADMIN_PASSWORD_VARIABLE] = inherited
+    return [("an application that seeds on start boots under scoring",
+             booted.get("factory") is True
+             and booted.get("index_status") == 200)]
+
+
 def self_test():
     """Prove the missing-vs-zero rule fires before any score is believed.
 
@@ -1440,6 +1491,7 @@ def self_test():
               + lock_source_checks(scratch) + unrun_checks(scratch)
               + claim_checks(scratch) + security_checks(scratch))
     venv = create_venv(os.path.join(scratch, "venv"))
+    checks += boot_checks(scratch, venv)
 
     empty = os.path.join(scratch, "empty")
     os.makedirs(empty)
