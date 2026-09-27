@@ -1,7 +1,6 @@
 .idea/
 .claude/
 tests/reports/
-temp/
 tmp/
 __pycache__/
 .env
