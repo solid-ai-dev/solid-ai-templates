@@ -355,7 +355,7 @@ POSTHOC = (
      lambda t: security_value(t, "secret_key")),
     ("security_debug", "Debug enabled", DOWN,
      lambda t: security_value(t, "debug")),
-    ("security_sql_strings", "SQL statements built from strings", DOWN,
+    ("security_sql_strings", "SQL assembled from untraced values", DOWN,
      lambda t: security_value(t, "sql_strings")),
     ("security_vulnerable", "Known vulnerabilities in installed dependencies",
      DOWN, lambda t: security_value(t, "vulnerable_dependencies")),
