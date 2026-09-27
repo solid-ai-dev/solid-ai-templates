@@ -19,6 +19,7 @@ import datetime
 import io
 import json
 import os
+import re
 import sys
 import tempfile
 
@@ -42,6 +43,20 @@ PIP_AUDIT = "pip-audit==2.10.1"
 SECRET_NAMES = ("SECRET_KEY", "WTF_CSRF_SECRET_KEY", "secret_key")
 DEBUG_NAMES = ("DEBUG", "debug")
 SQL_CALLS = ("execute", "executemany", "executescript")
+
+# SQLite binds values only, so a table name, a PRAGMA value or a migration
+# script has to be interpolated. What makes an interpolation unsafe is not
+# that it happens but where the value comes from: a statement is counted only
+# where some interpolated value cannot be traced to the module's constants.
+# A module constant is named in upper case, by the convention every arm
+# follows.
+CONSTANT_NAME = re.compile(r"^_?[A-Z][A-Z0-9_]*$")
+
+# Calls whose result is a number, which cannot carry SQL whatever their
+# argument; and calls that pass their arguments' provenance through.
+NUMERIC_CALLS = ("int", "len", "float", "bool", "round")
+PASSING_CALLS = ("range", "reversed", "sorted", "enumerate", "zip", "tuple",
+                 "list", "str", "join", "keys", "values", "items", "format")
 
 # The calls whose keyword arguments set configuration by name.
 KEYWORD_SETTERS = ("dict", "update", "from_mapping")
@@ -152,8 +167,280 @@ def sql_built_from_strings(node):
             and node.func.attr == "format")
 
 
+def interpolated(node):
+    """The expressions a statement argument is assembled from."""
+    if isinstance(node, ast.JoinedStr):
+        return [part.value for part in node.values
+                if isinstance(part, ast.FormattedValue)]
+    if isinstance(node, ast.BinOp):
+        return interpolated_operand(node.left) + interpolated_operand(
+            node.right)
+    if isinstance(node, ast.Call):
+        return ([node.func.value] + list(node.args)
+                + [keyword.value for keyword in node.keywords])
+    return [node]
+
+
+def interpolated_operand(node):
+    """One operand of a `%` or `+`: a literal adds nothing, a tuple its parts."""
+    if isinstance(node, ast.Constant):
+        return []
+    if isinstance(node, ast.Tuple):
+        return list(node.elts)
+    return interpolated(node) if isinstance(node, (ast.BinOp,
+                                                   ast.JoinedStr)) else [node]
+
+
+def target_names(target):
+    """The names a `for` or assignment target binds."""
+    if isinstance(target, ast.Name):
+        return {target.id}
+    if isinstance(target, (ast.Tuple, ast.List)):
+        return set().union(*(target_names(item) for item in target.elts))
+    if isinstance(target, ast.Starred):
+        return target_names(target.value)
+    return set()
+
+
+def called_name(func):
+    """The name a call is made by, whether plain or through an attribute."""
+    if isinstance(func, ast.Name):
+        return func.id
+    if isinstance(func, ast.Attribute):
+        return func.attr
+    return None
+
+
+class Provenance(object):
+    """Whether a value in one module traces back to that module's constants.
+
+    A parameter is traced one call level up, through every call of its
+    function in the same module; a name with no binding the module shows, or
+    a call it cannot see into, is not constant.
+    """
+
+    def __init__(self, tree):
+        self.tree = tree
+        self.parents = {child: node for node in ast.walk(tree)
+                        for child in ast.iter_child_nodes(node)}
+        self.functions = {}
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                self.functions.setdefault(node.name, []).append(node)
+        self.calls = [node for node in ast.walk(tree)
+                      if isinstance(node, ast.Call)]
+
+    def scope(self, node):
+        """The function a node sits in, or None at module level."""
+        while node in self.parents:
+            node = self.parents[node]
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                return node
+        return None
+
+    def constant(self, node, seen=frozenset()):
+        """Whether an expression is built from constants alone."""
+        if isinstance(node, ast.Constant):
+            return True
+        if isinstance(node, ast.Name):
+            return self.name(node, seen)
+        if isinstance(node, ast.FormattedValue):
+            return self.constant(node.value, seen)
+        if isinstance(node, (ast.JoinedStr, ast.Tuple, ast.List, ast.Set)):
+            parts = node.values if isinstance(node, ast.JoinedStr) else node.elts
+            return all(self.constant(part, seen) for part in parts)
+        if isinstance(node, ast.BinOp):
+            # Adding or subtracting an integer yields a number or raises, so
+            # `number + 1` cannot carry SQL whatever `number` holds.
+            if isinstance(node.op, (ast.Add, ast.Sub)) and any(
+                    isinstance(side, ast.Constant) and type(side.value) is int
+                    for side in (node.left, node.right)):
+                return True
+            return (self.constant(node.left, seen)
+                    and self.constant(node.right, seen))
+        if isinstance(node, ast.UnaryOp):
+            return self.constant(node.operand, seen)
+        if isinstance(node, ast.IfExp):
+            return (self.constant(node.body, seen)
+                    and self.constant(node.orelse, seen))
+        if isinstance(node, (ast.Subscript, ast.Starred)):
+            return self.constant(node.value, seen)
+        if isinstance(node, ast.Attribute):
+            return (bool(CONSTANT_NAME.match(node.attr))
+                    or self.constant(node.value, seen))
+        if isinstance(node, (ast.GeneratorExp, ast.ListComp, ast.SetComp)):
+            return self.constant(node.elt, seen)
+        if isinstance(node, ast.Call):
+            called = called_name(node.func)
+            if called in NUMERIC_CALLS:
+                return True
+
+            # Joining a mapping yields its keys, so a column list joined from
+            # a dict the code writes out is as constant as its keys.
+            if (called == "join" and isinstance(node.func, ast.Attribute)
+                    and len(node.args) == 1
+                    and self.keys_constant(node.args[0], seen)
+                    and self.constant(node.func.value, seen)):
+                return True
+            if called not in PASSING_CALLS:
+                return False
+            receiver = ([node.func.value]
+                        if isinstance(node.func, ast.Attribute) else [])
+            return all(self.constant(part, seen) for part in
+                       receiver + list(node.args)
+                       + [keyword.value for keyword in node.keywords])
+        return False
+
+    def name(self, node, seen):
+        """Whether every binding a name can have is constant."""
+        ident = node.id
+        if CONSTANT_NAME.match(ident):
+            return True
+        scope = self.scope(node)
+        key = (id(scope), ident)
+        if key in seen:
+            return False
+        seen = seen | {key}
+
+        # A comprehension's own target, bound by the iterable it walks.
+        parent = node
+        while parent in self.parents and parent is not scope:
+            parent = self.parents[parent]
+            if isinstance(parent, (ast.GeneratorExp, ast.ListComp,
+                                   ast.SetComp, ast.DictComp)):
+                for generator in parent.generators:
+                    if ident in target_names(generator.target):
+                        return self.constant(generator.iter, seen)
+
+        bindings = self.bindings(scope, ident)
+        if scope is not None and ident in parameters(scope):
+            return (self.parameter(scope, ident, seen)
+                    and all(self.constant(value, seen) for value in bindings))
+        if not bindings and scope is not None:
+            bindings = self.bindings(None, ident)
+        return bool(bindings) and all(self.constant(value, seen)
+                                      for value in bindings)
+
+    def keys_constant(self, node, seen):
+        """Whether a mapping's keys are all written out in the module.
+
+        A dict literal with constant keys, a module function returning one, or
+        a name bound only to such values and grown only by keyword `update`
+        calls or constant subscripts.
+        """
+        if isinstance(node, ast.Dict):
+            return all(key is not None and self.constant(key, seen)
+                       for key in node.keys)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            if node.func.id == "dict":
+                return not node.args and all(keyword.arg
+                                             for keyword in node.keywords)
+            functions = self.functions.get(node.func.id)
+            if not functions:
+                return False
+            returns = [statement.value for function in functions
+                       for statement in ast.walk(function)
+                       if isinstance(statement, ast.Return)]
+            return bool(returns) and all(
+                value is not None and self.keys_constant(value, seen)
+                for value in returns)
+        if not isinstance(node, ast.Name):
+            return False
+        scope = self.scope(node)
+        key = ("keys", id(scope), node.id)
+        if key in seen or (scope is not None
+                           and node.id in parameters(scope)):
+            return False
+        seen = seen | {key}
+        bindings = self.bindings(scope, node.id)
+        if not bindings or not all(self.keys_constant(value, seen)
+                                   for value in bindings):
+            return False
+        body = scope if scope is not None else self.tree
+        for inner in ast.walk(body):
+            if (isinstance(inner, ast.Call)
+                    and isinstance(inner.func, ast.Attribute)
+                    and isinstance(inner.func.value, ast.Name)
+                    and inner.func.value.id == node.id
+                    and inner.func.attr in ("update", "setdefault")):
+                if inner.func.attr == "setdefault":
+                    written = bool(inner.args) and self.constant(
+                        inner.args[0], seen)
+                else:
+                    written = (all(keyword.arg for keyword in inner.keywords)
+                               and all(self.keys_constant(arg, seen)
+                                       for arg in inner.args))
+                if not written:
+                    return False
+            if isinstance(inner, ast.Assign):
+                for target in inner.targets:
+                    if (isinstance(target, ast.Subscript)
+                            and isinstance(target.value, ast.Name)
+                            and target.value.id == node.id
+                            and not self.constant(target.slice, seen)):
+                        return False
+        return True
+
+    def bindings(self, scope, ident):
+        """Every value a name is bound to in one scope."""
+        if scope is None:
+            statements = [statement for statement in self.tree.body
+                          if not isinstance(statement, (
+                              ast.FunctionDef, ast.AsyncFunctionDef,
+                              ast.ClassDef))]
+        else:
+            statements = scope.body
+        values = []
+        for statement in statements:
+            for node in ast.walk(statement):
+                if (isinstance(node, (ast.For, ast.AsyncFor))
+                        and ident in target_names(node.target)):
+                    values.append(node.iter)
+                elif isinstance(node, ast.Assign) and any(
+                        ident in target_names(target)
+                        for target in node.targets):
+                    values.append(node.value)
+                elif (isinstance(node, (ast.AnnAssign, ast.AugAssign))
+                      and node.value is not None
+                      and ident in target_names(node.target)):
+                    values.append(node.value)
+        return values
+
+    def parameter(self, function, ident, seen):
+        """Whether every call of a function passes a constant for a parameter.
+        """
+        names = parameters(function)
+        position = names.index(ident)
+        method = isinstance(self.parents.get(function), ast.ClassDef)
+        callers = [call for call in self.calls
+                   if called_name(call.func) == function.name]
+        if not callers:
+            return False
+        defaults = function.args.defaults
+        first_default = len(names) - len(defaults)
+        for call in callers:
+            argument = next((keyword.value for keyword in call.keywords
+                             if keyword.arg == ident), None)
+            index = position - (1 if method and isinstance(
+                call.func, ast.Attribute) else 0)
+            if argument is None and 0 <= index < len(call.args):
+                argument = call.args[index]
+            if argument is None and position >= first_default:
+                argument = defaults[position - first_default]
+            if argument is None or not self.constant(argument, seen):
+                return False
+        return True
+
+
+def parameters(function):
+    """A function's positional parameter names, in order."""
+    return [argument.arg for argument in
+            function.args.posonlyargs + function.args.args]
+
+
 def static_findings(tree):
     """The three source checks' findings in one module, as line numbers."""
+    provenance = Provenance(tree)
     found = {"secret_key": [], "debug": [], "sql_strings": []}
     for name, value, line in settings(tree):
         if name in SECRET_NAMES and supplies_literal(value):
@@ -169,7 +456,9 @@ def static_findings(tree):
                 for keyword in node.keywords):
             found["debug"].append(node.lineno)
         if (node.func.attr in SQL_CALLS and node.args
-                and sql_built_from_strings(node.args[0])):
+                and sql_built_from_strings(node.args[0])
+                and not all(provenance.constant(part)
+                            for part in interpolated(node.args[0]))):
             found["sql_strings"].append(node.lineno)
     return found
 
@@ -754,11 +1043,22 @@ app.config["DEBUG"] = True
 settings = dict(debug=True)
 
 
+def count(conn, table):
+    return conn.execute(f"SELECT COUNT(*) FROM {table}")
+
+
+def insert(conn, form):
+    columns = ", ".join(form)
+    conn.execute(f"INSERT INTO products ({columns}) VALUES (?)", tuple(form))
+
+
 def main(conn, sku, rows, tail):
+    insert(conn, rows)
     conn.execute(f"SELECT * FROM products WHERE sku = '{sku}'")
     conn.execute("SELECT * FROM products WHERE sku = '%s'" % sku)
     conn.executemany("INSERT INTO {} VALUES (?)".format(tail), rows)
     conn.executescript("DROP TABLE " + tail)
+    count(conn, tail)
     app.run(debug=True)
 '''
 
@@ -775,9 +1075,43 @@ LABEL = "SECRET_KEY"
 DEBUG = os.environ.get("FLASK_DEBUG") == "1"
 
 
-def main(conn, sku):
+TABLES = ("products", "rules")
+MIGRATIONS = [(1, "CREATE TABLE products (sku TEXT)")]
+
+
+class Store(object):
+    def __init__(self, conn):
+        self.conn = conn
+
+    def delete(self, table, column, value):
+        self.conn.execute(f"DELETE FROM {table} WHERE {column} = ?", (value,))
+
+    def erase(self, sku):
+        self.delete("products", "sku", sku)
+
+    def counts(self):
+        tables = ("products", "rules")
+        return {t: self.conn.execute(f"SELECT COUNT(*) FROM {t}")
+                for t in tables}
+
+
+def main(conn, sku, version, row):
     conn.execute("SELECT * FROM products WHERE sku = ?", (sku,))
     conn.execute(f"SELECT COUNT(*) FROM products")
+    for table in TABLES:
+        conn.execute(f"DELETE FROM {table}")
+    for number, script in MIGRATIONS:
+        conn.executescript(f"BEGIN;{script}PRAGMA user_version = {number};")
+    conn.execute(f"PRAGMA user_version = {int(version)}")
+    marks = ", ".join("?" for _ in row)
+    conn.execute(f"INSERT INTO products VALUES ({marks})", row)
+    values = {"sku": row[0]}
+    values.update(name=row[1])
+    names = ", ".join(values)
+    conn.execute(f"INSERT INTO products ({names}) VALUES (?, ?)",
+                 tuple(values.values()))
+    current = conn.execute("PRAGMA user_version").fetchone()[0]
+    conn.execute(f"PRAGMA user_version = {current + 1}")
     app.run(debug=False)
 '''
 
@@ -973,13 +1307,13 @@ def static_self_checks(scratch):
         ("every planted debug form is counted",
          exposed["debug"]["value"] == 4),
         ("every planted assembled statement is counted",
-         exposed["sql_strings"]["value"] == 4),
+         exposed["sql_strings"]["value"] == 6),
         ("the trial's tests are not read", exposed["secret_key"]["files"] == 1),
         ("hardened source finds no secret",
          hardened["secret_key"]["value"] == 0),
         ("hardened source finds no debug", hardened["debug"]["value"] == 0),
-        ("parameters and plain f-strings are not assembled SQL",
-         hardened["sql_strings"]["value"] == 0),
+        ("parameters, plain f-strings and constant names are not assembled "
+         "SQL", hardened["sql_strings"]["value"] == 0),
         ("no roots is missing, not zero",
          all(metric["value"] is None and metric["missing"]
              for metric in static_checks([]).values())),

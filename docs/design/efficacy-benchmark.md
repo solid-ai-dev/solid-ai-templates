@@ -640,7 +640,7 @@ Each is read two ways, and both readings are primary:
 - no CSRF on sign-in
 - a hard-coded secret key
 - debug left on
-- SQL built from strings
+- SQL assembled from a value the module cannot trace to its constants
 - known vulnerabilities in the installed dependencies
 - missing session cookie flags
 - missing security headers
@@ -906,6 +906,7 @@ Two limits:
 | 2026-09-25 | Design's 1 names the damage to layering, and dispatch on concrete classes with the layers kept apart is a 3 | Under `claude-opus-5-5` the base and the damaged tree both scored 2, each judged on that dispatch | #1767 |
 | 2026-09-25 | The rounds' judge is `claude-opus-5-5`; `gpt-6-astra` reads a sample as a cross-check | gpt-6-astra's plan allows about thirty judgings a week and a round needs three times as many; Opus 5.5 runs on capacity the owner already pays for | #1767 |
 | 2026-09-26 | `short`'s instruction asks the model to measure every line against the width before answering | On the round-3 brief two generations in a row were refused, with 1 and then 9 lines over 88 characters; retrying until one passed would select the tersest sample, and dropping the width lets a line carry a paragraph | #1767 |
+| 2026-09-27 | The SQL probe counts a statement only where an interpolated value cannot be traced to the module's constants | SQLite binds values only, so a table name, a PRAGMA value or a migration script has to be interpolated; round 3's 23 hits were all such, and every user value was bound | #1882 |
 
 ¹ This agrees with Anthropic's guidance on context engineering, which asks
 for the smallest set of high-signal tokens:
