@@ -686,11 +686,12 @@ REQUESTS = (
 
 def normalised(response, names):
     """An answer with what the request itself supplied taken out: the name
-    typed in, and every form value, a fresh CSRF token among them."""
+    typed in, and every attribute value. A fresh CSRF token sits in one,
+    whether a form field's or the header an HTMX page sends it in."""
     text = response.get_data(as_text=True)
     for name in names:
         text = text.replace(name, "<name>")
-    text = re.sub(r'value="[^"]*"', 'value=""', text)
+    text = re.sub(r"""([\w:-]+)=("[^"]*"|'[^']*')""", r'\1=""', text)
     return (response.status_code, response.headers.get("Location"), text)
 
 
@@ -1119,13 +1120,18 @@ def main(conn, sku, version, row):
 # answers the probe's requests from a table, so each probe's reading is known
 # before the probe runs: `hardened` passes every probe, `exposed` fails every
 # one, `locked` never seeds its administrator, and `broken` will not boot.
-FAKE_APP = '''import json
+FAKE_APP = '''import itertools
+import json
 import logging
 
 MODE = "__MODE__"
 TRACE = 'Traceback (most recent call last):\\n  File "app.py", line 9'
 FORM = '<input type="hidden" name="csrf_token" value="t">'
 LOG = logging.getLogger("tariff")
+
+# A fresh token on every answer, sent in the header an HTMX page carries.
+TOKENS = itertools.count()
+HTMX_BODY = "<body data-hx-headers=" + "'" + '{"X-CSRFToken": "tok-%d"}' + "'>"
 
 
 class Headers(dict):
@@ -1219,8 +1225,9 @@ class Client(object):
                     known = data["username"] in self.store.users
                     return Response(200, "wrong password" if known
                                     else "no such account")
-                return Response(200, 'wrong username or password '
-                                     '<input value="%s">' % data["username"])
+                return Response(200, (HTMX_BODY % next(TOKENS))
+                                + 'wrong username or password '
+                                  '<input value="%s">' % data["username"])
             self.signed = True
             target = data.get("next") or "/"
             if MODE != "exposed" and (not target.startswith("/")
