@@ -35,6 +35,7 @@ as a refusal or a missing metric, not a crash.
 | a Java runtime on `PATH` | `html5validator`, the HTML validity metric | that metric is missing |
 | a Playwright browser | the suite's browser flows and the accessibility probe | scoring installs one, and refuses the trial where it cannot |
 | `codex` on `PATH`, logged in | the cross-check judge, on a sample | each of its judgings fails |
+| about 15 GB free on the run root's drive | a K = 3 round: round 3's root held 5.5 GB after both tasks, and each scored trial's environment is about 290 MB | a trial or a scoring stops with `No space left on device`, and the trial it stopped is not a result |
 
 `score.py --no-web` skips both browser-side probes and installs no browser.
 The suite then skips its browser flows, and the trial is flagged as partial.
@@ -106,11 +107,16 @@ calling a model.
 - It leaves the root untouched, so the real run can use the same root.
 - Drop `--dry-run` to run the trials.
 
-**`--arms` is required.** A run names the arms it holds. Trials interleave:
-`none-1`, `full-1`, `short-1`, `hybrid-1`, `hand-1`, `none-2`, and so on.
+**`--arms` is required,** for the change task as well. A run names the arms
+it holds. Trials interleave: `none-1`, `full-1`, `short-1`, `hybrid-1`,
+`hand-1`, `none-2`, and so on.
 
 Why: a model-side change part-way through then lands across the arms, not on
 one of them.
+
+**Leave the checkout's HEAD where it is until the run ends.** Each trial
+records the commit the checkout stands on as its templates revision, read when
+the trial starts. Work on another branch in a separate worktree.
 
 **The harness refuses:**
 
@@ -228,8 +234,10 @@ py tests/efficacy/harness.py --root <the run root> --arms none,full,short,hybrid
 ## The change task
 
 ```bash
-py tests/efficacy/harness.py --root <the run root> --task change --dry-run
-py tests/efficacy/harness.py --root <the run root> --task change --resume-after-block
+py tests/efficacy/harness.py --root <the run root> --task change \
+    --arms none,full,short,hybrid,hand --dry-run
+py tests/efficacy/harness.py --root <the run root> --task change \
+    --arms none,full,short,hybrid,hand --resume-after-block
 py tests/efficacy/score.py --root <the run root> --task change
 ```
 
