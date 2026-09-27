@@ -1719,11 +1719,11 @@ def escalation_section(escalation):
                      "K = %d." % (k, K_PRIMARY))
         return lines
     if state == "assessed" and owed:
-        lines.append("**Owed.** Run blocks %d to %d with `--k %d --from A%d`, "
+        lines.append("**Owed.** Run blocks %d to %d with `--k %d --from %s`, "
                      "then report again. A row still containing zero at K = "
                      "%d is reported as no improvement shown."
-                     % (K_PRIMARY + 1, K_CEILING, K_CEILING, K_PRIMARY + 1,
-                        K_CEILING))
+                     % (K_PRIMARY + 1, K_CEILING, K_CEILING,
+                        trial_name(BARE, K_PRIMARY + 1), K_CEILING))
     elif state == "assessed":
         lines.append("**Not owed.** No primary dimension's row meets the "
                      "rule, so K stays %d." % K_PRIMARY)
@@ -2019,6 +2019,14 @@ def escalation_checks(seed):
         triggers = escalation_triggers(planted_results(key, name, pairs, low,
                                                        high))
         checks.append((label, bool(triggers) == expected, triggers))
+
+    # An owed escalation names the first trial of block four the way the
+    # harness spells it, so the printed command runs as written.
+    owed = "\n".join(escalation_section({"k": K_PRIMARY, "state": "assessed",
+                                         "owed": True, "triggers": []}))
+    checks.append(("an owed escalation's command names a trial the harness "
+                   "takes", "--from %s" % trial_name(BARE, K_PRIMARY + 1)
+                   in owed and "--from A" not in owed, owed))
 
     # Five blocks of judged trials. The first three alone must decide the
     # escalation, and the report must print their vector beside the fifth's.
