@@ -480,6 +480,13 @@ unmeasured one.
 Not measured: mutation score, class cohesion, and pylint's refactoring
 checks.
 
+The coverage run first installs what the trial declares for its tests —
+every extra and every dependency group in its `pyproject.toml` — constrained
+to the tool lock. The clean install leaves them out, and a suite that fails
+on an import would record a trial that packaged its test dependencies
+correctly as unmeasured. A declared dependency that conflicts with the lock
+records coverage as missing, with the conflict as the reason.
+
 ### 5.3 Design structure
 
 The harness probes each tree's structure directly:

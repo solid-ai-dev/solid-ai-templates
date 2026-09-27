@@ -25,6 +25,7 @@ import glob
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 import tarfile
@@ -131,11 +132,21 @@ def run_module(venv, module, args, cwd=None, timeout=TOOL_TIMEOUT):
     """
     outcome = run([python_in(venv), "-m", module] + list(args), cwd=cwd,
                   timeout=timeout)
-    if outcome["failed"] is None and "No module named" in (
-            outcome["stderr"] or ""):
+    if outcome["failed"] is None and tool_absent(module, outcome["stderr"]):
         outcome["failed"] = ("is not installed in the trial environment, so "
                              "nothing was scanned")
     return outcome
+
+
+def tool_absent(module, stderr):
+    """Whether `python -m <module>` failed because the module is absent.
+
+    The interpreter names the missing module bare; an import that fails
+    inside the tool's run, such as a test importing a dependency, names it
+    quoted. Only the first means the tool is not installed.
+    """
+    pattern = r"No module named %s(?![\w.])" % re.escape(module)
+    return re.search(pattern, stderr or "") is not None
 
 
 def python_in(venv):
@@ -485,6 +496,11 @@ def install_browser(venv):
     return None
 
 
+def installed_lock(venv):
+    """The filtered lock a trial's environment installed its rulers from."""
+    return os.path.join(venv, "tool-lock.txt")
+
+
 def install_battery(venv, lock, requirements=REQUIREMENTS):
     """Install the rulers from the run's lock, resolving it where none exists.
 
@@ -509,7 +525,7 @@ def install_battery(venv, lock, requirements=REQUIREMENTS):
     # one, so it is filtered on the way in as well as on the way out.
     with io.open(lock, encoding="utf-8") as handle:
         rulers = lock_lines(handle.read())
-    filtered = os.path.join(venv, "tool-lock.txt")
+    filtered = installed_lock(venv)
     with io.open(filtered, "w", encoding="utf-8") as handle:
         handle.write("\n".join(rulers) + "\n")
     outcome = pip(venv, "install", "-r", filtered)
@@ -763,6 +779,48 @@ def unused_code(venv, workspace, roots, seen):
     return measured(count, seen=seen, invocation=outcome["argv"])
 
 
+def declared_test_requirements(workspace):
+    """What the trial declares beyond its package, as pip arguments.
+
+    Every extra, as `.[names]`, and every requirement in every dependency
+    group, read here because the environment's pip may predate `--group`.
+    Empty where the trial declares neither or has no readable pyproject.
+    """
+    path = os.path.join(workspace, "pyproject.toml")
+    if not os.path.exists(path):
+        return []
+    try:
+        import tomllib
+        with io.open(path, "rb") as handle:
+            payload = tomllib.load(handle)
+    except Exception:
+        return []
+    arguments = []
+    extras = sorted((payload.get("project") or {}).get(
+        "optional-dependencies") or {})
+    if extras:
+        arguments.append(".[%s]" % ",".join(extras))
+    groups = payload.get("dependency-groups") or {}
+
+    # A group may include another by name, and a cycle must not hang scoring.
+    def expand(name, visiting):
+        if name in visiting:
+            return []
+        found = []
+        for entry in groups.get(name) or []:
+            if isinstance(entry, str):
+                found.append(entry)
+            elif isinstance(entry, dict) and "include-group" in entry:
+                found += expand(entry["include-group"], visiting | {name})
+        return found
+
+    for name in sorted(groups):
+        for requirement in expand(name, frozenset()):
+            if requirement not in arguments:
+                arguments.append(requirement)
+    return arguments
+
+
 def own_test_coverage(venv, workspace, roots, seen):
     """Line and branch coverage of the trial's own tests.
 
@@ -772,6 +830,21 @@ def own_test_coverage(venv, workspace, roots, seen):
     paths = test_paths(workspace)
     if not paths:
         return absent("the trial wrote no tests", seen=seen)
+
+    # The clean install is `pip install .`, which leaves out what the trial
+    # declares for its tests alone; its suite then fails on an import, and
+    # the trial reads as untested for packaging its test dependencies well.
+    # Constrained to the lock, so no ruler moves under the metrics after it.
+    declared = declared_test_requirements(workspace)
+    if declared:
+        outcome = pip(venv, "install", "-c", installed_lock(venv), *declared,
+                      cwd=workspace)
+        if outcome["failed"] or outcome["status"] != 0:
+            return absent("the trial's declared test dependencies would not "
+                          "install beside the scoring lock: %s"
+                          % (outcome["failed"] or outcome["stderr"]
+                             or outcome["stdout"])[-400:],
+                          seen=seen, invocation=outcome["argv"])
     coverage = os.path.join(workspace, ".score-coverage.json")
     outcome = run_module(venv, "pytest",
                          ["-q", "-p", "no:cacheprovider", "--cov", PACKAGE,
@@ -1467,6 +1540,48 @@ def boot_checks(scratch, venv):
              and booted.get("index_status") == 200)]
 
 
+PLANTED_TEST_DEPENDENCIES = '''[project]
+name = "pkg"
+version = "0"
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev = ["html5lib"]
+
+[dependency-groups]
+dev = ["beautifulsoup4", {include-group = "lint"}]
+lint = ["ruff"]
+loop = [{include-group = "loop"}]
+'''
+
+
+def coverage_checks(scratch):
+    """Prove the coverage run installs what the trial's tests declare.
+
+    And that an import failing inside the trial's own tests is not read as
+    the test runner being absent.
+    """
+    planted = os.path.join(scratch, "declared")
+    os.makedirs(planted)
+    bare = declared_test_requirements(planted)
+    with io.open(os.path.join(planted, "pyproject.toml"), "w",
+                 encoding="utf-8") as handle:
+        handle.write(PLANTED_TEST_DEPENDENCIES)
+    declared = declared_test_requirements(planted)
+    return [
+        ("a tree with no pyproject declares nothing", bare == []),
+        ("every extra and every group requirement is installed",
+         declared == [".[dev,test]", "beautifulsoup4", "ruff"]),
+        ("an absent test runner is read as absent",
+         tool_absent("pytest", "python.exe: No module named pytest\n")),
+        ("a test's failed import is not read as an absent runner",
+         not tool_absent("pytest", "E   ModuleNotFoundError: No module "
+                                   "named 'html5lib'\n")),
+        ("a sibling module is not read as the runner",
+         not tool_absent("pytest", "No module named pytest_cov\n")),
+    ]
+
+
 def self_test():
     """Prove the missing-vs-zero rule fires before any score is believed.
 
@@ -1489,7 +1604,8 @@ def self_test():
     checks = (run_record_checks(scratch) + churn_checks(scratch)
               + lock_checks() + html_checks() + readonly_checks(scratch)
               + lock_source_checks(scratch) + unrun_checks(scratch)
-              + claim_checks(scratch) + security_checks(scratch))
+              + claim_checks(scratch) + security_checks(scratch)
+              + coverage_checks(scratch))
     venv = create_venv(os.path.join(scratch, "venv"))
     checks += boot_checks(scratch, venv)
 
