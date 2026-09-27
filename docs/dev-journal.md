@@ -8760,3 +8760,60 @@ decisions table.
   luck: nine lines over is not one sample away from passing
 - Regenerated fixtures fall under every check that reads the whole tree.
   Run conformance on them before calling a regeneration done
+
+## 2026-09-27 — Round 3 runs, and five measurement defects are fixed before its report
+
+**Tool:** Claude Code (Opus 5.5 1M)
+
+**Key changes:**
+- Round 3 ran on `4a5df4d`: 15 build and 15 change trials under
+  `claude-sonnet-5`, none blocked, $36.85 for the builds, and 45 judgings
+  by `claude-opus-5-5`. Its report answers Yes for the inline file
+  (readability +0.7), Worse for the short and hybrid files, No for the
+  hand-written one, and owes the escalation to K = 5 (#1888)
+- Five defects in the ruler were found by reading the first scores and fixed
+  before the report, each with a control: the judge's bundle carried a venv
+  and user caches naming the trial (#1866); scoring never gave the
+  application the administrator password seeding needs (#1868); the SQL
+  probe counted interpolated constants (#1882); the enumeration probe read a
+  fresh CSRF token in an HTMX header as a difference (#1884); the report's
+  escalation command named round 1's `A4` (#1880). The closing reading now
+  names the files it compares (#1886)
+- `base-2.zip` stays unpatched, by the owner's decision: round 3 does not
+  read it, and a patch would void the control's second-application readings
+- ADR-047: files under `docs/` take kebab-case from v3.0, and the playbook
+  keeps its noun (#1291). ADR-048: a lessons log replaces this journal from
+  v3.0 (#1870)
+- Filed for v3.0: consolidating the standard documents so README, CONTRIBUTING
+  and the playbook each answer one question (#1872), and epic #1873 with six
+  spikes testing where the templates help beyond a one-shot build from a
+  precise spec
+- The efficacy README names `--arms` for the change task, the disk a round
+  needs, and that the checkout's HEAD stays put during a run (#1889)
+
+**Pull requests merged:** #1864, #1865, #1867, #1869, #1871, #1881, #1883,
+#1885, #1887, #1888, #1889.
+
+**Issues closed:** #1291, #1866, #1868, #1880, #1882, #1884, #1886.
+
+**ADRs:** ADR-047 and ADR-048. The probe rule is the benchmark's own and is a
+row in the design's decisions table.
+
+**Gaps flagged:**
+- #1767 owes the escalation to K = 5 on the judge's security row, and the
+  owner's decision on coverage for the 9 trials whose tests import
+  `html5lib`
+- The drive holding `C:\efficacy` has 2.2 GB free; the escalation needs
+  about 10 GB
+- The gpt-6-astra cross-check waits on its plan's reset, 2026-10-02 11:34
+
+**Lessons:**
+- Read the first scores for a metric that is missing on every trial before
+  judging anything: a missing value shared by all arms is the ruler, not the
+  arms
+- A probe that fails nearly every trial and passes only the arm that
+  happens to avoid one coding pattern is measuring the pattern. Read the
+  flagged lines before the rate
+- Two background jobs sharing a nearly full disk both die. Run a round's
+  steps one after another and delete each scored environment once its
+  score is written
