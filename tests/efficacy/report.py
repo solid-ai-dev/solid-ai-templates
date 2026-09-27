@@ -1588,9 +1588,22 @@ def finding_lines(trials, table, results, active):
                         "round's trials."))
         lines.append("")
     k = max((index_of(name) for name in trials), default=0)
-    lines.append("Together: %s. K = %d, one project: a signal, not proof."
-                 % (reading(answers, lengths), k))
+    lines.append("Together%s: %s. K = %d, one project: a signal, not proof."
+                 % (compared(answers, lengths), reading(answers, lengths), k))
     return lines
+
+
+def compared(answers, lengths):
+    """Which two files the reading sets side by side, where there are more
+    than two to choose from; empty where the two columns are the only ones."""
+    measured = [arm for arm in answers
+                if answers[arm] != "Not measured" and lengths.get(arm)]
+    if len(measured) < 3:
+        return ""
+    longer = max(measured, key=lengths.get)
+    shorter = min(measured, key=lengths.get)
+    return (", reading the longest file beside the shortest (%s, %s)"
+            % (FILES[longer].lower(), FILES[shorter].lower()))
 
 
 def between_files(results, active):
@@ -2322,6 +2335,18 @@ def executive_checks(seed):
              {"full": "Not measured", "hand": "Yes"}, NOT_MEASURED)):
         got = reading(answers, lengths)
         checks.append((label, got == expected, got))
+
+    # With more than two files the reading names the two it compares; with
+    # two it needs no names, since the columns are the only ones.
+    four = {"full": 391, "short": 39, "hybrid": 516, "hand": 40}
+    named = compared({arm: "No" for arm in four}, four)
+    checks.append(("a reading over four files names the two it compares",
+                   named == ", reading the longest file beside the shortest "
+                            "(templates' hybrid file, templates' short inline "
+                            "file)", named))
+    checks.append(("a reading over two files names none",
+                   compared({"full": "No", "hand": "No"}, lengths) == "",
+                   compared({"full": "No", "hand": "No"}, lengths)))
 
     # A moved primary dimension prints its change alone, whole where it is.
     planted = {key: {"hand-none": {"mean": 0.0, "verdict": shown}}
