@@ -960,3 +960,46 @@ two-hour trial stays under the cap.
   suite catches all twelve.
 - The pre-round-3 reference, which has no sign-in, fails the sign-in
   module, so its checks cannot pass without a gate.
+
+## 12. Hypotheses registered after round 3
+
+Each entry is committed before the analysis or trial that tests it, with one
+primary measure, its threshold and the result that refutes it. Every other
+measure it names is reported without a verdict.
+
+### 12.1 Consistency across trials (#1874)
+
+**Hypothesis.** A context file makes an arm's independent trials agree with
+each other more than bare trials do.
+
+**Data.** Round 3's fifteen build trials as re-read on 2026-09-27, K = 3. No
+new trials. When this entry was written, the per-trial adherence fractions
+had been seen in the report; no agreement measure had been computed.
+
+**Primary measure: conventions agreement.** For one arm, take the adherence
+checklist items measured in all three of its trials. Agreement is the share
+of those items on which all three trials give the same verdict, pass or
+fail alike.
+
+| | |
+|---|---|
+| Contrast | `hybrid` minus `none` |
+| Supported | the difference is at least 0.15, about two items |
+| Refuted | the difference is below 0.15 |
+
+`hybrid` is the contrast because it is the arm whose adherence moved in round
+3. With one agreement value per arm there is no interval; the result is
+descriptive.
+
+**Secondary measures, no verdict:**
+
+- conventions agreement for `full`, `short` and `hand` against `none`
+- structure agreement: the mean, over the three pairs of an arm's trials, of
+  the Jaccard similarity of their Python file paths, where a trial's files
+  are those its own Git state would commit (tracked, plus untracked files its
+  `.gitignore` does not exclude) and scoring's `.score` artefacts are left
+  out
+- security agreement: the same pairwise mean over the sets of security and
+  data-protection probes each trial fails, two empty sets counting as full
+  agreement; round 3's arms pass nearly every probe, so this measure sits at
+  its ceiling and is expected to say little
