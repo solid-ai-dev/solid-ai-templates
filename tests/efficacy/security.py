@@ -749,26 +749,29 @@ if report["signed_in"]:
 
     # A sign-in without its token is accepted where it leaves the client
     # shown what the administrator is shown. On public pages that cannot
-    # tell, so the forged answer is compared with a real sign-in's and a
-    # failed one's instead; where those two answer alike, nothing tells
-    # acceptance from refusal and the probe is lost to the application.
+    # tell, so the forged answer is read against a real sign-in's: answering
+    # otherwise refuses it, whatever a failed sign-in answers. Only a forged
+    # answer that matches a real one needs a failed one to set them apart;
+    # where all three answer alike, nothing tells acceptance from refusal
+    # and the probe is lost to the application.
     forger = app.test_client()
     forger.get("/sign-in")
-    forged = sign_in(forger, USERNAME, ADMIN_SENTINEL, token=False)
+    forged = answered(sign_in(forger, USERNAME, ADMIN_SENTINEL, token=False))
     if report["gated"]:
         probes["sign_in_csrf"] = outcome(view(forger) != admitted,
                                          read="pages")
+    elif forged != answered(answer):
+        probes["sign_in_csrf"] = outcome(True, read="answers",
+                                         forged=list(forged))
+    elif answered(sign_in(app.test_client(), USERNAME,
+                          "probe-wrong")) == forged:
+        probes["sign_in_csrf"] = outcome(
+            False, read="answers", forged=list(forged),
+            reason="a forged sign-in, a real one and a failed one answer "
+                   "alike, so acceptance cannot be told from refusal")
     else:
-        refused = answered(sign_in(app.test_client(), USERNAME,
-                                   "probe-wrong"))
-        if refused == answered(answer):
-            probes["sign_in_csrf"] = outcome(
-                False, read="answers", reason="a sign-in and a failed one "
-                "answer alike, so a forged one cannot be told apart")
-        else:
-            probes["sign_in_csrf"] = outcome(
-                answered(forged) != answered(answer), read="answers",
-                forged=list(answered(forged)))
+        probes["sign_in_csrf"] = outcome(False, read="answers",
+                                         forged=list(forged))
 
     outcomes = []
     for label, path, form, body in REQUESTS:
@@ -1166,7 +1169,10 @@ def main(conn, sku, version, row):
 # before the probe runs: `hardened` passes every probe, `exposed` fails every
 # one, `locked` never seeds its administrator, and `broken` will not boot.
 # `public` serves its pages to anyone and refuses a sign-in without its token;
-# `public-forgeable` serves them to anyone and accepts one.
+# `public-forgeable` serves them to anyone and accepts one. The two
+# `public-blind` modes also redirect a failed sign-in to `/`, as a success
+# does: the first still refuses a sign-in without its token, the second
+# accepts one.
 FAKE_APP = '''import itertools
 import json
 import logging
@@ -1265,10 +1271,13 @@ class Client(object):
 
     def post(self, path, data=None):
         if path == "/sign-in":
-            if (MODE not in ("exposed", "public-forgeable")
+            if (MODE not in ("exposed", "public-forgeable",
+                             "public-blind-forgeable")
                     and data.get("csrf_token") != "t"):
                 return Response(400, "missing token")
             if not self.store.matches(data["username"], data["password"]):
+                if MODE.startswith("public-blind"):
+                    return Response(302, "", {"Location": "/"})
                 if MODE == "exposed":
                     known = data["username"] in self.store.users
                     return Response(200, "wrong password" if known
@@ -1382,7 +1391,8 @@ def runtime_readings(scratch):
     """Run the probe against the stand-in application in every mode."""
     readings = {}
     for mode in ("hardened", "exposed", "locked", "broken", "public",
-                 "public-forgeable"):
+                 "public-forgeable", "public-blind",
+                 "public-blind-forgeable"):
         where = os.path.join(scratch, "runtime-" + mode)
         package = os.path.join(where, "site", "tariff")
         os.makedirs(package)
@@ -1415,7 +1425,8 @@ def runtime_self_checks(scratch):
     probes = {}
     for mode, findings in (("hardened", 0), ("exposed", 1), ("locked", 0),
                            ("broken", 0), ("public", 0),
-                           ("public-forgeable", 0)):
+                           ("public-forgeable", 0), ("public-blind", 0),
+                           ("public-blind-forgeable", 0)):
         payload, _ = readings[mode]
         result = planted_result(findings)
         add_probes(result, payload, None if payload else "no JSON")
@@ -1469,6 +1480,17 @@ def runtime_self_checks(scratch):
          [name for name, probe
           in probes["public-forgeable"]["probes"].items()
           if not probe["passed"]] == ["sign_in_csrf"]),
+        ("a refused forgery passes though a failed sign-in answers as a "
+         "real one", [name for name, probe
+                      in probes["public-blind"]["probes"].items()
+                      if not probe["passed"]] == []),
+        ("a forgery answering as both a real and a failed sign-in fails, "
+         "saying why",
+         [name for name, probe
+          in probes["public-blind-forgeable"]["probes"].items()
+          if not probe["passed"]] == ["sign_in_csrf"]
+         and "cannot be told" in probes["public-blind-forgeable"]["probes"]
+         ["sign_in_csrf"].get("reason", "")),
         ("the old counts still read: exposed leaks three times",
          runtime_metrics(readings["exposed"][0])["error_leakage"]["value"]
          == 3),

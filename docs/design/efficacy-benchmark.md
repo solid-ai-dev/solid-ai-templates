@@ -1077,8 +1077,10 @@ specification leaves a page free to be public, so a client is read as
 signed in where some page shows it what an anonymous client is not shown,
 or, where every page is public, where its sign-in answered with the
 redirect to `next` a success gives. A sign-in sent without its token fails
-the CSRF probe only where it is accepted by the same reading; a public
-dashboard alone fails nothing. This was fixed before any round-4 trial ran,
+the CSRF probe only where it is accepted by the same reading: where every
+page is public, one answered otherwise than a real sign-in is refused,
+whatever a failed sign-in answers, and the probe fails as unreadable only
+where all three answer alike. A public dashboard alone fails nothing. This was fixed before any round-4 trial ran,
 and reads round 3's applications as before, since every one of them gated
 its pages.
 
