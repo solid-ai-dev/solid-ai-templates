@@ -934,6 +934,7 @@ Two limits:
 | 2026-09-27 | The SQL probe counts a statement only where an interpolated value cannot be traced to the module's constants | SQLite binds values only, so a table name, a PRAGMA value or a migration script has to be interpolated; round 3's 23 hits were all such, and every user value was bound | #1882 |
 | 2026-10-15 | A round is archived to the private `braboj/tariff-runs`, verified by restoring it and recomputing the report's figures, before the report is written under `docs/audits/` | Round 3's run root and scoring area were deleted with nothing kept, so none of its readings can be re-run, re-judged or cross-checked | #1904 |
 | 2026-10-15 | Round 3's K = 5 escalation is recorded as unrunnable, and its report stays at K = 3 | The escalation adds blocks 4 and 5 to round 3's root, which no longer exists; re-running the whole round would not reproduce the three blocks its report read | #1767 |
+| 2026-10-15 | The security probes read a client as signed in by what it is shown beside an anonymous client, not by `GET /` answering 200 | The thin specification lets the dashboard be public, and a public dashboard read a CSRF-checked sign-in as forged: 100 % fell to 90.91 %, past round 4's 9-point threshold | #1876 |
 | 2026-10-15 | A trial is both fenced and excluded: its file tools are denied every path it may not reach, and a trial whose transcript still reaches one, through the shell, is voided and re-run once; a second reach loses it without stopping the run | A deny rule matches a shell command's prefix, not its paths, so the shell cannot be fenced; a trial that read the hidden suite measures the suite, so counting it was never an option, and deciding after its scores were seen would be | #1907 |
 | 2026-10-15 | The cross-check reads whole blocks, reports agreement per judge row, and withholds a verdict only where the two judges read opposite directions | A shared vendor could favour the templates' style in every arm; opposite signs is the disagreement a verdict cannot survive, and a missed confirmation is what the interval already weighs | #1903 |
 
@@ -1070,6 +1071,16 @@ two probe pass rates.
 |---|---|
 | Supported | at least one file arm grows on at least one of the four rows by that row's smallest change that matters (0.5 points, 9 pp, 30 pp) with a better verdict |
 | Refuted | no file arm grows on any of the four by that much |
+
+**The probes read sign-in without assuming it is required.** The thin
+specification leaves a page free to be public, so a client is read as
+signed in where some page shows it what an anonymous client is not shown,
+or, where every page is public, where its sign-in answered with the
+redirect to `next` a success gives. A sign-in sent without its token fails
+the CSRF probe only where it is accepted by the same reading; a public
+dashboard alone fails nothing. This was fixed before any round-4 trial ran,
+and reads round 3's applications as before, since every one of them gated
+its pages.
 
 **Secondary, no verdict:** the hidden suite's pass rate per arm, which now
 also counts the dropped practices the suite checks, and each probe's result

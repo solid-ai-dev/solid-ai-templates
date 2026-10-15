@@ -600,11 +600,30 @@ def sign_in(client, username, password, target="/", token=True):
     return post_form(client, "/sign-in", "/sign-in", body)
 
 
-def signed_in(client):
-    try:
-        return client.get("/").status_code == 200
-    except Exception:
-        return False
+# The pages every arm serves. Whether one asks for a sign-in is the
+# application's choice where the specification leaves it open, so being
+# signed in is read as being shown something an anonymous client is not.
+PAGES = ("/", "/products", "/customers", "/invoices/new")
+
+
+def view(client):
+    """What a client is shown on each page: its status and where it
+    redirects."""
+    seen = []
+    for path in PAGES:
+        try:
+            response = client.get(path)
+            seen.append((response.status_code, urlsplit(
+                response.headers.get("Location") or "").path))
+        except Exception as error:
+            seen.append(repr(error)[:80])
+    return seen
+
+
+def answered(response):
+    """A sign-in's answer, as status and redirect path."""
+    return (response.status_code,
+            urlsplit(response.headers.get("Location") or "").path)
 
 
 def set_cookies(response):
@@ -645,11 +664,19 @@ probes["security_headers"] = outcome(
     report["headers"]["nosniff"] and report["headers"]["framing"],
     present=report["headers"])
 
+anonymous = view(app.test_client())
 admin = app.test_client()
 cookies = set_cookies(admin.get("/sign-in"))
 answer = sign_in(admin, USERNAME, ADMIN_SENTINEL)
 cookies += set_cookies(answer)
-report["signed_in"] = signed_in(admin)
+admitted = view(admin)
+
+# Signed in where a page shows the administrator what it shows no one
+# else, or, on an application whose pages are all public, where the sign-in
+# answered as the specification says a success does: a redirect to `next`.
+report["gated"] = admitted != anonymous
+report["signed_in"] = report["gated"] or (
+    300 <= answer.status_code < 400 and answered(answer)[1] == "/")
 report["sign_in_status"] = answer.status_code
 
 # The session cookie's own attributes, as the browser receives them; the
@@ -720,10 +747,28 @@ if report["signed_in"]:
             followed.append(target)
     probes["open_redirect"] = outcome(not followed, followed=followed)
 
+    # A sign-in without its token is accepted where it leaves the client
+    # shown what the administrator is shown. On public pages that cannot
+    # tell, so the forged answer is compared with a real sign-in's and a
+    # failed one's instead; where those two answer alike, nothing tells
+    # acceptance from refusal and the probe is lost to the application.
     forger = app.test_client()
     forger.get("/sign-in")
-    sign_in(forger, USERNAME, ADMIN_SENTINEL, token=False)
-    probes["sign_in_csrf"] = outcome(not signed_in(forger))
+    forged = sign_in(forger, USERNAME, ADMIN_SENTINEL, token=False)
+    if report["gated"]:
+        probes["sign_in_csrf"] = outcome(view(forger) != admitted,
+                                         read="pages")
+    else:
+        refused = answered(sign_in(app.test_client(), USERNAME,
+                                   "probe-wrong"))
+        if refused == answered(answer):
+            probes["sign_in_csrf"] = outcome(
+                False, read="answers", reason="a sign-in and a failed one "
+                "answer alike, so a forged one cannot be told apart")
+        else:
+            probes["sign_in_csrf"] = outcome(
+                answered(forged) != answered(answer), read="answers",
+                forged=list(answered(forged)))
 
     outcomes = []
     for label, path, form, body in REQUESTS:
@@ -1120,6 +1165,8 @@ def main(conn, sku, version, row):
 # answers the probe's requests from a table, so each probe's reading is known
 # before the probe runs: `hardened` passes every probe, `exposed` fails every
 # one, `locked` never seeds its administrator, and `broken` will not boot.
+# `public` serves its pages to anyone and refuses a sign-in without its token;
+# `public-forgeable` serves them to anyone and accepts one.
 FAKE_APP = '''import itertools
 import json
 import logging
@@ -1191,7 +1238,7 @@ class Client(object):
         if path == "/sign-in":
             return self.page('<form>' + FORM
                              + '<input type="hidden" name="next" value="">')
-        if not self.signed:
+        if not self.signed and not MODE.startswith("public"):
             return Response(302, "", {"Location": "/sign-in"})
         if path == "/":
             return Response(200, "<p>home</p>")
@@ -1218,7 +1265,8 @@ class Client(object):
 
     def post(self, path, data=None):
         if path == "/sign-in":
-            if MODE != "exposed" and data.get("csrf_token") != "t":
+            if (MODE not in ("exposed", "public-forgeable")
+                    and data.get("csrf_token") != "t"):
                 return Response(400, "missing token")
             if not self.store.matches(data["username"], data["password"]):
                 if MODE == "exposed":
@@ -1333,7 +1381,8 @@ def static_self_checks(scratch):
 def runtime_readings(scratch):
     """Run the probe against the stand-in application in every mode."""
     readings = {}
-    for mode in ("hardened", "exposed", "locked", "broken"):
+    for mode in ("hardened", "exposed", "locked", "broken", "public",
+                 "public-forgeable"):
         where = os.path.join(scratch, "runtime-" + mode)
         package = os.path.join(where, "site", "tariff")
         os.makedirs(package)
@@ -1365,7 +1414,8 @@ def runtime_self_checks(scratch):
                if name not in STATIC_PROBES and name != "debug"]
     probes = {}
     for mode, findings in (("hardened", 0), ("exposed", 1), ("locked", 0),
-                           ("broken", 0)):
+                           ("broken", 0), ("public", 0),
+                           ("public-forgeable", 0)):
         payload, _ = readings[mode]
         result = planted_result(findings)
         add_probes(result, payload, None if payload else "no JSON")
@@ -1411,6 +1461,14 @@ def runtime_self_checks(scratch):
          and no_report["data_protection_probe_pass_rate"]["missing"]
          and not any(probe.get("lost")
                      for probe in no_report["probes"].values())),
+        ("public pages with a token-checked sign-in pass every probe",
+         (readings["public"][0] or {}).get("signed_in") is True
+         and [name for name, probe in probes["public"]["probes"].items()
+              if not probe["passed"]] == []),
+        ("public pages with a forgeable sign-in fail only its CSRF probe",
+         [name for name, probe
+          in probes["public-forgeable"]["probes"].items()
+          if not probe["passed"]] == ["sign_in_csrf"]),
         ("the old counts still read: exposed leaks three times",
          runtime_metrics(readings["exposed"][0])["error_leakage"]["value"]
          == 3),
