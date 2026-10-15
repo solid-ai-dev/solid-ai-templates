@@ -21,6 +21,7 @@ directory holds the parts that run.
 | `report.py` | the contrasts, intervals, verdicts and the report under `docs/audits/` |
 | `withdrawn.json` | metrics withdrawn after grading, keyed by the grader's revision |
 | `reuse.py` | copies an earlier round's trials into a new run root |
+| `archive.py` | archives a round's raw data, restores a root from an archive, verifies the two |
 | `control/` | the rubric control: six trees that check the judge |
 
 ## Before a run
@@ -267,6 +268,8 @@ py tests/efficacy/judge.py --root <the run root> --repeat 3
 py tests/efficacy/judge.py --self-test
 py tests/efficacy/security.py --self-test
 py tests/efficacy/security.py --root <the run root>
+py tests/efficacy/archive.py --self-test
+py tests/efficacy/archive.py --root <the run root> --into <a fresh directory in braboj/tariff-runs>
 py tests/efficacy/report.py --self-test
 py tests/efficacy/report.py --root <the run root>
 ```
@@ -434,6 +437,51 @@ revision keeps the metric.
 The self test runs the design's worked cases through the verdict rule,
 plants a row on each side of the escalation rule, and plants a run on each
 side of a withdrawal.
+
+### Archiving a round
+
+**A round is archived before it is reported.** The run root and its scoring
+area live on the machine that ran the round. Round 3's were deleted, and with
+them every reading behind its report.
+
+`archive.py --into` writes to a fresh directory in a clone of the private
+repository `braboj/tariff-runs`, and to its `-scoring` sibling there:
+
+- the run records, unchanged
+- each frozen tarball, without its virtual environments, found by
+  `pyvenv.cfg`, and without tool caches or bytecode; the original's hash is
+  recorded
+- the transcripts, and nothing else of the scratch home, which holds the
+  account's credentials
+- a marker per voided directory, whose name the report reads
+- the scores, change scores, security readings, judgings, the unblinding
+  map and the tool lock; the judge's bundles are rebuilt from the trees
+
+`ARCHIVE.json` beside them lists every file with its hash, the templates and
+hidden-suite revisions, and what was stripped from each tarball. A file over
+50 MB is refused, because a push would be.
+
+**Every archive is verified before it counts.** It is restored into a
+temporary root, and the report's table, contrasts, withdrawals, escalation,
+reach scan and lost trials are computed from both roots. Any difference fails
+the run. Only a verified archive writes `archived.json` into the scoring area,
+holding the hash of every file the report reads.
+
+**The report refuses to write under `docs/audits/`** without that stamp, or
+once any reading has changed since it was written. `--out-dir` elsewhere
+writes a draft without one. Commit and push the archive before the report's
+pull request.
+
+```bash
+py tests/efficacy/archive.py --verify --root <the run root> --from <the archive>
+py tests/efficacy/archive.py --restore --from <the archive> --into <a fresh root>
+```
+
+`--restore` makes a working root from an archive: the records' tarball and
+voided paths point at the restored copies, and each transcript gets back its
+original time, which the report reads to tell a re-run's sessions apart from
+those of the blocked attempt before it. Scoring and judging then run on it as
+on any root, which is how a later round re-reads an earlier one.
 
 ### One run at a time
 

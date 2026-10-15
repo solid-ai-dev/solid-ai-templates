@@ -28,6 +28,7 @@ import textwrap
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import archive  # noqa: E402
 import lib  # noqa: E402
 from generate_arm import GENERATED, record_path  # noqa: E402
 from harness import (ARMS, ARMS_DIR, K_CEILING, K_PRIMARY,  # noqa: E402
@@ -2623,6 +2624,14 @@ def main(argv):
         print("no scores under %s; score.py writes them"
               % scoring_area(options.root))
         return 2
+
+    # A report under docs/audits/ is the round's record, so it is written only
+    # from a round archived as it stands; anywhere else it is a draft.
+    if os.path.abspath(options.out_dir) == os.path.abspath(AUDITS):
+        problem = archive.stamp_problem(options.root)
+        if problem:
+            print("refused: %s" % problem)
+            return 2
 
     # The design escalates once, to K = 5, and never further, so a run past
     # the ceiling is refused rather than reported as though the bound held.
