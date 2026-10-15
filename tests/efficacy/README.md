@@ -34,7 +34,9 @@ as a refusal or a missing metric, not a crash.
 |---|---|---|
 | `claude` on `PATH`, logged in | every trial, every arm's generation, and the judge | the preflight refuses the run |
 | `gh`, logged in with access to `braboj/tariff-hidden-suite` | scoring clones the hidden suite | scoring refuses |
+| Python 3.12, running the scorer as `py -3.12` | every scored trial's environment is made by the scorer's own interpreter, and round 3 scored under 3.12 | trials scored under another interpreter are measured with another ruler |
 | a Java runtime on `PATH` | `html5validator`, the HTML validity metric | that metric is missing |
+| a clone of `braboj/tariff-runs` | `archive.py --into`, before the report | the report refuses to write under `docs/audits/` |
 | a Playwright browser | the suite's browser flows and the accessibility probe | scoring installs one, and refuses the trial where it cannot |
 | `codex` on `PATH`, logged in | the cross-check judge, on a sample | each of its judgings fails |
 | about 15 GB free on the run root's drive | a K = 3 round: round 3's root held 5.5 GB after both tasks, and each scored trial's environment is about 290 MB | a trial or a scoring stops with `No space left on device`, and the trial it stopped is not a result |
