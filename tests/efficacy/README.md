@@ -7,6 +7,7 @@ directory holds the parts that run.
 | Path | What it is |
 |---|---|
 | `SPEC.md` | the application every arm is asked to build; copied into each workspace |
+| `SPEC-thin.md` | the same contract without the practices, for `--spec thin`; copied in as `SPEC.md` |
 | `brief.txt` | the project brief the generated arms' interview reads, the only copy |
 | `change-prompt.txt` | the change task's prompt, the only copy |
 | `arms/<arm>/CLAUDE.md` | each arm's context file: `full`, `short`, `hybrid` generated, `hand` hand-written |

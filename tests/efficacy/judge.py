@@ -37,6 +37,7 @@ from harness import (LiveRunError, TrialError, canonical,  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.basename(__file__)
 SPEC = os.path.join(HERE, "SPEC.md")
+THIN_SPEC = os.path.join(HERE, "SPEC-thin.md")
 
 # Every specification a round has built against, by the sha256 of its text
 # with line endings normalised. A tree is judged against the one it carries,
@@ -370,8 +371,9 @@ def tree_spec(tree):
     if text is None:
         return None
     known = dict(SPECS)
-    current = hashlib.sha256(spec_text(SPEC)).hexdigest()
-    known.setdefault(current, "the current specification")
+    for path, label in ((SPEC, "the current specification"),
+                        (THIN_SPEC, "the current thin specification")):
+        known.setdefault(hashlib.sha256(spec_text(path)).hexdigest(), label)
     found = hashlib.sha256(text).hexdigest()
     if found not in known:
         return None
@@ -973,7 +975,8 @@ def spec_checks(scratch):
     """
     current = spec_text(SPEC)
     earlier = b"# tariff, as an earlier round specified it\n"
-    planted = {"current": current,
+    thin = spec_text(THIN_SPEC)
+    planted = {"current": current, "thin": thin,
                "crlf": current.replace(b"\n", b"\r\n"),
                "earlier": earlier,
                "edited": current + b"\nAlso build a blog.\n",
@@ -1012,6 +1015,10 @@ def spec_checks(scratch):
     return [
         ("a tree carrying the current spec is judged against it",
          judged_against("current", current)),
+        ("a tree carrying the thin spec is judged against it",
+         judged_against("thin", thin)
+         and built["thin"][0]["spec"]["round"]
+         == "the current thin specification"),
         ("a CRLF copy of it is recognised and bundled as LF",
          judged_against("crlf", current)),
 
