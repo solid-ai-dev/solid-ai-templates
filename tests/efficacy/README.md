@@ -393,6 +393,25 @@ default. The other vendor's judge, `gpt-6-astra`, runs with `--cli codex`
 in a root of its own and reads a sample of each round as a cross-check. Its
 scores are never averaged with the rounds' judge (the design's §5.6).
 
+```bash
+py tests/efficacy/archive.py --restore --from <the round's archive> --into <a fresh root>
+rm -r <that root>-scoring/judge
+py tests/efficacy/score.py --root <that root> --rescore
+py tests/efficacy/judge.py --root <that root> --cli codex --repeat 1
+py tests/efficacy/report.py --root <the run root> --cross-check <that root>
+```
+
+The restored root carries the round's own judgings, which the judge would
+count as done and the report would read as the other vendor's, so they are
+removed first. Scoring with `--rescore` extracts the trees the judge reads;
+an archive keeps the tarballs, not the trees.
+
+The report prints agreement per judge row over the trials both judges read,
+and withholds the verdict of a judge-row contrast the two read in opposite
+directions. It refuses a `--cross-check` root that holds no judging of the
+round's trials, because an empty cross-check would print as agreement, and
+one holding a judging by the rounds' own judge.
+
 ### Security
 
 `security.py` reads each scored trial with the eleven security and three

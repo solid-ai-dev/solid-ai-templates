@@ -450,6 +450,10 @@ def bca_interval(differences, seed):
 # or "worse", so this value counts nowhere.
 CROSSING_VERDICT = "no verdict: the arms were judged in different rounds"
 
+# What a judge-row contrast reads as when the other vendor's judge reads it in
+# the opposite direction. Like the crossing verdict, it counts nowhere.
+DISAGREE_VERDICT = "no verdict: the two judges disagree on its direction"
+
 
 def verdict(interval, direction):
     """Better, worse, or no improvement shown — read against the direction."""
@@ -694,6 +698,128 @@ def withdraw(withdrawn, table, *result_sets):
                     for pair in CONTRASTS}
 
 
+# The primary rows the judge scores, which the other vendor's judge reads too.
+JUDGE_ROWS = tuple(key for key in PRIMARY if key not in PROBE_RATES)
+
+# Two scores this close agree: the rubric anchors its 1, 3 and 5 two points
+# apart, so a difference of one never crosses an anchor.
+AGREE_WITHIN = 1.0
+
+
+def load_cross_check(root, trials):
+    """The other vendor's completed judgings under `root`, for the trials
+    this round scored, keyed as `load` keys them."""
+    found = {}
+    pattern = os.path.join(scoring_area(root), "judge", "T*.json")
+    for file in sorted(glob.glob(pattern)):
+        with io.open(file, encoding="utf-8") as handle:
+            judging = json.load(handle)
+        name = canonical(judging.get("trial") or "")
+        if name in trials and judging.get("outcome") == "judged":
+            entry = found.setdefault(name, {"judge": judging, "judgings": []})
+            entry["judgings"].append(judging)
+    return found
+
+
+def shared_judges(trials, other):
+    """The judge models that read both this round and the cross-check."""
+    def models(source):
+        return {judging.get("model") for trial in source.values()
+                for judging in readings(trial)}
+    return sorted(str(model) for model in models(trials) & models(other))
+
+
+def cross_check(trials, other, seed):
+    """How far the other vendor's judge agrees with the rounds' judge on the
+    trials it read, per judge row, and the contrasts it reads itself."""
+    rows = {}
+    for key in JUDGE_ROWS:
+        dimension = key[len("judge_"):]
+        differences = []
+        for name in sorted(other):
+            ours = judge_score(trials[name], dimension)
+            theirs = judge_score(other[name], dimension)
+            if ours is not None and theirs is not None:
+                differences.append(theirs - ours)
+        rows[key] = {
+            "trials": len(differences),
+            "mean_difference": (round(statistics.fmean(differences), 4)
+                                if differences else None),
+            "within_one": (sum(1 for difference in differences
+                               if abs(difference) <= AGREE_WITHIN)
+                           / len(differences) if differences else None)}
+    first = other[min(other)]["judge"] if other else {}
+    metrics = [metric for metric in METRICS if metric[0] in JUDGE_ROWS]
+    return {"model": first.get("model"), "trials": sorted(other),
+            "rows": rows, "results": contrasts(collect(other, metrics), seed),
+            "disagreements": []}
+
+
+def disagree(results, check):
+    """Withhold the verdict of every judge-row contrast the other vendor's
+    judge reads in the opposite direction; return what was withheld."""
+    withheld = []
+    for key in JUDGE_ROWS:
+        for label, contrast in results.get(key, {}).items():
+            ours = contrast["mean"]
+            theirs = check["results"][key][label]["mean"]
+            if (contrast["verdict"] not in ("better", "worse")
+                    or ours is None or theirs is None):
+                continue
+
+            # Opposite signs only: a judge that reads no difference has not
+            # read the other direction, and a verdict it merely fails to
+            # confirm is what the rounds' judge's interval already weighs.
+            if ours * theirs < 0:
+                contrast["verdict"] = DISAGREE_VERDICT
+                contrast["non_inferior"] = None
+                withheld.append({"metric": key, "contrast": label,
+                                 "ours": ours, "theirs": theirs})
+    check["disagreements"] = withheld
+    return withheld
+
+
+def cross_check_section(check):
+    """The report's lines on the other vendor's judge."""
+    lines = ["## The other vendor's judge", ""]
+    if not check:
+        lines.append("Not run: no other vendor's judging was read for this "
+                     "round, so the judge shares a vendor with the generator "
+                     "unchecked.")
+        return lines
+    lines.append("`%s` read %d trial(s) of this round: %s. Its scores are "
+                 "never meaned with the rounds' judge's. A judge-row contrast "
+                 "it reads in the opposite direction keeps its numbers and "
+                 "loses its verdict."
+                 % (check["model"], len(check["trials"]),
+                    ", ".join(check["trials"])))
+    lines.append("")
+    lines.append("| Row | Trials read by both | Mean difference, other judge "
+                 "minus the rounds' | Within one point |")
+    lines.append("|---|---|---|---|")
+    for key in JUDGE_ROWS:
+        row = check["rows"][key]
+        lines.append("| %s | %d | %s | %s |"
+                     % (SHORT[key], row["trials"],
+                        number(row["mean_difference"]),
+                        "—" if row["within_one"] is None
+                        else "%.0f%%" % (100 * row["within_one"])))
+    lines.append("")
+    if check["disagreements"]:
+        lines.append("Verdicts withheld, the two judges reading opposite "
+                     "directions:")
+        lines.append("")
+        for entry in check["disagreements"]:
+            lines.append("- %s, %s: the rounds' judge %s, the other %s"
+                         % (SHORT[entry["metric"]], entry["contrast"],
+                            signed(entry["ours"]), signed(entry["theirs"])))
+    else:
+        lines.append("No verdict withheld: on every judge-row contrast both "
+                     "read, the two judges agree on the direction or one of "
+                     "them reads none.")
+    return lines
+
+
 def escalation_triggers(results):
     """The rows that owe the escalation to K = 5, in one set of contrasts.
 
@@ -928,7 +1054,7 @@ def unrecorded_voids(root, sequence, recorded):
 
 
 def write_report(root, trials, table, results, seed, escalation,
-                 out_dir=AUDITS, posthoc=None, withdrawn=None):
+                 out_dir=AUDITS, posthoc=None, withdrawn=None, cross=None):
     """The report the design names, under `docs/audits/`.
 
     The directory is an argument so a shakedown of the writer can render into
@@ -937,6 +1063,8 @@ def write_report(root, trials, table, results, seed, escalation,
     `posthoc` is the table and contrasts of the checks declared after the
     run, printed in their own section and nowhere else. `withdrawn` maps each
     withdrawn metric to its record, already blanked from `table` and `results`.
+    `cross` is the other vendor's judge's reading, already applied to
+    `results`.
     """
     names = ordered(trials)
     arms = [arm for arm in ARMS if arm in {arm_of(name) for name in names}]
@@ -1133,7 +1261,10 @@ def write_report(root, trials, table, results, seed, escalation,
     lines.append("")
     lines.append("No person scores the judge. Each score it gives quotes an "
                  "evidence line, and the share of those lines found in the "
-                 "tree they were quoted from is the only check on it.")
+                 "tree they were quoted from is one check on it; the other "
+                 "vendor's judge, below, is the second.")
+    lines.append("")
+    lines.extend(cross_check_section(cross))
     lines.append("")
 
     lines.append("## Verdict vector")
@@ -1850,6 +1981,9 @@ def parse_args(argv):
     parser.add_argument("--out-dir", default=AUDITS,
                         help="where the report is written; default is "
                              "docs/audits/")
+    parser.add_argument("--cross-check",
+                        help="a root whose scoring area holds the other "
+                             "vendor's judgings of this round's trees")
     parser.add_argument("--self-test", action="store_true",
                         help="check the verdict rule against worked cases; "
                              "read no run")
@@ -2516,6 +2650,73 @@ def executive_checks(seed):
     return checks
 
 
+def cross_checks(seed):
+    """The other vendor's judge withholds a verdict it reads the other way,
+    leaves one it agrees with, and its agreement is counted per row."""
+    def judged(model, design, readability):
+        judging = {"outcome": "judged", "model": model,
+                   "answer": {"rubric": {"design": {"score": design},
+                                         "readability":
+                                             {"score": readability}}}}
+        return {"scores": {}, "judge": judging, "judgings": [judging],
+                "change": None, "security": None}
+
+    # The rounds' judge reads full better on both rows. The other reads full
+    # worse on design and better on readability.
+    ours, theirs = {}, {}
+    for index, (full_design, other_design, full_reads, other_reads) in \
+            enumerate(((4, 2, 4, 4), (4, 2, 5, 4), (5, 1, 4, 5)), 1):
+        ours["none-%d" % index] = judged("ours", 2, 3)
+        ours["full-%d" % index] = judged("ours", full_design, full_reads)
+        theirs["none-%d" % index] = judged("theirs", 4, 3)
+        theirs["full-%d" % index] = judged("theirs", other_design,
+                                           other_reads)
+    results = contrasts(collect(ours), seed)
+    before = (results["judge_design"]["full-none"]["verdict"],
+              results["judge_readability"]["full-none"]["verdict"])
+    check = cross_check(ours, theirs, seed)
+    withheld = disagree(results, check)
+    text = "\n".join(cross_check_section(check))
+
+    # Only the none trials read: the full-none contrast has no other reading,
+    # so the rounds' judge's verdict stands.
+    unread = contrasts(collect(ours), seed)
+    partial = cross_check(ours, {name: trial for name, trial
+                                 in theirs.items() if name.startswith("none")},
+                          seed)
+    disagree(unread, partial)
+    return [
+        ("the planted rounds' judge reads full better on both rows",
+         before == ("better", "better"), before),
+        ("a direction the other judge reverses loses its verdict",
+         results["judge_design"]["full-none"]["verdict"] == DISAGREE_VERDICT
+         and [entry["metric"] for entry in withheld] == ["judge_design"],
+         results["judge_design"]["full-none"]["verdict"]),
+        ("a direction both judges read keeps its verdict",
+         results["judge_readability"]["full-none"]["verdict"] == "better",
+         results["judge_readability"]["full-none"]["verdict"]),
+        ("agreement is counted per row over the trials both read",
+         check["rows"]["judge_design"] == {"trials": 6,
+                                           "mean_difference": -0.3333,
+                                           "within_one": 0.0}
+         and check["rows"]["judge_readability"]["within_one"] == 1.0,
+         check["rows"]),
+        ("the section names the model and the withheld verdict",
+         "`theirs` read 6 trial(s)" in text and "- design, full-none" in text,
+         text[:200]),
+        ("a contrast the other judge did not read keeps its verdict",
+         unread["judge_design"]["full-none"]["verdict"] == "better",
+         unread["judge_design"]["full-none"]["verdict"]),
+        ("a root with no judgings yields no cross-check",
+         load_cross_check(os.path.join(HERE, "no-such-root"), ours) == {},
+         None),
+        ("the rounds' own judge is caught posing as the other",
+         shared_judges(ours, ours) == ["ours"]
+         and shared_judges(ours, theirs) == [],
+         shared_judges(ours, ours)),
+    ]
+
+
 def self_test(seed):
     """Check the verdict rule, the relative margin, the escalation rule, the
     withdrawal of a metric and the reach section."""
@@ -2599,6 +2800,7 @@ def self_test(seed):
     checks.extend(posthoc_checks(seed))
     checks.extend(withdrawal_checks(seed))
     checks.extend(executive_checks(seed))
+    checks.extend(cross_checks(seed))
     checks.extend((label, ok, ok) for label, ok in reach_checks())
     checks.extend((label, ok, ok) for label, ok in lost_checks())
     checks.extend((label, ok, ok) for label, ok in rescan_checks())
@@ -2644,6 +2846,28 @@ def main(argv):
     results = contrasts(table, options.seed, crossed_labels(trials))
     withdrawn = withdrawals(trials)
     withdraw(withdrawn, table, results)
+
+    # A cross-check named and then found empty would print as "no verdict
+    # withheld", which reads as agreement; it is refused instead.
+    check = None
+    if options.cross_check:
+        other = load_cross_check(options.cross_check, trials)
+        if not other:
+            print("refused: no completed judging under %s names a trial of "
+                  "this round" % scoring_area(options.cross_check))
+            return 2
+
+        # A root restored from the round's archive carries the rounds' own
+        # judgings; read as the other vendor, they would agree with
+        # themselves.
+        shared = shared_judges(trials, other)
+        if shared:
+            print("refused: %s judged both this round and the cross-check; "
+                  "remove the restored root's judge/ before judging it"
+                  % ", ".join(shared))
+            return 2
+        check = cross_check(trials, other, options.seed)
+        disagree(results, check)
     escalation = assess_escalation(trials, results, options.seed, withdrawn)
     posthoc = None
     if posthoc_owed(trials):
@@ -2652,13 +2876,14 @@ def main(argv):
                                             crossed_labels(trials)))
     target = write_report(options.root, trials, table, results, options.seed,
                           escalation, options.out_dir, posthoc,
-                          withdrawn)
+                          withdrawn, check)
 
     with io.open(os.path.join(scoring_area(options.root), "aggregate.json"),
                  "w", encoding="utf-8") as handle:
         json.dump({"seed": options.seed, "table": table, "results": results,
                    "escalation": escalation,
                    "withdrawn": withdrawn,
+                   "cross_check": check,
                    "posthoc": {"table": posthoc[0], "results": posthoc[1]}
                    if posthoc else None},
                   handle, indent=2, sort_keys=True)
