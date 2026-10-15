@@ -291,6 +291,7 @@ def figures(root, seed):
     import report
 
     trials = report.load(root)
+    report.exclude_reached(trials, report.reaches(root))
     table = report.collect(trials)
     results = report.contrasts(table, seed, report.crossed_labels(trials))
     withdrawn = report.withdrawals(trials)
