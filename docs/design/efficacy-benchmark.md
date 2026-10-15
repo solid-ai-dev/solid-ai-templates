@@ -1080,9 +1080,9 @@ redirect to `next` a success gives. A sign-in sent without its token fails
 the CSRF probe only where it is accepted by the same reading: where every
 page is public, one answered otherwise than a real sign-in is refused,
 whatever a failed sign-in answers, and the probe fails as unreadable only
-where all three answer alike. A public dashboard alone fails nothing. This was fixed before any round-4 trial ran,
-and reads round 3's applications as before, since every one of them gated
-its pages.
+where all three answer alike. A public dashboard alone fails nothing. This
+was fixed before any round-4 trial ran, and reads round 3's applications as
+before, since every one of them gated its pages.
 
 **Secondary, no verdict:** the hidden suite's pass rate per arm, which now
 also counts the dropped practices the suite checks, and each probe's result
