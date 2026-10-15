@@ -223,8 +223,9 @@ whether the effect carries to another agent reading `AGENTS.md`.
 ## 7. Limits of this evidence
 
 - **Three trials per arm.** No arrangement of three paired differences reaches
-  conventional significance; every interval is descriptive. One escalation to
-  K = 5 is owed on round 3's judge security row and has not yet run.
+  conventional significance; every interval is descriptive. Round 3's judge
+  security row owed an escalation to K = 5, which cannot run: the round's raw
+  data was deleted before it, and rounds are now archived (#1904).
 - **One application.** `tariff` is the development app. A second, `ledger`, is
   sealed for the final claim, so nothing here is tuned against it.
 - **One builder model, one agent.** All trials use `claude-sonnet-5` in Claude
