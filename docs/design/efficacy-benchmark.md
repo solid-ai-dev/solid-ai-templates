@@ -1025,3 +1025,69 @@ descriptive.
   data-protection probes each trial fails, two empty sets counting as full
   agreement; round 3's arms pass nearly every probe, so this measure sits at
   its ceiling and is expected to say little
+
+### 12.2 Round 4: the protocol both entries share
+
+Round 4 is two runs, each in a root of its own, and neither reuses a trial:
+
+| Run | Generator | Specification | Tasks |
+|---|---|---|---|
+| thin | `claude-sonnet-5`, effort `high` | `SPEC-thin.md` (`--spec thin`) | build |
+| weaker | `claude-haiku-4-5-20251001`, effort `high` | `SPEC.md` | build and change |
+
+Both use round 3's five arms and files, K = 3, the rounds' judge three times
+per trial, the cross-check of section 5.6, the trial deny rules of section
+7, and an archive before the report. When these entries were written, no
+round 4 trial had run.
+
+Each primary measure is a growth over round 3: for one file arm and one
+row, the round-4 contrast's mean paired difference against `none`, minus
+round 3's for the same arm and row, as `docs/audits/2026-09-27-efficacy.md`
+prints it. A growth counts only where the round-4 contrast's verdict is
+better.
+
+### 12.3 A thin specification (#1876)
+
+**Hypothesis.** Round 3's specification states the defences a context file
+would otherwise bring, so with a specification that states only the
+contract, the files' gain on security and data protection shows.
+
+**The thin specification** keeps everything the hidden suite drives: the
+domain, the pricing algorithm, the API, the routes and form fields, the
+export formats, the seed and the worked example. It drops 45 of 475 lines,
+every one a practice: no network at runtime, valid HTML, the
+JavaScript-disabled path, the 400 and 404 answers and server-side
+validation, CSRF, sign-in required on every route, the failed sign-in, and
+what erasure must leave behind. The issue estimated about 40 lines in all;
+that cannot hold, because the suite checks the pricing algorithm figure by
+figure and the algorithm alone runs to 70 lines.
+
+**Primary measure:** the growth over round 3 of the four security and
+data-protection rows: the judge's security and data-protection rows and the
+two probe pass rates.
+
+| | |
+|---|---|
+| Supported | at least one file arm grows on at least one of the four rows by that row's smallest change that matters (0.5 points, 9 pp, 30 pp) with a better verdict |
+| Refuted | no file arm grows on any of the four by that much |
+
+**Secondary, no verdict:** the hidden suite's pass rate per arm, which now
+also counts the dropped practices the suite checks, and each probe's result
+per arm.
+
+### 12.4 A weaker generator (#1875)
+
+**Hypothesis.** A context file makes up for what a weaker model does not
+know, so the files' gap to `none` opens as the model weakens.
+
+**Primary measure:** the growth over round 3 of the seven primary rows and
+task success.
+
+| | |
+|---|---|
+| Supported | at least one file arm grows on at least one of the eight by its smallest change that matters (section 5.8's for the primaries; 5 pp for task success, declared here) with a better verdict |
+| Refuted | no file arm grows on any of the eight by that much |
+
+**Secondary, no verdict:** the change task's success and churn, cost per
+trial, and the trials lost to the provider, a weaker model being likelier to
+end a trial on the budget or the timeout.

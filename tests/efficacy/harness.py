@@ -13,6 +13,7 @@ import argparse
 import contextlib
 import datetime
 import glob
+import hashlib
 import io
 import json
 import os
@@ -34,6 +35,12 @@ import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SPEC = os.path.join(HERE, "SPEC.md")
+
+# The specifications a round can build against, by the word `--spec` takes.
+# Each reaches the workspace as SPEC.md, so the prompt is one text for both.
+# The thin one keeps the contract the hidden suite drives and drops the
+# practices: the design's section 12 says which.
+SPECS = {"normal": SPEC, "thin": os.path.join(HERE, "SPEC-thin.md")}
 ARMS_DIR = os.path.join(HERE, "arms")
 
 # The change task's prompt lives in a file of its own, the one copy the
@@ -355,7 +362,7 @@ def vendor_templates(workspace, vendor):
     return dict(vendor, tree=tree)
 
 
-def prepare_workspace(arm, trial, root):
+def prepare_workspace(arm, trial, root, spec=SPEC):
     """Create the starting workspace for one trial; return its path and the
     record of what was vendored into it, None for every arm but the hybrid.
 
@@ -373,7 +380,7 @@ def prepare_workspace(arm, trial, root):
                          "one" % workspace)
     os.makedirs(workspace)
 
-    shutil.copyfile(SPEC, os.path.join(workspace, "SPEC.md"))
+    shutil.copyfile(spec, os.path.join(workspace, "SPEC.md"))
     context = ARMS[arm]["context"]
     if context:
         source = os.path.join(ARMS_DIR, context)
@@ -1085,9 +1092,13 @@ def prepare_change_workspace(arm, trial, root, build):
 
 def run_trial(arm, trial, root, home, options):
     """Run one build trial and return its record."""
-    workspace, vendored = prepare_workspace(arm, trial, root)
+    spec = SPECS[getattr(options, "spec", "normal")]
+    workspace, vendored = prepare_workspace(arm, trial, root, spec)
+    with io.open(spec, "rb") as handle:
+        digest = hashlib.sha256(handle.read()).hexdigest()
     record = {"arm": arm, "label": ARMS[arm]["label"], "trial": trial,
-              "task": "build", "vendored": vendored}
+              "task": "build", "vendored": vendored,
+              "spec": {"file": os.path.basename(spec), "sha256": digest}}
     return run_agent(workspace, trial_name(arm, trial), PROMPT, record, root,
                      home, options)
 
@@ -1821,6 +1832,16 @@ def dry_run_checks():
         followed = True
     except TrialError:
         followed = False
+
+    # The thin specification reaches its workspace under the one name the
+    # prompt gives, so the prompt stays a single text across specifications.
+    thin_workspace, _ = prepare_workspace("full", 1, root, SPECS["thin"])
+    with io.open(os.path.join(thin_workspace, "SPEC.md"), "rb") as handle:
+        given = handle.read()
+    with io.open(SPECS["thin"], "rb") as handle:
+        thin = handle.read()
+    with io.open(SPEC, "rb") as handle:
+        normal = handle.read()
     remove_tree(scratch)
     checks = [("the root holds a frozen build and its run record",
                "none-1.tar" in before and "run-planted.json" in before)]
@@ -1831,6 +1852,8 @@ def dry_run_checks():
                        untouched))
     checks.append(("the run that follows prepares in the same root",
                    followed))
+    checks.append(("--spec thin gives the thin spec as SPEC.md",
+                   given == thin and thin != normal))
     return checks
 
 
@@ -2409,6 +2432,9 @@ def parse_args(argv):
     parser.add_argument("--model", default="claude-sonnet-5",
                         help="exact generator model id, recorded in the report")
     parser.add_argument("--effort", default="high")
+    parser.add_argument("--spec", choices=sorted(SPECS), default="normal",
+                        help="the specification the build trials get as "
+                             "SPEC.md (default normal)")
     parser.add_argument("--budget", type=float, default=BUDGET_USD,
                         help="dollar ceiling per trial, read against the "
                              "CLI's own cost figure (default %s, the design's)"
