@@ -597,6 +597,24 @@ Security and data protection join them from round 3 (§5.8).
   of each round, and the report states how often the two agree. The two are
   never averaged.
 
+**The cross-check's rule**, registered before the first round it covers:
+
+- **Sample:** whole blocks, so every contrast it reads is paired. It reads
+  every build trial once where the plan's weekly limit allows, which a round
+  of five arms does up to K = 5 (25 judgings of about 30). Where it does not,
+  blocks are drawn in a shuffled order at the round's recorded seed until the
+  limit is reached.
+- **Agreement:** per judge row, over the trials both judges read, the mean
+  difference (the other judge's score minus the rounds' judge's mean) and the
+  share of trials whose two scores lie within one point, which is half the
+  distance between two anchors.
+- **Direction:** a judge-row contrast the rounds' judge calls better or worse
+  loses its verdict when the other judge's mean paired difference on the
+  same pairs has the opposite sign. A contrast the other judge reads as zero,
+  or did not read, keeps its verdict.
+- **Reading:** the other judge's scores never replace or join the rounds'
+  judge's, and its own intervals decide nothing.
+
 ### 5.7 How the judge is checked
 
 No person scores the judge. Two automated checks do:
@@ -916,6 +934,7 @@ Two limits:
 | 2026-09-27 | The SQL probe counts a statement only where an interpolated value cannot be traced to the module's constants | SQLite binds values only, so a table name, a PRAGMA value or a migration script has to be interpolated; round 3's 23 hits were all such, and every user value was bound | #1882 |
 | 2026-10-15 | A round is archived to the private `braboj/tariff-runs`, verified by restoring it and recomputing the report's figures, before the report is written under `docs/audits/` | Round 3's run root and scoring area were deleted with nothing kept, so none of its readings can be re-run, re-judged or cross-checked | #1904 |
 | 2026-10-15 | Round 3's K = 5 escalation is recorded as unrunnable, and its report stays at K = 3 | The escalation adds blocks 4 and 5 to round 3's root, which no longer exists; re-running the whole round would not reproduce the three blocks its report read | #1767 |
+| 2026-10-15 | The cross-check reads whole blocks, reports agreement per judge row, and withholds a verdict only where the two judges read opposite directions | A shared vendor could favour the templates' style in every arm; opposite signs is the disagreement a verdict cannot survive, and a missed confirmation is what the interval already weighs | #1903 |
 
 ¹ This agrees with Anthropic's guidance on context engineering, which asks
 for the smallest set of high-signal tokens:
