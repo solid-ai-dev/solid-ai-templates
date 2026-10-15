@@ -934,6 +934,7 @@ Two limits:
 | 2026-09-27 | The SQL probe counts a statement only where an interpolated value cannot be traced to the module's constants | SQLite binds values only, so a table name, a PRAGMA value or a migration script has to be interpolated; round 3's 23 hits were all such, and every user value was bound | #1882 |
 | 2026-10-15 | A round is archived to the private `braboj/tariff-runs`, verified by restoring it and recomputing the report's figures, before the report is written under `docs/audits/` | Round 3's run root and scoring area were deleted with nothing kept, so none of its readings can be re-run, re-judged or cross-checked | #1904 |
 | 2026-10-15 | Round 3's K = 5 escalation is recorded as unrunnable, and its report stays at K = 3 | The escalation adds blocks 4 and 5 to round 3's root, which no longer exists; re-running the whole round would not reproduce the three blocks its report read | #1767 |
+| 2026-10-15 | Round 4 is judged by `claude-opus-5-5` alone, without the cross-check | The owner keeps `gpt-6-astra`'s weekly plan free; round 4's thirty build trials would take all of it. The same-vendor caveat round 3 carried stands for round 4 | #1903 |
 | 2026-10-15 | The security probes read a client as signed in by what it is shown beside an anonymous client, not by `GET /` answering 200 | The thin specification lets the dashboard be public, and a public dashboard read a CSRF-checked sign-in as forged: 100 % fell to 90.91 %, past round 4's 9-point threshold | #1876 |
 | 2026-10-15 | A trial is both fenced and excluded: its file tools are denied every path it may not reach, and a trial whose transcript still reaches one, through the shell, is voided and re-run once; a second reach loses it without stopping the run | A deny rule matches a shell command's prefix, not its paths, so the shell cannot be fenced; a trial that read the hidden suite measures the suite, so counting it was never an option, and deciding after its scores were seen would be | #1907 |
 | 2026-10-15 | The cross-check reads whole blocks, reports agreement per judge row, and withholds a verdict only where the two judges read opposite directions | A shared vendor could favour the templates' style in every arm; opposite signs is the disagreement a verdict cannot survive, and a missed confirmation is what the interval already weighs | #1903 |
@@ -1037,9 +1038,11 @@ Round 4 is two runs, each in a root of its own, and neither reuses a trial:
 | weaker | `claude-haiku-4-5-20251001`, effort `high` | `SPEC.md` | build and change |
 
 Both use round 3's five arms and files, K = 3, the rounds' judge three times
-per trial, the cross-check of section 5.6, the trial deny rules of section
-7, and an archive before the report. When these entries were written, no
-round 4 trial had run.
+per trial, the trial deny rules of section 7, and an archive before the
+report. Round 4 runs without the cross-check of section 5.6: its judge is
+`claude-opus-5-5` alone, as round 3's was, and the report says so. When these
+entries were written, and when the cross-check was dropped, no round 4 trial
+had run.
 
 Each primary measure is a growth over round 3: for one file arm and one
 row, the round-4 contrast's mean paired difference against `none`, minus
