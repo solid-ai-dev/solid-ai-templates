@@ -174,6 +174,58 @@ SETTING_SOURCES = ""
 # falling back to whatever the machine carries.
 ISOLATED_SETTINGS = {"includeCoAuthoredBy": False}
 
+# The outcomes that void a trial and re-run it once in its place: the
+# provider's cut, and a session whose tool calls reached past its workspace.
+# Neither is a measurement of the arm.
+VOIDING = ("blocked", "reached")
+
+
+def rule_path(path):
+    """`path` as a permission rule spells an absolute path: `//c/x` for
+    `C:\\x`. The CLI matches the long form, so a short 8.3 name never
+    matches."""
+    full = os.path.abspath(path).replace("\\", "/").rstrip("/")
+    if len(full) > 1 and full[1] == ":":
+        full = "/%s%s" % (full[0].lower(), full[2:])
+    return "/" + full
+
+
+def reach_denials(root, workspace):
+    """Read and Edit deny rules for what a trial may not reach that a path
+    names: this repository, the scoring area, and every entry of the run root
+    but the trial's own workspace and temporary directory.
+
+    The shell is not covered, since a deny rule matches a command's prefix
+    and not the paths in it; the transcript scan reads what the shell sent.
+    """
+    root = os.path.abspath(root)
+    own = os.path.basename(os.path.abspath(workspace))
+    names = {trial_name(arm, trial)
+             for arm in ARMS for trial in range(1, K_CEILING + 1)}
+    names |= {"change-" + name for name in names}
+    targets = [repository_root(), scoring_area(root),
+               os.path.join(root, "home"), os.path.join(root, "void")]
+    targets += [os.path.join(root, name) for name in sorted(names)
+                if name != own]
+    patterns = ["%s/**" % rule_path(target) for target in targets]
+    patterns += ["%s/%s" % (rule_path(root), entry)
+                 for entry in ("*.tar", "run-*.json")]
+    return ["%s(%s)" % (tool, pattern)
+            for pattern in patterns for tool in ("Read", "Edit")]
+
+
+def trial_settings(home, root, workspace):
+    """Write a trial's own settings file into the scratch home, which its
+    deny rules cover, and return its path."""
+    os.makedirs(home, exist_ok=True)
+    path = os.path.join(home, "settings-%s.json"
+                        % os.path.basename(os.path.abspath(workspace)))
+    settings = dict(ISOLATED_SETTINGS,
+                    permissions={"deny": reach_denials(root, workspace)})
+    with io.open(path, "w", encoding="utf-8") as handle:
+        json.dump(settings, handle, indent=2)
+    return path
+
 
 class TrialError(Exception):
     """A trial could not be set up or run as the protocol requires."""
@@ -512,21 +564,26 @@ def agent_environment(home, environ=None, temp=None):
     return env
 
 
-def agent_command(home, model, effort, budget):
+def agent_command(home, model, effort, budget, settings=None):
     """The argv for one trial; the prompt goes on standard input.
 
     `--max-turns`, which the design's protocol names, is not a flag this
     CLI carries. The bound is a dollar budget and the wall-clock timeout the
     caller applies, and the record states which of them ended a trial.
+    `settings` is the trial's own settings file, the home's by default.
     """
     argv = [
         agent_executable(), "-p",
         "--output-format", "json",
         "--model", model,
         "--effort", effort,
+
+        # Deny rules hold in this mode: a probe denied one file under it read
+        # the file beside it and not the denied one, and read both without
+        # the rule.
         "--permission-mode", "bypassPermissions",
         "--setting-sources", SETTING_SOURCES,
-        "--settings", os.path.join(home, "settings.json"),
+        "--settings", settings or os.path.join(home, "settings.json"),
         "--strict-mcp-config",
         "--disallowed-tools",
     ]
@@ -1185,7 +1242,8 @@ def run_agent(workspace, name, prompt, record, root, home, options):
     it took, and the frozen state it left.
     """
     assert_no_ambient_context(workspace, home)
-    argv = agent_command(home, options.model, options.effort, options.budget)
+    argv = agent_command(home, options.model, options.effort, options.budget,
+                         trial_settings(home, root, workspace))
     record.update({
         "workspace": workspace,
         "prompt": prompt,
@@ -1236,8 +1294,9 @@ def run_agent(workspace, name, prompt, record, root, home, options):
     record["elapsed_s"] = round(time.monotonic() - started, 1)
     record.update(contain(workspace, temp, home, shared, since,
                           record.get("vendored")))
+    record.update(reached(record))
     record["frozen"] = freeze(workspace, root, name)
-    if record["outcome"] == "blocked":
+    if record["outcome"] in VOIDING:
         try:
             record["void"] = void(root, workspace, record["frozen"], name)
             record["frozen"]["tarball"] = record["void"]["tarball"]
@@ -1245,6 +1304,18 @@ def run_agent(workspace, name, prompt, record, root, home, options):
             record["void"] = None
             record["void_error"] = str(error)
     return record
+
+
+def reached(record):
+    """The outcome a finished trial takes when its scan found a reach: a
+    scorable trial that read past its workspace is not a measurement of its
+    arm, and is voided like a blocked one."""
+    hits = (record.get("reach") or {}).get("hits")
+    if not hits or record.get("outcome") not in SCORABLE:
+        return {}
+    return {"outcome": "reached",
+            "reason": "a tool call reached past the workspace: %s"
+                      % ", ".join(sorted({hit["term"] for hit in hits}))}
 
 
 def order(arms, k):
@@ -1329,13 +1400,24 @@ def run_in_place(arm, trial, runner, wait, records, write):
         if record.get("stopped"):
             print("  stopped %d process(es) the trial left running"
                   % len(record["stopped"]))
-        if record["outcome"] != "blocked":
+        if record["outcome"] not in VOIDING:
             return True
 
-        print("  blocked: %s" % (record.get("reason") or "")[:200])
+        print("  %s: %s" % (record["outcome"],
+                            (record.get("reason") or "")[:200]))
         if not record.get("void"):
             print("  stopping: %s" % record.get("void_error"))
             return False
+
+        # A reach is the agent's doing, not the provider's, so it needs no
+        # wait, and a second one loses the trial without stopping the run.
+        if record["outcome"] == "reached":
+            if lost:
+                print("  %s was lost twice; it is recorded and not scored"
+                      % name)
+                return True
+            lost = record
+            continue
         if lost:
             print("  stopping: %s was blocked twice" % name)
             return False
@@ -1533,6 +1615,27 @@ def resume_checks():
     unanswered = replay([blocked], [False])
     checks.append(("no answer stops the run", not unanswered["carried_on"]
                    and unanswered["waits"] == 1))
+
+    reached_once = dict(blocked, outcome="reached")
+    redone = replay([reached_once, completed], [])
+    checks.append(("a reached trial re-runs at once, with no wait",
+                   redone["carried_on"] and redone["waits"] == 0
+                   and redone["outcomes"] == ["reached", "completed"]
+                   and redone["records"][-1].get("substitutes")
+                   == blocked["void"]["dir"]))
+    lost_twice = replay([reached_once, reached_once], [])
+    checks.append(("a second reach loses the trial and the run goes on",
+                   lost_twice["carried_on"]
+                   and lost_twice["outcomes"] == ["reached", "reached"]))
+    hit = {"tool": "Bash", "term": "hidden-suite", "call": "planted"}
+    checks.append(("a scorable trial with a reach becomes reached",
+                   reached({"outcome": "completed",
+                            "reach": {"hits": [hit]}}).get("outcome")
+                   == "reached"
+                   and reached({"outcome": "completed",
+                                "reach": {"hits": []}}) == {}
+                   and reached({"outcome": "blocked",
+                                "reach": {"hits": [hit]}}) == {}))
 
     unmoved = replay([dict(blocked, void=None, void_error="planted")], [])
     checks.append(("a workspace that could not move stops the run",
@@ -2224,6 +2327,45 @@ def vendor_checks():
     return checks
 
 
+def denial_checks():
+    """A trial's deny rules cover everything it may not reach that a path
+    names, and leave its own workspace readable."""
+    root = os.path.join(tempfile.gettempdir(), "efficacy-deny-self-test")
+    remove_tree(root)
+    workspace = os.path.join(root, "none-1")
+    rules = reach_denials(root, workspace)
+    spelled = rule_path(root)
+
+    def denied(target):
+        return ("Read(%s/**)" % rule_path(target) in rules
+                and "Edit(%s/**)" % rule_path(target) in rules)
+
+    settings = trial_settings(os.path.join(root, "home"), root, workspace)
+    with io.open(settings, encoding="utf-8") as handle:
+        written = json.load(handle)
+    remove_tree(root)
+    windows = rule_path("C:\\Runs\\round") == "//c/Runs/round"
+    return [
+        ("a Windows path is spelled as a rule spells it",
+         windows if os.name == "nt" else rule_path("/runs") == "//runs"),
+        ("this repository and the scoring area are denied",
+         denied(repository_root()) and denied(scoring_area(root))),
+        ("other trials, their change tasks, home and void are denied",
+         all(denied(os.path.join(root, entry))
+             for entry in ("full-1", "none-2", "change-none-1",
+                           "change-hand-5", "home", "void"))),
+        ("tarballs and run records are denied",
+         "Read(%s/*.tar)" % spelled in rules
+         and "Read(%s/run-*.json)" % spelled in rules),
+        ("the trial's own workspace is not denied",
+         not any(rule_path(workspace) + "/" in rule for rule in rules)),
+        ("the settings file carries the rules and the isolation",
+         written.get("permissions", {}).get("deny") == rules
+         and written.get("includeCoAuthoredBy") is False
+         and os.path.dirname(settings) == os.path.join(root, "home")),
+    ]
+
+
 def self_test():
     """Prove the naming, isolation, outcome, resume, change and vendoring
     rules before a trial."""
@@ -2232,7 +2374,7 @@ def self_test():
               + resume_checks() + change_checks() + dry_run_checks()
               + process_checks()
               + claim_checks() + leftover_checks() + reach_checks() + outside_checks()
-              + vendor_checks())
+              + vendor_checks() + denial_checks())
     for label, ok in checks:
         print("  %-52s %s" % (label, "ok" if ok else "FAILED"))
     passed = sum(1 for _, ok in checks if ok)
@@ -2394,11 +2536,13 @@ def main(argv):
 
     refused = sum(1 for r in records if r["outcome"] == "refused")
     blocked = sum(1 for r in records if r["outcome"] == "blocked")
+    lost = sum(1 for r in records if r["outcome"] == "reached")
     done = sum(1 for r in records if r["outcome"]
                in ("completed", "budget", "timeout", "dry-run"))
     lib.print_verdict(refused == 0 and finished,
-                      "%d trial(s), %d done, %d blocked, %d refused%s"
-                      % (len(records), done, blocked, refused,
+                      "%d trial(s), %d done, %d blocked, %d reached, "
+                      "%d refused%s"
+                      % (len(records), done, blocked, lost, refused,
                          "" if finished else ", run stopped"))
     return 0 if refused == 0 and finished else 1
 

@@ -173,18 +173,29 @@ every other trial, and hold keys it has no use for.
   every process running from its workspace, temporary directory or scratch
   home is stopped before the freeze, and the record lists them.
 
-**The shell keeps its network**, because every trial installs packages. Only
-the two web tools are disallowed. So each transcript is scanned for a tool
-call naming:
+**The file tools are fenced.** Each trial runs under its own settings file
+in the scratch home, whose deny rules keep the Read and Edit tools out of
+this repository, the scoring area, the scratch home, `void/`, the tarballs,
+the run records and every other trial's workspace. The rules hold under
+`bypassPermissions`: a probe denied one file read the file beside it and
+not the denied one, and read both without the rule.
+
+**The shell keeps its network**, because every trial installs packages, and
+a deny rule matches a command's prefix, not the paths in it. Only the two
+web tools are disallowed. So each transcript is scanned for a tool call
+naming:
 
 - this repository or the hidden suite
 - the scoring area or the run root
 - any entry of the root other than the trial's own workspace and temporary
   directory, whether spelled from the root or reached with `..`
 
-The trial record carries the hits, and the report scans again under the
-current rule. A trial with no transcript is recorded as not scanned, never
-as clean.
+The trial record carries the hits. **A trial with a hit is `reached`**: it
+is voided like a blocked one and re-run at once in its place, with no wait.
+A second reach loses the trial and the run goes on. The report scans again
+under the current rule and leaves out of every figure any trial that scan
+flags. A trial with no transcript is recorded as not scanned, never as
+clean.
 
 ```bash
 py tests/efficacy/harness.py --self-test
@@ -204,6 +215,7 @@ loses an entry it should keep.
 | `budget` | `--budget`, $100 by default, read against the CLI's own cost figure | yes |
 | `timeout` | `--timeout`, two hours by default | yes |
 | `blocked` | any other error: a usage limit, a rate limit, a crash, no result | no |
+| `reached` | a tool call reached past the workspace | no |
 | `refused` | the harness would not start it, such as a workspace that exists | no |
 
 **A CLI that prints its result but does not exit** is ended, with everything

@@ -24,6 +24,7 @@ import re
 import shutil
 import statistics
 import sys
+import tempfile
 import textwrap
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -32,7 +33,8 @@ import archive  # noqa: E402
 import lib  # noqa: E402
 from generate_arm import GENERATED, record_path  # noqa: E402
 from harness import (ARMS, ARMS_DIR, K_CEILING, K_PRIMARY,  # noqa: E402
-                     SCORABLE, canonical, reach, read_transcripts,
+                     SCORABLE, VOIDING, canonical, reach,
+                     read_transcripts,
                      scoring_area, split_name, trial_name)
 from harness import name_of as trial_of  # noqa: E402
 
@@ -908,6 +910,10 @@ def run_records(root):
     return sequence
 
 
+# What marks a change task's name apart from its build trial's.
+CHANGE_TASK = " (change task)"
+
+
 def name_of(record):
     """A trial record's name, marking a change task apart from its build."""
 
@@ -915,7 +921,7 @@ def name_of(record):
     # apart; a record written before tasks existed is a build trial.
     name = trial_of(record)
     if record.get("task", "build") == "change":
-        name += " (change task)"
+        name += CHANGE_TASK
     return name
 
 
@@ -954,16 +960,44 @@ def reaches(root):
     return scans
 
 
+def exclude_reached(trials, scans):
+    """Leave out of `trials` every trial whose scan finds a reach, in place;
+    return the names left out.
+
+    A reached build trial goes whole. A reached change task takes only its
+    change reading with it, because its build trial was measured clean.
+    """
+    left_out = []
+    for scan in scans:
+        if not scan["hits"]:
+            continue
+        name = scan["name"]
+        build = name.replace(CHANGE_TASK, "")
+        if build not in trials:
+            continue
+        if name == build:
+            del trials[name]
+        elif trials[build]["change"] is not None:
+            trials[build]["change"] = None
+        else:
+            continue
+        left_out.append(name)
+    return left_out
+
+
 def reach_section(root, scans=None):
     """The report's lines naming every trial that reached past its own
     workspace, from `scans` where the caller has already taken them."""
     lines = ["## Trials that reached past their own workspace",
              "",
-             "The shell keeps its network and the file system is not fenced, "
-             "so a trial could fetch this repository or read the hidden "
-             "suite, the scoring area, or another trial's workspace, tarball "
-             "or transcript. Every transcript is scanned for a tool call "
-             "naming any of them.",
+             "The shell keeps its network, and a trial's deny rules fence "
+             "only the file tools, so a trial could still fetch this "
+             "repository or read the hidden suite, the scoring area, or "
+             "another trial's workspace, tarball or transcript through the "
+             "shell. Every transcript is scanned for a tool call naming any "
+             "of them. The harness voids a trial whose scan finds one and "
+             "re-runs it; a trial this re-scan flags is left out of every "
+             "figure above.",
              ""]
     scans = reaches(root) if scans is None else scans
     flagged = [scan for scan in scans if scan["hits"]]
@@ -995,7 +1029,7 @@ def lost_trials(root):
 
     lost, recorded = [], set()
     for index, record in enumerate(sequence):
-        if record.get("outcome") != "blocked":
+        if record.get("outcome") not in VOIDING:
             continue
         later = next((other for other in sequence[index + 1:]
                       if name_of(other) == name_of(record)), None)
@@ -2650,6 +2684,49 @@ def executive_checks(seed):
     return checks
 
 
+def exclusion_checks():
+    """A trial the re-scan flags is left out of the figures; a flagged change
+    task takes only its change reading; a reached trial is a lost one."""
+    def planted():
+        return {name: {"scores": {"name": name}, "change": {"name": name}}
+                for name in ("none-1", "full-1", "hand-1")}
+
+    hit = [{"tool": "Bash", "term": "hidden-suite", "call": "planted"}]
+    trials = planted()
+    left_out = exclude_reached(trials, [
+        {"name": "full-1", "hits": hit},
+        {"name": "hand-1" + CHANGE_TASK, "hits": hit},
+        {"name": "none-1", "hits": []},
+        {"name": "short-1", "hits": hit}])
+    scratch = os.path.join(tempfile.gettempdir(), "efficacy-exclusion-test")
+    shutil.rmtree(scratch, ignore_errors=True)
+    os.makedirs(scratch)
+    with io.open(os.path.join(scratch, "run-planted.json"), "w",
+                 encoding="utf-8") as handle:
+        json.dump({"trials": [
+            {"arm": "full", "trial": 1, "task": "build",
+             "outcome": "reached", "reason": "planted",
+             "started_at": "2026-10-15T10:00:00"},
+            {"arm": "full", "trial": 1, "task": "build",
+             "outcome": "completed",
+             "started_at": "2026-10-15T11:00:00"}]}, handle)
+    lost = lost_trials(scratch)
+    shutil.rmtree(scratch, ignore_errors=True)
+    return [
+        ("a reached build trial is left out whole",
+         "full-1" not in trials and "none-1" in trials, sorted(trials)),
+        ("a reached change task takes only its change reading",
+         trials["hand-1"]["change"] is None
+         and trials["hand-1"]["scores"] == {"name": "hand-1"},
+         trials.get("hand-1")),
+        ("only what was flagged and held is named as left out",
+         left_out == ["full-1", "hand-1" + CHANGE_TASK], left_out),
+        ("a reached trial is listed among the lost, with its re-run",
+         [(entry["name"], entry["rerun"]) for entry in lost]
+         == [("full-1", "completed")], lost),
+    ]
+
+
 def cross_checks(seed):
     """The other vendor's judge withholds a verdict it reads the other way,
     leaves one it agrees with, and its agreement is counted per row."""
@@ -2801,6 +2878,7 @@ def self_test(seed):
     checks.extend(withdrawal_checks(seed))
     checks.extend(executive_checks(seed))
     checks.extend(cross_checks(seed))
+    checks.extend(exclusion_checks())
     checks.extend((label, ok, ok) for label, ok in reach_checks())
     checks.extend((label, ok, ok) for label, ok in lost_checks())
     checks.extend((label, ok, ok) for label, ok in rescan_checks())
@@ -2834,6 +2912,15 @@ def main(argv):
         if problem:
             print("refused: %s" % problem)
             return 2
+
+    # A trial that read past its workspace measures what it read, not its
+    # arm; the harness voids one its own scan catches, and this re-scan, under
+    # the current rule, leaves out any it missed.
+    for name in exclude_reached(trials, reaches(options.root)):
+        print("left out, having reached past its workspace: %s" % name)
+    if not trials:
+        print("no trial is left to report once the reached ones are out")
+        return 2
 
     # The design escalates once, to K = 5, and never further, so a run past
     # the ceiling is refused rather than reported as though the bound held.

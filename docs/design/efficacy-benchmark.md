@@ -834,7 +834,7 @@ result cannot say which produced it. A control is what rules it out.
 | Confound | Control |
 |---|---|
 | Your global `CLAUDE.md` or hooks reach the bare arm | A scratch home per trial; the harness refuses a run when a `CLAUDE.md` exists in that home or any parent directory |
-| The agent reads the templates, the hidden suite or the web | Nothing mounted; web tools off; Git credentials cleared; transcripts scanned, and each hit named in the report |
+| The agent reads the templates, the hidden suite or the web | Nothing mounted; web tools off; Git credentials cleared; the file tools denied this repository, the scoring area and every other entry of the run root; transcripts scanned, a trial with a hit voided and re-run once in its place, and one the report's re-scan flags left out of every figure |
 | `hybrid` legitimately carries the templates | Its reads of its own vendored copy are not a reach; naming the repository by URL or owner still is |
 | The model changes between trials | Exact id pinned; trials interleaved |
 | The agent sees the acceptance tests | The hidden suite stays outside the workspace until scoring |
@@ -934,6 +934,7 @@ Two limits:
 | 2026-09-27 | The SQL probe counts a statement only where an interpolated value cannot be traced to the module's constants | SQLite binds values only, so a table name, a PRAGMA value or a migration script has to be interpolated; round 3's 23 hits were all such, and every user value was bound | #1882 |
 | 2026-10-15 | A round is archived to the private `braboj/tariff-runs`, verified by restoring it and recomputing the report's figures, before the report is written under `docs/audits/` | Round 3's run root and scoring area were deleted with nothing kept, so none of its readings can be re-run, re-judged or cross-checked | #1904 |
 | 2026-10-15 | Round 3's K = 5 escalation is recorded as unrunnable, and its report stays at K = 3 | The escalation adds blocks 4 and 5 to round 3's root, which no longer exists; re-running the whole round would not reproduce the three blocks its report read | #1767 |
+| 2026-10-15 | A trial is both fenced and excluded: its file tools are denied every path it may not reach, and a trial whose transcript still reaches one, through the shell, is voided and re-run once; a second reach loses it without stopping the run | A deny rule matches a shell command's prefix, not its paths, so the shell cannot be fenced; a trial that read the hidden suite measures the suite, so counting it was never an option, and deciding after its scores were seen would be | #1907 |
 | 2026-10-15 | The cross-check reads whole blocks, reports agreement per judge row, and withholds a verdict only where the two judges read opposite directions | A shared vendor could favour the templates' style in every arm; opposite signs is the disagreement a verdict cannot survive, and a missed confirmation is what the interval already weighs | #1903 |
 
 ¹ This agrees with Anthropic's guidance on context engineering, which asks
