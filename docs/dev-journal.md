@@ -8817,3 +8817,61 @@ row in the design's decisions table.
 - Two background jobs sharing a nearly full disk both die. Run a round's
   steps one after another and delete each scored environment once its
   score is written
+
+## 2026-10-15 — The ruler is hardened before round 4, and round 4 starts
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Round 3's run root was found deleted, taking every reading behind its
+  report. Rounds are now archived to the private `braboj/tariff-runs`,
+  verified by restoring the archive and recomputing the report's figures,
+  and `report.py` refuses `docs/audits/` without a current stamp (#1911).
+  Round 3's K = 5 escalation is recorded as unrunnable
+- `report.py --cross-check` reads a second vendor's judge beside the
+  rounds' judge and withholds a judge-row verdict the two read in opposite
+  directions; the sampling rule is registered in the design's 5.6 (#1912)
+- Each trial's file tools are denied this repository, the scoring area and
+  every other trial's entries; a trial whose transcript still reaches one
+  is voided and re-run once, and the report leaves out any its re-scan
+  flags (#1913). A live probe showed deny rules hold under
+  `bypassPermissions`, in the long `//c/...` form only
+- Round 4 is registered in the design's 12.2–12.4 before any trial: a thin
+  specification (45 lines of practice dropped, the contract kept) under
+  `claude-sonnet-5`, and the normal one under `claude-haiku-4-5`. Each
+  primary is growth over round 3, with 5 pp declared for task success
+  (#1914). Two review findings on the CSRF probe were fixed before merge:
+  a public dashboard, and a failed sign-in redirecting as a real one, each
+  read a refused forgery as accepted
+- Round 4 is judged by `claude-opus-5-5` alone, keeping `gpt-6-astra`'s
+  plan free (#1915). Round 4's builds started at 23:54 from the worktree
+  `C:/Workspace/sat-r4`
+- Ten issues filed from the gap hunt and the variable table: #1903–#1910,
+  under epics #1184 (now an epic, with sub-issues) and #1873
+
+**Pull requests merged:** #1911, #1912, #1913, #1914, #1915, #1916.
+
+**Issues closed:** #1767, #1904, #1907.
+
+**Issues created:** #1903, #1904, #1905, #1906, #1907, #1908, #1909, #1910.
+
+**ADRs:** none. Each decision is the benchmark's own and is a row in the
+design's decisions table.
+
+**Gaps flagged:**
+- Round 4 is running; scoring, judging, the archive and both reports
+  follow under #1875 and #1876
+- The v3.0 plan's phase-0 issues (ADRs D1, D2, D3, D7 and the engine
+  issues in its section 4) are not filed
+- A trial's agent runs whichever `python` the machine resolves (3.14
+  here); round 3's was not recorded
+
+**Lessons:**
+- A probe's proof of a state must not rest on a rule the specification
+  under test may drop: "GET / answers 200" read sign-in only while every
+  page required it
+- Read the attempt a probe exists for before the fallback that interprets
+  ambiguity; a fallback consulted first decides cases the direct reading
+  already settles
+- A permission rule naming a short 8.3 path never matches; write the long
+  form, and test a deny rule with a control that reads the file without it
