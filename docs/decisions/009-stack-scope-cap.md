@@ -1,10 +1,10 @@
 ---
 id: "009"
-status: Accepted
+status: Superseded
 date: 2026-05-31
 category: templates
 supersedes: []
-superseded_by: []
+superseded_by: ["049"]
 ---
 
 # ADR-009: Stack scope cap
