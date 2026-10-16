@@ -44,6 +44,22 @@ with minimal friction.
 
 ## Decision
 
+Cap the library at a curated set of stacks covering major framework categories, and
+leave company and team stacks to their own repositories.
+
+## Rationale
+
+- A curated set stops the growth toward hundreds of stacks, each of which must be
+  validated on every base change and, when niche, drifts faster.
+- Teams and companies own internal frameworks and conventions that stack templates
+  cannot anticipate, so their stacks belong in their own repositories.
+- Base and layer templates carry the universal standards that hold the real value,
+  so effort goes into them rather than into stack breadth.
+- Base templates are almost never overridden, only extended, so the composition
+  model already supports downstream extension with minimal friction.
+
+## Design
+
 1. **Cap the stack library** — solid-ai-templates maintains a
    curated set of stacks covering major framework categories, not
    every variant. The current ~30 stacks are sufficient.
@@ -165,3 +181,11 @@ unbounded.
   its own dog food
 - SPEC.md and CLAUDE.md are updated to document the scope cap
 - PLAYBOOK.md documents the fork-and-extend workflow
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

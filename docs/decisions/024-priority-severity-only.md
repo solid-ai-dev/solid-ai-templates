@@ -40,6 +40,20 @@ a field that encodes the same fact.
 
 ## Decision
 
+Priority is severity only, `P0` to `P3`, and the milestone field alone carries deferral:
+an unmilestoned issue is backlog, and no label or named holding milestone records it.
+
+## Rationale
+
+- The deferral marker overlapped the milestone field rather than complementing it, and
+  in the measured tracker it said nothing the milestone field did not already say.
+- The marker was kept so deferral would not be pushed into prose, but the milestone
+  field is itself a first-class, filterable axis.
+- An empty milestone is already documented as a valid state meaning the work is not tied
+  to a release, so deferral was being recorded twice.
+
+## Design
+
 1. **Priority is severity only** — the scale is `P0` critical, `P1`
    high, `P2` medium, `P3` low. Every issue MUST carry exactly one
    band. There MUST NOT be a fifth priority label.
@@ -95,3 +109,11 @@ a field that encodes the same fact.
 - A deferred-work rule previously stated against the marker is restated
   against the milestone field. The prohibition on named holding
   milestones is unaffected.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

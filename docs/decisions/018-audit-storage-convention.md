@@ -26,6 +26,20 @@ prescribed location removes all three problems.
 
 ## Decision
 
+Each 360 audit is stored as a dated report at `docs/audits/YYYY-MM-DD-360.md`, the
+single-file history form is not used, and a smoke check enforces the location.
+
+## Rationale
+
+- Two storage forms with a per-project choice invite split history, as happened here,
+  and make the audit's location a judgement call on every run.
+- A single prescribed location leaves something to verify mechanically, where a
+  documentation-only rule drifts.
+- A bare score row ages poorly and loses the per-grade reasoning that makes an audit
+  worth revisiting.
+
+## Design
+
 1. **Single location** — Each 360 audit MUST be stored as a dated report
    at `docs/audits/YYYY-MM-DD-360.md`. This is the only audit location.
 2. **No single-file history** — The single-file `docs/360-audit.md`
@@ -57,6 +71,14 @@ prescribed location removes all three problems.
   rule; the smoke suite grows by one check.
 - Future audits append a new dated file under `docs/audits/`; no index
   or rollup history file is maintained.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

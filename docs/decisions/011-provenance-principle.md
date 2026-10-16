@@ -41,6 +41,21 @@ event. The principle has to be load-bearing to survive.
 
 ## Decision
 
+Every new template rule SHOULD cite the incident, PR or session that surfaced it,
+in the body of the issue proposing the rule rather than in the template prose.
+
+## Rationale
+
+- Naming the principle keeps it load-bearing, so contributors under deadline
+  pressure do not revert to adding rules that feel right without a witnessed event.
+- Each rule earned by a concrete failure is the project's strongest
+  differentiator, and the citation keeps that receipt for every new rule.
+- Citations in issue bodies, which are append-only history, keep template prose
+  from bloating and from rotting when source projects rename, archive or go
+  private.
+
+## Design
+
 Every new rule added to `templates/` (a new section, a new MUST, a
 new SHOULD, a new MAY) SHOULD cite the concrete incident, PR, or
 session that surfaced it. The citation lives in the **issue body
@@ -140,6 +155,14 @@ standard itself.
   originating problem is structurally gone (e.g. the tool that
   produced the failure is no longer used), the rule may be a
   candidate for removal
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

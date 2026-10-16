@@ -34,6 +34,22 @@ call is recorded here.
 
 ## Decision
 
+Skills are an in-scope artifact type, governed by a dedicated base template kept
+separate from the context-file spec, and a skill holds an on-demand procedure that never
+restates always-loaded context.
+
+## Rationale
+
+- Downstream projects author many skills with no shared guidance on when a skill earns
+  its place, how to write its description, or how to keep it from duplicating
+  always-loaded rules.
+- The library's own experiment found two skills redundant with always-loaded context, a
+  design lesson worth capturing rather than a reason to leave the topic ungoverned.
+- Skill guidance travels as a template, not a generator, so it fits the composable
+  template library; a doc under `docs/` would never reach a project's resolved chain.
+
+## Design
+
 1. **Skills are in scope** — the library provides authoring guidance for
    `.claude/skills/<name>/SKILL.md` skills as a first-class artifact type
    alongside context files.
@@ -69,6 +85,14 @@ call is recorded here.
   self-check verifies against.
 - Stack or layer templates MAY reference `base-skills` where a stack
   ships skills, via `[DEPENDS ON: ...]`.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

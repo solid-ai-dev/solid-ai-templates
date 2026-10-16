@@ -48,6 +48,23 @@ together account for 63%, and the distinction between "low" and
 
 ## Decision
 
+The priority scale has four severities, `P0` to `P3`, of which every issue carries
+exactly one, and `P4` is an optional deferral marker orthogonal to severity.
+
+## Rationale
+
+- `P4` carried both a severity and a scheduling meaning, and the two do not compose: an
+  issue can be trivially small and urgent, or critical and parked.
+- A tracker's typed priority field offers four named severities plus an unset value
+  meaning untriaged, so five bands cannot map onto it without merging two severities or
+  spending the untriaged slot.
+- Spending the untriaged slot makes the deliberate `P4` decisions unfindable among the
+  far more numerous untriaged issues.
+- `P0` fires on 2% of issues, as a drop-everything band should, while the distinction
+  between low and trivial is not one the project has ever acted on.
+
+## Design
+
 1. **Four severities** — the scale is `P0` critical, `P1` high, `P2`
    medium, `P3` low. `P3` MUST cover work previously described as
    trivial; "low" and "trivial" are one band.
@@ -92,3 +109,11 @@ together account for 63%, and the distinction between "low" and
   severity in the first place.
 - Tooling that treats `P0`–`P4` as a single ordered enum needs to treat
   `P4` as orthogonal instead.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

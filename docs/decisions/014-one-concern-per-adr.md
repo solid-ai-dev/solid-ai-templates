@@ -21,6 +21,20 @@ second concern into its own record.
 
 ## Decision
 
+Each decision record addresses exactly one concern, and may number several related
+decisions within that concern.
+
+## Rationale
+
+- The rule was only implicit for records, so nothing could be cited when a record grew
+  to cover two concerns and the second needed its own record.
+- The single `category` field, the singular template framing, atomic supersession and
+  the self-sufficiency requirement already imply one concern per record.
+- One rule per record would over-fragment governance records that legitimately bundle
+  related sub-decisions under a single concern.
+
+## Design
+
 1. **One concern per ADR** — each ADR MUST address exactly one concern.
    A separate concern gets its own ADR, cross-linked or superseding via
    the frontmatter `supersedes` / `superseded_by` fields as needed.
@@ -41,6 +55,14 @@ second concern into its own record.
   state the rule; the template note clarifies that one concern is not
   one rule.
 - No schema change; the smoke `ADR-01` check is unaffected.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

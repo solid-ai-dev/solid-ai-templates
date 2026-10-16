@@ -40,6 +40,21 @@ because an empty result and an unreached check look identical.
 
 ## Decision
 
+This repository runs every runnable check its templates ship against itself in CI, and
+every such block carries a written disposition, run or skipped with a reason, so none
+arrives unexamined.
+
+## Rationale
+
+- Three rules shipped and were violated here, each found by hand after merging, and a
+  rule its own author's repository violates is weak evidence for the rule.
+- The smoke suite checks that the templates compose, not whether this repository obeys
+  them, so the shipped checks need a runner of their own.
+- Several checks do not apply here, and skipping them silently makes an empty result and
+  an unreached check look identical, so "does not apply" becomes a written claim.
+
+## Design
+
 1. **The checks run here** — `tests/run_conformance.py` extracts every
    runnable fenced block under `templates/` and runs it against this
    repository, in CI, on every pull request.
@@ -96,3 +111,11 @@ because an empty result and an unreached check look identical.
 - A pass condition that cannot be expressed mechanically is recorded as
   such and reported for an operator to read, rather than being given a
   brittle assertion.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

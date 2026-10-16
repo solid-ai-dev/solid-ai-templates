@@ -34,6 +34,20 @@ that do not.
 
 ## Decision
 
+Every check in this repository's smoke suite reports the inputs it reached on every run,
+and the runner, not each check, fails a check that would pass while reporting no inputs.
+
+## Rationale
+
+- A check reporting only what it found reads identically when its corpus empties and
+  when the tree is clean, and one passed with its directory list emptied.
+- Adding counts to every existing check closes today's instance, but the next check is
+  written by someone who has not read this, so the runner enforces the contract.
+- A missing directory skipped with a bare `continue` let a check pass on a renamed path,
+  so an absent corpus root is a finding rather than a skip.
+
+## Design
+
 1. **Every check reports its inputs** — each check records what it
    reached, and the counts print under its verdict on every run, whatever
    the verdict. A count below its declared floor is a failure
@@ -89,3 +103,11 @@ that do not.
   past roughly fifty lines of them, and the suite's output grew by half
 - `tests/INDEX.md` states the contract once for every spec rather than
   each spec restating it
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

@@ -41,6 +41,19 @@ is future work, out of scope for #418.
 
 ## Decision
 
+Wire `base-data-quality` into `stack-python-service` only, so Flask, FastAPI and
+Django inherit it transitively and every other backend stack stays unwired.
+
+## Rationale
+
+- No stack declared `base-data-quality`, so its rules never reached a generated
+  chain; wiring one stack closes the gap now rather than waiting for the planned
+  data-heavy stack.
+- Wiring a single stack keeps data-modeling rules out of stateless services and
+  defers the broader rollout until the file-naming and split question is settled.
+
+## Design
+
 1. **Wire only via stack-python-service** — `base-data-quality`
    MUST appear in the `depends_on` list of `stack-python-service`
    and in the `[DEPENDS ON: ...]` header of
@@ -78,6 +91,14 @@ is future work, out of scope for #418.
   (calibration/research rules vs. true data-heavy rules).
 - Go, Node, Java, and Celery stacks remain in the gap until the
   follow-up decision lands.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 
