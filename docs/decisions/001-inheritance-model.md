@@ -18,6 +18,21 @@ system to define rules once and compose them for any project type.
 
 ## Decision
 
+Use a three-layer inheritance model, base to layer to stack with the platform
+orthogonal, composed through the `DEPENDS ON`, `EXTEND` and `OVERRIDE` directives.
+
+## Rationale
+
+- Rules that are largely the same across projects of one stack are defined once in
+  a parent template, which avoids the inconsistency and drift of writing them from
+  scratch per project.
+- A stack composes any project type by declaring its parents and extending or
+  overriding their sections, so no base rule is duplicated across stacks.
+- Agents follow `DEPENDS ON` references natively, so the composition needs no
+  build-time tooling to merge files.
+
+## Design
+
 Use a three-layer inheritance model inspired by SOLID principles:
 
 ```
@@ -58,3 +73,11 @@ Composition uses three directives:
 - The dependency graph must be acyclic — enforced by smoke tests
 - New contributors must understand the inheritance model before
   contributing (mitigated by ONBOARDING.md and SPEC.md)
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

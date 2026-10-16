@@ -20,6 +20,22 @@ perspectives were evaluated from a developer lens.
 
 ## Decision
 
+Add `base/360.md` as a four-category assessment template, Value, Quality, Viability
+and Discovery, each with a role prompt the evaluating agent adopts.
+
+## Rationale
+
+- The Value, Viability and Discovery categories cover the user value, business
+  viability and marketing discoverability that the purely technical review
+  templates miss.
+- A fixed template replaces the methodology improvised in the ad-hoc analysis of
+  tutorial-git, which proved useful.
+- Each category runs as a parallel subagent with a clean context, which isolates
+  the perspectives structurally so all four do not collapse into a developer
+  review.
+
+## Design
+
 Add base/360.md as a four-category assessment template:
 
 1. **Value** (user) — functional completeness, content quality,
@@ -61,3 +77,11 @@ It does NOT read developer documentation.
   docs/user-journeys.md for the Value agent to verify
 - The overall grade is the lowest category grade — the project
   is only as strong as its weakest perspective
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

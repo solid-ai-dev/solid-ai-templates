@@ -50,6 +50,22 @@ signals this. A 23-item flat list exceeds 7±2 by 3x.
 
 ## Decision
 
+Apply Miller's law by nesting the template source under `templates/` and splitting
+`base/` into five subfolders by concern, so each listing stays within 7±2.
+
+## Rationale
+
+- Nesting the six template directories under `templates/` takes the root from 12
+  directories to 7 and separates the product from the infrastructure that supports
+  it.
+- Splitting the 23-file `base/` into five subfolders by concern keeps each within
+  7±2, where a listing beyond that range forces sequential scanning instead of
+  recognition.
+- Making both changes together addresses both listings, where either alone leaves
+  one of them above the range.
+
+## Design
+
 Two changes, both applying Miller's law.
 
 ### 1. Nest template source under templates/
@@ -218,3 +234,11 @@ Agents never browse folders directly.
   before this reorganization, reducing base file count to 18
 - If this lands first, ADR-004 moves patterns from their new
   subfolder paths — order doesn't matter
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

@@ -29,6 +29,23 @@ prompt assembly or token limits apply.
 
 ## Decision
 
+The product is the composable template library, not a generation tool, and
+generation is a user-space concern with a local agent as the recommended path.
+
+## Rationale
+
+- API-based generation from large prompts summarizes, truncates and loses
+  fidelity, so the project does not own or guarantee the generation step.
+- Local agents read template files directly from disk, where no prompt assembly or
+  token limit applies, so they are the recommended path.
+- Owning generation means complex orchestration, and a generation CLI would
+  duplicate what local agents already do well while tying the project to one model
+  provider.
+- Rate limits and token caps make automated generation testing impractical, so e2e
+  tests validate templates and prompts rather than a model's output.
+
+## Design
+
 The product is the **composable template library**, not a
 generation tool. Generation is a user-space concern.
 
@@ -64,6 +81,14 @@ generation tool. Generation is a user-space concern.
 - E2e test scope narrows to structural validation and lightweight
   canary checks
 - Contributors do not need API keys to validate their changes
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## References
 

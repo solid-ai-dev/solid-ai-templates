@@ -19,6 +19,20 @@ triage by urgency impossible. Some labels were misleading (e.g.
 
 ## Decision
 
+Standardize all repositories on 12 labels in three groups, five type, five priority
+and two terminal triage labels, with one type and one priority on every issue.
+
+## Rationale
+
+- One label set across all repositories replaces the GitHub defaults, which carried
+  no consistency from repo to repo.
+- A required priority label from `P0` to `P4` gives every issue the priority
+  dimension that triage by urgency needs.
+- Type labels named for the work, such as `spike` and `task`, replace the
+  misleading `question` and `enhancement`.
+
+## Design
+
 Standardize to 12 labels across all repositories, split into three
 groups:
 
@@ -58,3 +72,11 @@ Rules:
   platform/github.md (implementation) — new repos get the same set
 - Old labels (enhancement, question, documentation) were migrated
   and deleted — 55+ issues re-labeled with zero data loss
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

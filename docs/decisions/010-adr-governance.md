@@ -44,6 +44,25 @@ update) is tracked as follow-up tasks.
 
 ## Decision
 
+Govern decision records with YAML frontmatter carrying id, status, date, a closed
+category and two-way supersession links, archiving by status and keeping links
+between records out of the prose.
+
+## Rationale
+
+- Frontmatter gives every record machine-readable metadata, so smoke checks can
+  enforce invariants and tooling can filter and sort without parsing inconsistent
+  prose headers.
+- A `superseded_by` field updated by the superseding PR gives a reader who lands on
+  an outdated record a signal that it is outdated.
+- Filtering by `status: Superseded` archives a record without breaking deep links,
+  git blame continuity or the numbered ordering, as a move to an archive directory
+  would.
+- A closed category set makes records filterable by area, and frontmatter-only
+  links replace prose references that rot when their target is superseded.
+
+## Design
+
 ### 1. YAML frontmatter on every ADR
 
 Every ADR (new and migrated) starts with a YAML frontmatter block
@@ -200,6 +219,14 @@ prose body of any ADR. Immutability is preserved.
 - ADRs become filterable, sortable, and validatable without prose
   parsing; the folder scales beyond 50 entries without becoming
   hard to scan
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 
