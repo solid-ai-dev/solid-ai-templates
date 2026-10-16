@@ -79,6 +79,7 @@ restated in each.
 | `SAIT-E2E-STK-21-001A` | E2E | P1 | Full interview → CLAUDE.md for a NestJS project |
 | `SAIT-E2E-STK-22-001A` | E2E | P1 | Full interview → CLAUDE.md for a C embedded project |
 | `SAIT-E2E-STK-23-001A` | E2E | P1 | Full interview → CLAUDE.md for a tutorial site project |
+| `SAIT-E2E-STK-24-001A` | E2E | P1 | Full interview → CLAUDE.md from the fixture stack (the canary) |
 | `SAIT-E2E-DPL-01-001A` | E2E | P1 | Cloud deployment target produces correct deployment rules |
 | `SAIT-E2E-DPL-02-001A` | E2E | P1 | Hybrid deployment target produces correct deployment rules |
 | `SAIT-E2E-DPL-03-001A` | E2E | P1 | Offline deployment target produces correct deployment rules |

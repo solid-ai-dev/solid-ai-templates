@@ -29,6 +29,7 @@ templates/          # All template source files
   backend/          # Backend layer — HTTP, API, database, observability
   frontend/         # Frontend layer — UX, accessibility, CSS, SSG
   platform/         # CI and security tool mappings per hosting platform
+  fixture/          # Test-input stack and platform — checked, never listed
   stack/            # Concrete stacks — extend base + layer templates
   INTERVIEW.md      # Agent-driven project setup interview
   manifest.yaml     # Machine-readable dependency graph
@@ -364,7 +365,7 @@ py tests/run_smoke.py SYS-01       # run one check by ID
 py tests/run_conformance.py        # the templates' checks, against this repo
 py tests/run_conformance.py --list # dispositions only, run nothing
 
-py tests/run_e2e.py                # canary only (python-lib, needs API key)
+py tests/run_e2e.py                # canary only (fixture stack, needs API key)
 py tests/run_e2e.py --all          # all tests (live, needs API key)
 py tests/run_e2e.py --area=STK     # run all stack tests
 py tests/run_e2e.py STK-01 FMT-01  # run specific tests by ID
@@ -380,7 +381,7 @@ py tests/run_e2e.py --dry-run      # build prompts, call no model, write no repo
 - CI runs smoke, conformance, `sync.py --check`, `resolve.py --check`,
   the redundancy audit and gitleaks on PRs and on push to main
 - Live e2e calls a model and costs money, so it runs on a cadence
-  rather than per change: the STK-15 canary at every release cut,
+  rather than per change: the STK-24 canary at every release cut,
   recorded in the cut PR, and the full suite at each periodic review
   (PLAYBOOK, "Run the test suite")
 - To validate a new template: run `py tests/run_smoke.py` and

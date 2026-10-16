@@ -9,7 +9,7 @@ Provider is selected via E2E_PROVIDER env var (default: gemini).
 See tests/providers.py for available backends.
 
 Usage:
-  py tests/run_e2e.py                    # run canary test only (python-lib)
+  py tests/run_e2e.py                    # run canary test only (fixture stack)
   py tests/run_e2e.py --all              # run all non-skipped tests
   py tests/run_e2e.py STK-01             # run one test by short ID
   py tests/run_e2e.py STK-01 FMT-01      # run multiple
@@ -17,7 +17,7 @@ Usage:
   py tests/run_e2e.py --dry-run          # build prompts, call no model, write no report
   py tests/run_e2e.py --fail-fast        # stop on first failure
 
-Default (no args) runs only the canary test (STK-15, python-lib) to keep
+Default (no args) runs only the canary test (STK-24, fixture stack) to keep
 live runs fast and token-efficient. Use --all, --area, or explicit IDs
 to run more tests.
 

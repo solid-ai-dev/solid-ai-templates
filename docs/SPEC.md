@@ -42,6 +42,16 @@ Extend base templates. Never used directly by a project.
 
 Technology-specific rules. Each stack declares which layers it depends on.
 
+### Fixtures (test input)
+
+`templates/fixture/` holds one stack and one platform that exist for the
+checks, not for projects: `stack-fixture` (layer `fixture`) and
+`platform-fixture`. Each manifest entry carries `fixture: true`, so the
+README, this file's listings, the interview and `generated/` leave them out,
+while the checks that read every stack or platform read them too. They keep
+those checks fed when the concrete stacks and platforms live in forks, and
+the e2e canary (STK-24) runs against the fixture stack.
+
 ### Directory listings
 
 Generated from `templates/manifest.yaml` — run `py tools/sync.py` to refresh.

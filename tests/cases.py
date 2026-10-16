@@ -258,9 +258,6 @@ STK_TESTS = [
     {
         "id": "STK-15",
         "spec": "SAIT-E2E-STK-15-001A",
-
-        # the canary: the default live test, run at every release cut
-        "canary": True,
         "stack": "templates/stack/python-lib.md",
         "answers": {
             "Project name": "validify",
@@ -407,6 +404,31 @@ STK_TESTS = [
             "feat:",
         ],
         "forbidden": ["[your project]", "[owner]", "[repo]"],
+    },
+    {
+        "id": "STK-24",
+        "spec": "SAIT-E2E-STK-24-001A",
+
+        # the canary: the default live test, run at every release cut. It
+        # reads the fixture stack, which stays in this repository when the
+        # concrete stacks move to forks.
+        "canary": True,
+        "stack": "templates/fixture/stack.md",
+        "answers": {
+            "Project name": "echo",
+            "Language": "Python",
+            "Output format": "CLAUDE.md (inline model)",
+        },
+        "required": [
+            "1. Project", "Commands", "Project structure",
+            "Git", "Testing",
+            "make test",
+            "feat:",
+        ],
+
+        # [any] is the fixture's own placeholder; left in, the agent failed
+        # to substitute the interview answers
+        "forbidden": ["[any]", "[your project]", "[owner]", "[repo]"],
     },
 ]
 

@@ -156,6 +156,28 @@ def load_manifest():
     return core_ids, entries, stacks
 
 
+def is_fixture(entry):
+    """True for an entry that is test input rather than a template to pick."""
+
+    # This parser reads the flag as the string "true"; PyYAML reads a bool.
+    return entry.get("fixture") in (True, "true")
+
+
+def load_catalogue():
+    """load_manifest() without the fixture entries.
+
+    Returns (core_ids, entries_by_id, stacks), as load_manifest() does.
+    """
+    core_ids, entries, stacks = load_manifest()
+
+    # A fixture is a root nothing depends on, so leaving it out changes no
+    # other chain. Every listing, table and cached file describes what a
+    # project can pick, and a fixture is not among those.
+    entries = {eid: e for eid, e in entries.items() if not is_fixture(e)}
+    stacks = [s for s in stacks if not is_fixture(s)]
+    return core_ids, entries, stacks
+
+
 def resolve_chain(stack_id, core_ids, entries):
     """Resolve full dependency chain for a stack.
 
@@ -299,27 +321,31 @@ def main():
         print(__doc__)
         sys.exit(0)
 
-    core_ids, entries, stacks = load_manifest()
+    core_ids, entries, _ = load_manifest()
+
+    # The listings and the cache offer what a project can pick. A fixture
+    # still resolves when named, which is how the checks reach it.
+    _, offered, catalogue = load_catalogue()
 
     if "--list" in args:
-        for s in stacks:
+        for s in catalogue:
             label = s.get("label", "")
             print(f"  {s['id']:<30s} {label}")
         sys.exit(0)
 
     if "--roots" in args:
-        for s in stacks:
+        for s in catalogue:
             print(s["id"])
-        for rid in opt_in_roots(core_ids, entries, stacks):
+        for rid in opt_in_roots(core_ids, offered, catalogue):
             print(rid)
         sys.exit(0)
 
     if "--generate" in args:
-        generate_all(core_ids, entries, stacks)
+        generate_all(core_ids, offered, catalogue)
         sys.exit(0)
 
     if "--check" in args:
-        stale = check_generated(core_ids, entries, stacks)
+        stale = check_generated(core_ids, offered, catalogue)
         if stale:
             print(f"{len(stale)} stale file(s):")
             for sid in stale:
