@@ -1,10 +1,10 @@
 ---
 id: "005"
-status: Accepted
-date: 2026-05-04
+status: Superseded
+date: 2026-10-16
 category: templates
 supersedes: []
-superseded_by: []
+superseded_by: ["050"]
 ---
 
 # ADR-005: Apply Miller's law to repository structure
