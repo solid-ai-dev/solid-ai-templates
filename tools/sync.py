@@ -282,7 +282,7 @@ NEWLINE = "\n"
 
 def _spec_chain_examples():
     """Render SPEC.md's worked chain examples from the resolver itself."""
-    from resolve import load_manifest as _load, resolve_chain
+    from resolve import load_catalogue as _load, resolve_chain
 
     core_ids, entries, stacks = _load()
     known = set(entry["id"] for entry in stacks)
@@ -338,7 +338,7 @@ def _window_label(size):
 
 def _readme_model_limits():
     """Render README.md's model table from the resolved chains themselves."""
-    from resolve import load_manifest as _load, resolve_chain, concat_chain
+    from resolve import load_catalogue as _load, resolve_chain, concat_chain
 
     core_ids, entries, stacks = _load()
 
@@ -445,6 +445,20 @@ def _update_file(path, replacements, check_mode=False):
 
 # ---- main ----
 
+def _catalogue(manifest):
+    """The parsed manifest without its fixture entries."""
+    from resolve import is_fixture
+
+    # Every block this script writes describes what a project can pick. A
+    # fixture is test input, so it stays off the README, SPEC and interview.
+    return {
+        key: ([e for e in value
+               if not (isinstance(e, dict) and is_fixture(e))]
+              if isinstance(value, list) else value)
+        for key, value in manifest.items()
+    }
+
+
 def _readme_agents():
     """Render the agent-to-output mapping the templates already state.
 
@@ -494,19 +508,19 @@ def main():
     # silently, dropping the core tier and every block-list depends_on.
     from resolve import parse_manifest
 
-    manifest = parse_manifest(manifest_text)
+    manifest = _catalogue(parse_manifest(manifest_text))
 
     spec_content = _spec_sections(manifest)
     chain_examples = _spec_chain_examples()
     readme_content = _readme_stacks(manifest)
 
-    # load_manifest() re-reads the file parse_manifest already produced, but
+    # load_catalogue() re-reads the file parse_manifest already produced, but
     # it is the resolver's own entry point and returns the core tier and the
     # stack list the root split needs. Reusing it keeps one definition of
     # what an opt-in root is.
-    from resolve import load_manifest
+    from resolve import load_catalogue
 
-    core_ids, entries, stacks = load_manifest()
+    core_ids, entries, stacks = load_catalogue()
     spec_core_tier = _spec_core_tier(core_ids, entries)
     readme_extras = _readme_extras(core_ids, entries, stacks)
     readme_root_counts = _readme_root_counts(core_ids, entries, stacks)
@@ -548,7 +562,7 @@ def main():
             print(f"  OK    {path.name}")
 
     # Check generated/ files via resolve.py
-    from resolve import load_manifest as _load, check_generated, generate_all
+    from resolve import load_catalogue as _load, check_generated, generate_all
     core_ids, entries, stacks = _load()
     stale = check_generated(core_ids, entries, stacks)
     if stale:

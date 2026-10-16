@@ -21,6 +21,13 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
+### Added
+
+- `templates/fixture/` adds `stack-fixture` and `platform-fixture`, test
+  input marked `fixture: true` in the manifest. Listings and `generated/`
+  omit them; per-stack checks select by the manifest's `stacks:` key, and
+  the e2e canary is now STK-24 on the fixture.
+
 ### Breaking changes
 
 - The concern directories leave `templates/base/`: `templates/base/<concern>/`

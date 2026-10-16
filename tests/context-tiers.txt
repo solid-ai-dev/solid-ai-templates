@@ -8,6 +8,7 @@
 abstract 200K
 backend 200K
 embedded 128K
+fixture 200K
 hypermedia 128K
 library 200K
 static 200K

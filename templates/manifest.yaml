@@ -10,6 +10,7 @@
 #   label       — human-readable name (stacks only, for interview)
 #   layer       — classification (stacks only, for README table)
 #   produces    — output filename (output entries only)
+#   fixture     — true for test input the checks read and no listing offers
 
 version: "1.0"
 
@@ -142,6 +143,11 @@ platform:
     file: templates/platform/linear.md
     description: Label groups, native priority, sub-issues, code-host sync
     depends_on: [base-issues]
+  - id: platform-fixture
+    file: templates/fixture/platform.md
+    description: Test input for the platform checks; listed nowhere a project reads
+    fixture: true
+    depends_on: [base-quality-gates]
 
 frontend:
   - id: frontend-ux
@@ -224,6 +230,14 @@ backend:
     description: Server-side rendering, partials, escaping, caching, forms, testing
 
 stacks:
+  - id: stack-fixture
+    file: templates/fixture/stack.md
+    label: Fixture
+    layer: fixture
+    description: Test input for the per-stack checks; listed nowhere a project reads
+    fixture: true
+    depends_on: [base-security, base-quality-gates]
+
   - id: stack-htmx
     file: templates/stack/htmx.md
     label: HTMX + server rendering

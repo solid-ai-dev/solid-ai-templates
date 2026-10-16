@@ -362,7 +362,7 @@ any entry that no longer applies.
 py tests/run_smoke.py              # structural checks — seconds
 py tests/run_conformance.py        # the templates' own checks, run here
 py tests/run_conformance.py --list # dispositions only, run nothing
-py tests/run_e2e.py                # canary test (python-lib)
+py tests/run_e2e.py                # canary test (fixture stack)
 py tests/run_e2e.py --all          # all agent tests
 py tests/run_e2e.py STK-01 FMT-01  # specific tests only
 py tests/run_e2e.py --dry-run      # build prompts, call no model, write no report
@@ -393,7 +393,7 @@ full list of specs. Requires `py -m pip install pyyaml` for the manifest
 check.
 
 `run_e2e.py` is the one runner that calls a model and costs money, so it
-runs on a cadence rather than on every change: the STK-15 canary runs live
+runs on a cadence rather than on every change: the STK-24 canary runs live
 at every release cut, recorded in the cut's pull request, and the full
 suite runs live at each periodic review. It is also the only runner that
 reads what the templates generate — smoke and conformance read the
@@ -831,7 +831,7 @@ below exist to prevent. Run them here anyway.
    pull request's body is this repository's release proposal: it names
    every step of `core/git.md`'s pre-release sequence and the result
    it produced, including the checks that carry no step number here.
-   It also records the STK-15 canary run live against the release commit:
+   It also records the STK-24 canary run live against the release commit:
    the report's tree, provider, model and verdict lines.
    The check's two counts are not required to match: a commit touching
    no template carries no entry, so a journal or tooling change is

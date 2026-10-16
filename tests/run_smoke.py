@@ -96,6 +96,21 @@ def _load_manifest():
     return data.get("core", []), entries, file_to_id
 
 
+def _stacks(entries):
+    """The entries the manifest files under its stacks: key, in its order.
+
+    Selected by key rather than by directory. The fixture stack lives under
+    templates/fixture/, and once the stacks move to forks no stack lives
+    under templates/stack/ at all -- a directory selector would then read
+    nothing and every check built on it would pass on an empty list.
+    """
+    manifest_path = os.path.join(ROOT, "templates", "manifest.yaml")
+    with io.open(manifest_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return [entries[e["id"]] for e in data.get("stacks", [])
+            if e["id"] in entries]
+
+
 def _resolve_stack(stack_id, core_ids, entries):
     """Resolve full dependency chain for a stack.
 
@@ -141,10 +156,9 @@ def _opt_in_roots(core_ids, entries):
     that examines nothing reports the same result as a clean tree.
     """
     reached = set()
-    for entry in entries.values():
-        if entry["file"].startswith("templates/stack/"):
-            _, ids = _resolve_stack(entry["id"], core_ids, entries)
-            reached |= ids
+    for entry in _stacks(entries):
+        _, ids = _resolve_stack(entry["id"], core_ids, entries)
+        reached |= ids
     return sorted(set(entries) - reached)
 
 
@@ -157,8 +171,7 @@ def _roots_by_kind(core_ids, entries):
     it is 17 and 20 or 37 and 0. Two numbers move independently, so the
     kind that empties takes its own count to zero where a reader sees it.
     """
-    stacks = sorted(e["id"] for e in entries.values()
-                    if e["file"].startswith("templates/stack/"))
+    stacks = sorted(e["id"] for e in _stacks(entries))
     return stacks, _opt_in_roots(core_ids, entries)
 
 
@@ -176,6 +189,7 @@ TEMPLATE_DIRS = [
     "templates/frontend",
     "templates/platform",
     "templates/stack",
+    "templates/fixture",
 ]
 
 
@@ -550,8 +564,7 @@ def check_mnf_02():
     failures = []
     seen = Inspected()
 
-    stacks = seen.count("stacks resolved", [e for e in entries.values()
-                        if e["file"].startswith("templates/stack/")])
+    stacks = seen.count("stacks resolved", _stacks(entries))
 
     resolved = 0
     for stack in stacks:
@@ -586,8 +599,7 @@ def check_mnf_03():
     failures = []
     seen = Inspected()
 
-    stacks = seen.count("stacks resolved", [e for e in entries.values()
-                        if e["file"].startswith("templates/stack/")])
+    stacks = seen.count("stacks resolved", _stacks(entries))
     seen.count("core tier IDs required of each", len(core_ids))
 
     for stack in stacks:
@@ -623,8 +635,7 @@ def check_mnf_04():
     output_fmt = read(output_path)
     seen = Inspected()
 
-    stacks = seen.count("stacks resolved", [e for e in entries.values()
-                        if e["file"].startswith("templates/stack/")])
+    stacks = seen.count("stacks resolved", _stacks(entries))
 
     built = 0
     for stack in stacks:
@@ -716,8 +727,7 @@ def check_tpl_06():
     failures = []
     seen = Inspected()
 
-    stacks = seen.count("stacks resolved", [e["id"] for e in entries.values()
-                        if e["file"].startswith("templates/stack/")])
+    stacks = seen.count("stacks resolved", [e["id"] for e in _stacks(entries)])
 
     # A stack is not the only root a project resolves. Extras and the platform
     # are chosen independently of the stack, so what guarantees their EXTEND
@@ -1448,8 +1458,7 @@ def check_sys_06():
     failures = []
     seen = Inspected()
 
-    stacks = seen.count("stacks resolved", [e for e in entries.values()
-                        if e["file"].startswith("templates/stack/")])
+    stacks = seen.count("stacks resolved", _stacks(entries))
 
     asserted = 0
     for stack in sorted(stacks, key=lambda e: e["id"]):
@@ -1722,8 +1731,8 @@ def check_sys_11():
     core_ids, entries, _ = _load_manifest()
 
     # The third value from _load_manifest is file_to_id, not the stack list.
-    # A stack is an entry under templates/stack/, the same selector MNF-02
-    # uses -- reading the whole entry table instead resolves layer templates
+    # A stack is an entry under the manifest's stacks: key, the same selector
+    # MNF-02 uses -- reading the whole entry table instead resolves layer templates
     # as though they were stacks and inflates every count.
     # A stack is one of two kinds of root. Extras and the platform are picked
     # independently of it, and a file reaching a consumer only that way sits
@@ -1965,10 +1974,10 @@ def check_sys_13():
 # exits 1 for the right one.
 
 RESOLVE_CASES = [
-    (["stack-flask"], 0, ""),
+    (["stack-fixture"], 0, ""),
     (["bogus-root"], 1, "Unknown stack ID"),
-    (["stack-flask", "bogus-root"], 1, "Roots resolve independently"),
-    (["stack-flask", "platform-github"], 1, "Roots resolve independently"),
+    (["stack-fixture", "bogus-root"], 1, "Roots resolve independently"),
+    (["stack-fixture", "platform-fixture"], 1, "Roots resolve independently"),
     (["--bogus-flag"], 1, "Unknown flag"),
 
     # Bare invocation is the usage path, not an error -- same as --help.
@@ -2035,8 +2044,7 @@ def check_sys_15():
     failures = []
     seen = Inspected()
 
-    stacks = [e for e in entries.values()
-              if e["file"].startswith("templates/stack/")]
+    stacks = _stacks(entries)
     seen.count("stacks classified by layer", stacks)
     seen.count("exempt layers named with a reason",
                SECURITY_EXEMPT_LAYERS)
@@ -2292,8 +2300,7 @@ def check_sys_18():
                 f"the reason changes"
             )
 
-    stacks = [e for e in entries.values()
-              if e["file"].startswith("templates/stack/")]
+    stacks = _stacks(entries)
     seen.count("stacks classified by layer", stacks)
 
     governed = []
