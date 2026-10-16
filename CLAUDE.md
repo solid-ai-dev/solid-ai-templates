@@ -298,6 +298,8 @@ base/ ──┬── frontend/ ──┐
   and Security, per `base-docs` Decision logs
 - One coherent architectural decision may cover related choices across
   several issues or PRs; do not require a record per implementation concern.
+- Until the first implementation of an ADR merges, the record MAY be
+  rewritten or split in place; from then on it is history
 - What is immutable in a merged ADR is the decision — the claims
   made in Context, Decision, Alternatives considered and
   Consequences. Preserve those claims as history; routine refinements update

@@ -32,6 +32,9 @@ alters no template carries no entry.
   set, and a check gates the layout.
 - A merged decision record MAY be restructured to a new section layout by
   restatement alone; a section it predates says "Not assessed".
+- A decision record MAY be rewritten in place until the first merge that
+  implements it, and a record MAY show a rendered diagram (draw.io, Mermaid)
+  with its source committed beside it, instead of inline ASCII.
 
 ## [2.90.0] - 2026-09-12
 

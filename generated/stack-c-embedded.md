@@ -3784,6 +3784,10 @@ EOF
   One rule, implementation concern, issue, or PR does not mean one ADR.
 - Render "Alternatives considered" and "Consequences" as tables where the
   content fits — they scan faster than prose lists
+- A record still in its design stage, with no implementation of it merged,
+  MAY be rewritten or split in place: nothing yet depends on what it claims.
+  From the first merge that implements it, the record is history and the
+  rule below applies
 - Preserve merged ADR claims as history. Supersession metadata and format-only
   edits that change no claim are allowed. A format-only edit states
   "format-only, no decision change" in the commit and carries a word-level
@@ -4097,9 +4101,11 @@ raise SystemExit(1 if findings else 0)
   +-------------------------------------------+
   ```
 
-  Use the project's preferred rendered-diagram format (Mermaid,
-  Draw.io) for diagrams that need to be standalone artifacts; inline
-  ASCII is for the quick concept aid that lives inside the ADR
+  A project with a rendered-diagram format (draw.io, Mermaid) MAY use it
+  in a record instead: commit the source beside the image, show the image
+  with alt text stating what it shows, and end the diagram with a legend
+  of the colours and line styles it uses. Inline ASCII is the quick concept
+  aid for a project with no such format
 - File and directory operations do not determine architectural significance.
   Apply the decision threshold above to their consequences, not their shape
 
@@ -4161,7 +4167,9 @@ A record whose job is to say what happened — a decision record, a dated
 report, a journal entry — is fixed in what it claims, not in its bytes. The
 test for any edit is whether it changes what the record claims happened. If
 it does, it is an amendment and MUST go in a new record; if it does not, it
-is a correction and is made in place with no marker.
+is a correction and is made in place with no marker. A decision record is
+fixed from the first merge that implements it; before that it is a design,
+rewritten in place as "Decision logs" allows.
 
 ### Scope of a form rule over an immutable corpus
 
