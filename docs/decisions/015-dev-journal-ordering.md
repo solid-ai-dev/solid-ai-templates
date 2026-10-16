@@ -28,6 +28,21 @@ stops being an unexplained default.
 
 ## Decision
 
+Dev-journal session entries are ordered oldest first, newest at the bottom, restoring
+the original chronological convention.
+
+## Rationale
+
+- The flip to newest-first carried no recorded rationale; it rode inside a change whose
+  subject was the journal filename casing and contents schema, not ordering.
+- A long-running consumer journal that kept the original order was flagged as deviating
+  from a mandated format that itself had no justification.
+- Newest-first forces every long-running downstream journal to rewrite its history or
+  carry a standing deviation, a cost the "most recent entry visible first" benefit does
+  not justify.
+
+## Design
+
 1. **Oldest-first** — dev-journal session entries MUST be in chronological
    order: oldest first, newest at the bottom, directly under the
    architecture-overview block. The `## YYYY-MM-DD — theme` heading format
@@ -51,6 +66,14 @@ stops being an unexplained default.
   entries) so the repo matches its own rule.
 - The ordering half of #618's flagged deviation dissolves; its remaining
   heading/byline question stays open under the v3.0 restructure.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

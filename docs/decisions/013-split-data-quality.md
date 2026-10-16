@@ -30,6 +30,21 @@ stack resolves. A rule that must reach all stacks has to live there.
 
 ## Decision
 
+The calibration and tool-trust rules move from `base-data-quality` into the core-tier
+`base-quality`, while the data-research and schema rules stay in `base-data-quality`,
+which stays opt-in.
+
+## Rationale
+
+- `base-data-quality` is opt-in and reaches only the stacks that declare it, so its
+  broadly applicable agent-behavior rules are invisible to every other stack.
+- The core tier is the only set of templates every stack resolves, so a rule that must
+  reach all stacks has to live there.
+- `base-ai-workflow` is not in the core tier and no stack declares it, so moving the
+  rules there would make them reach no generated chain at all.
+
+## Design
+
 1. **Calibration and tool-trust move to core** — the "Calibration
    discipline" and "Cross-validation and tool trust" sections move
    from `base-data-quality` into `base-quality` (core tier), reaching
@@ -80,6 +95,14 @@ stack resolves. A rule that must reach all stacks has to live there.
   wiring.
 - `py tools/sync.py` and `py tests/run_smoke.py` MUST pass after the
   move.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

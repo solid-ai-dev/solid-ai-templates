@@ -27,6 +27,21 @@ stayed current.
 
 ## Decision
 
+The README holds a project's only directory map, a generated context file's Project
+structure section points to it and adds placement rules, and stack templates keep their
+layout sections.
+
+## Rationale
+
+- The documentation standard makes the README the single source of truth for project
+  structure, while generated context files must carry a Project structure section.
+- A context file that meets that requirement with its own tree duplicates the README's,
+  and the two copies drift, as one downstream project's context-file copy went stale.
+- A stack template's layout section is generation-time input that seeds the README and
+  scaffolding, not live project state, so it does not breach the single source of truth.
+
+## Design
+
 1. **README owns the directory map** — the README "Project structure"
    section is the only rendered directory map in a project. No other
    document carries a second one.
@@ -64,6 +79,14 @@ stayed current.
   realigned at the next pipeline regeneration.
 - Downstream projects reduce their context-file structure sections to
   a pointer plus placement rules.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

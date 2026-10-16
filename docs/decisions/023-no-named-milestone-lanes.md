@@ -41,6 +41,21 @@ description of a band that no longer exists.
 
 ## Decision
 
+A project stands up no named holding milestone, and carries deferral on the `P4` label
+and urgency on the severity band instead.
+
+## Rationale
+
+- A milestone answers which release an issue is in, while the two lanes answered whether
+  it is parked or urgent, which are properties of the issue.
+- A lane that never closes accumulates indefinitely and stops being a planning signal.
+- The lanes competed with labels that already encode the same facts, with no rule for
+  which reading won.
+- Closing or deleting a milestone strips the field from every attached issue and loses
+  the fact it carried, where a label survives.
+
+## Design
+
 1. **No named holding lanes** — a project MUST NOT stand up a `Backlog`,
    `Expedite`, or equivalent milestone to mark work as unscheduled or
    fast-tracked. Milestones remain optional, forward-looking, and scoped
@@ -85,3 +100,11 @@ description of a band that no longer exists.
 - Nothing distinguishes "untriaged" from "deliberately unscheduled"
   except the `P4` label, so applying it at deferral time is now
   load-bearing rather than advisory.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
