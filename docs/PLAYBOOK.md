@@ -175,7 +175,15 @@ ADRs live in `docs/decisions/`; ADR-010 records the frontmatter schema.
    numbered rules, with RFC 2119 keywords), **Alternatives
    considered**, **Consequences**, **Compatibility** and
    **Security** (each "None" when nothing applies). Non-trivial
-   decisions SHOULD include an inline ASCII diagram in Design.
+   decisions SHOULD include a diagram in Design: a draw.io source in
+   `docs/diagrams/` beside the PNG the record shows, styled like the
+   existing files there and ending in a legend. Export it at twice the
+   size with a 10 px border, and give the image alt text that states
+   what it shows:
+   ```bash
+   draw.io -x -f png -s 2 -b 10 -o docs/diagrams/NAME.png \
+     docs/diagrams/NAME.drawio
+   ```
 5. If this ADR supersedes an existing one: update the old ADR's
    frontmatter in the same PR — set its `status: Superseded`,
    refresh `date`, and add this ADR's id to its `superseded_by`
