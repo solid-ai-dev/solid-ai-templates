@@ -8875,3 +8875,55 @@ design's decisions table.
   already settles
 - A permission rule naming a short 8.3 path never matches; write the long
   form, and test a deny rule with a control that reads the file without it
+
+## 2026-10-16 — The fork model's records land, and the templates leave base/
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Round 4's thin run died after one trial: its agent stopped its dev server
+  with `Get-Process -Name python | Stop-Process`, which stopped the
+  harness. The haiku change task died the same way later. Trials are now
+  denied every kill by name on Bash and PowerShell, a kill that ran voids
+  the trial, and a run recovers a trial its dead harness left in flight
+  (#1928)
+- v3.0's records: ADR-049 the fork model (#1918), ADR-050 what stays
+  upstream (#1919, superseding ADR-005), ADR-051 what a release may
+  change from 3.0.0 (#1921). D3 waits for round 4's report
+- Decision records adopt imbrain's form: a one-sentence Decision, a
+  Rationale, an optional Design, and Compatibility and Security in every
+  record; Rejected and Withdrawn statuses; a layout check (#1901, #1902).
+  All 48 earlier records were restructured by restatement in four batches,
+  with no line deleted. ADR-049 was rewritten with draw.io diagrams under
+  the new design-stage rule
+- The concern directories moved out of `templates/base/` (#1504). Every
+  one of the 37 roots resolves the same ordered IDs and section directives
+  as before, and a planted ID rename showed the comparison catches a change
+- The plan's groom was applied, and its phase-0 and phase-1 steps are filed
+
+**Pull requests merged:** #1929, #1931, #1933, #1934, #1935, #1936, #1937,
+#1938, #1939, #1940, #1941, #1942.
+
+**Issues closed:** #305, #1480, #1504, #1901, #1902, #1918, #1919, #1921,
+#1928.
+
+**Issues created:** #1918, #1919, #1920, #1921, #1922, #1923, #1924, #1925,
+#1926, #1927, #1928, #1930, #1943, #1944, #1945, #1946.
+
+**ADRs:** ADR-049, ADR-050 and ADR-051; ADR-005 and ADR-009 superseded.
+
+**Gaps flagged:**
+- Round 4 continues: the haiku change task is being scored, the thin run
+  re-runs in a fresh root, and judging, the archive and both reports
+  follow under #1875 and #1876
+- Not yet decided: an issue for a fork overriding an upstream security
+  section unseen, and a skills arm for round 5 to inform D3
+
+**Lessons:**
+- A trial's agent that stops its server by process name stops every
+  process of that name, the harness and the scorer included. A deny glob
+  matches anywhere in a command, so the kill can be denied outright
+- `git merge -s ours X` marks X and all its ancestors as merged; merge the
+  parent of X normally first, or the changes before X are skipped for good
+- The single-commit subject check reads each `(#N)` on its own, so
+  `(#1901, #1902)` names only the first issue
