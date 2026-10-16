@@ -42,7 +42,7 @@ tags: [e2e, output, go, library]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/go-lib.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/go-lib.md`, `core/agents.md`
 3. Interview answers:
    - Project name: retrykit
    - Language: Go

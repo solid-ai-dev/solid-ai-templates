@@ -4,7 +4,7 @@ Wiki notes on reusable security structures for CI/CD pipelines.
 Each entry describes a problem, solution structure, when to
 use it, and examples.
 
-See `base/devsecops.md` for SAST, SCA, secret detection, and
+See `security/devsecops.md` for SAST, SCA, secret detection, and
 compliance rules.
 See `security.md` for application-level security
 patterns (input validation, encoding, CSRF, headers).

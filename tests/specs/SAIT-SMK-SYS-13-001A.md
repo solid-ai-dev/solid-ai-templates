@@ -91,12 +91,12 @@ have landed before its result was read.
 2. **The resolver carries a file the walk cannot reach.** Adding
    `base-agents` to `stack-htmx`'s manifest `depends_on` without the
    matching directive in `htmx.md` MUST fail. Observed 2026-09-03: the
-   check named `templates/base/core/agents.md` under `stack-htmx`. The
+   check named `templates/core/agents.md` under `stack-htmx`. The
    control asserts the mutated manifest still *parses* and that the edge
    is in the parsed data — a corrupt file makes the check error, which is
    not the failure being tested
 3. **The walk overshoots the chain.** Appending
-   `templates/base/core/agents.md` to `htmx.md`'s `[DEPENDS ON:]`
+   `templates/core/agents.md` to `htmx.md`'s `[DEPENDS ON:]`
    directive without the manifest edge MUST fail in the other direction.
    Observed 2026-09-03, naming the same file with the opposite message
 4. A first attempt at control 2 matched a byte pattern containing `\n`
@@ -117,8 +117,8 @@ have landed before its result was read.
 
 - Measured basis, 2026-09-03: 6 core-tier files, 37 roots, and 148 files
   the DEPENDS ON walk alone would miss summed over roots. Before the
-  README was corrected, `templates/base/core/readme.md` and
-  `templates/base/core/review.md` were missed by 17 of 17 stacks, so the
+  README was corrected, `templates/core/readme.md` and
+  `templates/core/review.md` were missed by 17 of 17 stacks, so the
   documented manual path lost the code-review rules on every chain
 
 <!-- /measured -->

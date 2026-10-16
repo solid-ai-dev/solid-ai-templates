@@ -68,6 +68,6 @@ tags: [audit, 360, convention, adr-018]
 
 - ADR-018 — `docs/audits/` is the sole audit-storage convention (the
   rule this check pairs with)
-- `templates/base/workflow/360.md` [ID: 360-tracking] — the audit
+- `templates/workflow/360.md` [ID: 360-tracking] — the audit
   tracking rule
 - `quality-gates-pair-check` — pair-the-check convention

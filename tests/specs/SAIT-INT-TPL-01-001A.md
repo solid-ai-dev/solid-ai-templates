@@ -39,8 +39,8 @@ tags: [composition, depends-on, inheritance]
 - Repository cloned locally
 - Claude Code or equivalent agent available
 - `stack/python-flask.md` and its full dependency chain accessible:
-  `stack/python-lib.md`, `stack/python-service.md`, `base/git.md`,
-  `base/docs.md`, `base/quality.md`, `backend/config.md`, `backend/http.md`,
+  `stack/python-lib.md`, `stack/python-service.md`, `core/git.md`,
+  `core/docs.md`, `core/quality.md`, `backend/config.md`, `backend/http.md`,
   `backend/database.md`, `backend/observability.md`, `backend/quality.md`,
   `backend/features.md`, `backend/messaging.md`
 
@@ -63,7 +63,7 @@ tags: [composition, depends-on, inheritance]
 1. Assert the dependency chain includes all of the following:
    - `stack/python-lib.md`
    - `stack/python-service.md`
-   - `base/git.md`, `base/docs.md`, `base/quality.md`
+   - `core/git.md`, `core/docs.md`, `core/quality.md`
    - `backend/config.md`, `backend/http.md`, `backend/database.md`
    - `backend/observability.md`, `backend/quality.md`
    - `backend/features.md`, `backend/messaging.md`

@@ -1,6 +1,6 @@
 # Base — CLI and Driver Architecture
 [ID: base-cli]
-[DEPENDS ON: templates/base/core/quality.md, templates/base/core/config.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/config.md]
 
 Applies to any executable entry point — a published CLI, an operational
 driver, a maintenance script that outlives the afternoon it was written

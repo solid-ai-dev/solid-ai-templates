@@ -1,5 +1,5 @@
 # Stack — HTMX
-[DEPENDS ON: templates/base/core/git.md, templates/base/core/docs.md, templates/base/core/quality.md, templates/base/core/config.md, templates/base/security/security.md, templates/backend/templating.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/core/config.md, templates/security/security.md, templates/backend/templating.md]
 
 Extends server-side templating with HTMX hypermedia conventions. Covers swap
 strategies, triggers, out-of-band updates, server-sent events, Alpine.js

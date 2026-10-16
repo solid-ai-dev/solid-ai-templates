@@ -1,5 +1,5 @@
 # Stack — Static Site Tutorial
-[DEPENDS ON: templates/stack/static-site-astro.md, templates/base/workflow/issues.md, templates/base/workflow/scope.md]
+[DEPENDS ON: templates/stack/static-site-astro.md, templates/workflow/issues.md, templates/workflow/scope.md]
 
 Extends the Astro static site stack with conventions for multi-chapter
 tutorial sites. Covers content structure, chapter format, diagram
@@ -157,7 +157,7 @@ Two workflows:
 ## Release process
 [EXTEND: base-git]
 
-Follow `templates/base/core/git.md` release process:
+Follow `templates/core/git.md` release process:
 1. `git checkout -b chore/release-vX.Y.Z`
 2. `git commit --allow-empty -m "chore: release vX.Y.Z"`
 3. Push, open PR, merge
@@ -171,7 +171,7 @@ tags MUST be annotated (`-a`) so `git describe` reports them.
 
 ## Issue templates
 
-Use 5 typed templates from `templates/base/workflow/issues.md`:
+Use 5 typed templates from `templates/workflow/issues.md`:
 - Epic, Task, Bug, Incident, Spike
 - Placed in `.github/ISSUE_TEMPLATE/`
 - No title prefix — labels identify the type

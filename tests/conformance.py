@@ -7,7 +7,7 @@ a block with no entry, which is what stops a check added to a template from
 arriving unexamined.
 
 A block is located by a string only its body contains, never by position:
-`base/core/git.md` alone holds ten of them, and selecting by index has
+`core/git.md` alone holds ten of them, and selecting by index has
 already found the wrong one.
 """
 
@@ -57,31 +57,31 @@ READ = "read"
 
 CHECKS = [
 
-    # -- base/core/docs.md ------------------------------------------------
+    # -- core/docs.md ------------------------------------------------
 
-    {"file": "base/core/docs.md", "find": "community health files checked",
+    {"file": "core/docs.md", "find": "community health files checked",
      "title": "Community health files resolve to one location each",
      "do": RUN, "expect": ["nonzero"]},
 
-    {"file": "base/core/docs.md",
+    {"file": "core/docs.md",
      "find": "the naming convention drifted",
      "title": "ADR frontmatter schema", "do": RUN, "expect": ["nonzero"]},
 
-    {"file": "base/core/docs.md", "find": "bound by the layout, from",
+    {"file": "core/docs.md", "find": "bound by the layout, from",
      "title": "Decision records carry the layout's sections",
      "do": RUN, "expect": ["nonzero", "nonzero"]},
 
-    {"file": "base/core/docs.md", "find": "over a bound and not frozen",
+    {"file": "core/docs.md", "find": "over a bound and not frozen",
      "title": "Decision-record prose stays within the declared bounds",
      "do": RUN,
      "expect": ["line", "line", "nonzero", "nonzero", "zero", "zero",
                 "zero", "zero"]},
 
-    {"file": "base/core/docs.md", "find": "changelog entries measured",
+    {"file": "core/docs.md", "find": "changelog entries measured",
      "title": "Changelog entries stay within the word bound",
      "do": RUN, "expect": ["nonzero", "nonzero", "any", "zero"]},
 
-    {"file": "base/core/docs.md", "find": "entries, fenced = [], False",
+    {"file": "core/docs.md", "find": "entries, fenced = [], False",
      "title": "Development journal entry form", "do": RUN,
      "expect": ["nonzero"]},
 
@@ -89,92 +89,92 @@ CHECKS = [
     # which its design forbids editing; `short`'s is held to its own budget
     # and the others to none. They are source material the benchmark
     # measures, not documentation, so both checks leave them out.
-    {"file": "base/core/docs.md", "find": "width, source = None, None",
+    {"file": "core/docs.md", "find": "width, source = None, None",
      "title": "Documentation line width matches the declared one",
      "do": RUN, "expect": ["nonzero"],
      "substitute": {'["git", "ls-files", "*.md"]':
                     '["git", "ls-files", "*.md", '
                     '":(exclude)tests/efficacy/arms/"]'}},
 
-    {"file": "base/core/docs.md", "find": "ungated figures",
+    {"file": "core/docs.md", "find": "ungated figures",
      "title": "A documentation figure comes from a generator",
      "do": RUN, "expect": ["nonzero", "zero"],
      "substitute": {'SOURCES = ("templates/", "generated/", "examples/")':
                     'SOURCES = ("templates/", "generated/", "examples/", '
                     '"tests/efficacy/arms/")'}},
 
-    {"file": "base/core/docs.md", "find": "(?:R|TD)[0-9]{2}",
+    {"file": "core/docs.md", "find": "(?:R|TD)[0-9]{2}",
      "title": "Risk and technical-debt identifiers stay in their owning doc",
      "do": RUN, "expect": ["nonzero", "nonzero", "nonzero"]},
 
-    {"file": "base/core/docs.md", "find": "git diff --word-diff=porcelain",
+    {"file": "core/docs.md", "find": "git diff --word-diff=porcelain",
      "title": "A format-only ADR edit moved no claim", "do": SKIP,
      "reason": "Takes the format-only commit under review as its argument; "
                "`HEAD~1` is a placeholder. There is no standing corpus of "
                "format-only ADR edits to run it over."},
 
-    # -- base/core/examples.md ---------------------------------------------
+    # -- core/examples.md ---------------------------------------------
 
-    {"file": "base/core/examples.md", "find": "example failed: $f",
+    {"file": "core/examples.md", "find": "example failed: $f",
      "title": "Every example runs against a consumer install", "do": SKIP,
      "reason": "Placeholder runner. This repository's `examples/` holds generated "
                "context files rather than executable programs, so there is nothing "
                "to execute."},
 
-    # -- base/core/git.md -------------------------------------------------
+    # -- core/git.md -------------------------------------------------
 
-    {"file": "base/core/git.md", "find": "<regenerate-command>",
+    {"file": "core/git.md", "find": "<regenerate-command>",
      "title": "Regenerated artifact matches its sources", "do": SKIP,
      "reason": "The regeneration command is a placeholder the consuming "
                "project fills in. This repository's equivalent is "
                "`py tools/sync.py`, already gated in CI."},
 
-    {"file": "base/core/git.md", "find": "mask() {",
+    {"file": "core/git.md", "find": "mask() {",
      "title": "Volatile parts of a binary artifact are masked before diffing",
      "do": SKIP,
      "reason": "Needs the paths of two generated bundles to compare. This "
                "repository commits no binary artifact."},
 
-    {"file": "base/core/git.md", "find": "PATHS = [\"<file>\"]",
+    {"file": "core/git.md", "find": "PATHS = [\"<file>\"]",
      "title": "Numbered headings stay consistent across concurrent edits",
      "do": SKIP,
      "reason": "PATHS is a placeholder naming the documents two open "
                "branches both edit; it is set per release, not per repo."},
 
-    {"file": "base/core/git.md", "find": "git diff --stat :3:<path>",
+    {"file": "core/git.md", "find": "git diff --stat :3:<path>",
      "title": "A conflict resolution keeps both sides' content", "do": SKIP,
      "reason": "Runs only during an unresolved merge conflict, against the "
                "conflicting path."},
 
-    {"file": "base/core/git.md",
+    {"file": "core/git.md",
      "find": "settings leaving no safe deletion path",
      "title": "A merged head branch has a safe deletion path", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    {"file": "base/core/git.md", "find": "MILESTONE",
+    {"file": "core/git.md", "find": "MILESTONE",
      "title": "Every issue closed since the previous tag carries the "
               "milestone", "do": RUN, "expect": MANUAL,
      "reason": "Parameterised by MILESTONE, which is unset here, so the "
                "check reports that the release is not scoped to a "
                "milestone and does not apply."},
 
-    {"file": "base/core/git.md", "find": "<release-workflow>.yml",
+    {"file": "core/git.md", "find": "<release-workflow>.yml",
      "title": "The release pipeline has executed before", "do": RUN,
      "expect": ["nonzero"],
      "substitute": {"<release-workflow>.yml": "release-gates.yml"}},
 
-    {"file": "base/core/git.md",
+    {"file": "core/git.md",
      "find": "closing issues the subject does not name",
      "title": "A single-commit branch names its issue in the subject",
      "do": RUN, "expect": ["nonzero", "nonzero", "nonzero", "zero"]},
 
-    {"file": "base/core/git.md",
+    {"file": "core/git.md",
      "find": "named by a merged commit and still open",
      "title": "No issue whose work already merged is still open",
      "do": RUN,
      "expect": ["line", "nonzero", "nonzero", "nonzero", "zero"]},
 
-    {"file": "base/core/git.md", "find": "ready but unmerged",
+    {"file": "core/git.md", "find": "ready but unmerged",
      "title": "Release ordering against other ready pull requests",
      "do": RUN, "expect": MANUAL,
      "reason": "Each pull request it lists as ready is a decision about "
@@ -189,18 +189,18 @@ CHECKS = [
     # a derivation of `templates/`; `tools/` and `tests/` stay out because a
     # set covering the whole tree passes whatever the code mentions, which
     # the rule calls the defect itself.
-    {"file": "base/core/git.md", "find": "documentation files in the tree",
+    {"file": "core/git.md", "find": "documentation files in the tree",
      "title": "The tree being tagged documents what the release claims",
      "do": RUN,
      "expect": ["nonzero", "nonzero", "line", "line", "any", "any", "zero"],
      "substitute": {'DOCS = ("README.md", "docs/")':
                     'DOCS = ("README.md", "docs/", "templates/")'}},
 
-    {"file": "base/core/git.md",
+    {"file": "core/git.md",
      "find": "bullets ever under Unreleased in that range",
      "title": "A bullet deleted from Unreleased is reported",
      "do": RUN, "expect": ["nonzero", "nonzero", "zero"]},
-    {"file": "base/core/git.md", "find": "entries in Unreleased",
+    {"file": "core/git.md", "find": "entries in Unreleased",
      "title": "The Unreleased section accounts for what the release carries",
      "do": RUN, "expect": MANUAL,
      "reason": "Parameterised by RELEASE, which is unset here, so the check "
@@ -208,31 +208,31 @@ CHECKS = [
                "apply. With it set, the two counts are deliberately not "
                "required to match and the operator reconciles them."},
 
-    {"file": "base/core/git.md", "find": "audit records found",
+    {"file": "core/git.md", "find": "audit records found",
      "title": "The newest periodic-review record is inside the interval",
      "do": RUN, "expect": ["nonzero", "nonzero"]},
 
-    {"file": "base/core/git.md", "find": "<source-owner>/<source-repo>",
+    {"file": "core/git.md", "find": "<source-owner>/<source-repo>",
      "title": "A repository migration preserves both remotes", "do": SKIP,
      "reason": "Placeholder owner/repo pairs, run once during a migration."},
 
-    {"file": "base/core/git.md", "find": "BASE = \"origin/main\"",
+    {"file": "core/git.md", "find": "BASE = \"origin/main\"",
      "title": "A diff touching an off-limits path says so", "do": RUN,
      "expect": MANUAL,
      "reason": "The finding is whether the change SAYS SO about the path it "
                "touches, which is prose in a pull request body and not a "
                "count."},
 
-    # -- base/core/quality.md ------------------------------------------
+    # -- core/quality.md ------------------------------------------
 
-    {"file": "base/core/quality.md", "find": "FORBIDDEN = ()",
+    {"file": "core/quality.md", "find": "FORBIDDEN = ()",
      "title": "A directional layering ban names its check", "do": SKIP,
      "reason": "FORBIDDEN is empty by design -- this repository's own "
                "Python (tools/, tests/) is a flat test/tooling layer "
                "with no domain/adapter split to bound. Re-examine if "
                "one is ever adopted."},
 
-    {"file": "base/core/quality.md", "find": "def unwrap(cls, name)",
+    {"file": "core/quality.md", "find": "def unwrap(cls, name)",
      "title": "A frozen override checker is backed by a hierarchy "
               "contract test", "do": SKIP,
      "reason": "BASE and HIERARCHY are empty by design -- this "
@@ -241,7 +241,7 @@ CHECKS = [
                "subtype and no overridable operation. Applies to a "
                "consuming project's own abstract hierarchy."},
 
-    {"file": "base/core/quality.md", "find": "documents naming ${module}",
+    {"file": "core/quality.md", "find": "documents naming ${module}",
      "title": "A document naming a check is re-read when its exemptions change",
      "do": SKIP,
      "reason": "Takes the check whose exemptions are changing as an "
@@ -249,112 +249,112 @@ CHECKS = [
                "exemption is added or removed, not as a property of the "
                "tree."},
 
-    {"file": "base/core/quality.md", "find": "Identifiers only",
+    {"file": "core/quality.md", "find": "Identifiers only",
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    {"file": "base/core/quality.md", "find": "aside to the right of code",
+    {"file": "core/quality.md", "find": "aside to the right of code",
      "title": "Comment layout", "do": RUN, "expect": ["nonzero"]},
 
-    {"file": "base/core/quality.md", "find": "SCRIPTS = pathlib.Path",
+    {"file": "core/quality.md", "find": "SCRIPTS = pathlib.Path",
      "title": "The scripts directory carries the rules it owes", "do": SKIP,
      "reason": "This repository has no `scripts/` directory. Its permanent "
                "tooling lives in `tools/`, which the rule's own text scopes "
                "out. Re-examine if `scripts/` is ever added."},
 
-    {"file": "base/core/quality.md",
+    {"file": "core/quality.md",
      "find": "ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts",
      "title": "No committed text file carries CRLF", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    {"file": "base/core/quality.md", "find": "eol() { git ls-files --eol",
+    {"file": "core/quality.md", "find": "eol() { git ls-files --eol",
      "title": "The checkout carries the line ending the index does",
      "do": RUN, "expect": ["nonzero", "zero"]},
 
-    # -- base/core/review.md ----------------------------------------------
+    # -- core/review.md ----------------------------------------------
 
-    {"file": "base/core/review.md", "find": "open pull requests inspected",
+    {"file": "core/review.md", "find": "open pull requests inspected",
      "title": "An issue is not already in flight before work starts",
      "do": SKIP,
      "reason": "The jq filter carries `#<N>` for the issue being checked. "
                "Run per issue when picking up work, not against a tree."},
 
-    {"file": "base/core/review.md", "find": "pull requests linked to it",
+    {"file": "core/review.md", "find": "pull requests linked to it",
      "title": "A sibling's shipped route, not the one it proposed",
      "do": SKIP,
      "reason": "Takes the sibling issue number as a placeholder. Run per "
                "issue when picking one up that defers to another, not "
                "against a tree."},
 
-    {"file": "base/core/review.md", "find": "--since=<filing date>",
+    {"file": "core/review.md", "find": "--since=<filing date>",
      "title": "A filed issue's claim is re-measured against the tree",
      "do": SKIP,
      "reason": "Takes the issue's filing date as an argument; run per issue "
                "during a groom, which the PLAYBOOK covers."},
 
-    # -- base/core/testing.md ---------------------------------------------
+    # -- core/testing.md ---------------------------------------------
 
-    {"file": "base/core/testing.md", "find": "module-under-change",
+    {"file": "core/testing.md", "find": "module-under-change",
      "title": "A remedy naming another check is re-read before narrowing it",
      "do": SKIP,
      "reason": "Takes the module whose scope is narrowing as an argument. "
                "It is run per change, not as a property of the tree."},
 
-    {"file": "base/core/testing.md", "find": "guard-field-name",
+    {"file": "core/testing.md", "find": "guard-field-name",
      "title": "A guard field has a consumer, not only an assignment",
      "do": SKIP,
      "reason": "Takes the module under review and the guard field as "
                "arguments. It is run when one inert primitive is found, to "
                "sweep for its siblings, not as a property of the tree."},
 
-    {"file": "base/core/testing.md", "find": "class ServerFixture",
+    {"file": "core/testing.md", "find": "class ServerFixture",
      "title": "Fixture shape for a threaded server", "do": SKIP,
      "reason": "An illustration of the pattern, not a check. It has no pass "
                "condition and names a project's own server class."},
 
-    {"file": "base/core/testing.md", "find": "type[(]self[)]",
+    {"file": "core/testing.md", "find": "type[(]self[)]",
      "title": "A class attribute is not mutated through the instance",
      "do": RUN, "expect": ["nonzero"], "grep": True},
 
-    {"file": "base/core/testing.md", "find": "SERVER_THREAD_NAME",
+    {"file": "core/testing.md", "find": "SERVER_THREAD_NAME",
      "title": "A test names its server thread", "do": SKIP,
      "reason": "An illustration of the naming pattern, not a check."},
 
-    {"file": "base/core/testing.md", "find": "ssl.TLSVersion.TLSv1_2",
+    {"file": "core/testing.md", "find": "ssl.TLSVersion.TLSv1_2",
      "title": "A TLS floor is asserted, not assumed", "do": SKIP,
      "reason": "An illustration: an assertion a consuming project's own "
                "suite makes about its own context object."},
 
-    {"file": "base/core/testing.md", "find": "pkg.__all__",
+    {"file": "core/testing.md", "find": "pkg.__all__",
      "title": "Everything in __all__ is importable", "do": SKIP,
      "reason": "This repository ships no importable package. It applies to "
                "a library stack, where `stack/python-lib.md` carries it."},
 
-    {"file": "base/core/testing.md", "find": "def fingerprint(path)",
+    {"file": "core/testing.md", "find": "def fingerprint(path)",
      "title": "A mechanical move leaves the fingerprint unchanged",
      "do": SKIP,
      "reason": "Compares two revisions of a module named as arguments; run "
                "during a module split, not against a tree."},
 
-    # -- base/language/python.md ------------------------------------------
+    # -- language/python.md ------------------------------------------
 
-    {"file": "base/language/python.md", "find": "pkg/_accel.py",
+    {"file": "language/python.md", "find": "pkg/_accel.py",
      "title": "An optional accelerator is isolated to one module",
      "do": SKIP,
      "reason": "An illustration of the module layout, not a check."},
 
-    {"file": "base/language/python.md", "find": "_LOG.addHandler",
+    {"file": "language/python.md", "find": "_LOG.addHandler",
      "title": "A library core attaches a null handler",
      "do": SKIP,
      "reason": "An illustration of the module layout, not a check."},
 
-    {"file": "base/language/python.md", "find": "the library attaches no handler",
+    {"file": "language/python.md", "find": "the library attaches no handler",
      "title": "A plain import leaves the library's logger silent",
      "do": SKIP,
      "reason": "Imports a package named `pkg`. This repository ships no "
                "importable package."},
 
-    {"file": "base/language/python.md",
+    {"file": "language/python.md",
      "find": "raises_nothing_outside_the_contract",
      "title": "The package raises nothing outside its error contract",
      "do": SKIP,
@@ -364,18 +364,18 @@ CHECKS = [
                "declares no error hierarchy, because nothing calls it as "
                "a library."},
 
-    # -- base/security/devsecops.md ---------------------------------------
+    # -- security/devsecops.md ---------------------------------------
 
-    {"file": "base/security/devsecops.md", "find": "sbom.json",
+    {"file": "security/devsecops.md", "find": "sbom.json",
      "title": "The SBOM lists the components the build produced",
      "do": SKIP,
      "reason": "Reads `sbom.json`, produced by a build this repository does "
                "not have -- it ships Markdown and has no dependency graph "
                "to describe."},
 
-    # -- base/workflow/quality-gates.md -----------------------------------
+    # -- workflow/quality-gates.md -----------------------------------
 
-    {"file": "base/workflow/quality-gates.md",
+    {"file": "workflow/quality-gates.md",
      "find": "family: $FAMILY",
      "title": "Sizing one frozen rule family", "do": SKIP,
      "reason": "Names a rule family and a source root as placeholders, and "
@@ -383,11 +383,11 @@ CHECKS = [
                "This repository ships Markdown, has no `pyproject.toml`, no "
                "linter freeze and no `src/`, so there is no family to size."},
 
-    {"file": "base/workflow/quality-gates.md", "find": "SUPPRESSIONS = (",
+    {"file": "workflow/quality-gates.md", "find": "SUPPRESSIONS = (",
      "title": "A suppression names the rule it suppresses", "do": RUN,
      "expect": ["nonzero", "any", "zero"]},
 
-    {"file": "base/workflow/quality-gates.md",
+    {"file": "workflow/quality-gates.md",
      "find": "'tests/*'", "title": "A change to an existing test is visible",
      "do": RUN, "expect": MANUAL,
      "reason": "Governance rather than a pass/fail metric: it decides "
@@ -396,12 +396,12 @@ CHECKS = [
                "itself a test edit, so scoring it would fail each "
                "conforming change on arrival."},
 
-    {"file": "base/workflow/quality-gates.md",
+    {"file": "workflow/quality-gates.md",
      "find": "A shipped check is a heredoc inside a fenced block",
      "title": "A shipped rule states its check", "do": RUN,
      "expect": ["nonzero", "nonzero", "zero"]},
 
-    {"file": "base/workflow/quality-gates.md", "find": "CHECK_LANGUAGES = (",
+    {"file": "workflow/quality-gates.md", "find": "CHECK_LANGUAGES = (",
      "title": "A shipped check is safe to run where it is documented",
      "do": RUN, "expect": ["nonzero", "nonzero", READ],
      "reading": "The continuation count and the lines under it. A non-zero "
@@ -413,22 +413,22 @@ CHECKS = [
                 "meaning the fence pattern drifted and the second the "
                 "language filter."},
 
-    {"file": "base/workflow/quality-gates.md",
+    {"file": "workflow/quality-gates.md",
      "find": "checks stated outside a fence",
      "title": "Every stated check is in a form a tool can extract",
      "do": RUN, "expect": ["nonzero", "zero"]},
 
-    # -- base/workflow/scope.md -------------------------------------------
+    # -- workflow/scope.md -------------------------------------------
 
-    {"file": "base/workflow/scope.md", "find": "platform/[a-z-]+[.]md",
+    {"file": "workflow/scope.md", "find": "platform/[a-z-]+[.]md",
      "title": "The context file names exactly one platform", "do": SKIP,
      "reason": "Reads a generated project's `CLAUDE.md` for its platform "
                "axis. This repository's `CLAUDE.md` is authored, not "
                "generated, and declares no platform template."},
 
-    # -- base/workflow/two-pass-review.md ---------------------------------
+    # -- workflow/two-pass-review.md ---------------------------------
 
-    {"file": "base/workflow/two-pass-review.md", "find": "usage: scan <artifact>",
+    {"file": "workflow/two-pass-review.md", "find": "usage: scan <artifact>",
      "title": "First-pass mechanical scan of an artifact under review",
      "do": SKIP,
      "reason": "Takes the artifact to scan as an argument. It is a review "
@@ -516,7 +516,7 @@ CHECKS = [
      "title": "A deferred import binds its name on first access", "do": SKIP,
      "reason": "This repository ships no importable package. The block is "
                "the module `__getattr__` pattern itself; the check that "
-               "every advertised name resolves is `base/core/testing.md`'s "
+               "every advertised name resolves is `core/testing.md`'s "
                "and carries its own entry."},
 
     {"file": "stack/python-lib.md", "find": "_RENAMED = {\"OldName\"",

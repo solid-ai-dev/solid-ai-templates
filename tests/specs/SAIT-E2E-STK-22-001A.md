@@ -42,7 +42,7 @@ tags: [e2e, output, c, embedded]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/c-embedded.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/c-embedded.md`, `core/agents.md`
 3. Interview answers:
    - Project name: SensorFirmware
    - Target: STM32 (ARM Cortex-M4)

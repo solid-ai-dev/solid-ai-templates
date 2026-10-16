@@ -10,7 +10,8 @@ files. Instead of writing a `CLAUDE.md` or `AGENTS.md` from scratch for every
 project, you compose templates from three layers:
 
 ```
-templates/base/       → rules that apply to every project
+templates/core/       → rules that apply to every project; security/,
+                        workflow/, infra/, data/ and language/ sit beside it
 templates/backend/    → rules for backend services and APIs
 templates/frontend/   → rules for frontend and UI projects
 templates/stack/      → concrete, technology-specific rules
@@ -74,7 +75,7 @@ what differs from the parent.
 
 Example chain:
 ```
-templates/base/core/git.md + templates/base/core/quality.md + ...
+templates/core/git.md + templates/core/quality.md + ...
     ↓
 templates/stack/python-lib.md
     ↓
@@ -115,7 +116,7 @@ Then run the system end-to-end with an agent:
 
 1. Open Claude Code in any project directory
 2. Attach `templates/INTERVIEW.md` and `templates/stack/python-flask.md`
-3. Ask: "Generate a CLAUDE.md for this project using templates/base/core/agents.md
+3. Ask: "Generate a CLAUDE.md for this project using templates/core/agents.md
    format"
 4. Review the output — this is what users get
 

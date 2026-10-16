@@ -4,8 +4,8 @@ Wiki notes on reusable structures for secure application code.
 Each entry describes a problem, solution structure, when to use
 it, and examples.
 
-See `base/security.md` for application security rules.
-See `base/devsecops.md` for pipeline security rules and
+See `security.md` for application security rules.
+See `security/devsecops.md` for pipeline security rules and
 `devsecops.md` for pipeline security patterns.
 
 ---

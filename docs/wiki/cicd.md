@@ -4,7 +4,7 @@ Wiki notes on reusable CI/CD pipeline structures. Each entry
 describes a problem, solution structure, when to use it, and
 platform examples.
 
-See `base/cicd.md` for pipeline stages and delivery rules.
+See `infra/cicd.md` for pipeline stages and delivery rules.
 See `platform/github.md` or `platform/gitlab.md` for tool-specific
 configuration.
 

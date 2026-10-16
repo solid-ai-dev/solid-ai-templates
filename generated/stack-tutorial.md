@@ -3,7 +3,7 @@
      `py tools/resolve.py --check` to verify the committed
      files are up to date. -->
 
-<!-- templates/base/core/quality.md -->
+<!-- templates/core/quality.md -->
 # Base — Quality Attributes
 
 [ID: base-quality]
@@ -1429,7 +1429,7 @@ so every hit is a real finding rather than a judgement call.
 - Tests must pass before merging to `main`
 
 
-<!-- templates/base/core/git.md -->
+<!-- templates/core/git.md -->
 # Base — Git Conventions
 [ID: base-git]
 
@@ -1514,7 +1514,7 @@ so every hit is a real finding rather than a judgement call.
     only through the human-in-the-loop step that owns it, and flag
     the staleness explicitly instead
 - **Before merging**, review the diff against the base branch. Follow
-  `templates/base/core/review.md` priority order: security → correctness →
+  `templates/core/review.md` priority order: security → correctness →
   clarity →
   conventions. Check CI passes. Only merge after the review passes.
 - **Re-run the verification a pull request body claims, rather than
@@ -2102,7 +2102,7 @@ When NOT to close-and-resubmit:
 ## README
 - Every repository MUST contain a `README.md`
 - The README MUST conform to the structure and rules defined in
-  `templates/base/core/readme.md`
+  `templates/core/readme.md`
 
 ## Versioning
 - Use [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
@@ -3425,7 +3425,7 @@ the path.
 - Do not ignore lockfiles — they MUST be committed
 
 
-<!-- templates/base/core/docs.md -->
+<!-- templates/core/docs.md -->
 # Base — Documentation
 
 [ID: base-docs]
@@ -4262,7 +4262,7 @@ rewritten in place as "Decision logs" allows.
 - Where a surviving copy is sensitive, state the finding to whoever owns the
   repository rather than widening the deletion unasked. What a repository
   publishes is that owner's decision
-- The concept-retirement sweep in `templates/base/core/quality.md` does not
+- The concept-retirement sweep in `templates/core/quality.md` does not
   cover this. That rule chases surviving instructions to APPLY a retired
   concept and explicitly settles for historical records; a record is exactly
   what carries the content here
@@ -4440,7 +4440,7 @@ reports the wrong thing entirely, at full confidence.
   that raised it — tidying the old list is the tempting move and the
   wrong one
 - When writing a new entry, follow the document-convention-matching
-  rule in `templates/base/workflow/ai-workflow.md` (Match document
+  rule in `templates/workflow/ai-workflow.md` (Match document
   convention section) — read prior entries and copy their skeleton
   exactly; the prior entry is the authoritative structural template
 - That rule governs an entry's SHAPE, never the file's ordering.
@@ -5191,7 +5191,7 @@ than the documented one.
 | Generic / other  | `AI_CONTEXT.md`                   |
 
 
-<!-- templates/base/core/readme.md -->
+<!-- templates/core/readme.md -->
 # Base — README
 [ID: base-readme]
 
@@ -5363,7 +5363,7 @@ Every README MUST contain the following sections, in this order:
   for accuracy
 
 
-<!-- templates/base/core/testing.md -->
+<!-- templates/core/testing.md -->
 # Base — Testing
 
 [ID: base-testing]
@@ -5398,7 +5398,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/base/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/workflow/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -6023,7 +6023,7 @@ against a sender that never acquired its lock.
 - One inert primitive is grounds to sweep for its siblings, because the
   same author wired them the same way on the same afternoon. The sweep
   runs on a FIELD rather than on a construct, which is what distinguishes
-  it from the rejected-mechanism sweep in `templates/base/core/quality.md`:
+  it from the rejected-mechanism sweep in `templates/core/quality.md`:
 
   ```bash
   MODULE=<module-under-review>
@@ -6540,7 +6540,7 @@ every test file drifts from where the test actually lives.
   expensive dependencies are not installed for it
 
 
-<!-- templates/base/core/review.md -->
+<!-- templates/core/review.md -->
 # Base — Peer Review
 
 [ID: base-review]
@@ -6556,9 +6556,9 @@ every test file drifts from where the test actually lives.
 ## Priority order
 
 Apply the following order when reviewing, from most to least critical.
-Use `templates/base/core/quality.md` (and any language-specific quality template
+Use `templates/core/quality.md` (and any language-specific quality template
 such as
-`templates/base/language/typescript.md`) as the standard for items 2–4.
+`templates/language/typescript.md`) as the standard for items 2–4.
 
 1. **Security exposure** — anything that could be exploited, any credential
    or license problem
@@ -6651,17 +6651,17 @@ completeness. Run a structure audit after:
 
 Verify every MUST from:
 
-- `templates/base/core/docs.md` — standard documents (README, ONBOARDING,
+- `templates/core/docs.md` — standard documents (README, ONBOARDING,
   PLAYBOOK, ADRs)
-- `templates/base/core/readme.md` — README has all 9 required sections
-- `templates/base/core/git.md` — .gitignore, README exist
+- `templates/core/readme.md` — README has all 9 required sections
+- `templates/core/git.md` — .gitignore, README exist
 - The relevant frontend or backend layer template — required assets,
   config files, SEO files
 - The relevant stack template — framework-specific files and conventions
 
 When a section contains multiple MUST sub-clauses, verify each sub-clause
 independently — do not pass the section as a whole. For example,
-`templates/base/core/readme.md` Usage requires both usage examples AND expected
+`templates/core/readme.md` Usage requires both usage examples AND expected
 output
 per example — these are two separate checks.
 
@@ -6960,7 +6960,7 @@ answer for the wrong reason is the same failure in a cheaper form.
   approver before the change can land
 
 
-<!-- templates/base/core/oop.md -->
+<!-- templates/core/oop.md -->
 # Base — Object-Oriented Design
 
 [ID: base-oop]
@@ -7051,7 +7051,7 @@ stateless logic.
   acceptable; opaque interceptors that inject hidden behaviour are not
 
 
-<!-- templates/base/security/security.md -->
+<!-- templates/security/security.md -->
 # Base — Application Security
 
 [ID: base-security]
@@ -7354,7 +7354,7 @@ and server-side request forgery.
 # Frontend — UX Principles
 
 [ID: frontend-ux]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 ## UX principles
 
@@ -7473,7 +7473,7 @@ When several UX approaches are plausible, do not pick by fiat:
 # Frontend — Quality Attributes
 
 [ID: frontend-quality]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 ## Patterns
 
@@ -7603,7 +7603,7 @@ Rules:
 <!-- templates/frontend/static-site.md -->
 # Frontend — Static Site
 [ID: frontend-static-site]
-[DEPENDS ON: templates/base/core/git.md, templates/base/core/docs.md, templates/base/core/quality.md, templates/base/security/security.md, templates/frontend/ux.md, templates/frontend/quality.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/security/security.md, templates/frontend/ux.md, templates/frontend/quality.md]
 
 Abstract rules for any static site generated at build time and served as
 plain HTML, CSS, and minimal JavaScript. Never used directly — always
@@ -7776,10 +7776,10 @@ to change.
   pages below threshold are either enriched or noindexed; no
   duplicate/near-duplicate thin pages
 
-<!-- templates/base/language/typescript.md -->
+<!-- templates/language/typescript.md -->
 # Base — TypeScript
 [ID: base-typescript]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 ## Type design
 [ID: base-typescript-type-design]
@@ -7883,7 +7883,7 @@ add only the tools their shape changes.
 | `no-inverted-boolean-check` | Readability — avoid negative conditions |
 
 
-<!-- templates/base/core/config.md -->
+<!-- templates/core/config.md -->
 # Base — Configuration
 [ID: base-config]
 
@@ -8068,11 +8068,11 @@ DEBUG=false
 ```
 
 
-<!-- templates/base/workflow/quality-gates.md -->
+<!-- templates/workflow/quality-gates.md -->
 # Base — Quality Gates
 
 [ID: base-quality-gates]
-[DEPENDS ON: templates/base/core/quality.md, templates/base/core/git.md, templates/base/core/testing.md, templates/base/core/config.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/git.md, templates/core/testing.md, templates/core/config.md]
 
 Stack-agnostic quality gate model. Defines the layers, categories,
 thresholds, and constraints. Stack templates extend with concrete tools.
@@ -8955,7 +8955,7 @@ are separate things, and review usually looks only at the check:
 - A reviewer MUST NOT accept a green run as evidence that a scope change
   took effect
 
-`base/security/devsecops.md` and `platform/github.md` both require full
+`security/devsecops.md` and `platform/github.md` both require full
 history for the secret scan specifically. This is the general rule that
 the specific one is an instance of, and it holds regardless of which
 platform or security template a project resolves.
@@ -9742,7 +9742,7 @@ scheduled whole-tree sweep, not a per-change gate.
 
 <!-- templates/stack/static-site-astro.md -->
 # Stack — Astro (Static Site)
-[DEPENDS ON: templates/frontend/static-site.md, templates/base/language/typescript.md, templates/base/workflow/quality-gates.md]
+[DEPENDS ON: templates/frontend/static-site.md, templates/language/typescript.md, templates/workflow/quality-gates.md]
 
 Extends the static site stack with Astro-specific rules.
 
@@ -10090,7 +10090,7 @@ Rules:
   exception to the `set:html` ban since the input is fully server-controlled)
 
 
-<!-- templates/base/workflow/issues.md -->
+<!-- templates/workflow/issues.md -->
 # Issue Formats
 [ID: base-issues]
 
@@ -10460,7 +10460,7 @@ As a [role], I want to understand [topic] so that [decision can be made].
 ```
 
 
-<!-- templates/base/workflow/scope.md -->
+<!-- templates/workflow/scope.md -->
 # Base — Scope Guard
 
 [ID: base-scope]
@@ -10477,11 +10477,11 @@ finished.
 Before starting any work, the agent MUST:
 
 1. Read all documents referenced in the project's CLAUDE.md (e.g.
-   `docs/solid-ai-templates/templates/base/core/git.md`,
-   `templates/base/core/docs.md`, etc.)
+   `docs/solid-ai-templates/templates/core/git.md`,
+   `templates/core/docs.md`, etc.)
 2. Apply the project's adopted conventions. Reading or updating a template
    does not adopt its new rules; follow "Adopting shared rules" in
-   `templates/base/core/docs.md`
+   `templates/core/docs.md`
 3. Check which branch you are on — if not `main`, ask why before
    proceeding
 4. Check `git status` and preserve existing work. Continue independent work
@@ -10549,7 +10549,7 @@ The startup block MUST:
 - State the consequence: "If you respond without reading them, you are
   violating project rules"
 
-This requirement exists because `templates/base/workflow/scope.md` says "read
+This requirement exists because `templates/workflow/scope.md` says "read
 all documents
 referenced in CLAUDE.md" — but `scope.md` is one of the files that needs
 to be read first. The startup block breaks this chicken-and-egg problem
@@ -10652,7 +10652,7 @@ summarize — visible sequential execution prevents missed steps.
    what is done (verify auto-close worked)
 3. **Epic checklists** — update epic checklists if relevant
 4. **ADRs** — apply the decision threshold in
-   `templates/base/core/docs.md`: a record is owed when the decision
+   `templates/core/docs.md`: a record is owed when the decision
    changes what a user of the thing observes without reading the
    repository's internals. Prose style, tool choice, release procedure,
    naming and file layout need none; one coherent architectural choice
@@ -10708,7 +10708,7 @@ summarize — visible sequential execution prevents missed steps.
 
 <!-- templates/stack/static-site-tutorial.md -->
 # Stack — Static Site Tutorial
-[DEPENDS ON: templates/stack/static-site-astro.md, templates/base/workflow/issues.md, templates/base/workflow/scope.md]
+[DEPENDS ON: templates/stack/static-site-astro.md, templates/workflow/issues.md, templates/workflow/scope.md]
 
 Extends the Astro static site stack with conventions for multi-chapter
 tutorial sites. Covers content structure, chapter format, diagram
@@ -10866,7 +10866,7 @@ Two workflows:
 ## Release process
 [EXTEND: base-git]
 
-Follow `templates/base/core/git.md` release process:
+Follow `templates/core/git.md` release process:
 1. `git checkout -b chore/release-vX.Y.Z`
 2. `git commit --allow-empty -m "chore: release vX.Y.Z"`
 3. Push, open PR, merge
@@ -10880,7 +10880,7 @@ tags MUST be annotated (`-a`) so `git describe` reports them.
 
 ## Issue templates
 
-Use 5 typed templates from `templates/base/workflow/issues.md`:
+Use 5 typed templates from `templates/workflow/issues.md`:
 - Epic, Task, Bug, Incident, Spike
 - Placed in `.github/ISSUE_TEMPLATE/`
 - No title prefix — labels identify the type

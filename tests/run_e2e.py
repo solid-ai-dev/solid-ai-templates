@@ -74,7 +74,7 @@ def resolve_deps(stack_file):
     return []
 
 
-def build_prompt(stack_file, answers, output_file="templates/base/core/agents.md",
+def build_prompt(stack_file, answers, output_file="templates/core/agents.md",
                  extra_files=()):
     chain = resolve_deps(stack_file)
 
@@ -151,7 +151,7 @@ def run_test(test, dry_run=False):
 
     prompt = build_prompt(
         test["stack"], test["answers"],
-        test.get("output_file", "templates/base/core/agents.md"),
+        test.get("output_file", "templates/core/agents.md"),
         test.get("extra_files", ()),
     )
 

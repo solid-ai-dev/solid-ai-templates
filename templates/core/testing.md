@@ -32,7 +32,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/base/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/workflow/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -657,7 +657,7 @@ against a sender that never acquired its lock.
 - One inert primitive is grounds to sweep for its siblings, because the
   same author wired them the same way on the same afternoon. The sweep
   runs on a FIELD rather than on a construct, which is what distinguishes
-  it from the rejected-mechanism sweep in `templates/base/core/quality.md`:
+  it from the rejected-mechanism sweep in `templates/core/quality.md`:
 
   ```bash
   MODULE=<module-under-review>

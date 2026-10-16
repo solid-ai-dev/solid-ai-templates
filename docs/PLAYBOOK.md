@@ -44,7 +44,9 @@ composition model.
 ## Add a new base or layer template
 
 1. Create the file in the correct layer directory:
-   - `base/<name>.md` — cross-cutting, applies to all projects
+   - `<concern>/<name>.md` — cross-cutting, applies to all projects; the
+     concern is one of `core`, `security`, `workflow`, `infra`, `data`,
+     `language`
    - `backend/<name>.md` — backend services only
    - `frontend/<name>.md` — frontend/UI projects only
 2. Tag the file root with `[ID: <layer>-<name>]`
@@ -97,7 +99,7 @@ genericity before it becomes template content:
    A **pipeline template** carries rules about generating or consuming a
    context file, and `templates/INTERVIEW.md` reads it directly rather
    than any root resolving it into a project. Reach says nothing about
-   whether the rule lands: `base/core/agents.md` is carried by a single
+   whether the rule lands: `core/agents.md` is carried by a single
    root — its own — and shapes every file the pipeline generates.
    Recognise one by asking what reads it: a stack, an opt-in root, or
    INTERVIEW.md.
@@ -111,7 +113,7 @@ genericity before it becomes template content:
    cannot be read without the ones it is defined against is not made
    more useful by moving it somewhere better resolved
 3. If the kernel is genuinely cross-cutting, add it to the relevant
-   `base/` or layer template per "Add a new base or layer template"
+   concern or layer template per "Add a new base or layer template"
 4. If a fragment only applies to one stack or domain, fold it as an
    *example* inside a generic rule — do not add it as standalone base
    content. Standalone one-stack content in a core-tier template loads
@@ -148,7 +150,7 @@ genericity before it becomes template content:
 ## Author a new ADR
 
 Use this workflow only after applying the decision threshold in
-`templates/base/core/docs.md`: a record is owed when the decision changes
+`templates/core/docs.md`: a record is owed when the decision changes
 what a consuming project observes without reading this repository — the
 composition model. Prose style, tool choice, release procedure, naming and
 file layout need no ADR, however consequential they are. One coherent
@@ -178,7 +180,7 @@ ADRs live in `docs/decisions/`; ADR-010 records the frontmatter schema.
    frontmatter in the same PR — set its `status: Superseded`,
    refresh `date`, and add this ADR's id to its `superseded_by`
    list. Preserve historical claims; format-only changes are also allowed
-   under the decision-log rules in `templates/base/core/docs.md`.
+   under the decision-log rules in `templates/core/docs.md`.
 6. Run `py tests/run_smoke.py ADR-01` to validate the frontmatter
    schema before opening the PR.
 7. If the ADR **removes** a concept, sweep for prose that still
@@ -200,7 +202,7 @@ ADRs live in `docs/decisions/`; ADR-010 records the frontmatter schema.
 
 A newer tag alone creates no work. Review a template update for a named project
 need or material risk, applying "Adopting shared rules" in
-`templates/base/core/docs.md`. Keep existing adopted conventions until the
+`templates/core/docs.md`. Keep existing adopted conventions until the
 project deliberately changes them; declining a candidate needs no ADR or ticket.
 
 For consumers adopting the selective-adoption and ADR-threshold update:
@@ -246,7 +248,7 @@ If the agent cannot run scripts, use the pre-resolved files in
 `generated/`. Each file contains the full template chain for one stack:
 
 1. Attach `generated/stack-flask.md` (or the relevant stack)
-2. Attach `templates/base/core/agents.md` (output format)
+2. Attach `templates/core/agents.md` (output format)
 3. Provide your answers and ask the agent to generate the file
 
 ### Path selection guide
@@ -296,7 +298,7 @@ figures with no generator behind it, and the copy is what ages.
    place is often shorter than the text it replaces: the
    release-proposal record went from +472 characters as its own
    paragraph to 98 characters shorter than the narrow rule it replaced.
-   Measured 2026-09-03 on `base/core/git.md`.
+   Measured 2026-09-03 on `core/git.md`.
 
 3. **Agent check**: attach `INTERVIEW.md` + the changed template to an agent
    and review the output for coherence; or run the
@@ -482,7 +484,7 @@ sys.path.insert(0, "tests")
 from run_conformance import iter_blocks, run_block
 
 body = next(b[3] for b in iter_blocks()
-            if b[0] == "base/core/docs.md" and any("<find>" in l for l in b[3]))
+            if b[0] == "core/docs.md" and any("<find>" in l for l in b[3]))
 code, out = run_block(body, "bash", tempfile.mkdtemp())
 print("exit %d" % code)
 for line in out:
@@ -493,7 +495,7 @@ EOF
 Pass condition: the fixture that must be reported is reported, the one
 that must not is not, and the check's own corpus counts move between the
 two runs. `testing-control-corpus-moves` in
-`templates/base/core/testing.md` is the rule, and says why the third is
+`templates/core/testing.md` is the rule, and says why the third is
 what makes the first two readable.
 
 For a check that takes an argument — a milestone, a module, a field —
@@ -515,7 +517,7 @@ code edit. Sweep the documents for the check's name before merging and
 re-read every hit against the new exemption set: the check's own tests
 exercise the exemptions rather than the sentence describing them, so a
 document's account of them decays with nothing reporting it.
-`quality-exemption-doc-duty` in `templates/base/core/quality.md` is the
+`quality-exemption-doc-duty` in `templates/core/quality.md` is the
 rule, and ships the sweep.
 
 Adding a constraint owes a sweep of its own. Run the new rule or check
@@ -523,7 +525,7 @@ against the corpus that already exists before merging, and record in the
 pull request where it looked, what it found and what it left out. Where the
 corpus does not comply, say whether the instances were fixed or frozen, or,
 for a corpus that cannot be edited, the boundary the rule binds forward
-from. `quality-constraint-corpus-sweep` in `templates/base/core/quality.md`
+from. `quality-constraint-corpus-sweep` in `templates/core/quality.md`
 is the rule.
 
 ---
@@ -558,7 +560,7 @@ hand.
    - `generated/<stack>.md` — the resolved chain (the rules to apply);
      read any addon templates the example's stack source names but the
      chain does not include
-   - `templates/base/core/agents.md` — the output models (inline,
+   - `templates/core/agents.md` — the output models (inline,
      reference, or hybrid — keep the example's existing model)
 2. Ask the agent to regenerate `examples/<name>/CLAUDE.md` in the
    six-section structure, keeping the concrete project identity and
@@ -571,7 +573,7 @@ hand.
 
 ## Run a 360-degree audit
 
-Per `templates/base/workflow/360.md`, a 360 assesses the whole project
+Per `templates/workflow/360.md`, a 360 assesses the whole project
 from independent stakeholder perspectives as parallel, context-isolated
 subagents (the headless adaptation re-projects Quality into engineering
 dimensions). Run one on demand — before a launch, after a milestone or a
@@ -651,7 +653,7 @@ clean gate.
 ## Groom the backlog
 
 Run this before scoping a cut. The procedure and the reasons behind its
-order are in `templates/base/workflow/issues.md`, which this repository
+order are in `templates/workflow/issues.md`, which this repository
 consumes; what follows is only what is particular here.
 
 List the backlog — an unmilestoned issue is triaged, not untriaged, so no
@@ -671,7 +673,7 @@ gh issue list --state open --limit 200 --json number,title,milestone --jq '.[] |
 - Title the milestone `vA.B.C — <theme>`. The annotated tag message quotes
   the theme, so a bare version leaves the tag with nothing to quote
 - The merged-work sweep is step 9 of the release sequence in
-  `base/core/git.md`; `py tests/run_conformance.py` runs it here. Run it at
+  `core/git.md`; `py tests/run_conformance.py` runs it here. Run it at
   the groom too, where a hit is cheapest to act on
 
 Where a milestone already exists but its theme describes work that has not
@@ -687,7 +689,7 @@ issue had been put in it solely to satisfy the release gate.
 
 ## Survey the consuming repositories
 
-Run this before proposing a change to a document `base/core/docs.md` requires
+Run this before proposing a change to a document `core/docs.md` requires
 — `docs/PLAYBOOK.md`, `docs/ONBOARDING.md`, `README.md`, `CHANGELOG.md`,
 `SECURITY.md`, `CONTRIBUTING.md`. `tools/sync.py` reaches this repository and
 nothing else, so the cost of renaming or restructuring one of them sits
@@ -752,7 +754,7 @@ no manifest to bump, so nothing needs one. It does not remove every pull
 request: the changelog cut at step 4 is its own, and it is the release
 commit the tag names.
 
-Run `base/core/git.md`'s pre-release checks first — that sequence is the
+Run `core/git.md`'s pre-release checks first — that sequence is the
 source, and the nine steps below are this repository's release procedure
 proper, not a restatement of it. Two of those checks bind here and neither
 has a step below: the periodic-review-scope check, which reads the age of
@@ -793,24 +795,24 @@ below exist to prevent. Run them here anyway.
 2. Confirm the inverse — every issue closed since the previous tag
    carries the milestone being released. Step 1 reads the milestone
    and cannot see work merged without one. Run the milestone-coverage
-   check in `templates/base/core/git.md`, exporting `RELEASE_MILESTONE`
+   check in `templates/core/git.md`, exporting `RELEASE_MILESTONE`
    as the milestone being released. Left unset it reports that the check does
    not apply — correct for a routine release on a project that scopes
    some cuts and not others, and a silent pass here, where every cut is
    milestoned
 3. Confirm nothing else is ready to merge, or decide which side of the
    tag it lands on. Run the release-ordering check in
-   `templates/base/core/git.md` — anything merged between the release
+   `templates/core/git.md` — anything merged between the release
    commit and the tag ships inside the release with no note naming it,
    and both pull requests stay green in either order
 4. Cut `CHANGELOG.md` — reconcile the `Unreleased` section against the
    commits the release carries with the changelog-completeness check in
-   `templates/base/core/git.md`, setting its `RELEASE` to the version
+   `templates/core/git.md`, setting its `RELEASE` to the version
    being cut. Left empty it reports that no release is in preparation and
    does not apply, which is correct on any ordinary day and a silent pass
    here. Choose the version from the section before naming it: a patch
    when every entry sits under `### Fixed` or `### Security`, a minor
-   otherwise, per `base/core/git.md` Versioning — the release-documentation
+   otherwise, per `core/git.md` Versioning — the release-documentation
    check fails a version that disagrees. A patch's milestone is retitled
    `vA.B.C — <theme>` before the gates run, or milestone-coverage reads
    the minor line's milestone instead. Then rename that section to
@@ -819,14 +821,14 @@ below exist to prevent. Run them here anyway.
    pull request, and it MUST merge before the tag below — a tag placed
    first names a tree whose changelog does not mention the release. That
    pull request's body is this repository's release proposal: it names
-   every step of `base/core/git.md`'s pre-release sequence and the result
+   every step of `core/git.md`'s pre-release sequence and the result
    it produced, including the checks that carry no step number here.
    It also records the STK-15 canary run live against the release commit:
    the report's tree, provider, model and verdict lines.
    The check's two counts are not required to match: a commit touching
    no template carries no entry, so a journal or tooling change is
    expected to appear in the carried list with nothing answering it
-5. Tag and push, per `base/core/git.md`'s no-build sequence — the tag
+5. Tag and push, per `core/git.md`'s no-build sequence — the tag
    is annotated and names a commit, and that commit is step 4's
    changelog cut, not `main`. The theme in the tag message is the
    milestone's, which is where this repository keeps it
@@ -863,16 +865,16 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run_smoke.py`, plus the milestone's own issue list |
-| 2 | the milestone-coverage check in `base/core/git.md` |
-| 3 | the release-ordering check in `base/core/git.md` |
-| 4 | the changelog-completeness check in `base/core/git.md`, and its release-documentation check, which fails a version whose bump disagrees with the section's headings. The canary record is enforced by nothing |
+| 2 | the milestone-coverage check in `core/git.md` |
+| 3 | the release-ordering check in `core/git.md` |
+| 4 | the changelog-completeness check in `core/git.md`, and its release-documentation check, which fails a version whose bump disagrees with the section's headings. The canary record is enforced by nothing |
 | 5 | `tag-guard.yml`, which fails a pushed lightweight `v*` tag |
 | 6 | step 9, and nothing before it |
 | 7 | nothing — an open milestone after a published release is silent |
 | 8 | nothing — a missing entry surfaces at the next wrap-up, or never. The entry itself is gated by the audit item that writes it |
 | 9 | nothing; it is the closing check, so it is the one to run by hand |
 
-The pre-release checks above the table are enforced by `base/core/git.md`
+The pre-release checks above the table are enforced by `core/git.md`
 rather than by a row here, which is why they carry no step number: a
 number would claim they are part of this sequence and drift from the one
 that owns them. What keeps them from being skipped is not a number but
@@ -889,4 +891,4 @@ reason.
 
 Projects with a version manifest (`package.json`, `pyproject.toml`,
 etc.) instead follow the branch → bump → PR → merge → tag flow; see
-ADR-006 and `base/core/git.md`.
+ADR-006 and `core/git.md`.

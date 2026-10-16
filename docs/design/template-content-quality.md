@@ -20,7 +20,7 @@ content stand out as relevant. Two structural properties give
 well-written templates an advantage:
 
 - **Distinct topics with clear boundaries.** A file titled
-  `base/core/git.md` containing only commit, branch, and PR rules
+  `core/git.md` containing only commit, branch, and PR rules
   is easier for the model to retrieve from than the same rules
   scattered between a changelog, a tool catalog, and a per-feature
   progress log. Headings and consistent file organization act as
@@ -44,8 +44,8 @@ Two patterns reliably cause attention loss, regardless of byte count.
 
 ### Redundancy across templates
 
-Concrete example: suppose `base/core/git.md`,
-`base/workflow/scope.md`, and `platform/github.md` each restate a
+Concrete example: suppose `core/git.md`,
+`workflow/scope.md`, and `platform/github.md` each restate a
 no-force-push rule in slightly different words — one says "never
 force-push," another says "do not rewrite shared history," the
 third says "MUST NOT use --force." The model now sees three signals
@@ -71,7 +71,7 @@ fire on this project.
 Twofold:
 
 - **One rule, one template.** The single-source-of-truth principle
-  from `base/core/docs.md` applies to templates themselves. When
+  from `core/docs.md` applies to templates themselves. When
   the same rule needs to surface in two contexts, reference rather
   than restate.
 - **Only load what applies.** A project's `[DEPENDS ON]` chain

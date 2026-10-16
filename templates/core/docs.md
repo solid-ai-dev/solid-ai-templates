@@ -834,7 +834,7 @@ rewritten in place as "Decision logs" allows.
 - Where a surviving copy is sensitive, state the finding to whoever owns the
   repository rather than widening the deletion unasked. What a repository
   publishes is that owner's decision
-- The concept-retirement sweep in `templates/base/core/quality.md` does not
+- The concept-retirement sweep in `templates/core/quality.md` does not
   cover this. That rule chases surviving instructions to APPLY a retired
   concept and explicitly settles for historical records; a record is exactly
   what carries the content here
@@ -1012,7 +1012,7 @@ reports the wrong thing entirely, at full confidence.
   that raised it — tidying the old list is the tempting move and the
   wrong one
 - When writing a new entry, follow the document-convention-matching
-  rule in `templates/base/workflow/ai-workflow.md` (Match document
+  rule in `templates/workflow/ai-workflow.md` (Match document
   convention section) — read prior entries and copy their skeleton
   exactly; the prior entry is the authoritative structural template
 - That rule governs an entry's SHAPE, never the file's ordering.

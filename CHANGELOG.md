@@ -21,6 +21,13 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
+### Breaking changes
+
+- The concern directories leave `templates/base/`: `templates/base/<concern>/`
+  is now `templates/<concern>/` for core, security, workflow, infra, data and
+  language. Template and section IDs are unchanged; update any path a
+  reference or hybrid file, or a vendored copy, names.
+
 ### Changed
 
 - The repository moved to the `solid-ai-dev` organisation. Generated files

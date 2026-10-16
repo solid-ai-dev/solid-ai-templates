@@ -1,7 +1,7 @@
 # Base — Quality Gates
 
 [ID: base-quality-gates]
-[DEPENDS ON: templates/base/core/quality.md, templates/base/core/git.md, templates/base/core/testing.md, templates/base/core/config.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/git.md, templates/core/testing.md, templates/core/config.md]
 
 Stack-agnostic quality gate model. Defines the layers, categories,
 thresholds, and constraints. Stack templates extend with concrete tools.
@@ -884,7 +884,7 @@ are separate things, and review usually looks only at the check:
 - A reviewer MUST NOT accept a green run as evidence that a scope change
   took effect
 
-`base/security/devsecops.md` and `platform/github.md` both require full
+`security/devsecops.md` and `platform/github.md` both require full
 history for the secret scan specifically. This is the general rule that
 the specific one is an instance of, and it holds regardless of which
 platform or security template a project resolves.

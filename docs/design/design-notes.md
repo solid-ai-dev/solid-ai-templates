@@ -384,7 +384,7 @@ platform.github
 over:
 
 ```text
-templates/base/core/testing.md
+templates/core/testing.md
 templates/stack/python-fastapi.md
 ```
 
@@ -839,14 +839,14 @@ Primary authoring principle:
 
 | Rank | Template | Approx. size | Quality | Main concern |
 |-----:|----------|-------------:|--------:|--------------|
-| 1 | `base/workflow/quality-gates.md` | 62 KB | 4/10 | Encyclopedic implementation mandates |
-| 2 | `base/core/docs.md` | 65 KB | 4.5/10 | Documentation governance became a handbook |
-| 3 | `base/core/git.md` | 53 KB | 5/10 | Git invariants mixed with incident procedures |
-| 4 | `base/core/quality.md` | 51 KB | 5.5/10 | Principles buried under special cases |
-| 5 | `base/core/testing.md` | 47 KB | 6/10 | One test philosophy over-generalized |
-| 6 | `base/workflow/ai-workflow.md` | 39 KB | 6/10 | Policy, tutorial, and methodology mixed |
-| 7 | `base/workflow/360.md` | 21 KB | 6.5/10 | Heavy default procedure |
-| 8 | `base/core/review.md` | 19 KB | 7/10 | Useful but oversized |
+| 1 | `workflow/quality-gates.md` | 62 KB | 4/10 | Encyclopedic implementation mandates |
+| 2 | `core/docs.md` | 65 KB | 4.5/10 | Documentation governance became a handbook |
+| 3 | `core/git.md` | 53 KB | 5/10 | Git invariants mixed with incident procedures |
+| 4 | `core/quality.md` | 51 KB | 5.5/10 | Principles buried under special cases |
+| 5 | `core/testing.md` | 47 KB | 6/10 | One test philosophy over-generalized |
+| 6 | `workflow/ai-workflow.md` | 39 KB | 6/10 | Policy, tutorial, and methodology mixed |
+| 7 | `workflow/360.md` | 21 KB | 6.5/10 | Heavy default procedure |
+| 8 | `core/review.md` | 19 KB | 7/10 | Useful but oversized |
 
 Smaller language, backend, platform, and stack-specific templates generally
 demonstrate healthier scope.
@@ -1387,12 +1387,12 @@ Only after core semantics stabilize:
 
 Prioritize high-reach files:
 
-1. `base/workflow/quality-gates.md`
-2. `base/core/docs.md`
-3. `base/core/git.md`
-4. `base/core/quality.md`
-5. `base/core/testing.md`
-6. `base/workflow/ai-workflow.md`
+1. `workflow/quality-gates.md`
+2. `core/docs.md`
+3. `core/git.md`
+4. `core/quality.md`
+5. `core/testing.md`
+6. `workflow/ai-workflow.md`
 
 For each file:
 
@@ -1770,8 +1770,8 @@ Repository sources:
 
 - `templates/manifest.yaml`
 - `templates/INTERVIEW.md`
-- `templates/base/workflow/360.md`
-- `templates/base/workflow/issues.md`
+- `templates/workflow/360.md`
+- `templates/workflow/issues.md`
 - `docs/SPEC.md`
 - `docs/PLAYBOOK.md`
 - `docs/audits/2026-09-01-360.md`

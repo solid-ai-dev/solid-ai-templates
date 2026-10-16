@@ -1,7 +1,7 @@
 # Frontend — Quality Attributes
 
 [ID: frontend-quality]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 ## Patterns
 

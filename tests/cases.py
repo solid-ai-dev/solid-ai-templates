@@ -6,7 +6,7 @@ Each test entry has these fields:
   spec        the spec file this test implements
   stack       stack template file fed to the agent
   answers     interview answers the agent receives
-  output_file output format template (defaults to templates/base/core/agents.md)
+  output_file output format template (defaults to templates/core/agents.md)
   extra_files additional template files to include in the prompt
   required    strings that MUST appear in the output
   forbidden   strings that MUST NOT appear in the output
@@ -419,7 +419,7 @@ FMT_TESTS = [
         "id": "FMT-01",
         "spec": "SAIT-E2E-FMT-01-001A",
         "stack": "templates/stack/python-fastapi.md",
-        "output_file": "templates/base/core/agents.md",
+        "output_file": "templates/core/agents.md",
         "answers": {
             "Project name": "OrderService",
             "Database": "PostgreSQL via SQLAlchemy 2",
@@ -440,7 +440,7 @@ FMT_TESTS = [
         "id": "FMT-02",
         "spec": "SAIT-E2E-FMT-02-001A",
         "stack": "templates/stack/python-fastapi.md",
-        "output_file": "templates/base/core/agents.md",
+        "output_file": "templates/core/agents.md",
         "answers": {
             "Project name": "OrderService",
             "Database": "PostgreSQL via SQLAlchemy 2",
@@ -515,7 +515,7 @@ DPL_TESTS = [
         "id": "DPL-01",
         "spec": "SAIT-E2E-DPL-01-001A",
         "stack": "templates/stack/node-express.md",
-        "extra_files": ["templates/base/infra/deployment.md"],
+        "extra_files": ["templates/infra/deployment.md"],
         "answers": {
             "Project name": "PublicAPIService",
             "Owner": "Platform team",
@@ -535,7 +535,7 @@ DPL_TESTS = [
         "id": "DPL-02",
         "spec": "SAIT-E2E-DPL-02-001A",
         "stack": "templates/stack/go-service.md",
-        "extra_files": ["templates/base/infra/deployment.md"],
+        "extra_files": ["templates/infra/deployment.md"],
         "answers": {
             "Project name": "InternalPlatformAPI",
             "Owner": "Platform team",
@@ -553,7 +553,7 @@ DPL_TESTS = [
         "id": "DPL-03",
         "spec": "SAIT-E2E-DPL-03-001A",
         "stack": "templates/stack/python-fastapi.md",
-        "extra_files": ["templates/base/infra/deployment.md"],
+        "extra_files": ["templates/infra/deployment.md"],
         "answers": {
             "Project name": "SecureIngestService",
             "Owner": "Platform team",

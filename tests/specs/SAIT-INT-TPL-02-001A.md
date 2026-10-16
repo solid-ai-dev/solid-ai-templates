@@ -40,27 +40,27 @@ tags: [composition, extend, inheritance]
 
 - Repository cloned locally
 - Claude Code or equivalent agent available
-- Test pair: `base/testing.md` (contains `[ID: base-testing]`) and
+- Test pair: `core/testing.md` (contains `[ID: base-testing]`) and
   `stack/python-flask.md` (contains `[EXTEND: base-testing]` in its Testing section)
 
 ### Setup
 
 1. Open Claude Code in the repository root
-2. Attach `base/testing.md` and `stack/python-flask.md`
+2. Attach `core/testing.md` and `stack/python-flask.md`
 
 ### Execution
 
 1. Ask the agent:
    ```
    Show me the assembled Testing section for a Flask project.
-   Include all rules from base/testing.md and all rules from the
+   Include all rules from core/testing.md and all rules from the
    EXTEND in stack/python-flask.md.
    ```
 2. Record the assembled output
 
 ### Assertions
 
-1. Assert all rules from `base/testing.md` `[ID: base-testing]` are present
+1. Assert all rules from `core/testing.md` `[ID: base-testing]` are present
 2. Assert all rules from `stack/python-flask.md` `[EXTEND: base-testing]`
    are present
 3. Assert base rules appear before extension rules

@@ -27,17 +27,20 @@ for _stream in (sys.stdout, sys.stderr):
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "templates" / "manifest.yaml"
-DOCS_TEMPLATE = ROOT / "templates" / "base" / "core" / "docs.md"
+DOCS_TEMPLATE = ROOT / "templates" / "core" / "docs.md"
 
 
 # ---- generators ----
 
+# The manifest's base: key holds the concern directories, each directly
+# under templates/; every other section names one directory.
+CONCERN_DIRS = ("core", "security", "workflow", "infra", "data", "language")
 SECTION_DIRS = {
-    "base": "base",
-    "platform": "platform",
-    "frontend": "frontend",
-    "backend": "backend",
-    "stacks": "stack",
+    "base": CONCERN_DIRS,
+    "platform": ("platform",),
+    "frontend": ("frontend",),
+    "backend": ("backend",),
+    "stacks": ("stack",),
 }
 
 
@@ -50,9 +53,9 @@ def _check_sections(manifest):
     # be told from a correct one by reading it, and regenerating reproduces
     # the same wrong tree, so --check stays green over it.
     misfiled = []
-    for section, dirname in SECTION_DIRS.items():
+    for section, dirnames in SECTION_DIRS.items():
         for e in manifest.get(section, []) or []:
-            if Path(e["file"]).parts[1:2] != (dirname,):
+            if Path(e["file"]).parts[1] not in dirnames:
                 misfiled.append(f"{e['id']} ({e['file']}) under '{section}:'")
     if misfiled:
         raise SystemExit(
@@ -73,55 +76,18 @@ def _tree(entries, dirname):
     return "\n".join(lines)
 
 
-def _base_tree(entries):
-    """Generate base/ tree with subfolder grouping."""
-    from collections import OrderedDict
-    groups = OrderedDict()
-    for e in entries:
-        # file: templates/base/<subfolder>/<name>.md
-        parts = Path(e["file"]).parts
-
-        # parts: ('templates', 'base', '<subfolder>', '<name>.md')
-        subfolder = parts[2] if len(parts) > 3 else ""
-        groups.setdefault(subfolder, []).append(e)
-
-    lines = ["base/"]
-    group_keys = list(groups.keys())
-    for gi, subfolder in enumerate(group_keys):
-        group = groups[subfolder]
-        is_last_group = gi == len(group_keys) - 1
-        if subfolder:
-            g_prefix = "└──" if is_last_group else "├──"
-            lines.append(f"{g_prefix} {subfolder}/")
-            for i, e in enumerate(group):
-                fname = Path(e["file"]).name
-                desc = e.get("description", "")
-                is_last = i == len(group) - 1
-                if is_last_group:
-                    c_prefix = "    └──" if is_last else "    ├──"
-                else:
-                    c_prefix = "│   └──" if is_last else "│   ├──"
-                pad = " " * max(1, 16 - len(fname))
-                lines.append(f"{c_prefix} {fname}{pad}# {desc}")
-        else:
-            for i, e in enumerate(group):
-                fname = Path(e["file"]).name
-                desc = e.get("description", "")
-                prefix = "└──" if is_last_group and i == len(group) - 1 else "├──"
-                pad = " " * max(1, 16 - len(fname))
-                lines.append(f"{prefix} {fname}{pad}# {desc}")
-    return "\n".join(lines)
-
-
 def _spec_sections(manifest):
     """Generate SPEC.md directory listings."""
     _check_sections(manifest)
     parts = []
 
-    # base gets special subfolder treatment
-    base_entries = manifest.get("base", [])
-    if base_entries:
-        parts.append("```\n" + _base_tree(base_entries) + "\n```")
+    # The base: key spans several concern directories, one listing each, in
+    # the order the manifest first names them.
+    groups = {}
+    for e in manifest.get("base", []) or []:
+        groups.setdefault(Path(e["file"]).parts[1], []).append(e)
+    for dirname, entries in groups.items():
+        parts.append("```\n" + _tree(entries, dirname) + "\n```")
     for section, dirname in [
         ("platform", "platform"),
         ("frontend", "frontend"),
@@ -177,9 +143,8 @@ def _readme_extras(core_ids, entries, stacks):
         entry = entries[root]
         parts = entry["file"].split("/")
 
-        # templates/platform/x.md and templates/backend/x.md name their kind
-        # in the second segment; templates/base/<kind>/x.md in the third.
-        kind = parts[2] if parts[1] == "base" else parts[1]
+        # Every template's kind is its directory: templates/<kind>/x.md.
+        kind = parts[1]
         lines.append("| `%s` | %s | %s |"
                      % (entry["file"], kind, entry.get("description", "")))
     return "\n".join(lines)
@@ -248,7 +213,7 @@ def _spec_core_tier(core_ids, entries):
         for directive in re.finditer(r"\[DEPENDS ON:([^\]]*)\]", body):
             for token in directive.group(1).split(","):
                 token = token.strip()
-                if not token or "base/core/" not in token:
+                if not token or "core/" not in token:
                     continue
                 if os.path.basename(token) in names:
                     tokens += 1

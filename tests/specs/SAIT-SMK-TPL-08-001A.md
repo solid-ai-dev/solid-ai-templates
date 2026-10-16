@@ -17,7 +17,8 @@ tags: [structure, id-tag, base, core]
 ## Short description
 
 > **Given** the repository is cloned and all template files are present
-> **When** every `.md` file in `templates/base/` subdirectories is checked
+> **When** every `.md` file in the concern directories is checked: `core/`,
+> `security/`, `workflow/`, `infra/`, `data/` and `language/` under `templates/`
 > **Then** each file contains at least one `[ID: ...]` tag
 
 ## Results
@@ -43,7 +44,7 @@ tags: [structure, id-tag, base, core]
 
 ### Execution
 
-1. Collect all `.md` files from `templates/base/` subdirectories
+1. Collect all `.md` files from the concern directories
    (core, security, infra, workflow, language, data)
 2. Search each file for `[ID: ...]` pattern
 

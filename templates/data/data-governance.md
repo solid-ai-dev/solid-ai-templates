@@ -1,6 +1,6 @@
 # Base — Data Governance
 [ID: base-data-governance]
-[DEPENDS ON: templates/base/data/data-modeling.md]
+[DEPENDS ON: templates/data/data-modeling.md]
 
 Rules for data classification, retention, privacy, and ownership.
 Applies to any project that stores or processes user data, business

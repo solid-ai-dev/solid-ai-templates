@@ -42,7 +42,7 @@ tags: [e2e, output, astro, static-site]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/static-site-astro.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/static-site-astro.md`, `core/agents.md`
 3. Interview answers:
    - Project name: TechBlog
    - Language: TypeScript

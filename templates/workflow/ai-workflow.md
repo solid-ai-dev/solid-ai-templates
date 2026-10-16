@@ -201,7 +201,7 @@ CLAUDE.md or memory. Evaluate in priority order:
    a developer reads while editing the relevant code
 2. **ADR** — a choice a user of the thing can observe without reading the
    repository's internals, per the decision threshold in
-   `templates/base/core/docs.md`; everything else stays in the issue/PR
+   `templates/core/docs.md`; everything else stays in the issue/PR
    and current docs
 3. **README** (project or package) — discoverable user-facing setup,
    usage, or capability

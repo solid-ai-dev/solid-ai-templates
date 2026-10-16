@@ -13,9 +13,9 @@
 ## Priority order
 
 Apply the following order when reviewing, from most to least critical.
-Use `templates/base/core/quality.md` (and any language-specific quality template
+Use `templates/core/quality.md` (and any language-specific quality template
 such as
-`templates/base/language/typescript.md`) as the standard for items 2–4.
+`templates/language/typescript.md`) as the standard for items 2–4.
 
 1. **Security exposure** — anything that could be exploited, any credential
    or license problem
@@ -108,17 +108,17 @@ completeness. Run a structure audit after:
 
 Verify every MUST from:
 
-- `templates/base/core/docs.md` — standard documents (README, ONBOARDING,
+- `templates/core/docs.md` — standard documents (README, ONBOARDING,
   PLAYBOOK, ADRs)
-- `templates/base/core/readme.md` — README has all 9 required sections
-- `templates/base/core/git.md` — .gitignore, README exist
+- `templates/core/readme.md` — README has all 9 required sections
+- `templates/core/git.md` — .gitignore, README exist
 - The relevant frontend or backend layer template — required assets,
   config files, SEO files
 - The relevant stack template — framework-specific files and conventions
 
 When a section contains multiple MUST sub-clauses, verify each sub-clause
 independently — do not pass the section as a whole. For example,
-`templates/base/core/readme.md` Usage requires both usage examples AND expected
+`templates/core/readme.md` Usage requires both usage examples AND expected
 output
 per example — these are two separate checks.
 

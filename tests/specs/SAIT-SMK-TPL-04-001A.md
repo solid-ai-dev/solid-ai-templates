@@ -48,12 +48,12 @@ tags: [structure, extend, override, ids]
 
 1. Collect all declared IDs:
    ```bash
-   grep -rh "\[ID:" base/ backend/ frontend/ stack/ | \
+   grep -rh "\[ID:" core/ security/ workflow/ infra/ data/ language/ backend/ frontend/ stack/ | \
      grep -oP '(?<=\[ID: )[^\]]+' | sort > /tmp/declared_ids.txt
    ```
 2. Collect all EXTEND and OVERRIDE references:
    ```bash
-   grep -rh "\[EXTEND:\|\[OVERRIDE:" base/ backend/ frontend/ stack/ | \
+   grep -rh "\[EXTEND:\|\[OVERRIDE:" core/ security/ workflow/ infra/ data/ language/ backend/ frontend/ stack/ | \
      grep -oP '(?<=\[(EXTEND|OVERRIDE): )[^\]]+' | sort > /tmp/ref_ids.txt
    ```
 3. Find references with no matching declaration:

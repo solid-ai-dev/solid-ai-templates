@@ -1,6 +1,6 @@
 # Base — Go
 [ID: base-go]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 Per-language tool selection for Go. `base-quality-gates` states which
 categories a project MUST gate and at which layer; this file names the Go

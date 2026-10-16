@@ -1,6 +1,6 @@
 # Backend — Edge / Reverse Proxy
 [ID: backend-edge]
-[DEPENDS ON: templates/backend/http.md, templates/base/security/security.md, templates/backend/observability.md]
+[DEPENDS ON: templates/backend/http.md, templates/security/security.md, templates/backend/observability.md]
 
 Rules for the edge tier — the reverse proxy, load balancer, or gateway
 that sits in front of the application (nginx, Envoy, Caddy, HAProxy, a

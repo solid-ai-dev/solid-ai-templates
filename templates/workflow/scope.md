@@ -14,11 +14,11 @@ finished.
 Before starting any work, the agent MUST:
 
 1. Read all documents referenced in the project's CLAUDE.md (e.g.
-   `docs/solid-ai-templates/templates/base/core/git.md`,
-   `templates/base/core/docs.md`, etc.)
+   `docs/solid-ai-templates/templates/core/git.md`,
+   `templates/core/docs.md`, etc.)
 2. Apply the project's adopted conventions. Reading or updating a template
    does not adopt its new rules; follow "Adopting shared rules" in
-   `templates/base/core/docs.md`
+   `templates/core/docs.md`
 3. Check which branch you are on — if not `main`, ask why before
    proceeding
 4. Check `git status` and preserve existing work. Continue independent work
@@ -86,7 +86,7 @@ The startup block MUST:
 - State the consequence: "If you respond without reading them, you are
   violating project rules"
 
-This requirement exists because `templates/base/workflow/scope.md` says "read
+This requirement exists because `templates/workflow/scope.md` says "read
 all documents
 referenced in CLAUDE.md" — but `scope.md` is one of the files that needs
 to be read first. The startup block breaks this chicken-and-egg problem
@@ -189,7 +189,7 @@ summarize — visible sequential execution prevents missed steps.
    what is done (verify auto-close worked)
 3. **Epic checklists** — update epic checklists if relevant
 4. **ADRs** — apply the decision threshold in
-   `templates/base/core/docs.md`: a record is owed when the decision
+   `templates/core/docs.md`: a record is owed when the decision
    changes what a user of the thing observes without reading the
    repository's internals. Prose style, tool choice, release procedure,
    naming and file layout need none; one coherent architectural choice

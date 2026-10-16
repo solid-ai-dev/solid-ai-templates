@@ -1,5 +1,5 @@
 # Stack -- Embedded C
-[DEPENDS ON: templates/base/core/git.md, templates/base/core/docs.md, templates/base/core/quality.md, templates/base/core/testing.md, templates/base/language/c.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/core/testing.md, templates/language/c.md]
 
 Conventions for bare-metal embedded C projects. Covers toolchain, project
 structure, static analysis, unit testing with Unity, and distribution as

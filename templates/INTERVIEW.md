@@ -85,14 +85,14 @@ content, taking `<stack-id>` from the table's Stack id column.
 Otherwise, read the pre-resolved file from `generated/<stack-id>.md`.
 Apply any adjustments from Phase 3.
 Generate the output file using the format rules in
-`templates/base/core/agents.md`.
+`templates/core/agents.md`.
 All rules are inlined — the output file is self-contained.
 The user should review and adjust the output before adopting it.
 End the file with: `<!-- Generated with solid-ai-templates
 (github.com/solid-ai-dev/solid-ai-templates) -->`
 
 Also generate `docs/ONBOARDING.md` and `docs/PLAYBOOK.md` following the
-required structures in `templates/base/core/docs.md`.
+required structures in `templates/core/docs.md`.
 
 ### Reference model
 
@@ -115,13 +115,13 @@ git submodule add https://github.com/solid-ai-dev/solid-ai-templates.git docs/so
 ```
 
 Also generate `docs/ONBOARDING.md` and `docs/PLAYBOOK.md` following the
-required structures in `templates/base/core/docs.md`.
+required structures in `templates/core/docs.md`.
 
 ### Hybrid model
 
 Generate an agent file that inlines critical rules and references the
 templates for the rest. Follow the hybrid model structure in
-`templates/base/core/agents.md`. The output file:
+`templates/core/agents.md`. The output file:
 
 1. Points to `docs/solid-ai-templates/` as a submodule
 2. Lists ALL template files in the dependency chain
@@ -142,7 +142,7 @@ git submodule add https://github.com/solid-ai-dev/solid-ai-templates.git docs/so
 ```
 
 Also generate `docs/ONBOARDING.md` and `docs/PLAYBOOK.md` following the
-required structures in `templates/base/core/docs.md`.
+required structures in `templates/core/docs.md`.
 
 <!-- generated:interview-stacks -->
 | If the project is... | Use... | Stack id | What it covers |

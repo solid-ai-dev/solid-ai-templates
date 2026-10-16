@@ -63,14 +63,14 @@ These apply to all three models; the review process checks them.
   progress logs. Keep the qualifier or scope a rule needs to be
   followed; never compress away a load-bearing clause. Optimize for
   clarity, not bytes (see `docs/design/agent-context-tradeoffs.md` and
-  `templates/base/workflow/compression.md`).
+  `templates/workflow/compression.md`).
 - **Concise rules.** Keep necessary scope and qualifiers. Length alone does
   not warrant an ADR; apply the decision threshold in
-  `templates/base/core/docs.md` and place explanations in their relevant docs.
+  `templates/core/docs.md` and place explanations in their relevant docs.
 - **Single source of truth.** Never restate a rule that is
   authoritative in a skill, ADR, README, or template — point to it.
   Duplicated rules drift, and the agent gets no signal which copy
-  wins (see `templates/base/core/docs.md`).
+  wins (see `templates/core/docs.md`).
 - **State precedence when authorities compete.** When a project has
   more than one rule source (ADRs, skills, vendored templates), state
   the override order near the top: who wins when they differ.
@@ -133,7 +133,7 @@ of truth)]
 
 ## 2. Code conventions
 ### 2.1 Git
-[templates/base/core/git.md + any stack EXTEND/OVERRIDE]
+[templates/core/git.md + any stack EXTEND/OVERRIDE]
 ### 2.2 [Language]
 [Language-specific conventions from stack template]
 ### 2.3 [Additional code sections as needed]
@@ -153,18 +153,18 @@ of truth)]
 
 ## 5. Review process
 ### 5.1 Code review
-[templates/base/core/review.md priority order + checklists to apply]
+[templates/core/review.md priority order + checklists to apply]
 ### 5.2 Structure audit
 [Which templates to verify, when to run]
 
 ## 6. Session protocol
-Follow `templates/base/workflow/scope.md` for scope guard and end-of-session audit.
+Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
 ### 6.1 Start of session
-[templates/base/workflow/scope.md — Session startup + Mandatory startup block]
+[templates/workflow/scope.md — Session startup + Mandatory startup block]
 ### 6.2 During the session
-[templates/base/workflow/scope.md — During work]
+[templates/workflow/scope.md — During work]
 ### 6.3 End of session
-[templates/base/workflow/scope.md — End of session audit. Render this
+[templates/workflow/scope.md — End of session audit. Render this
 ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
 with an imperative — "Read scope.md (End of session audit) and execute
 each item sequentially; do not summarize or skip." NEVER paraphrase the
@@ -230,21 +230,21 @@ Omit anything already covered by the referenced templates.]
 
 ## 5. Review process
 ### 5.1 Code review
-Follow templates/base/core/review.md priority order, apply templates/base/core/quality.md and
+Follow templates/core/review.md priority order, apply templates/core/quality.md and
 language-specific templates as the standard.
 ### 5.2 Structure audit
-Verify MUSTs from templates/base/core/docs.md, templates/base/core/readme.md, templates/base/core/git.md, and
+Verify MUSTs from templates/core/docs.md, templates/core/readme.md, templates/core/git.md, and
 relevant layer/stack templates. Run after: new project, migration,
 new layer, or pre-release.
 
 ## 6. Session protocol
-Follow `templates/base/workflow/scope.md` for scope guard and end-of-session audit.
+Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
 ### 6.1 Start of session
-[templates/base/workflow/scope.md — Session startup + Mandatory startup block]
+[templates/workflow/scope.md — Session startup + Mandatory startup block]
 ### 6.2 During the session
-[templates/base/workflow/scope.md — During work]
+[templates/workflow/scope.md — During work]
 ### 6.3 End of session
-[templates/base/workflow/scope.md — End of session audit. Render this
+[templates/workflow/scope.md — End of session audit. Render this
 ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
 with an imperative — "Read scope.md (End of session audit) and execute
 each item sequentially; do not summarize or skip." NEVER paraphrase the
@@ -315,7 +315,7 @@ of truth)]
 
 ## 2. Code conventions
 ### 2.1 Git
-[INLINED — templates/base/core/git.md + project-specific overrides]
+[INLINED — templates/core/git.md + project-specific overrides]
 ### 2.2 [Language]
 [INLINED — safety rules, naming, strictness]
 ### 2.3 [Additional project-specific sections]
@@ -332,17 +332,17 @@ Inline only project-specific targets or deviations.]
 [Interview BRAND answers, if applicable]
 
 ## 5. Review process
-Follow templates/base/core/review.md priority order, apply templates/base/core/quality.md and
+Follow templates/core/review.md priority order, apply templates/core/quality.md and
 language-specific templates as the standard.
 
 ## 6. Session protocol
-Follow `templates/base/workflow/scope.md` for scope guard and end-of-session audit.
+Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
 ### 6.1 Start of session
-[templates/base/workflow/scope.md — Session startup + Mandatory startup block]
+[templates/workflow/scope.md — Session startup + Mandatory startup block]
 ### 6.2 During the session
-[templates/base/workflow/scope.md — During work]
+[templates/workflow/scope.md — During work]
 ### 6.3 End of session
-[templates/base/workflow/scope.md — End of session audit. Render this
+[templates/workflow/scope.md — End of session audit. Render this
 ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
 with an imperative — "Read scope.md (End of session audit) and execute
 each item sequentially; do not summarize or skip." NEVER paraphrase the
@@ -358,7 +358,7 @@ Inline the project's adoption boundary in reference and hybrid output:
 existing adopted rules remain effective, but reading a new upstream rule or
 bumping the pin does not adopt it. Select new conventions for a named local
 need or material risk; declining one needs no ADR or ticket. See
-`templates/base/core/docs.md` (Adopting shared rules). This boundary takes
+`templates/core/docs.md` (Adopting shared rules). This boundary takes
 precedence over inherited instructions to apply every newly discovered rule.
 
 The reference and hybrid models both vendor this repository as a
@@ -451,10 +451,10 @@ extend the root.
 
 All three models MUST also generate:
 - `docs/ONBOARDING.md` — following the structure in
-  `templates/base/core/docs.md`
-- `docs/PLAYBOOK.md` — following the structure in `templates/base/core/docs.md`
+  `templates/core/docs.md`
+- `docs/PLAYBOOK.md` — following the structure in `templates/core/docs.md`
 - `docs/dev-journal.md` — following the structure in
-  `templates/base/core/docs.md`
+  `templates/core/docs.md`
 
 ---
 

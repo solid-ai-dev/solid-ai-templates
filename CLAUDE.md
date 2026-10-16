@@ -20,7 +20,12 @@ project type.
 
 ```
 templates/          # All template source files
-  base/             # Cross-cutting rules (core, security, infra, workflow, language)
+  core/             # Cross-cutting foundation (git, docs, quality, testing, ...)
+  security/         # Security rules
+  workflow/         # Session protocol, issues, gates
+  infra/            # CI/CD, containers, deployment
+  data/             # Data modeling, quality, governance, migration
+  language/         # Language-specific rules
   backend/          # Backend layer — HTTP, API, database, observability
   frontend/         # Frontend layer — UX, accessibility, CSS, SSG
   platform/         # CI and security tool mappings per hosting platform
@@ -147,9 +152,11 @@ Stacks without a variant use a bare name (e.g. `htmx.md`).
 ### 2.4 Inheritance model
 
 ```
-base/ ──┬── frontend/ ──┐
-        ├── backend/  ──┼── stack/
-        └── platform/ ──┘
+concerns ──┬── frontend/ ──┐
+           ├── backend/  ──┼── stack/
+           └── platform/ ──┘
+
+concerns = core/, security/, workflow/, infra/, data/, language/
 ```
 
 - Every stack declares `[DEPENDS ON: ...]` at the top
@@ -180,12 +187,12 @@ base/ ──┬── frontend/ ──┐
 ### 2.6 Adding a new base or layer template
 
 1. Create the file in the correct directory:
-   - `templates/base/core/` — foundation (git, docs, quality, etc.)
-   - `templates/base/security/` — security rules
-   - `templates/base/infra/` — CI/CD, containers, deployment
-   - `templates/base/workflow/` — session protocol, issues, gates
-   - `templates/base/language/` — language-specific rules
-   - `templates/base/data/` — data modeling, quality, governance, migration
+   - `templates/core/` — foundation (git, docs, quality, etc.)
+   - `templates/security/` — security rules
+   - `templates/infra/` — CI/CD, containers, deployment
+   - `templates/workflow/` — session protocol, issues, gates
+   - `templates/language/` — language-specific rules
+   - `templates/data/` — data modeling, quality, governance, migration
    - `templates/backend/` — backend services
    - `templates/frontend/` — frontend/UI projects
    - `templates/platform/` — CI platform mappings
@@ -288,7 +295,7 @@ base/ ──┬── frontend/ ──┐
 
 #### Decision logs
 
-- Apply the ADR threshold in `templates/base/core/docs.md`: a record is
+- Apply the ADR threshold in `templates/core/docs.md`: a record is
   owed when a decision changes something a consuming project can observe
   without reading this repository — the composition model. Prose style,
   tooling, release procedure, naming and file layout do not, however
@@ -530,7 +537,7 @@ summarize — visible sequential execution prevents missed steps.
    checks pass
 6. **CLAUDE.md** — for each new convention/rule, apply the
    doc-placement decision tree in
-   `templates/base/workflow/ai-workflow.md` (Doc placement decision
+   `templates/workflow/ai-workflow.md` (Doc placement decision
    tree section): evaluate code → ADR → README → PLAYBOOK →
    CLAUDE.md → memory in order. CLAUDE.md is the home ONLY if the
    agent MUST apply the rule on every turn.

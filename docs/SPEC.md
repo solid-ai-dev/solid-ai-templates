@@ -48,47 +48,61 @@ Generated from `templates/manifest.yaml` — run `py tools/sync.py` to refresh.
 
 <!-- generated:spec-directories -->
 ```
-base/
-├── core/
-│   ├── git.md          # Committer identity, commits, branching, PR workflow, versioning
-│   ├── docs.md         # Rule language, documentation standards, ADR, diagrams, docs-as-code
-│   ├── quality.md      # Architecture, code style, calibration, tool trust, testing
-│   ├── review.md       # Peer review priority, MUST/SHOULD checklists, deviation rules
-│   ├── testing.md      # Test pyramid, coverage thresholds, naming conventions
-│   ├── agents.md       # Output structure, models (inline/reference/hybrid), formatting rules
-│   ├── skills.md       # Skill authoring — when to write one, frontmatter, triggering, structure, scripts
-│   ├── readme.md       # README structure, badges, quick start, contribution guide
-│   ├── config.md       # Env vars, secrets, fail-fast validation
-│   ├── cli.md          # Entry-point architecture - thin main(argv), shared plumbing, durable output
-│   ├── examples.md     # Examples directory — contents, index, offline rule, smoke job
-│   └── oop.md          # SOLID, OOP, GoF design patterns, AOP guidance
-├── security/
-│   ├── devsecops.md    # SAST, SCA, SBOM, secret detection, license compliance
-│   └── security.md     # Application security rules — input, output, injection, auth, sessions, TLS, headers
-├── workflow/
-│   ├── release.md      # Semver, version bump propagation, backward compat, cut-over
-│   ├── issues.md       # Issue templates — epic, task, bug, incident, spike
-│   ├── scope.md        # Scope guard, session protocol, drift prevention
-│   ├── compression.md  # Re-verifying summaries, tables and rollups derived from verified research
-│   ├── quality-gates.md # Three-layer gate model (editor, pre-commit, CI), thresholds
-│   ├── ai-workflow.md  # AI-assisted development lifecycle, work item hierarchy
-│   ├── 360.md          # 360-degree project analysis — four stakeholder perspectives, grading
-│   ├── communication.md # Communication preferences — concise output, shorthand verbs, scope-asking
-│   └── two-pass-review.md # Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue
-├── infra/
-│   ├── cicd.md         # Pipeline stages, triggers, environments, IaC, deployment
-│   ├── containers.md   # Dockerfile, runtime security, resource limits, Kubernetes
-│   └── deployment.md   # Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
-├── language/
-│   ├── go.md           # Per-language tool selection for Go - lint, vet, complexity, tests
-│   ├── python.md       # Per-language tool selection for Python - lint, types, complexity, tests
-│   ├── typescript.md   # Type design, naming, strictness — applies to all TypeScript projects
-│   └── c.md            # Per-language tool selection for C - clang-tidy, clang-format, cppcheck, ctest
-└── data/
-    ├── data-quality.md # Data sourcing, completeness, freshness, research, scoring — data-heavy projects
-    ├── data-modeling.md # Schema design, naming, normalization, relationships, data types
-    ├── data-governance.md # Classification, PII handling, retention, ownership, audit trail
-    └── data-migration.md # Versioned migrations, zero-downtime, rollback strategies
+core/
+├── git.md          # Committer identity, commits, branching, PR workflow, versioning
+├── docs.md         # Rule language, documentation standards, ADR, diagrams, docs-as-code
+├── quality.md      # Architecture, code style, calibration, tool trust, testing
+├── review.md       # Peer review priority, MUST/SHOULD checklists, deviation rules
+├── testing.md      # Test pyramid, coverage thresholds, naming conventions
+├── agents.md       # Output structure, models (inline/reference/hybrid), formatting rules
+├── skills.md       # Skill authoring — when to write one, frontmatter, triggering, structure, scripts
+├── readme.md       # README structure, badges, quick start, contribution guide
+├── config.md       # Env vars, secrets, fail-fast validation
+├── cli.md          # Entry-point architecture - thin main(argv), shared plumbing, durable output
+├── examples.md     # Examples directory — contents, index, offline rule, smoke job
+└── oop.md          # SOLID, OOP, GoF design patterns, AOP guidance
+```
+
+```
+security/
+├── devsecops.md    # SAST, SCA, SBOM, secret detection, license compliance
+└── security.md     # Application security rules — input, output, injection, auth, sessions, TLS, headers
+```
+
+```
+workflow/
+├── release.md      # Semver, version bump propagation, backward compat, cut-over
+├── issues.md       # Issue templates — epic, task, bug, incident, spike
+├── scope.md        # Scope guard, session protocol, drift prevention
+├── compression.md  # Re-verifying summaries, tables and rollups derived from verified research
+├── quality-gates.md # Three-layer gate model (editor, pre-commit, CI), thresholds
+├── ai-workflow.md  # AI-assisted development lifecycle, work item hierarchy
+├── 360.md          # 360-degree project analysis — four stakeholder perspectives, grading
+├── communication.md # Communication preferences — concise output, shorthand verbs, scope-asking
+└── two-pass-review.md # Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue
+```
+
+```
+infra/
+├── cicd.md         # Pipeline stages, triggers, environments, IaC, deployment
+├── containers.md   # Dockerfile, runtime security, resource limits, Kubernetes
+└── deployment.md   # Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
+```
+
+```
+language/
+├── go.md           # Per-language tool selection for Go - lint, vet, complexity, tests
+├── python.md       # Per-language tool selection for Python - lint, types, complexity, tests
+├── typescript.md   # Type design, naming, strictness — applies to all TypeScript projects
+└── c.md            # Per-language tool selection for C - clang-tidy, clang-format, cppcheck, ctest
+```
+
+```
+data/
+├── data-quality.md # Data sourcing, completeness, freshness, research, scoring — data-heavy projects
+├── data-modeling.md # Schema design, naming, normalization, relationships, data types
+├── data-governance.md # Classification, PII handling, retention, ownership, audit trail
+└── data-migration.md # Versioned migrations, zero-downtime, rollback strategies
 ```
 
 ```
@@ -153,14 +167,14 @@ stack/
 
 Rendering rules for the generated output. Describes structure, model
 selection (inline/reference/hybrid), and formatting constraints.
-Lives in `templates/base/core/agents.md` alongside the other core
+Lives in `templates/core/agents.md` alongside the other core
 templates.
 
 ### 7. Interview template (orchestrator)
 
 A single file any agent uses to ask the user the required questions before
 generating the output context file. Questions are grouped by concern and
-reference the relevant base/stack templates.
+reference the relevant concern and stack templates.
 
 ```
 INTERVIEW.md
@@ -184,9 +198,9 @@ Interop: `AGENTS.md` is read by Claude Code as a fallback when no
 ## Inheritance model
 
 ```
-templates/base/core/git.md ────────────────────────────────────────────┐
-templates/base/core/docs.md ───────────────────────────────────────────┤
-templates/base/core/quality.md ────────────────────────────────────────┤
+templates/core/git.md ────────────────────────────────────────────┐
+templates/core/docs.md ───────────────────────────────────────────┤
+templates/core/quality.md ────────────────────────────────────────┤
                                                         ▼
 frontend/ux.md ─────────────────────────────► frontend/static-site.md
 frontend/quality.md ────────────────────────►          │
@@ -195,7 +209,7 @@ frontend/quality.md ────────────────────
                                                         │
                                              + templates/INTERVIEW.md answers
                                                         │
-                                             + templates/base/core/agents.md rules
+                                             + templates/core/agents.md rules
                                                         │
                                                         ▼
                                                    CLAUDE.md
@@ -222,13 +236,13 @@ The core-tier base templates apply to every project. They are declared in
 resolution — stacks do not need to list them in `depends_on`:
 
 <!-- generated:spec-core-tier -->
-- `templates/base/core/quality.md`
-- `templates/base/core/git.md`
-- `templates/base/core/docs.md`
-- `templates/base/core/readme.md`
-- `templates/base/core/testing.md`
-- `templates/base/core/review.md`
-- `templates/base/core/oop.md`
+- `templates/core/quality.md`
+- `templates/core/git.md`
+- `templates/core/docs.md`
+- `templates/core/readme.md`
+- `templates/core/testing.md`
+- `templates/core/review.md`
+- `templates/core/oop.md`
 
 Measured: 45 `[DEPENDS ON]` tokens across 20 templates name one of these
 files, and 20 manifest entries name a core id in `depends_on`. Declaring one
@@ -358,7 +372,7 @@ Resolution selects source files; project adoption selects operative rules.
 The dependency graph and section overrides remain deterministic discovery
 mechanisms. A consumer update does not automatically adopt new rules or create
 compliance work. Apply "Adopting shared rules" in
-`templates/base/core/docs.md`, and inline that boundary in reference/hybrid
+`templates/core/docs.md`, and inline that boundary in reference/hybrid
 context files. Existing adopted rules remain effective until deliberately changed.
 
 Each base template section is tagged with a unique ID:
@@ -455,7 +469,7 @@ applies — higher numbers win:
 3. **Stack template** — overrides or extends the layer or base
 4. **Interview answers** — the highest precedence; always win over any template
 
-Example: `templates/base/core/testing.md` defines the test naming convention.
+Example: `templates/core/testing.md` defines the test naming convention.
 `templates/stack/python-fastapi.md`
 extends it with a Python-specific pattern. The interview answer "use BDD-style
 names" overrides both. The final output uses the interview answer.
@@ -600,7 +614,7 @@ Output: ordered list of template files to load.
 5. Return the ordered file list
 ```
 
-`templates/base/core/agents.md` is not appended. It governs how the output
+`templates/core/agents.md` is not appended. It governs how the output
 is written — structure, model selection, formatting — so it is an input to
 generation, applied by whoever produces the file, not a rule file the chain
 loads. The diagram above shows it in that position. A project that wants its
@@ -619,20 +633,20 @@ py tools/resolve.py stack-astro
 ```
 
 ```
-templates/base/core/quality.md
-templates/base/core/git.md
-templates/base/core/docs.md
-templates/base/core/readme.md
-templates/base/core/testing.md
-templates/base/core/review.md
-templates/base/core/oop.md
-templates/base/security/security.md
+templates/core/quality.md
+templates/core/git.md
+templates/core/docs.md
+templates/core/readme.md
+templates/core/testing.md
+templates/core/review.md
+templates/core/oop.md
+templates/security/security.md
 templates/frontend/ux.md
 templates/frontend/quality.md
 templates/frontend/static-site.md
-templates/base/language/typescript.md
-templates/base/core/config.md
-templates/base/workflow/quality-gates.md
+templates/language/typescript.md
+templates/core/config.md
+templates/workflow/quality-gates.md
 templates/stack/static-site-astro.md
 ```
 
@@ -643,30 +657,30 @@ py tools/resolve.py stack-flask
 ```
 
 ```
-templates/base/core/quality.md
-templates/base/core/git.md
-templates/base/core/docs.md
-templates/base/core/readme.md
-templates/base/core/testing.md
-templates/base/core/review.md
-templates/base/core/oop.md
-templates/base/core/config.md
+templates/core/quality.md
+templates/core/git.md
+templates/core/docs.md
+templates/core/readme.md
+templates/core/testing.md
+templates/core/review.md
+templates/core/oop.md
+templates/core/config.md
 templates/backend/http.md
 templates/backend/database.md
 templates/backend/observability.md
-templates/base/security/security.md
-templates/base/infra/containers.md
+templates/security/security.md
+templates/infra/containers.md
 templates/backend/quality.md
 templates/backend/features.md
 templates/backend/messaging.md
-templates/base/infra/cicd.md
-templates/base/security/devsecops.md
-templates/base/data/data-modeling.md
-templates/base/data/data-quality.md
-templates/base/language/python.md
-templates/base/core/cli.md
-templates/base/workflow/quality-gates.md
-templates/base/core/examples.md
+templates/infra/cicd.md
+templates/security/devsecops.md
+templates/data/data-modeling.md
+templates/data/data-quality.md
+templates/language/python.md
+templates/core/cli.md
+templates/workflow/quality-gates.md
+templates/core/examples.md
 templates/stack/python-lib.md
 templates/stack/python-service.md
 templates/stack/python-flask.md
@@ -678,12 +692,12 @@ templates/stack/python-flask.md
 ## File naming conventions
 
 ```
-templates/base/[concern].md               # cross-cutting — applies to all projects
+templates/[concern]/[name].md             # cross-cutting — core, security, workflow, infra, data, language
 templates/frontend/[concern].md           # frontend layer — UI projects only
 templates/backend/[concern].md            # backend layer — services and APIs only
 templates/stack/[framework].md            # concrete — extends base + frontend or backend
 templates/stack/[framework]-[variant].md  # variant of a framework (e.g. astro-ssr.md)
-templates/base/core/agents.md    # output format — structure, models, formatting rules
+templates/core/agents.md    # output format — structure, models, formatting rules
 templates/INTERVIEW.md           # orchestrator — always one file
 docs/SPEC.md                     # this file
 ```

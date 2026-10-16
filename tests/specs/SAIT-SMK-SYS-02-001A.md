@@ -29,7 +29,7 @@ tags: [structure, ids, uniqueness]
 
 | Result | Condition |
 |--------|-----------|
-| PASSED | Every sole-line `[ID: ...]` declaration is unique across all files in `base/`, `backend/`, `frontend/`, and `stack/` |
+| PASSED | Every sole-line `[ID: ...]` declaration is unique across all files in the concern directories, `backend/`, `frontend/`, and `stack/` |
 | FAILED | Two or more templates declare the same `[ID: ...]` value on a sole line |
 | SKIPPED | Repository cannot be cloned or accessed |
 | BLOCKED | — |
@@ -53,12 +53,12 @@ tags: [structure, ids, uniqueness]
    leaves only the `[ID: ...]` tag:
    ```bash
    grep -rhE "^[[:space:]]*\[ID:[^]]+\][[:space:]]*$" \
-     base/ backend/ frontend/ stack/ | sort
+     core/ security/ workflow/ infra/ data/ language/ backend/ frontend/ stack/ | sort
    ```
 2. Identify duplicates:
    ```bash
    grep -rhE "^[[:space:]]*\[ID:[^]]+\][[:space:]]*$" \
-     base/ backend/ frontend/ stack/ | sort | uniq -d
+     core/ security/ workflow/ infra/ data/ language/ backend/ frontend/ stack/ | sort | uniq -d
    ```
 
 Inline references to existing IDs in prose (e.g. "see the

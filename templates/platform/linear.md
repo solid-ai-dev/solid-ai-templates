@@ -1,7 +1,7 @@
 # Platform — Linear
 
 [ID: platform-linear]
-[DEPENDS ON: templates/base/workflow/issues.md]
+[DEPENDS ON: templates/workflow/issues.md]
 
 Linear-specific issue tracking. Implements the base issue taxonomy in
 Linear-native primitives — label groups, the priority field, workflow

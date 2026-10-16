@@ -162,7 +162,7 @@ Trim CLAUDE.md when:
   consolidate to a single home
 
 The wrap-up doc-placement decision tree (see
-`templates/base/workflow/ai-workflow.md` Doc placement decision tree
+`templates/workflow/ai-workflow.md` Doc placement decision tree
 section) is the operational gate.
 
 ### When NOT to trim
@@ -211,8 +211,8 @@ measurement when the question gets quantitative.
 
 Related work:
 
-- `templates/base/workflow/ai-workflow.md` Doc placement decision tree
+- `templates/workflow/ai-workflow.md` Doc placement decision tree
   — the routing logic this document references
-- `templates/base/workflow/scope.md` end-of-session step 6 — the
+- `templates/workflow/scope.md` end-of-session step 6 — the
   operational gate that applies the decision tree
 - Issues #354 and #355 — the rules above were codified in those PRs
