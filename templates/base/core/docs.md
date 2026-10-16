@@ -270,7 +270,87 @@ wrong before changing either.
   end in the pull request and the current docs, however consequential or
   durable they are. No separate justification for declining a record is
   required.
-- Each ADR documents: context, decision, alternatives considered, consequences
+- Each ADR carries these sections, in this order:
+  - **Context** — why the decision was needed: the forces it answers
+  - **Decision** — what was decided, in one sentence
+  - **Rationale** — why this option won, in two to four bullets, each tied to
+    a force the Context names. Alternatives considered says why each other
+    option lost, which is not the same
+  - **Design** (optional) — the numbered rules that make the decision
+    concrete, with a diagram where it helps
+  - **Alternatives considered** — what was rejected and why
+  - **Consequences** — what follows from the decision
+  - **Compatibility** — what an existing consumer or stored datum sees, the
+    migration path, and how long the old form is served; "None" when no
+    existing interface changes
+  - **Security** — what the decision exposes or protects: credentials, trust
+    boundaries, exposed surfaces, access to data; "None" when it touches none
+- Every section but Design is present in every record, Compatibility and
+  Security included when they read "None": a record stating "None" shows the
+  question was asked, and an absent section cannot be told from a forgotten
+  one
+- The layout binds records authored after the project adopts it. A record
+  merged earlier keeps its form, or is restructured by restatement as
+  "Amending a record" below allows. Declare the first record the layout
+  binds as `decision_layout.from` in the configuration that carries the
+  Markdown width; with none declared, every record is bound
+- Check — every bound record carries the sections in order, with a
+  one-sentence Decision:
+
+  ```bash
+  py - <<'EOF'
+import json, pathlib, re
+
+first = 1
+cfg = pathlib.Path(".markdownlint.json")
+if cfg.exists():
+    layout = json.loads(cfg.read_text(encoding="utf-8")).get("decision_layout")
+    if isinstance(layout, dict) and str(layout.get("from", "")).isdigit():
+        first = int(layout["from"])
+
+ORDER = ("Context", "Decision", "Rationale", "Design",
+         "Alternatives considered", "Consequences", "Compatibility",
+         "Security")
+OPTIONAL = ("Design",)
+records = sorted(pathlib.Path("docs/decisions").glob("[0-9][0-9][0-9]-*.md"))
+bound = [r for r in records if int(r.name[:3]) >= first]
+print("decision records inspected: %d" % len(records))
+print("bound by the layout, from %03d: %d" % (first, len(bound)))
+
+# A sentence ends at its stop, and the next opens on a capital, code, bold,
+# a bracket or a quote.
+SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z`*(\[\"'])")
+fence = "`" * 3
+
+findings = [] if records else ["no decision records found"]
+for record in bound:
+    text = record.read_text(encoding="utf-8")
+    text = re.sub(fence + ".*?" + fence, "", text, flags=re.S)
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
+    parts = re.split(r"^## (.+?)\s*$", text, flags=re.M)
+    sections = dict(zip(parts[1::2], parts[2::2]))
+    present = [name for name in parts[1::2] if name in ORDER]
+    missing = [name for name in ORDER
+               if name not in sections and name not in OPTIONAL]
+    if missing:
+        findings.append("%s: missing %s" % (record.name, ", ".join(missing)))
+    elif present != [name for name in ORDER if name in present]:
+        findings.append("%s: sections out of order" % record.name)
+    said = " ".join(sections.get("Decision", "").split())
+    if len([s for s in SPLIT.split(said) if s.strip()]) != 1:
+        findings.append("%s: the Decision is not one sentence" % record.name)
+
+for finding in findings:
+    print(finding)
+
+raise SystemExit(1 if findings else 0)
+EOF
+  ```
+
+  Pass condition: the command prints how many records it inspected and how
+  many the layout binds, both above zero, and nothing after that. A corpus of
+  zero records fails, and a bound count of zero means the boundary sits past
+  every record, so the check read nothing
 - Each ADR records one coherent architectural decision. Related ownership,
   layout, and compatibility choices MAY share it across several issues or PRs.
   One rule, implementation concern, issue, or PR does not mean one ADR.
@@ -449,7 +529,7 @@ EOF
 ```markdown
 ---
 id: "NNN"                 # zero-padded sequence, quoted to stay a string
-status: Proposed          # Proposed | Accepted | Superseded
+status: Proposed          # Proposed | Accepted | Superseded | Rejected | Withdrawn
 date: YYYY-MM-DD          # date the status was last changed
 category: process         # one value from the project's closed set
 supersedes: []            # ids this ADR supersedes
@@ -460,11 +540,19 @@ superseded_by: []         # ids that supersede this ADR
 
 ## Context
 
-[Why this decision was needed]
+[Why this decision was needed: the forces it answers]
 
 ## Decision
 
-[What was decided]
+[What was decided, in one sentence]
+
+## Rationale
+
+- [Why this option won, tied to a force named in the context]
+
+## Design
+
+[Optional: the numbered rules that make the decision concrete]
 
 ## Alternatives considered
 
@@ -473,6 +561,15 @@ superseded_by: []         # ids that supersede this ADR
 ## Consequences
 
 [What follows from this decision]
+
+## Compatibility
+
+[What an existing consumer sees, the migration path, how long the old
+form is served; "None" when no existing interface changes]
+
+## Security
+
+[What the decision exposes or protects; "None" when it touches none]
 ```
 
 - The frontmatter is the source of truth for status, date and
@@ -481,8 +578,11 @@ superseded_by: []         # ids that supersede this ADR
   first and nothing says which one won
 - `id` MUST match the filename's leading digits, and MUST be quoted so
   a leading zero survives as a string rather than parsing as a number
-- `status` MUST be one of `Proposed`, `Accepted`, `Superseded`, and
-  MUST read `Superseded` if and only if `superseded_by` is non-empty
+- `status` MUST be one of `Proposed`, `Accepted`, `Superseded`, `Rejected`,
+  `Withdrawn`, and MUST read `Superseded` if and only if `superseded_by` is
+  non-empty. `Rejected` marks a proposal turned down and `Withdrawn` one its
+  author abandoned before a verdict; either is merged as a record, so the
+  reasoning outlives the pull request that carried it
 - `date` MUST be present and MUST be updated whenever `status` changes
 - `category` MUST come from a closed set the project defines in its schema.
   Update the schema and its validation together when changing that set;
@@ -501,7 +601,7 @@ superseded_by: []         # ids that supersede this ADR
   py - <<'EOF'
 import pathlib
 KEYS = ("id", "status", "date", "category", "supersedes", "superseded_by")
-STATUS = ("Proposed", "Accepted", "Superseded")
+STATUS = ("Proposed", "Accepted", "Superseded", "Rejected", "Withdrawn")
 records = sorted(pathlib.Path("docs/decisions").glob("[0-9][0-9][0-9]-*.md"))
 print("decision records inspected: %d" % len(records))
 
@@ -554,7 +654,7 @@ raise SystemExit(1 if findings else 0)
   in the ADR itself, not in separate spec files — external specs create
   maintenance burden and go stale
 - Non-trivial ADRs SHOULD include at least one inline ASCII diagram or
-  mockup in the Decision section — a pipeline flow, layout sketch,
+  mockup in the Design section — a pipeline flow, layout sketch,
   state transition, or similar — so the concept is scannable without
   parsing dense prose. A diagram MUST stay legible in a monospace
   font and MUST NOT rely on colour or proportional spacing. Plain
@@ -654,6 +754,14 @@ is a correction and is made in place with no marker.
   not cover it. Superseding each affected record is worse — it produces a
   supersession that changes no decision. A repair that passes the
   format-only test moves no claim, and MAY be made in place
+- A section-layout rule for decision records MAY be applied to merged
+  records in place by restatement, which moves no claim: the record's
+  numbered rules move under the new heading unchanged, a new summary section
+  restates only what the record already says, and a section the record
+  predates states "Not assessed: this record predates the section" rather
+  than a retroactive answer. The commit states "restructure, no decision
+  change"; a sentence the record cannot support is a new claim and goes in a
+  new record
 
 ### Dated reports
 

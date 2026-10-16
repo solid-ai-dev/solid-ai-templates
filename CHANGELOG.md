@@ -26,6 +26,12 @@ alters no template carries no entry.
 - The repository moved to the `solid-ai-dev` organisation. Generated files
   and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
   `braboj/` URL redirects, so existing submodules keep working until updated.
+- `base-docs` Decision logs: an ADR states a one-sentence Decision, then
+  Rationale, an optional Design, and Compatibility and Security sections
+  ("None" when nothing applies); `Rejected` and `Withdrawn` join the status
+  set, and a check gates the layout.
+- A merged decision record MAY be restructured to a new section layout by
+  restatement alone; a section it predates says "Not assessed".
 
 ## [2.90.0] - 2026-09-12
 

@@ -167,12 +167,13 @@ ADRs live in `docs/decisions/`; ADR-010 records the frontmatter schema.
    closed set in ADR-010, and `supersedes` / `superseded_by` lists.
 3. Replace `# ADR-NNN: Title in sentence case` with the real title
    (colon form, sentence case).
-4. Write the four sections in order — **Context** (why this
-   decision is needed), **Decision** (what was decided, with
-   RFC 2119 keywords), **Alternatives considered** (what was
-   rejected and why), **Consequences** (downstream effects).
-   Non-trivial decisions SHOULD include an inline ASCII diagram
-   in the Decision section.
+4. Write the sections in the template's order — **Context** (the
+   forces), **Decision** (one sentence), **Rationale** (two to four
+   bullets, each tied to a force), **Design** (optional: the
+   numbered rules, with RFC 2119 keywords), **Alternatives
+   considered**, **Consequences**, **Compatibility** and
+   **Security** (each "None" when nothing applies). Non-trivial
+   decisions SHOULD include an inline ASCII diagram in Design.
 5. If this ADR supersedes an existing one: update the old ADR's
    frontmatter in the same PR — set its `status: Superseded`,
    refresh `date`, and add this ADR's id to its `superseded_by`

@@ -15,5 +15,8 @@
   "prose": {
     "sentence_words": 40,
     "paragraph_words": 80
+  },
+  "decision_layout": {
+    "from": "049"
   }
 }

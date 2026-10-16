@@ -32,6 +32,22 @@ one organisation's process is a release for everyone.
 
 ## Decision
 
+Upstream holds the composition engine and the invariant policy, and forks
+carry the stacks, platforms, process layer, interview, examples and
+generated chains, syncing by merging upstream.
+
+## Rationale
+
+- One organisation's process in the shared core contradicts the practice of
+  a team running a different one; in a fork it binds only that organisation.
+- With the stacks in forks, upstream no longer ships every stack in every
+  release, and one organisation's process change is no longer a release for
+  everyone.
+- A fork that merges upstream receives upstream's fixes, which a copy that
+  drifts does not.
+
+## Design
+
 1. **Upstream holds the engine and the invariant policy** — this
    repository keeps the manifest schema, IDs, EXTEND and OVERRIDE, the
    resolver, the checks and the engineering policy that holds for any
@@ -89,3 +105,11 @@ one organisation's process is a release for everyone.
 - The README is rewritten for the fork model, and the issue on capping
   stack scope and defining the extension model closes on this record
 - The migration guide documents the `ours` merge and the ownership rule
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
