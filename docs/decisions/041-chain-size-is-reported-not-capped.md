@@ -47,6 +47,21 @@ the tree.
 
 ## Decision
 
+The chain-size ceiling, its check and its specification are deleted, and chain size
+stays reported in the `README.md` model-limits table, which `sync.py --check` keeps
+honest.
+
+## Rationale
+
+- The ceiling was raised 702 times and lowered 37, every raise in the change that caused
+  it and none refused, so the gate recorded growth rather than refusing it.
+- The generated ceiling file conflicted repeatedly on a cut landing several rule-adding
+  branches, and the re-measure that resolved it produced no information.
+- The figure a consumer feels, which context window still holds the chain, is already
+  generated into `README.md` and fails `sync.py --check` when it drifts.
+
+## Design
+
 Remove the ceiling. `tests/chain-budget.txt`, the SYS-12 check and its
 specification are deleted; nothing gates chain size.
 
@@ -93,3 +108,11 @@ so removing the ceiling loses no signal that the tier gate would restore.
   chooses at.
 - The history stays legible: the deleted file's numbers remain in the
   history of every release that carried them.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
