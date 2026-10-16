@@ -31,6 +31,22 @@ decision settles the second.
 
 ## Decision
 
+`--check` keeps failing on exact in-chain duplicates only, the near tier stays advisory,
+and every run prints the near-duplicate count.
+
+## Rationale
+
+- The 0.99 `Versioning` pair survived below the gated tier because the gate printed
+  nothing about what it had not looked at; the count makes a green gate state what it
+  did not gate.
+- A similarity ratio is a judgement rendered as a number, so a gate on it fails on
+  correct content and repairs each false positive with a baseline entry, growing the
+  baseline that is currently empty.
+- Exact means byte-identical after normalisation, a predicate; lowering the exact
+  threshold would delete the one tier that needs no judgement.
+
+## Design
+
 `--check` continues to fail on exact in-chain duplicates only. The near tier
 stays advisory.
 
@@ -73,3 +89,11 @@ templates and is not part of this decision.
 
 The audit's cost rises with the wider root set, since it resolves 37 chains
 rather than 17.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
