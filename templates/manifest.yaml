@@ -17,115 +17,115 @@ core: [base-quality, base-git, base-docs, base-readme, base-testing, base-review
 
 base:
   - id: base-git
-    file: templates/base/core/git.md
+    file: templates/core/git.md
     description: Committer identity, commits, branching, PR workflow, versioning
   - id: base-docs
-    file: templates/base/core/docs.md
+    file: templates/core/docs.md
     description: Rule language, documentation standards, ADR, diagrams, docs-as-code
   - id: base-quality
-    file: templates/base/core/quality.md
+    file: templates/core/quality.md
     description: Architecture, code style, calibration, tool trust, testing
   - id: base-review
-    file: templates/base/core/review.md
+    file: templates/core/review.md
     description: Peer review priority, MUST/SHOULD checklists, deviation rules
   - id: base-testing
-    file: templates/base/core/testing.md
+    file: templates/core/testing.md
     description: Test pyramid, coverage thresholds, naming conventions
   - id: base-agents
-    file: templates/base/core/agents.md
+    file: templates/core/agents.md
     description: Output structure, models (inline/reference/hybrid), formatting rules
   - id: base-skills
-    file: templates/base/core/skills.md
+    file: templates/core/skills.md
     description: Skill authoring — when to write one, frontmatter, triggering, structure, scripts
   - id: base-devsecops
-    file: templates/base/security/devsecops.md
+    file: templates/security/devsecops.md
     description: SAST, SCA, SBOM, secret detection, license compliance
   - id: base-security
-    file: templates/base/security/security.md
+    file: templates/security/security.md
     description: Application security rules — input, output, injection, auth, sessions, TLS, headers
   - id: base-release
-    file: templates/base/workflow/release.md
+    file: templates/workflow/release.md
     description: Semver, version bump propagation, backward compat, cut-over
   - id: base-cicd
-    file: templates/base/infra/cicd.md
+    file: templates/infra/cicd.md
     description: Pipeline stages, triggers, environments, IaC, deployment
   - id: base-containers
-    file: templates/base/infra/containers.md
+    file: templates/infra/containers.md
     description: Dockerfile, runtime security, resource limits, Kubernetes
   - id: base-readme
-    file: templates/base/core/readme.md
+    file: templates/core/readme.md
     description: README structure, badges, quick start, contribution guide
   - id: base-config
-    file: templates/base/core/config.md
+    file: templates/core/config.md
     description: Env vars, secrets, fail-fast validation
   - id: base-cli
-    file: templates/base/core/cli.md
+    file: templates/core/cli.md
     description: Entry-point architecture - thin main(argv), shared plumbing, durable output
     depends_on: [base-quality, base-config]
   - id: base-examples
-    file: templates/base/core/examples.md
+    file: templates/core/examples.md
     description: Examples directory — contents, index, offline rule, smoke job
   - id: base-deployment
-    file: templates/base/infra/deployment.md
+    file: templates/infra/deployment.md
     description: Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
   - id: base-go
-    file: templates/base/language/go.md
+    file: templates/language/go.md
     description: Per-language tool selection for Go - lint, vet, complexity, tests
     depends_on: [base-quality]
   - id: base-python
-    file: templates/base/language/python.md
+    file: templates/language/python.md
     description: Per-language tool selection for Python - lint, types, complexity, tests
     depends_on: [base-quality]
   - id: base-typescript
-    file: templates/base/language/typescript.md
+    file: templates/language/typescript.md
     description: Type design, naming, strictness — applies to all TypeScript projects
     depends_on: [base-quality]
   - id: base-c
-    file: templates/base/language/c.md
+    file: templates/language/c.md
     description: Per-language tool selection for C - clang-tidy, clang-format, cppcheck, ctest
     depends_on: [base-quality]
   - id: base-data-quality
-    file: templates/base/data/data-quality.md
+    file: templates/data/data-quality.md
     description: Data sourcing, completeness, freshness, research, scoring — data-heavy projects
     depends_on: [base-data-modeling]
   - id: base-data-modeling
-    file: templates/base/data/data-modeling.md
+    file: templates/data/data-modeling.md
     description: Schema design, naming, normalization, relationships, data types
   - id: base-data-governance
-    file: templates/base/data/data-governance.md
+    file: templates/data/data-governance.md
     description: Classification, PII handling, retention, ownership, audit trail
     depends_on: [base-data-modeling]
   - id: base-data-migration
-    file: templates/base/data/data-migration.md
+    file: templates/data/data-migration.md
     description: Versioned migrations, zero-downtime, rollback strategies
     depends_on: [base-data-modeling]
   - id: base-issues
-    file: templates/base/workflow/issues.md
+    file: templates/workflow/issues.md
     description: Issue templates — epic, task, bug, incident, spike
   - id: base-scope
-    file: templates/base/workflow/scope.md
+    file: templates/workflow/scope.md
     description: Scope guard, session protocol, drift prevention
   - id: base-compression
-    file: templates/base/workflow/compression.md
+    file: templates/workflow/compression.md
     description: Re-verifying summaries, tables and rollups derived from verified research
   - id: base-oop
-    file: templates/base/core/oop.md
+    file: templates/core/oop.md
     description: SOLID, OOP, GoF design patterns, AOP guidance
   - id: base-quality-gates
-    file: templates/base/workflow/quality-gates.md
+    file: templates/workflow/quality-gates.md
     description: Three-layer gate model (editor, pre-commit, CI), thresholds
     depends_on: [base-quality, base-git, base-testing, base-config]
   - id: base-ai-workflow
-    file: templates/base/workflow/ai-workflow.md
+    file: templates/workflow/ai-workflow.md
     description: AI-assisted development lifecycle, work item hierarchy
   - id: base-360
-    file: templates/base/workflow/360.md
+    file: templates/workflow/360.md
     description: 360-degree project analysis — four stakeholder perspectives, grading
   - id: base-communication
-    file: templates/base/workflow/communication.md
+    file: templates/workflow/communication.md
     description: Communication preferences — concise output, shorthand verbs, scope-asking
   - id: base-two-pass-review
-    file: templates/base/workflow/two-pass-review.md
+    file: templates/workflow/two-pass-review.md
     description: Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue
     depends_on: [base-quality-gates, base-review]
 

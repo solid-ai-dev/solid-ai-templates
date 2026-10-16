@@ -166,12 +166,12 @@ def _roots_by_kind(core_ids, entries):
 # comes from git; this list exists so a renamed or emptied directory is a
 # finding rather than a corpus that quietly shrinks.
 TEMPLATE_DIRS = [
-    "templates/base/core",
-    "templates/base/security",
-    "templates/base/infra",
-    "templates/base/workflow",
-    "templates/base/language",
-    "templates/base/data",
+    "templates/core",
+    "templates/security",
+    "templates/infra",
+    "templates/workflow",
+    "templates/language",
+    "templates/data",
     "templates/backend",
     "templates/frontend",
     "templates/platform",
@@ -430,10 +430,10 @@ def check_tpl_01():
     required = [
         "templates/stack/python-lib.md",
         "templates/stack/python-service.md",
-        "templates/base/core/git.md",
-        "templates/base/core/docs.md",
-        "templates/base/core/quality.md",
-        "templates/base/core/config.md",
+        "templates/core/git.md",
+        "templates/core/docs.md",
+        "templates/core/quality.md",
+        "templates/core/config.md",
         "templates/backend/http.md",
         "templates/backend/database.md",
         "templates/backend/observability.md",
@@ -484,10 +484,10 @@ def check_tpl_02():
     seen = Inspected()
 
     base_content = _extract_section(
-        os.path.join(ROOT, "templates", "base", "core", "testing.md"), "base-testing"
+        os.path.join(ROOT, "templates", "core", "testing.md"), "base-testing"
     )
     if not base_content:
-        failures.append("  base/core/testing.md [ID: base-testing] section is empty")
+        failures.append("  core/testing.md [ID: base-testing] section is empty")
 
     flask_content = _extract_section(
         os.path.join(ROOT, "templates", "stack", "python-flask.md"), "python-service-testing"
@@ -615,7 +615,7 @@ def check_mnf_04():
     core_ids, entries, _ = _load_manifest()
     failures = []
 
-    output_file = "templates/base/core/agents.md"
+    output_file = "templates/core/agents.md"
     output_path = os.path.join(ROOT, output_file)
     if not os.path.isfile(output_path):
         return [f"  output format missing: {output_file}"]
@@ -1034,21 +1034,19 @@ def check_sys_04():
 
 
 # ---------------------------------------------------------------------------
-# TPL-08 — every base/core template has at least one [ID:] tag
+# TPL-08 — every core template has at least one [ID:] tag
 # ---------------------------------------------------------------------------
 
-# The base tier the check is pointed at. Its files come from git, so a
-# template added in a new base subdirectory is inspected without this list
-# being edited; the list survives to make an emptied directory a finding.
-BASE_PREFIX = "templates/base/"
-
+# The concern directories the check is pointed at. Their files come from
+# git, so a template added to one is inspected without this list being
+# edited; the list survives to make an emptied directory a finding.
 CORE_DIRS = [
-    "templates/base/core",
-    "templates/base/security",
-    "templates/base/infra",
-    "templates/base/workflow",
-    "templates/base/language",
-    "templates/base/data",
+    "templates/core",
+    "templates/security",
+    "templates/infra",
+    "templates/workflow",
+    "templates/language",
+    "templates/data",
 ]
 
 
@@ -1058,7 +1056,8 @@ def check_tpl_08():
     seen.count("directories the check is pointed at", len(CORE_DIRS))
 
     base_files = seen.count("files inspected for an [ID:] tag",
-                            template_files(BASE_PREFIX))
+                            [path for d in CORE_DIRS
+                             for path in template_files(d + "/")])
 
     # A directory that is not there is a finding, not a skip. Skipping it
     # makes a rename silent: every listed directory disappears and the
@@ -1329,7 +1328,7 @@ def check_e2e_01():
             elif os.path.getsize(path) == 0:
                 failures.append(f"  {tid}: stack file empty: {stack}")
 
-        output_file = test.get("output_file", "templates/base/core/agents.md")
+        output_file = test.get("output_file", "templates/core/agents.md")
         path = os.path.join(ROOT, output_file)
         if not os.path.isfile(path):
             failures.append(f"  {tid}: output_file missing: {output_file}")
@@ -1376,7 +1375,7 @@ def check_sys_05():
     seen = Inspected()
 
     # 1) Output spec — every §6.3 directive in agents.md carries the rule.
-    agents_path = os.path.join(ROOT, "templates", "base", "core", "agents.md")
+    agents_path = os.path.join(ROOT, "templates", "core", "agents.md")
     a_lines = read(agents_path).splitlines()
     h63 = re.compile(r"^###\s+6\.3\b")
     stop_spec = re.compile(r"^(#{1,3}\s|```)")
@@ -1483,7 +1482,7 @@ def check_sys_06():
 # ---------------------------------------------------------------------------
 # SYS-07 — 360 audit reports live only under docs/audits/
 # ---------------------------------------------------------------------------
-# templates/base/workflow/360.md [ID: 360-tracking] mandates one audit-storage
+# templates/workflow/360.md [ID: 360-tracking] mandates one audit-storage
 # convention: each audit is a dated report at docs/audits/YYYY-MM-DD-360.md,
 # and the single-file docs/360-audit.md form is prohibited. This guards the
 # rule mechanically — no audit report may live outside docs/audits/, and a
@@ -1656,7 +1655,7 @@ def check_sys_10():
     document = (
         "# Base — Example\n"
         "[ID: base-example]\n"
-        "[DEPENDS ON: templates/base/core/git.md]\n"
+        "[DEPENDS ON: templates/core/git.md]\n"
         "\n"
         "## Composition\n"
         "\n"
@@ -1675,7 +1674,7 @@ def check_sys_10():
                document.count("[DEPENDS ON:"), floor=3)
     seen.count("occurrences read as a declaration", len(refs))
 
-    if refs != ["templates/base/core/git.md"]:
+    if refs != ["templates/core/git.md"]:
         failures.append(
             f"  header declaration not read as the only one: {refs!r} — a "
             f"backticked or fenced directive in body prose is documentation, "

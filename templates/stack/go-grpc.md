@@ -1,5 +1,5 @@
 # Stack — gRPC Service (Go)
-[DEPENDS ON: templates/stack/go-lib.md, templates/base/core/config.md, templates/backend/grpc.md, templates/backend/concurrency.md, templates/base/infra/cicd.md, templates/base/security/devsecops.md]
+[DEPENDS ON: templates/stack/go-lib.md, templates/core/config.md, templates/backend/grpc.md, templates/backend/concurrency.md, templates/infra/cicd.md, templates/security/devsecops.md]
 
 Extends the Go library stack and the gRPC backend layer with Go-specific
 conventions for implementing gRPC servers and clients.

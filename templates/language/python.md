@@ -1,6 +1,6 @@
 # Base — Python
 [ID: base-python]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 Per-language tool selection for Python. `base-quality-gates` states which
 categories a project MUST gate and at which layer; this file names the

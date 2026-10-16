@@ -42,7 +42,7 @@ tags: [e2e, output, flask, python]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/python-flask.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/python-flask.md`, `core/agents.md`
 3. Interview answers:
    - Project name: ReportingAPI
    - Language: Python

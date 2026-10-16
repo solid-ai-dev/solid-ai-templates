@@ -46,7 +46,7 @@ tags: [e2e, output, fastapi, claude-md]
 2. Attach the following files:
    - `INTERVIEW.md`
    - `stack/python-fastapi.md`
-   - `base/core/agents.md`
+   - `core/agents.md`
 3. Prepare the following interview answers:
    - **Project name**: OrderService
    - **Owner**: Platform team
@@ -63,7 +63,7 @@ tags: [e2e, output, fastapi, claude-md]
 1. Ask the agent:
    ```
    Using INTERVIEW.md and stack/python-fastapi.md, generate a CLAUDE.md
-   for this project. Use base/core/agents.md for formatting rules.
+   for this project. Use core/agents.md for formatting rules.
    ```
 2. Provide the prepared interview answers when the agent asks
 3. Save the generated output as `CLAUDE.md` in a temp directory
@@ -82,7 +82,7 @@ tags: [e2e, output, fastapi, claude-md]
 4. Assert `## Code conventions` includes async handler rules (from `python-fastapi.md`)
 5. Assert `## Code conventions` includes configuration rules (from `backend/config.md`)
 6. Assert `## Git conventions` includes conventional commit prefixes (from
-   `base/git.md`)
+   `core/git.md`)
 7. Assert no identity-level placeholders remain unsubstituted (e.g.
    `[your project]`, `[owner]`, `[repo]`); note that `[feature].py` in
    architecture diagrams is an intentional naming convention, not a

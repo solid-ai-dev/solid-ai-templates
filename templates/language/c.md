@@ -1,6 +1,6 @@
 # Base — C
 [ID: base-c]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 Per-language tool selection for C. The categories a project gates are
 the same for every language; this file names the C tool that satisfies

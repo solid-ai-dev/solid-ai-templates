@@ -1,5 +1,5 @@
 # Stack — Go Service
-[DEPENDS ON: templates/stack/go-lib.md, templates/base/core/config.md, templates/backend/http.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/errors.md, templates/backend/quality.md, templates/backend/concurrency.md, templates/backend/features.md, templates/backend/messaging.md, templates/base/infra/cicd.md, templates/base/security/devsecops.md]
+[DEPENDS ON: templates/stack/go-lib.md, templates/core/config.md, templates/backend/http.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/errors.md, templates/backend/quality.md, templates/backend/concurrency.md, templates/backend/features.md, templates/backend/messaging.md, templates/infra/cicd.md, templates/security/devsecops.md]
 
 Extends the Go library stack with service-specific rules. Covers project
 structure, HTTP handlers, configuration, concurrency, graceful shutdown,

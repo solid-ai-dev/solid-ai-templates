@@ -44,7 +44,7 @@ tags: [e2e, output, astro, tutorial]
 
 1. Open Claude Code
 2. Attach `INTERVIEW.md`, `stack/static-site-tutorial.md`,
-   `base/core/agents.md`
+   `core/agents.md`
 3. Interview answers:
    - Project name: LearnAstro
    - Content: Multi-chapter Markdown in chapters/

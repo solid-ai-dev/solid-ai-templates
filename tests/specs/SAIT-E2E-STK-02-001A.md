@@ -46,7 +46,7 @@ tags: [e2e, output, go-echo, claude-md]
 2. Attach the following files:
    - `INTERVIEW.md`
    - `stack/go-echo.md`
-   - `base/core/agents.md`
+   - `core/agents.md`
 3. Prepare the following interview answers:
    - **Project name**: MetricsHub
    - **Owner**: Infrastructure team
@@ -63,7 +63,7 @@ tags: [e2e, output, go-echo, claude-md]
 1. Ask the agent:
    ```
    Using INTERVIEW.md and stack/go-echo.md, generate a CLAUDE.md
-   for this project. Use base/core/agents.md for formatting rules.
+   for this project. Use core/agents.md for formatting rules.
    ```
 2. Provide the prepared interview answers when the agent asks
 3. Save the generated output as `CLAUDE.md` in a temp directory

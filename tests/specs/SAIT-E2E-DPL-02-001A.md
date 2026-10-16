@@ -17,7 +17,7 @@ tags: [e2e, deployment, hybrid, private-ca, pki]
 
 ## Short description
 
-> **Given** `INTERVIEW.md`, a stack template, and `base/deployment.md` are attached to
+> **Given** `INTERVIEW.md`, a stack template, and `infra/deployment.md` are attached to
 > an agent
 > **When** the interview answer selects **hybrid** as the deployment target
 > **Then** the generated `CLAUDE.md` contains hybrid-appropriate deployment rules
@@ -43,8 +43,8 @@ tags: [e2e, deployment, hybrid, private-ca, pki]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/go-service.md`, `base/deployment.md`,
-   `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/go-service.md`, `infra/deployment.md`,
+   `core/agents.md`
 3. Interview answers:
    - Project name: InternalPlatformAPI
    - Language: Go
@@ -73,4 +73,4 @@ tags: [e2e, deployment, hybrid, private-ca, pki]
 ## Related
 
 - Related procedures: `SAIT-E2E-DPL-01-001A`, `SAIT-E2E-DPL-03-001A`
-- Implements: `base/deployment.md` §Deployment targets — hybrid
+- Implements: `infra/deployment.md` §Deployment targets — hybrid

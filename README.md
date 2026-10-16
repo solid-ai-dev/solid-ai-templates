@@ -123,8 +123,8 @@ effective; declining a new rule needs no ADR or ticket. See the
 <!-- generated:readme-model-limits -->
 | Stack category | Stacks | Largest chain | Prompt | Min context |
 |----------------|--------|---------------|--------|-------------|
-| abstract | 2 | `stack-python-service` — 557K chars | ~159K tokens | 200K |
-| backend | 8 | `stack-django` — 571K chars | ~163K tokens | 200K |
+| abstract | 2 | `stack-python-service` — 556K chars | ~159K tokens | 200K |
+| backend | 8 | `stack-django` — 570K chars | ~163K tokens | 200K |
 | embedded | 1 | `stack-c-embedded` — 363K chars | ~104K tokens | 128K |
 | hypermedia | 1 | `stack-htmx` — 382K chars | ~109K tokens | 128K |
 | library | 3 | `stack-python-lib` — 486K chars | ~139K tokens | 200K |
@@ -211,17 +211,17 @@ meets templates the stacks table does not list.
 | `templates/backend/microservices.md` | backend | Service boundaries, inter-service comms, saga, contract testing |
 | `templates/backend/monitoring.md` | backend | Key metrics, thresholds, alerts, dashboards, incidents |
 | `templates/backend/webhooks.md` | backend | Inbound webhook intake, edge signature verification, fast-ack, retry amplification |
-| `templates/base/workflow/360.md` | workflow | 360-degree project analysis — four stakeholder perspectives, grading |
-| `templates/base/core/agents.md` | core | Output structure, models (inline/reference/hybrid), formatting rules |
-| `templates/base/workflow/ai-workflow.md` | workflow | AI-assisted development lifecycle, work item hierarchy |
-| `templates/base/workflow/communication.md` | workflow | Communication preferences — concise output, shorthand verbs, scope-asking |
-| `templates/base/workflow/compression.md` | workflow | Re-verifying summaries, tables and rollups derived from verified research |
-| `templates/base/data/data-governance.md` | data | Classification, PII handling, retention, ownership, audit trail |
-| `templates/base/data/data-migration.md` | data | Versioned migrations, zero-downtime, rollback strategies |
-| `templates/base/infra/deployment.md` | infra | Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets |
-| `templates/base/workflow/release.md` | workflow | Semver, version bump propagation, backward compat, cut-over |
-| `templates/base/core/skills.md` | core | Skill authoring — when to write one, frontmatter, triggering, structure, scripts |
-| `templates/base/workflow/two-pass-review.md` | workflow | Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue |
+| `templates/workflow/360.md` | workflow | 360-degree project analysis — four stakeholder perspectives, grading |
+| `templates/core/agents.md` | core | Output structure, models (inline/reference/hybrid), formatting rules |
+| `templates/workflow/ai-workflow.md` | workflow | AI-assisted development lifecycle, work item hierarchy |
+| `templates/workflow/communication.md` | workflow | Communication preferences — concise output, shorthand verbs, scope-asking |
+| `templates/workflow/compression.md` | workflow | Re-verifying summaries, tables and rollups derived from verified research |
+| `templates/data/data-governance.md` | data | Classification, PII handling, retention, ownership, audit trail |
+| `templates/data/data-migration.md` | data | Versioned migrations, zero-downtime, rollback strategies |
+| `templates/infra/deployment.md` | infra | Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets |
+| `templates/workflow/release.md` | workflow | Semver, version bump propagation, backward compat, cut-over |
+| `templates/core/skills.md` | core | Skill authoring — when to write one, frontmatter, triggering, structure, scripts |
+| `templates/workflow/two-pass-review.md` | workflow | Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue |
 | `templates/platform/github.md` | platform | CodeQL, GitHub Actions, gitleaks action, push protection |
 | `templates/platform/gitlab.md` | platform | Semgrep OSS, GitLab CI/CD, gitleaks CLI |
 | `templates/platform/linear.md` | platform | Label groups, native priority, sub-issues, code-host sync |
@@ -246,7 +246,7 @@ Attach the template directly, or run `python3 tools/resolve.py <root>
 | Generic / other | `AI_CONTEXT.md` |
 <!-- /generated:readme-agents -->
 
-See `templates/base/core/agents.md` for structure, models, and formatting rules.
+See `templates/core/agents.md` for structure, models, and formatting rules.
 
 ## Links
 

@@ -1,6 +1,6 @@
 # Backend — Authentication and Authorization
 [ID: backend-auth]
-[DEPENDS ON: templates/base/security/security.md, templates/backend/http.md]
+[DEPENDS ON: templates/security/security.md, templates/backend/http.md]
 
 Rules for identity verification (authn) and access control (authz).
 Applies to any backend service that has protected resources.

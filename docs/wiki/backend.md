@@ -86,7 +86,7 @@ them together.
 | **Edge / gateway** | TLS, routing, load balancing, CDN, rate limit, authn, WAF | No | `backend/edge.md` |
 | **API / application layer** | Validate, authorize, run business logic | No (keep it so) | `backend/quality.md` |
 | **Auth provider** | Identity, tokens, sessions, keys | Yes | `backend/auth.md` |
-| **Config / secrets** | Env vars, secrets, runtime config | Yes | `base/config.md` |
+| **Config / secrets** | Env vars, secrets, runtime config | Yes | `core/config.md` |
 | **Feature flags** | Toggles, gradual rollout, experiments | Yes | `backend/features.md` |
 | **Relational DB** | Source-of-truth records, transactions | Yes | `backend/database.md` |
 | **Cache / KV** | Hot reads, sessions, locks, counters | Yes (ephemeral) | `backend/caching.md` |
@@ -180,7 +180,7 @@ you see and alert before users do. See `backend/observability.md`,
 
 Validate all input; least-privilege credentials; secrets from the
 environment, not code; encrypt in transit and at rest. See the
-`security.md` wiki page and `base/config.md`.
+`security.md` wiki page and `core/config.md`.
 
 ## 5. Reference compositions
 

@@ -17,17 +17,17 @@ tags: [e2e, output, claude-md, claude-code]
 
 ## Short description
 
-> **Given** `INTERVIEW.md`, `stack/python-fastapi.md`, and `base/core/agents.md`
+> **Given** `INTERVIEW.md`, `stack/python-fastapi.md`, and `core/agents.md`
 > are attached to an agent
 > **When** the agent conducts the interview and generates output
-> **Then** the result is a valid `CLAUDE.md` formatted per `base/core/agents.md`
+> **Then** the result is a valid `CLAUDE.md` formatted per `core/agents.md`
 > containing all required sections
 
 ## Results
 
 | Result  | Condition                                                                                                    |
 |---------|--------------------------------------------------------------------------------------------------------------|
-| PASSED  | Output file is named `CLAUDE.md`; all required sections present; formatting follows `base/core/agents.md` rules |
+| PASSED  | Output file is named `CLAUDE.md`; all required sections present; formatting follows `core/agents.md` rules |
 | FAILED  | Output uses a different format; required sections missing; wrong filename                                    |
 | SKIPPED | No agent available                                                                                           |
 | BLOCKED | `SAIT-INT-TPL-01-001A` is failing                                                                            |
@@ -44,14 +44,14 @@ tags: [e2e, output, claude-md, claude-code]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/python-fastapi.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/python-fastapi.md`, `core/agents.md`
 
 ### Execution
 
 1. Ask the agent:
    ```
    Using INTERVIEW.md and stack/python-fastapi.md, generate a CLAUDE.md
-   for this project. Use base/core/agents.md for formatting rules.
+   for this project. Use core/agents.md for formatting rules.
    ```
 2. Provide the same interview answers as `SAIT-E2E-STK-01-001A`
 3. Save the generated output
@@ -59,10 +59,10 @@ tags: [e2e, output, claude-md, claude-code]
 ### Assertions
 
 1. Assert output filename is `CLAUDE.md`
-2. Assert formatting follows `base/core/agents.md` rules
+2. Assert formatting follows `core/agents.md` rules
 3. Assert all required sections are present
 4. Assert FastAPI-specific rules are present
-5. Assert base rules from `base/git.md` and `base/quality.md` are present
+5. Assert base rules from `core/git.md` and `core/quality.md` are present
 
 ### Teardown
 
@@ -71,4 +71,4 @@ tags: [e2e, output, claude-md, claude-code]
 ## Related
 
 - Related procedures: `SAIT-E2E-STK-01-001A`, `SAIT-E2E-FMT-02-001A`
-- Implements: `base/core/agents.md` formatting rules
+- Implements: `core/agents.md` formatting rules

@@ -1,6 +1,6 @@
 # Base — TypeScript
 [ID: base-typescript]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 ## Type design
 [ID: base-typescript-type-design]

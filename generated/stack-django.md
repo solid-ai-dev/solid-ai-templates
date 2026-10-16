@@ -3,7 +3,7 @@
      `py tools/resolve.py --check` to verify the committed
      files are up to date. -->
 
-<!-- templates/base/core/quality.md -->
+<!-- templates/core/quality.md -->
 # Base — Quality Attributes
 
 [ID: base-quality]
@@ -1429,7 +1429,7 @@ so every hit is a real finding rather than a judgement call.
 - Tests must pass before merging to `main`
 
 
-<!-- templates/base/core/git.md -->
+<!-- templates/core/git.md -->
 # Base — Git Conventions
 [ID: base-git]
 
@@ -1514,7 +1514,7 @@ so every hit is a real finding rather than a judgement call.
     only through the human-in-the-loop step that owns it, and flag
     the staleness explicitly instead
 - **Before merging**, review the diff against the base branch. Follow
-  `templates/base/core/review.md` priority order: security → correctness →
+  `templates/core/review.md` priority order: security → correctness →
   clarity →
   conventions. Check CI passes. Only merge after the review passes.
 - **Re-run the verification a pull request body claims, rather than
@@ -2102,7 +2102,7 @@ When NOT to close-and-resubmit:
 ## README
 - Every repository MUST contain a `README.md`
 - The README MUST conform to the structure and rules defined in
-  `templates/base/core/readme.md`
+  `templates/core/readme.md`
 
 ## Versioning
 - Use [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
@@ -3425,7 +3425,7 @@ the path.
 - Do not ignore lockfiles — they MUST be committed
 
 
-<!-- templates/base/core/docs.md -->
+<!-- templates/core/docs.md -->
 # Base — Documentation
 
 [ID: base-docs]
@@ -4262,7 +4262,7 @@ rewritten in place as "Decision logs" allows.
 - Where a surviving copy is sensitive, state the finding to whoever owns the
   repository rather than widening the deletion unasked. What a repository
   publishes is that owner's decision
-- The concept-retirement sweep in `templates/base/core/quality.md` does not
+- The concept-retirement sweep in `templates/core/quality.md` does not
   cover this. That rule chases surviving instructions to APPLY a retired
   concept and explicitly settles for historical records; a record is exactly
   what carries the content here
@@ -4440,7 +4440,7 @@ reports the wrong thing entirely, at full confidence.
   that raised it — tidying the old list is the tempting move and the
   wrong one
 - When writing a new entry, follow the document-convention-matching
-  rule in `templates/base/workflow/ai-workflow.md` (Match document
+  rule in `templates/workflow/ai-workflow.md` (Match document
   convention section) — read prior entries and copy their skeleton
   exactly; the prior entry is the authoritative structural template
 - That rule governs an entry's SHAPE, never the file's ordering.
@@ -5191,7 +5191,7 @@ than the documented one.
 | Generic / other  | `AI_CONTEXT.md`                   |
 
 
-<!-- templates/base/core/readme.md -->
+<!-- templates/core/readme.md -->
 # Base — README
 [ID: base-readme]
 
@@ -5363,7 +5363,7 @@ Every README MUST contain the following sections, in this order:
   for accuracy
 
 
-<!-- templates/base/core/testing.md -->
+<!-- templates/core/testing.md -->
 # Base — Testing
 
 [ID: base-testing]
@@ -5398,7 +5398,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/base/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/workflow/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -6023,7 +6023,7 @@ against a sender that never acquired its lock.
 - One inert primitive is grounds to sweep for its siblings, because the
   same author wired them the same way on the same afternoon. The sweep
   runs on a FIELD rather than on a construct, which is what distinguishes
-  it from the rejected-mechanism sweep in `templates/base/core/quality.md`:
+  it from the rejected-mechanism sweep in `templates/core/quality.md`:
 
   ```bash
   MODULE=<module-under-review>
@@ -6540,7 +6540,7 @@ every test file drifts from where the test actually lives.
   expensive dependencies are not installed for it
 
 
-<!-- templates/base/core/review.md -->
+<!-- templates/core/review.md -->
 # Base — Peer Review
 
 [ID: base-review]
@@ -6556,9 +6556,9 @@ every test file drifts from where the test actually lives.
 ## Priority order
 
 Apply the following order when reviewing, from most to least critical.
-Use `templates/base/core/quality.md` (and any language-specific quality template
+Use `templates/core/quality.md` (and any language-specific quality template
 such as
-`templates/base/language/typescript.md`) as the standard for items 2–4.
+`templates/language/typescript.md`) as the standard for items 2–4.
 
 1. **Security exposure** — anything that could be exploited, any credential
    or license problem
@@ -6651,17 +6651,17 @@ completeness. Run a structure audit after:
 
 Verify every MUST from:
 
-- `templates/base/core/docs.md` — standard documents (README, ONBOARDING,
+- `templates/core/docs.md` — standard documents (README, ONBOARDING,
   PLAYBOOK, ADRs)
-- `templates/base/core/readme.md` — README has all 9 required sections
-- `templates/base/core/git.md` — .gitignore, README exist
+- `templates/core/readme.md` — README has all 9 required sections
+- `templates/core/git.md` — .gitignore, README exist
 - The relevant frontend or backend layer template — required assets,
   config files, SEO files
 - The relevant stack template — framework-specific files and conventions
 
 When a section contains multiple MUST sub-clauses, verify each sub-clause
 independently — do not pass the section as a whole. For example,
-`templates/base/core/readme.md` Usage requires both usage examples AND expected
+`templates/core/readme.md` Usage requires both usage examples AND expected
 output
 per example — these are two separate checks.
 
@@ -6960,7 +6960,7 @@ answer for the wrong reason is the same failure in a cheaper form.
   approver before the change can land
 
 
-<!-- templates/base/core/oop.md -->
+<!-- templates/core/oop.md -->
 # Base — Object-Oriented Design
 
 [ID: base-oop]
@@ -7051,7 +7051,7 @@ stateless logic.
   acceptable; opaque interceptors that inject hidden behaviour are not
 
 
-<!-- templates/base/core/config.md -->
+<!-- templates/core/config.md -->
 # Base — Configuration
 [ID: base-config]
 
@@ -7501,7 +7501,7 @@ looks wrong" becomes a probe session reconstructing intermediate state.
   change can break one stage silently while the final output still looks
   plausible
 
-<!-- templates/base/security/security.md -->
+<!-- templates/security/security.md -->
 # Base — Application Security
 
 [ID: base-security]
@@ -7800,7 +7800,7 @@ and server-side request forgery.
   cached or logged
 
 
-<!-- templates/base/infra/containers.md -->
+<!-- templates/infra/containers.md -->
 # Base — Containers
 [ID: base-containers]
 
@@ -7926,7 +7926,7 @@ gone on exit           persists               persists (shipped)
 <!-- templates/backend/quality.md -->
 # Backend — Quality Attributes
 [ID: backend-quality]
-[DEPENDS ON: templates/base/core/quality.md, templates/base/core/oop.md, templates/base/security/security.md, templates/base/infra/containers.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/oop.md, templates/security/security.md, templates/infra/containers.md]
 
 ## Layered architecture
 - Enforce a strict handler → service → repository separation
@@ -8212,7 +8212,7 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 - Test idempotency: publish the same message twice and assert the
   consumer produces the same result with no unintended side effects
 
-<!-- templates/base/infra/cicd.md -->
+<!-- templates/infra/cicd.md -->
 # Base — CI/CD and Delivery
 
 [ID: base-cicd]
@@ -8225,7 +8225,7 @@ merged PR and a deployed artifact — humans approve, machines execute.
 ## Quality gates
 
 - Stages 2–4 (lint, test, security scan) are defined in detail in
-  `templates/base/workflow/quality-gates.md` — categories, thresholds, and tool
+  `templates/workflow/quality-gates.md` — categories, thresholds, and tool
   constraints
 - Platform-specific CI integration is in `platform/github.md` or
   `platform/gitlab.md`
@@ -8328,7 +8328,7 @@ historical tag with `--notes-start-tag`.
   copy-paste pipeline stages across repositories
 
 
-<!-- templates/base/security/devsecops.md -->
+<!-- templates/security/devsecops.md -->
 # Base — DevSecOps
 
 [ID: base-devsecops]
@@ -8521,7 +8521,7 @@ a base layer you do not control does not.
   them — a moved tag is a supply-chain attack vector
 
 
-<!-- templates/base/data/data-modeling.md -->
+<!-- templates/data/data-modeling.md -->
 # Base — Data Modeling
 [ID: base-data-modeling]
 
@@ -8609,10 +8609,10 @@ files alike.
   invites abuse and complicates indexing
 
 
-<!-- templates/base/data/data-quality.md -->
+<!-- templates/data/data-quality.md -->
 # Base — Data Quality
 [ID: base-data-quality]
-[DEPENDS ON: templates/base/data/data-modeling.md]
+[DEPENDS ON: templates/data/data-modeling.md]
 
 Rules for projects where content or data accuracy matters as much as
 code quality. Applies to lens databases, product catalogs, tutorial
@@ -8838,10 +8838,10 @@ the manual effort to a scan-and-correct pass, and it prevents the
 calibration set from silently becoming the agent's own predictions.
 
 
-<!-- templates/base/language/python.md -->
+<!-- templates/language/python.md -->
 # Base — Python
 [ID: base-python]
-[DEPENDS ON: templates/base/core/quality.md]
+[DEPENDS ON: templates/core/quality.md]
 
 Per-language tool selection for Python. `base-quality-gates` states which
 categories a project MUST gate and at which layer; this file names the
@@ -9058,10 +9058,10 @@ plant is removed.
   behaviour, and a reword then breaks tests that are about neither
 
 
-<!-- templates/base/core/cli.md -->
+<!-- templates/core/cli.md -->
 # Base — CLI and Driver Architecture
 [ID: base-cli]
-[DEPENDS ON: templates/base/core/quality.md, templates/base/core/config.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/config.md]
 
 Applies to any executable entry point — a published CLI, an operational
 driver, a maintenance script that outlives the afternoon it was written
@@ -9148,11 +9148,11 @@ and these rules apply to it there.
   on the path every operator takes first
 
 
-<!-- templates/base/workflow/quality-gates.md -->
+<!-- templates/workflow/quality-gates.md -->
 # Base — Quality Gates
 
 [ID: base-quality-gates]
-[DEPENDS ON: templates/base/core/quality.md, templates/base/core/git.md, templates/base/core/testing.md, templates/base/core/config.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/git.md, templates/core/testing.md, templates/core/config.md]
 
 Stack-agnostic quality gate model. Defines the layers, categories,
 thresholds, and constraints. Stack templates extend with concrete tools.
@@ -10035,7 +10035,7 @@ are separate things, and review usually looks only at the check:
 - A reviewer MUST NOT accept a green run as evidence that a scope change
   took effect
 
-`base/security/devsecops.md` and `platform/github.md` both require full
+`security/devsecops.md` and `platform/github.md` both require full
 history for the secret scan specifically. This is the general rule that
 the specific one is an instance of, and it holds regardless of which
 platform or security template a project resolves.
@@ -10820,7 +10820,7 @@ scheduled whole-tree sweep, not a per-change gate.
 - Platform templates define the CI integration and SAST tool
 
 
-<!-- templates/base/core/examples.md -->
+<!-- templates/core/examples.md -->
 # Base — Examples
 [ID: base-examples]
 
@@ -11003,7 +11003,7 @@ time is the correct first move.
 
 <!-- templates/stack/python-lib.md -->
 # Stack — Python Library / CLI
-[DEPENDS ON: templates/base/core/git.md, templates/base/core/docs.md, templates/base/core/quality.md, templates/base/language/python.md, templates/base/core/cli.md, templates/base/workflow/quality-gates.md, templates/base/core/examples.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/language/python.md, templates/core/cli.md, templates/workflow/quality-gates.md, templates/core/examples.md]
 
 A Python library, CLI tool, or shared package intended to be imported or
 installed. No web server, no frontend. May be published to PyPI.
@@ -11457,7 +11457,7 @@ runs at where it differs from the category default.
 
 <!-- templates/stack/python-service.md -->
 # Stack — Python Web Service
-[DEPENDS ON: templates/base/core/git.md, templates/base/core/docs.md, templates/base/core/quality.md, templates/base/core/config.md, templates/backend/http.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/quality.md, templates/backend/features.md, templates/backend/messaging.md, templates/stack/python-lib.md, templates/base/infra/cicd.md, templates/base/security/devsecops.md, templates/base/data/data-quality.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/core/config.md, templates/backend/http.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/quality.md, templates/backend/features.md, templates/backend/messaging.md, templates/stack/python-lib.md, templates/infra/cicd.md, templates/security/devsecops.md, templates/data/data-quality.md]
 
 Abstract rules for any Python web service or API. Never used directly —
 always extended by a framework-specific stack (Flask, FastAPI, Django).
@@ -11704,7 +11704,7 @@ Sunset: <HTTP-date>
 <!-- templates/backend/auth.md -->
 # Backend — Authentication and Authorization
 [ID: backend-auth]
-[DEPENDS ON: templates/base/security/security.md, templates/backend/http.md]
+[DEPENDS ON: templates/security/security.md, templates/backend/http.md]
 
 Rules for identity verification (authn) and access control (authz).
 Applies to any backend service that has protected resources.

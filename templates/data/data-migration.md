@@ -1,6 +1,6 @@
 # Base — Data Migration
 [ID: base-data-migration]
-[DEPENDS ON: templates/base/data/data-modeling.md]
+[DEPENDS ON: templates/data/data-modeling.md]
 
 Rules for migrating data between schemas, systems, or formats.
 Covers versioned migrations, bulk transfers, and rollback strategies.

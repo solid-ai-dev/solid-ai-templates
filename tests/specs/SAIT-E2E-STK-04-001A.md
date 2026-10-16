@@ -42,7 +42,7 @@ tags: [e2e, output, express, nodejs]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/node-express.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/node-express.md`, `core/agents.md`
 3. Interview answers:
    - Project name: NotificationService
    - Language: TypeScript

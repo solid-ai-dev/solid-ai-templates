@@ -1,6 +1,6 @@
 # Platform — GitLab
 [ID: platform-gitlab]
-[DEPENDS ON: templates/base/workflow/quality-gates.md]
+[DEPENDS ON: templates/workflow/quality-gates.md]
 
 GitLab-specific CI and security integration. Maps quality gate categories
 to GitLab CI/CD pipelines and GitLab-native features.

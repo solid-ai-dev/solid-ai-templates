@@ -82,7 +82,7 @@
     only through the human-in-the-loop step that owns it, and flag
     the staleness explicitly instead
 - **Before merging**, review the diff against the base branch. Follow
-  `templates/base/core/review.md` priority order: security → correctness →
+  `templates/core/review.md` priority order: security → correctness →
   clarity →
   conventions. Check CI passes. Only merge after the review passes.
 - **Re-run the verification a pull request body claims, rather than
@@ -670,7 +670,7 @@ When NOT to close-and-resubmit:
 ## README
 - Every repository MUST contain a `README.md`
 - The README MUST conform to the structure and rules defined in
-  `templates/base/core/readme.md`
+  `templates/core/readme.md`
 
 ## Versioning
 - Use [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`

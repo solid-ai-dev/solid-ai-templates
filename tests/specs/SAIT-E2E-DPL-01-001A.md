@@ -17,7 +17,7 @@ tags: [e2e, deployment, cloud, certificates, dns]
 
 ## Short description
 
-> **Given** `INTERVIEW.md`, a stack template, and `base/deployment.md` are attached to
+> **Given** `INTERVIEW.md`, a stack template, and `infra/deployment.md` are attached to
 > an agent
 > **When** the interview answer selects **cloud** as the deployment target
 > **Then** the generated `CLAUDE.md` contains cloud-appropriate deployment rules
@@ -43,8 +43,8 @@ tags: [e2e, deployment, cloud, certificates, dns]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/node-express.md`, `base/deployment.md`,
-   `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/node-express.md`, `infra/deployment.md`,
+   `core/agents.md`
 3. Interview answers:
    - Project name: PublicAPIService
    - Language: TypeScript
@@ -72,4 +72,4 @@ tags: [e2e, deployment, cloud, certificates, dns]
 ## Related
 
 - Related procedures: `SAIT-E2E-DPL-02-001A`, `SAIT-E2E-DPL-03-001A`
-- Implements: `base/deployment.md` §Deployment targets — cloud
+- Implements: `infra/deployment.md` §Deployment targets — cloud

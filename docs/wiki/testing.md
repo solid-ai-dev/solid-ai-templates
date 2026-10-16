@@ -4,8 +4,8 @@ Wiki notes on reusable structures for test code. Each entry
 describes a problem, solution structure, when to use it, and
 examples.
 
-See `base/testing.md` for test types, coverage targets, and naming.
-See `base/quality.md` for testability as a design concern.
+See `core/testing.md` for test types, coverage targets, and naming.
+See `core/quality.md` for testability as a design concern.
 
 ---
 

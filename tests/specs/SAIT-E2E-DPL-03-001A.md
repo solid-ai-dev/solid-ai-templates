@@ -17,7 +17,7 @@ tags: [e2e, deployment, offline, air-gapped, pki]
 
 ## Short description
 
-> **Given** `INTERVIEW.md`, a stack template, and `base/deployment.md` are attached to
+> **Given** `INTERVIEW.md`, a stack template, and `infra/deployment.md` are attached to
 > an agent
 > **When** the interview answer selects **offline** (air-gapped) as the deployment
 > target
@@ -44,8 +44,8 @@ tags: [e2e, deployment, offline, air-gapped, pki]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/python-fastapi.md`, `base/deployment.md`,
-   `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/python-fastapi.md`, `infra/deployment.md`,
+   `core/agents.md`
 3. Interview answers:
    - Project name: SecureIngestService
    - Language: Python
@@ -74,4 +74,4 @@ tags: [e2e, deployment, offline, air-gapped, pki]
 ## Related
 
 - Related procedures: `SAIT-E2E-DPL-01-001A`, `SAIT-E2E-DPL-02-001A`
-- Implements: `base/deployment.md` §Deployment targets — offline
+- Implements: `infra/deployment.md` §Deployment targets — offline

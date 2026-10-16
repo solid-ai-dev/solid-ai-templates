@@ -4,7 +4,7 @@
 Structure, triggering, and quality rules for authoring agent skills —
 `.claude/skills/<name>/SKILL.md` files with YAML frontmatter and a body
 of on-demand instructions. Companion to the context-file spec in
-`templates/base/core/agents.md`: that governs always-loaded rules, this
+`templates/core/agents.md`: that governs always-loaded rules, this
 governs on-demand procedures.
 
 ---
@@ -28,7 +28,7 @@ A rule that MUST fire on every turn belongs in `CLAUDE.md` or a template,
 never a skill — a skill the agent forgets to invoke is weaker than an
 always-loaded rule. Do NOT create a skill that restates always-loaded
 context: it is redundant and drifts from its source (see the single
-source of truth rule in `templates/base/core/agents.md`).
+source of truth rule in `templates/core/agents.md`).
 
 ---
 

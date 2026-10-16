@@ -1,6 +1,6 @@
 # Base — Data Quality
 [ID: base-data-quality]
-[DEPENDS ON: templates/base/data/data-modeling.md]
+[DEPENDS ON: templates/data/data-modeling.md]
 
 Rules for projects where content or data accuracy matters as much as
 code quality. Applies to lens databases, product catalogs, tutorial

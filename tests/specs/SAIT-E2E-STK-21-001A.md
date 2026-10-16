@@ -42,7 +42,7 @@ tags: [e2e, output, nestjs, nodejs]
 ### Setup
 
 1. Open Claude Code
-2. Attach `INTERVIEW.md`, `stack/node-nestjs.md`, `base/core/agents.md`
+2. Attach `INTERVIEW.md`, `stack/node-nestjs.md`, `core/agents.md`
 3. Interview answers:
    - Project name: PaymentsAPI
    - Language: TypeScript

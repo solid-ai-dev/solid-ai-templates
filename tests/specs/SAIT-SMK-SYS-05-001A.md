@@ -42,7 +42,7 @@ tags: [generation, fidelity, session-protocol, output-spec]
 ### Setup
 
 1. Change to the repository root
-2. Read `templates/base/core/agents.md`
+2. Read `templates/core/agents.md`
 3. Read every `examples/*/CLAUDE.md`
 
 ### Execution
@@ -68,4 +68,4 @@ tags: [generation, fidelity, session-protocol, output-spec]
 
 - Issue #498 — generation drops/condenses the end-of-session audit
 - `quality-gates-pair-check` — the rule this check pairs with
-- `templates/base/workflow/scope.md` — canonical End of session audit
+- `templates/workflow/scope.md` — canonical End of session audit
