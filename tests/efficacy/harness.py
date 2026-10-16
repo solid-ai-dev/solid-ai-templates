@@ -12,6 +12,7 @@ hidden suite and the graders read them afterwards.
 import argparse
 import contextlib
 import datetime
+import fnmatch
 import glob
 import hashlib
 import io
@@ -181,10 +182,11 @@ SETTING_SOURCES = ""
 # falling back to whatever the machine carries.
 ISOLATED_SETTINGS = {"includeCoAuthoredBy": False}
 
-# The outcomes that void a trial and re-run it once in its place: the
-# provider's cut, and a session whose tool calls reached past its workspace.
-# Neither is a measurement of the arm.
-VOIDING = ("blocked", "reached")
+# The outcomes that void a trial: the provider's cut, and a session whose
+# tool calls reached past its workspace, each re-run once in its place; and a
+# trial whose harness died under it, which `recover` voids before the next
+# run. None is a measurement of the arm.
+VOIDING = ("blocked", "reached", "interrupted")
 
 
 def rule_path(path):
@@ -221,6 +223,37 @@ def reach_denials(root, workspace):
             for pattern in patterns for tool in ("Read", "Edit")]
 
 
+# Commands that stop processes by name, as a deny rule's glob spells them.
+# Stopping a dev server by name stops every process of that name on the
+# machine, the harness's own interpreter among them, which is how round 4's
+# thin run ended mid-trial. Stopping one by PID or by port stays allowed:
+# that is how an agent stops only what it started.
+KILL_BY_NAME = ("*Get-Process*Stop-Process*", "*Stop-Process*Get-Process*",
+                "*Stop-Process -Name*", "*Stop-Process -ProcessName*",
+                "*Get-Process*Kill(*", "*taskkill*/IM*", "*pkill*",
+                "*killall*", "*Win32_Process*", "*wmic*process*")
+
+# The tools a command runs through. Both match a glob across the whole
+# command, so a kill chained after `cd ... &&` is denied too; a probe showed
+# the rules deny those calls and let a kill by PID through.
+SHELL_TOOLS = ("Bash", "PowerShell")
+
+# The same globs as one pattern for the transcript scan. A rule may match
+# case-sensitively, so the scan ignores case and catches what slipped by.
+KILL_PATTERN = re.compile("|".join(fnmatch.translate(pattern)
+                                   for pattern in KILL_BY_NAME),
+                          re.IGNORECASE)
+
+
+def kill_denials():
+    """Deny rules for every shell command that stops processes by name, in
+    each glob's own spelling and in lower case."""
+    patterns = sorted({form for pattern in KILL_BY_NAME
+                       for form in (pattern, pattern.lower())})
+    return ["%s(%s)" % (tool, pattern)
+            for pattern in patterns for tool in SHELL_TOOLS]
+
+
 def trial_settings(home, root, workspace):
     """Write a trial's own settings file into the scratch home, which its
     deny rules cover, and return its path."""
@@ -228,7 +261,8 @@ def trial_settings(home, root, workspace):
     path = os.path.join(home, "settings-%s.json"
                         % os.path.basename(os.path.abspath(workspace)))
     settings = dict(ISOLATED_SETTINGS,
-                    permissions={"deny": reach_denials(root, workspace)})
+                    permissions={"deny": reach_denials(root, workspace)
+                                 + kill_denials()})
     with io.open(path, "w", encoding="utf-8") as handle:
         json.dump(settings, handle, indent=2)
     return path
@@ -721,6 +755,48 @@ def tool_calls(files):
     return calls
 
 
+def stopped_by_name(files):
+    """The shell calls in the transcripts that stopped processes by name and
+    were not denied, as reach hits.
+
+    A denied call comes back as an error opening "Permission to use", and it
+    stopped nothing. A call with no result at all counts as run, because a
+    session that ended mid-call may well have ended by it.
+    """
+    calls, denied = [], set()
+    for file in files:
+        with io.open(file, encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                try:
+                    entry = json.loads(line)
+                except ValueError:
+                    continue
+                content = (entry.get("message") or {}).get("content") \
+                    if isinstance(entry, dict) else None
+                for block in content if isinstance(content, list) else []:
+                    if not isinstance(block, dict):
+                        continue
+                    if block.get("type") == "tool_use" \
+                            and block.get("name") in SHELL_TOOLS:
+                        command = (block.get("input") or {}).get("command")
+                        if isinstance(command, str) \
+                                and KILL_PATTERN.match(command):
+                            calls.append((block.get("id"), block["name"],
+                                          command))
+                    elif block.get("type") == "tool_result" \
+                            and block.get("is_error"):
+                        text = block.get("content")
+                        if isinstance(text, list):
+                            text = " ".join(part.get("text", "")
+                                            for part in text
+                                            if isinstance(part, dict))
+                        if str(text or "").startswith("Permission to use"):
+                            denied.add(block.get("tool_use_id"))
+    return [{"tool": tool, "term": "a process stopped by name",
+             "call": command[:300]}
+            for call_id, tool, command in calls if call_id not in denied]
+
+
 def read_transcripts(home, workspace, since=None):
     """A trial's transcript files and every tool call in them."""
     files = transcript_files(home, workspace, since)
@@ -1024,6 +1100,11 @@ def contain(workspace, temp, home, shared, since, vendored=None):
                                        for entry in leftovers]
     result = {"reach": reach(files, calls, workspace, temp, vendored),
               "shared_temp_dir": shared}
+
+    # Stopping processes by name reaches every process of that name on the
+    # machine, so it voids the trial as a path past the workspace does.
+    if result["reach"]["hits"] is not None:
+        result["reach"]["hits"].extend(stopped_by_name(files))
     try:
         result["stopped"] = stop_processes(owned)
     except (OSError, ValueError, subprocess.SubprocessError) as error:
@@ -1391,17 +1472,22 @@ def run_in_place(arm, trial, runner, wait, records, write):
     while True:
         print("%s  %s%s" % (name, ARMS[arm]["label"],
                             "  (re-run)" if lost else ""))
+
+        # Recorded before it starts, so a harness that dies mid-trial leaves
+        # the trial it was on in the record for `recover` to find.
+        records.append(in_flight(arm, trial))
+        write()
         try:
             record = runner(arm, trial)
         except TrialError as error:
             print("  refused: %s" % error)
-            records.append({"arm": arm, "trial": trial, "outcome": "refused",
-                            "error": str(error)})
+            records[-1] = {"arm": arm, "trial": trial, "outcome": "refused",
+                           "error": str(error)}
             write()
             return True
         if lost:
             record["substitutes"] = lost["void"]["dir"]
-        records.append(record)
+        records[-1] = record
         write()
         print("  %s in %ss" % (record["outcome"], record.get("elapsed_s", 0)))
         hits = (record.get("reach") or {}).get("hits")
@@ -1436,6 +1522,69 @@ def run_in_place(arm, trial, runner, wait, records, write):
         if not wait():
             print("  stopping the run")
             return False
+
+
+def in_flight(arm, trial):
+    """The record a trial holds while it runs: whose run it is, and since
+    when."""
+    return {"arm": arm, "trial": trial, "outcome": "running",
+            "harness_pid": os.getpid(),
+            "started_at": datetime.datetime.now().isoformat(timespec="seconds")}
+
+
+def harness_alive(pid, table):
+    """Whether `pid` is a running harness in the process table."""
+    return any(row == pid and "harness.py" in command
+               for row, _, command in table)
+
+
+def recover(root, home, table=None):
+    """Void every trial a dead harness left in flight in `root`; return the
+    workspaces voided.
+
+    A harness stopped mid-trial writes no ending, its agent may still be
+    running, and the workspace it leaves blocks the re-run, since a
+    workspace is never reused. A trial whose harness still runs belongs to a
+    live run, so the root is refused rather than taken from under it.
+    """
+    table = process_table() if table is None else table
+    voided = []
+    for run_file in sorted(glob.glob(os.path.join(root, "run-*.json"))):
+        with io.open(run_file, encoding="utf-8") as handle:
+            run = json.load(handle)
+        records = run.get("trials", [])
+        changed = False
+        for index, record in enumerate(records):
+            if record.get("outcome") != "running":
+                continue
+            name = trial_name(record["arm"], record["trial"])
+            if run.get("task") == "change":
+                name = "change-" + name
+            if harness_alive(record.get("harness_pid"), table):
+                raise TrialError("%s is running under harness process %s; a "
+                                 "live run holds %s"
+                                 % (name, record.get("harness_pid"), root))
+
+            # The orphaned agent names its settings file on its command line,
+            # and what it started runs from the workspace.
+            workspace = os.path.join(root, name)
+            settings = os.path.join(home, "settings-%s.json" % name)
+            ending = {"outcome": "interrupted",
+                      "reason": "the harness ended while the trial ran",
+                      "stopped": stop_processes([workspace, settings], table)}
+            if os.path.isdir(workspace):
+                frozen = freeze(workspace, root, name)
+                ending["void"] = void(root, workspace, frozen, name)
+                frozen["tarball"] = ending["void"]["tarball"]
+                ending["frozen"] = frozen
+                voided.append(workspace)
+            records[index] = dict(record, **ending)
+            changed = True
+        if changed:
+            write_run(run_file, datetime.datetime.fromisoformat(
+                run["started_at"]), records, run.get("task", "build"),
+                run.get("prompt", PROMPT))
+    return voided
 
 
 # One variable of each kind the trial environment sheds, and two it must keep.
@@ -1616,8 +1765,10 @@ def resume_checks():
     checks.append(("the re-run names the trial it substitutes",
                    rerun["records"][-1].get("substitutes")
                    == blocked["void"]["dir"]))
-    checks.append(("the record is written after every trial",
-                   rerun["writes"] == [1, 2]))
+    checks.append(("the record is written as every trial starts and ends",
+                   rerun["writes"] == [1, 1, 2, 2]))
+    checks.append(("no trial stays recorded as running",
+                   "running" not in rerun["outcomes"]))
 
     twice = replay([blocked, blocked], [True])
     checks.append(("a second block stops the run", not twice["carried_on"]
@@ -2383,10 +2534,145 @@ def denial_checks():
         ("the trial's own workspace is not denied",
          not any(rule_path(workspace) + "/" in rule for rule in rules)),
         ("the settings file carries the rules and the isolation",
-         written.get("permissions", {}).get("deny") == rules
+         written.get("permissions", {}).get("deny")
+         == rules + kill_denials()
          and written.get("includeCoAuthoredBy") is False
          and os.path.dirname(settings) == os.path.join(root, "home")),
     ]
+
+
+# The command that ended round 4's thin run, and its kin. Each MUST meet a
+# deny rule; a stop by PID or by port MUST meet none.
+KILLS = {
+    "Bash": ['cd "C:/runs/full-1" && powershell -NoProfile -Command '
+             '"Get-Process -Name python -ErrorAction SilentlyContinue | '
+             'Where-Object { $_.MainWindowTitle -eq \'\' } | '
+             'Stop-Process -Force"',
+             "taskkill //IM python.exe //F", "pkill -f flask",
+             "killall python3"],
+    "PowerShell": ["Stop-Process -Name python -Force",
+                   "Get-Process python | ForEach-Object { $_.Kill() }",
+                   "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\""
+                   " | Invoke-CimMethod -MethodName Terminate"],
+}
+SPARED = {
+    "Bash": ["kill 4242", "taskkill //PID 4242 //F",
+             "powershell -Command \"Stop-Process -Id 4242\""],
+    "PowerShell": ["Stop-Process -Id 4242 -Force",
+                   "Get-NetTCPConnection -LocalPort 5055"],
+}
+
+
+def kill_checks():
+    """A kill by name meets a deny rule and, where it ran, voids the trial;
+    a denied one and a kill by PID do neither."""
+    rules = kill_denials()
+
+    def denied(tool, command):
+        return any(fnmatch.fnmatchcase(command, rule[len(tool) + 1:-1])
+                   for rule in rules if rule.startswith(tool + "("))
+
+    checks = [
+        ("every kill by name meets a deny rule",
+         all(denied(tool, command)
+             for tool, commands in KILLS.items() for command in commands)),
+        ("no stop by PID or port meets one",
+         not any(denied(tool, command)
+                 for tool, commands in SPARED.items()
+                 for command in commands)),
+    ]
+
+    scratch = os.path.join(tempfile.gettempdir(), "efficacy-kill-self-test")
+    remove_tree(scratch)
+    os.makedirs(scratch)
+    transcript = os.path.join(scratch, "planted.jsonl")
+    ran, refused, unanswered = KILLS["Bash"][0], KILLS["Bash"][2], \
+        KILLS["PowerShell"][0]
+
+    def use(call_id, tool, command):
+        return {"message": {"content": [
+            {"type": "tool_use", "id": call_id, "name": tool,
+             "input": {"command": command}}]}}
+
+    def answer(call_id, text, error):
+        return {"message": {"content": [
+            {"type": "tool_result", "tool_use_id": call_id,
+             "is_error": error, "content": text}]}}
+
+    entries = [use("t1", "Bash", ran), answer("t1", "", False),
+               use("t2", "Bash", refused),
+               answer("t2", "Permission to use Bash with command %s has "
+                            "been denied." % refused, True),
+               use("t3", "Bash", SPARED["Bash"][0]), answer("t3", "", False),
+               use("t4", "PowerShell", unanswered)]
+    with io.open(transcript, "w", encoding="utf-8") as handle:
+        handle.writelines(json.dumps(entry) + "\n" for entry in entries)
+    hits = stopped_by_name([transcript])
+    remove_tree(scratch)
+    checks.append(("a kill by name that ran, or never answered, is a hit",
+                   sorted(hit["call"] for hit in hits)
+                   == sorted([ran[:300], unanswered])))
+    checks.append(("a trial that stopped processes by name is reached",
+                   reached({"outcome": "completed",
+                            "reach": {"hits": hits}}).get("outcome")
+                   == "reached"))
+    return checks
+
+
+def recover_checks():
+    """A trial a dead harness left in flight is voided and its slot freed; a
+    live harness's trial refuses the root."""
+    scratch = os.path.join(tempfile.gettempdir(), "efficacy-recover-self-test")
+    remove_tree(scratch)
+    root = os.path.join(scratch, "run")
+    home = os.path.join(root, "home")
+    workspace = os.path.join(root, "short-1")
+    os.makedirs(home)
+    os.makedirs(workspace)
+    with io.open(os.path.join(workspace, "partial.py"), "w",
+                 encoding="utf-8") as handle:
+        handle.write("# partial work\n")
+    git(workspace, "init", "-q")
+    git(workspace, "add", "-A")
+    git(workspace, "-c", "user.name=efficacy",
+        "-c", "user.email=efficacy@example.invalid", "commit", "-q", "-m",
+        "planted")
+
+    started = datetime.datetime(2026, 10, 16, 0, 0, 0)
+    finished = {"arm": "none", "trial": 1, "outcome": "completed"}
+    dead = dict(in_flight("short", 1), harness_pid=4242)
+    run_file = os.path.join(root, "run-planted.json")
+    write_run(run_file, started, [finished, dead])
+
+    # The plant is read before recovery, so a voided slot is recovery's doing
+    # and not a workspace that was never there.
+    checks = [("the in-flight trial's workspace exists",
+               os.path.isfile(os.path.join(workspace, "partial.py")))]
+    live = [(4242, "", "python tests/efficacy/harness.py --root run")]
+    try:
+        recover(root, home, live)
+        checks.append(("a live harness's trial refuses the root", False))
+    except TrialError:
+        checks.append(("a live harness's trial refuses the root",
+                       os.path.isdir(workspace)))
+
+    voided = recover(root, home, [])
+    with io.open(run_file, encoding="utf-8") as handle:
+        records = json.load(handle)["trials"]
+    kept = (records[1].get("void") or {}).get("workspace") or ""
+    checks += [
+        ("a dead harness's trial is voided and its slot freed",
+         voided == [workspace] and not os.path.exists(workspace)
+         and os.path.isfile(os.path.join(kept, "partial.py"))),
+        ("the record names the ending and keeps the rest",
+         records[0] == finished
+         and records[1]["outcome"] == "interrupted"
+         and records[1]["outcome"] in VOIDING
+         and os.path.isfile(records[1]["frozen"]["tarball"])),
+        ("a second recovery finds nothing", recover(root, home, []) == []),
+    ]
+    remove_tree(scratch)
+    return checks
 
 
 def self_test():
@@ -2397,7 +2683,8 @@ def self_test():
               + resume_checks() + change_checks() + dry_run_checks()
               + process_checks()
               + claim_checks() + leftover_checks() + reach_checks() + outside_checks()
-              + vendor_checks() + denial_checks())
+              + vendor_checks() + denial_checks() + kill_checks()
+              + recover_checks())
     for label, ok in checks:
         print("  %-52s %s" % (label, "ok" if ok else "FAILED"))
     passed = sum(1 for _, ok in checks if ok)
@@ -2498,6 +2785,17 @@ def main(argv):
     except TrialError as error:
         print("refused: %s" % error)
         return 2
+
+    # A trial an earlier harness died under holds its slot until voided, so
+    # the run that re-runs it `--from` that trial finds the slot free.
+    if not options.dry_run:
+        try:
+            for workspace in recover(work, home):
+                print("voided %s: the harness ended while it ran" % workspace)
+        except (TrialError, OSError, ValueError) as error:
+            print("refused: %s" % error)
+            lib.print_verdict(False, "0 trial(s), 0 done, 1 refused")
+            return 1
 
     # The change task needs its prompt and its build trials before anything
     # runs, so a design or a run root that cannot supply them refuses here.

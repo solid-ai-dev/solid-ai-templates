@@ -835,6 +835,7 @@ result cannot say which produced it. A control is what rules it out.
 |---|---|
 | Your global `CLAUDE.md` or hooks reach the bare arm | A scratch home per trial; the harness refuses a run when a `CLAUDE.md` exists in that home or any parent directory |
 | The agent reads the templates, the hidden suite or the web | Nothing mounted; web tools off; Git credentials cleared; the file tools denied this repository, the scoring area and every other entry of the run root; transcripts scanned, a trial with a hit voided and re-run once in its place, and one the report's re-scan flags left out of every figure |
+| A trial stops the harness, or another process on the machine | Shell commands that stop processes by name are denied, and stopping one by PID or port is not; a trial whose transcript shows one that ran is voided and re-run like a reach; a trial in flight when its harness died is voided by the next run on that root, which refuses the root while that harness still runs |
 | `hybrid` legitimately carries the templates | Its reads of its own vendored copy are not a reach; naming the repository by URL or owner still is |
 | The model changes between trials | Exact id pinned; trials interleaved |
 | The agent sees the acceptance tests | The hidden suite stays outside the workspace until scoring |
@@ -938,6 +939,7 @@ Two limits:
 | 2026-10-15 | The security probes read a client as signed in by what it is shown beside an anonymous client, not by `GET /` answering 200 | The thin specification lets the dashboard be public, and a public dashboard read a CSRF-checked sign-in as forged: 100 % fell to 90.91 %, past round 4's 9-point threshold | #1876 |
 | 2026-10-15 | A trial is both fenced and excluded: its file tools are denied every path it may not reach, and a trial whose transcript still reaches one, through the shell, is voided and re-run once; a second reach loses it without stopping the run | A deny rule matches a shell command's prefix, not its paths, so the shell cannot be fenced; a trial that read the hidden suite measures the suite, so counting it was never an option, and deciding after its scores were seen would be | #1907 |
 | 2026-10-15 | The cross-check reads whole blocks, reports agreement per judge row, and withholds a verdict only where the two judges read opposite directions | A shared vendor could favour the templates' style in every arm; opposite signs is the disagreement a verdict cannot survive, and a missed confirmation is what the interval already weighs | #1903 |
+| 2026-10-16 | A trial may not stop processes by name: the commands are denied, one that ran voids the trial, and a trial whose harness died under it is voided before the next run re-runs it `--from` that trial | Round 4's thin run ended after one trial when an agent stopped its dev server with `Get-Process -Name python \| Stop-Process`, which stopped the harness too; a probe showed a deny rule's glob matches anywhere in a command, chained ones included, and lets a stop by PID through | #1928 |
 
 ¹ This agrees with Anthropic's guidance on context engineering, which asks
 for the smallest set of high-signal tokens:
