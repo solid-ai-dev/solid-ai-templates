@@ -24,6 +24,20 @@ created an awkward step with nothing to change.
 
 ## Decision
 
+Adopt three-digit SemVer, release a minor version per milestone, and let projects
+without a version manifest tag main directly while projects with one keep the chore
+PR.
+
+## Rationale
+
+- Three-digit `MAJOR.MINOR.PATCH` is the industry default, and the dropped BUILD
+  segment added complexity without solving a clear problem for most projects.
+- A project with no version manifest tags main and publishes a GitHub Release with
+  auto-generated notes, which removes a version-bump step that had nothing to
+  change.
+
+## Design
+
 1. **Three-digit SemVer** — adopt standard `MAJOR.MINOR.PATCH` in
    `release.md`, dropping the BUILD segment
 2. **Milestones map to minor bumps** — each milestone closes with a
@@ -48,3 +62,11 @@ created an awkward step with nothing to change.
 - `release.md` versioning section updated to three-digit SemVer
 - `git.md` release process updated with a no-build variant
 - Existing tags (v2.0.0, v2.1.0) already follow three-digit SemVer
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

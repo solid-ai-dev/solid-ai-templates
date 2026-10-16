@@ -55,6 +55,23 @@ the current model.
 
 ## Decision
 
+Adopt composition over inheritance for the dependency model, so stacks compose only
+the modules they need with no transitive surprises.
+
+## Rationale
+
+- `quality-gates` is self-contained, so dropping `devsecops` and `cicd` from its
+  dependencies stops a consumer such as a static site inheriting SBOM and
+  multi-environment deployment rules it never uses.
+- Platform templates depend on `quality-gates`, so trimming it ends the transitive
+  pull of `devsecops` and `cicd` into every project on that platform.
+- Composition as the principle, rather than a trim of one file, prevents the same
+  violation recurring as new modules are added.
+- The manifest is the source of truth and file headers align to it, which removes
+  the hand-curation drift found in `static-site-astro`.
+
+## Design
+
 Adopt composition over inheritance for the dependency model. Stacks
 compose only the modules they need — no transitive surprises.
 
@@ -277,3 +294,11 @@ core: [base-quality, base-git, base-docs, base-readme, base-testing]
 
 Top-level list. Smoke tests validate all IDs in `core:` exist in the
 manifest.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

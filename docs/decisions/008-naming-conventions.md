@@ -18,6 +18,22 @@ creates inconsistency in the git log.
 
 ## Decision
 
+Issue titles use sentence case with an imperative verb and no prefix, and PR titles
+use the Conventional Commits form ending with the issue numbers, which squash-merge
+carries into the commit subject.
+
+## Rationale
+
+- Squash-merge derives the commit subject from the PR title, so one PR title
+  format gives every line of the git log a consistent subject.
+- A required issue number ends the inconsistency of some PRs carrying one and
+  others not, and keeps the cheapest link back to the discussion in
+  `git log --oneline`.
+- Issue titles carry no type prefix, because the label carries the type and the
+  titles are read by non-developers.
+
+## Design
+
 ### Issue titles
 
 - Sentence case, imperative verb: "Add X", "Fix Y", "Remove Z"
@@ -56,3 +72,11 @@ creates inconsistency in the git log.
   and ticket reference
 - Issue titles remain human-readable without prefix noise
 - No CI enforcement needed — this is a guideline, not a gate
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
