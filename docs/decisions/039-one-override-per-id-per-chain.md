@@ -37,6 +37,23 @@ level overrides that.
 
 ## Decision
 
+A resolved chain holds at most one override of each section ID, a section expecting
+further specialisation declares an ID of its own, and a smoke check fails an ID claimed
+twice.
+
+## Rationale
+
+- The `stack-tutorial` chain carried two contradictory bodies for each of three section
+  IDs, settled by whichever the agent read last; one override per ID leaves one
+  authority per ID.
+- The specification already called a double override an error, yet nothing counted the
+  claims, so a rule stated only in prose was violated silently; a check makes it
+  enforced rather than advised.
+- The `go-lib` to `go-service` to `go-echo` chain already specialised through a new ID
+  at each level, keeping each level addressable.
+
+## Design
+
 1. **One override per ID per chain** — no resolved chain MUST contain more
    than one template overriding a given section ID. This holds for stack
    chains and for the chains of orthogonal roots alike.
@@ -71,3 +88,11 @@ level overrides that.
   chain characters to specialise a section. The chain budget prices it.
 - The check reads orthogonal roots as well as stacks, so a collision inside
   an opt-in chain is a finding rather than a blind spot.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

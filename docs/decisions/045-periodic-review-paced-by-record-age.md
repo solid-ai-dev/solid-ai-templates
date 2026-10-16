@@ -45,6 +45,22 @@ the one a cadence is for.
 
 ## Decision
 
+Where a release is gated on a periodic project-wide audit, the obligation is decided by
+the newest record's age against a declared review interval, not by the release kind or
+count.
+
+## Rationale
+
+- Release-kind scoping produced four whole-project reviews in seven days in a repository
+  whose releases are mostly minors, so the gate collected artifacts rather than
+  readings.
+- A review of the whole project's shape has nothing new to read three days after the
+  last one, so a release whose newest record falls inside the interval owes nothing.
+- A busy period reaches an audit through on-demand events before any interval expires,
+  so the interval only catches the quiet project a cadence is for.
+
+## Design
+
 1. **Pace by the record's age** — where a project gates its release on a
    periodic project-wide audit, the obligation MUST be decided by the age
    of the newest record against a review interval the project declares:
@@ -119,6 +135,14 @@ the one a cadence is for.
 - A project releasing several times a week produces one review per
   interval instead of one per minor, and stops writing decline records
   for releases whose record is already current.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

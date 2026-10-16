@@ -39,6 +39,23 @@ the budget that tier leaves.
 
 ## Decision
 
+A rule family that some stacks carry and others do not has its membership declared by
+stack category, with a falsifiable reason per exempt category, and a check enforces it
+in both directions.
+
+## Rationale
+
+- Membership was a side effect of a few declarations, which left the quality-gate tier
+  in twelve of seventeen stacks with an asymmetry no reader would defend.
+- Declaring by category governs a stack added later by the class it declares, where a
+  list of stack identifiers goes stale at the next stack.
+- The security tier already expresses membership by class of stack, with a check
+  enforcing it, so the mechanism carries a second family.
+- A category at the most constrained context tier cannot take a large file without
+  changing what it requires of a model, so the tier is a recorded reason for exemption.
+
+## Design
+
 1. **Membership is declared** — a rule family that some stacks carry and
    others do not MUST have its membership stated by stack category, with
    a reason per exempt category, and MUST NOT be left to whatever the
@@ -95,3 +112,11 @@ the budget that tier leaves.
 - Any further rule family that some stacks carry and others do not owes
   the same declaration. The mechanism is now used twice, so a third use
   is a repetition rather than a design.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
