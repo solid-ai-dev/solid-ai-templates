@@ -42,6 +42,24 @@ the check at run time.
 
 ## Decision
 
+A check that determines at run time that it does not apply reports it with the reserved
+exit status 3, which a runner counts apart from readings and verdicts without matching
+output text.
+
+## Rationale
+
+- The runner recorded an answered inapplicability as a judgement awaiting a reading, so
+  five of twelve readings were checks that had already answered.
+- A skip is decided in advance by a person about the repository, while inapplicability
+  is decided at run time by the check about the moment, so folding it into the skip
+  loses that the check ran.
+- Membership of the inapplicable set changes with the moment, so the signal comes from
+  the check at run time rather than from a disposition recorded once.
+- A phrase is a convention no check declares, and rewording the sentence breaks the
+  recognition silently.
+
+## Design
+
 1. **Reserved status** — a check that determines at run time that it does
    not apply MUST report it with exit status 3, beside the sentence that
    explains it. The sentence is for whoever runs the block by hand; the
@@ -94,3 +112,11 @@ the check at run time.
   check that cannot apply here and one whose moment is not in progress.
 - Status 3 is now reserved across the shipped checks. A check using it for
   anything else would be read as inapplicable.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

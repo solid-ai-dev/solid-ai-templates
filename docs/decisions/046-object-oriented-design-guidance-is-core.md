@@ -31,6 +31,21 @@ object-oriented code.
 
 ## Decision
 
+`base-oop` is a member of the core tier and resolves into every stack chain and opt-in
+root, its rules applying where the object-oriented paradigm applies.
+
+## Rationale
+
+- The file reached only the eight service chains, and the exclusion of the other nine
+  was never decided; the dependency graph produced it.
+- The gap was widest for libraries, whose public surface is the contract callers depend
+  on and whose chains carried no rule on interface segregation, dependency inversion or
+  the shape of an abstraction.
+- The file is 4,113 characters and reads as the continuation of `base-quality`, whose
+  rule family is core already.
+
+## Design
+
 1. **`base-oop` is a member of the core tier** — it is listed in the
    manifest's `core:` entry and resolves into every stack chain and every
    opt-in root, alongside `base-quality`, `base-git`, `base-docs`,
@@ -68,3 +83,11 @@ object-oriented code.
   stack category crosses a context tier
 - A rule about object-oriented design goes in `oop.md` with core reach
   and needs no per-stack wiring
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

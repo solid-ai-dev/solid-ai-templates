@@ -30,6 +30,20 @@ occurrence.
 
 ## Decision
 
+From v3.0 the development journal is no longer a standard document, and a project SHOULD
+keep `docs/lessons.md` instead, one entry per lesson with its upstream disposition.
+
+## Rationale
+
+- At 470 KB the journal is too large for an agent to read whole, so it cannot carry
+  context to the next session.
+- Most of an entry restates what the tracker holds, and its gaps are unfinished work a
+  frozen entry cannot follow, which the wrap-up already turns into issues.
+- Lessons are the one part no other record holds, and a consuming project can recognise
+  a recurring need only if it recorded the first occurrence.
+
+## Design
+
 1. **The development journal is no longer a standard document** —
    `docs/dev-journal.md` leaves the standard documents table, and no
    template requires a per-session entry.
@@ -72,3 +86,11 @@ occurrence.
 - The v3.0 migration guide tells a consuming project to keep its journal as
   history and start `docs/lessons.md`
 - The CHANGELOG entry for v3.0 names the removal as a breaking change
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

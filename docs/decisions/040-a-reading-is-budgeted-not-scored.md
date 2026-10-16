@@ -36,6 +36,22 @@ about whether work is committed.
 
 ## Decision
 
+The checks allowed to await a reading are named, each above its reason, in
+`tests/reading-budget.txt`, and the conformance runner fails a run on any reading the
+file does not name.
+
+## Rationale
+
+- The awaiting count moved from 3 to 5 in changes whose diffs said nothing, while every
+  run stayed green; an unbudgeted reading now fails in the diff that causes it, beside
+  its reason.
+- Failing the run on every reading would score a governance signal and fail every
+  conforming change, so readings still pass and only unnamed ones fail.
+- A plain count moves with the release moment and differs between a developer machine
+  and a hosted runner, so the budget names checks rather than freezing a number.
+
+## Design
+
 The checks allowed to await a reading are named in `tests/reading-budget.txt`,
 one title per line, each above the reason it cannot reach a verdict. The
 conformance runner compares the run against that file:
@@ -88,3 +104,11 @@ a verdict while another stops reaching one, at a constant total.
 - The file records only what a reading costs to leave unautomated. It says
   nothing about whether the reading was read, which remains a matter of
   procedure.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

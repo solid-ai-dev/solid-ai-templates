@@ -32,6 +32,23 @@ carried `docs/PLAYBOOK.md`, and 12 of them `docs/ONBOARDING.md`.
 
 ## Decision
 
+From v3.0 every file under `docs/` uses lower kebab-case, root files keep their
+ecosystem names, the playbook keeps its noun, and existing projects rename when they
+adopt v3.0.
+
+## Rationale
+
+- Two consuming projects reported the SHOUT-case files under `docs/` as distracting, and
+  one is already renaming its guide docs to kebab-case as a local departure.
+- The casing and the noun are decided together because either alone renames a MUST
+  document in every consuming project, and apart they would rename the same file twice.
+- The playbook holds recipes for tasks a contributor chooses to perform, while a runbook
+  answers a misbehaving system, which only one section resembles.
+- A renamed MUST document is a breaking change across 13 consuming repositories, so it
+  waits for v3.0, the release that carries breaking changes.
+
+## Design
+
 1. **Every file under `docs/` uses lower kebab-case** — the standard
    documents become `docs/onboarding.md`, `docs/playbook.md` and
    `docs/spec.md`, beside `docs/dev-journal.md`. The single-word/multi-word
@@ -85,3 +102,11 @@ carried `docs/PLAYBOOK.md`, and 12 of them `docs/ONBOARDING.md`.
   move to v3.0
 - The CHANGELOG entry for v3.0 names the rename as a breaking change
 - A consumer already on kebab-case needs no local departure from v3.0 on
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

@@ -34,6 +34,22 @@ work depends on.
 
 ## Decision
 
+Stack templates follow a canonical section structure, classified in RFC 2119 tiers and
+judged against the resolved chain, with the MUST tier gated by a smoke check.
+
+## Rationale
+
+- The stack templates drifted: a usable stack omits `Commands`, the static-site stacks
+  omit a `Testing` section, and the language-conventions section is spelled five ways.
+- Derived stacks extend a parent, so a section may be satisfied by inheritance, which is
+  why membership is judged against the resolved chain rather than the raw file.
+- The core tier resolves into every chain, so the required tier holds only the
+  stack-unique sections the core tier cannot supply.
+- Without a written structure and a gate the drift recurs, and stacks cannot be compared
+  like-for-like, which the stack-cleanup work depends on.
+
+## Design
+
 Stack templates follow a canonical section structure, classified with
 RFC 2119 keywords. Membership is judged against the **resolved chain**,
 not the raw file — a section a stack inherits from its parent counts as
@@ -101,6 +117,14 @@ present.
 - New stack templates must follow this structure; the authoring steps
   in CLAUDE.md and PLAYBOOK reference it.
 - `generated/` chains for the edited stacks are regenerated.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

@@ -41,6 +41,24 @@ not written down.
 
 ## Decision
 
+A template names another template's section ID in running prose only where the declaring
+file resolves into every chain carrying the referencing file, otherwise stating the
+substance inline, and this is checked per chain.
+
+## Rationale
+
+- A prose reference resolves in the chains that carry both files and dangles in the
+  rest, sending a consumer to a section their file does not have, with nothing reporting
+  it.
+- The reference is well-formed in both files and defective only in some chains, so
+  review cannot catch it and the check runs per chain.
+- Naming the concept rather than the section ID keeps the sentence true in every chain,
+  since a chain lacking the rule also lacks the sentence's premise.
+- One dangling reference was introduced knowingly weeks after two others were removed
+  for the same reason, so the constraint was understood but not written down.
+
+## Design
+
 1. **Prose reference** — a template MUST NOT name another template's
    section ID in running prose unless the file declaring that section
    resolves into every chain that carries the referencing file.
@@ -93,3 +111,11 @@ not written down.
 - Authors gain a constraint that is cheap to satisfy and expensive to
   detect by eye, which is the shape that justifies a check rather than a
   convention.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
