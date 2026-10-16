@@ -1135,14 +1135,15 @@ def check_tpl_09():
 # Enforces the schema defined in docs/decisions/010-adr-governance.md:
 # - frontmatter present and parses as YAML
 # - id is 3-digit string matching filename leading digits
-# - status in closed set: Proposed | Accepted | Superseded
+# - status in closed set: Proposed | Accepted | Superseded | Rejected |
+#   Withdrawn
 # - date present in YYYY-MM-DD form
 # - category in closed set
 # - supersedes / superseded_by present (empty list allowed)
 # - reciprocal-link consistency
 # - status=Superseded iff superseded_by non-empty
 
-ADR_STATUSES = {"Proposed", "Accepted", "Superseded"}
+ADR_STATUSES = {"Proposed", "Accepted", "Superseded", "Rejected", "Withdrawn"}
 ADR_CATEGORIES = {"composition", "templates", "tooling", "process", "release"}
 ADR_FILENAME = re.compile(r"^(\d{3})-[a-z0-9-]+\.md$")
 ADR_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
