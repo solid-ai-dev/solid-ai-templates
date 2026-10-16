@@ -12,12 +12,10 @@ superseded_by: []
 ## Context
 
 <!--
-Why this decision is needed now. What problem, gap, or pressure
-prompted writing this ADR. Include the relevant prior state — what
-exists, what does not work, and what changed to surface the issue.
-
-This section is descriptive, not prescriptive. The Decision section
-makes the call; this section justifies that the call is necessary.
+Why this decision is needed now: the forces it answers. Open with one or
+two lead sentences, then group the forces as bullets or a table. Include
+the relevant prior state — what exists, what does not work, and what
+changed to surface the issue.
 
 Keep references to other ADRs to the frontmatter `supersedes` and
 `superseded_by` fields. Do NOT name other ADRs in prose.
@@ -26,31 +24,58 @@ Keep references to other ADRs to the frontmatter `supersedes` and
 ## Decision
 
 <!--
-What is decided. Imperative voice, RFC 2119 keywords (MUST, SHOULD,
-MAY) for the rule statements. Number multi-part decisions:
+What was decided, in one sentence.
+-->
+
+## Rationale
+
+<!--
+Why this option won, in two to four bullets, each tied to a force the
+Context names. Why each other option lost goes under Alternatives
+considered.
+-->
+
+## Design
+
+<!--
+Optional. The numbered rules that make the decision concrete, with
+RFC 2119 keywords (MUST, SHOULD, MAY), and a diagram where it helps:
 
 1. **Short label** — the rule
 2. **Short label** — the next rule
 
-One concern per ADR; multi-part decisions are allowed within it.
+Remove this section if the Decision sentence needs no rules.
 -->
 
 ## Alternatives considered
 
 <!--
-What was rejected and why. One bullet per alternative:
+What was rejected and why, as a table where it fits:
 
-- **Alternative name** — rejected; one-line reason
+| Alternative | Why not |
+|---|---|
 -->
 
 ## Consequences
 
 <!--
-What follows from this decision. Bullet list of downstream effects:
-- Files that must be updated
-- Follow-up tasks created
-- Constraints introduced
-- Constraints removed
+What follows from this decision, as a table where it fits: files that
+must be updated, follow-up tasks, constraints introduced or removed.
+-->
+
+## Compatibility
+
+<!--
+What an existing consumer or stored datum sees, the migration path, and
+how long the old form is served. "None" when no existing interface
+changes.
+-->
+
+## Security
+
+<!--
+What the decision exposes or protects: credentials, trust boundaries,
+exposed surfaces, access to data. "None" when it touches none.
 -->
 
 ## Related

@@ -67,6 +67,10 @@ CHECKS = [
      "find": "the naming convention drifted",
      "title": "ADR frontmatter schema", "do": RUN, "expect": ["nonzero"]},
 
+    {"file": "base/core/docs.md", "find": "bound by the layout, from",
+     "title": "Decision records carry the layout's sections",
+     "do": RUN, "expect": ["nonzero", "nonzero"]},
+
     {"file": "base/core/docs.md", "find": "over a bound and not frozen",
      "title": "Decision-record prose stays within the declared bounds",
      "do": RUN,

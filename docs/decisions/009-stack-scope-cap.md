@@ -1,7 +1,7 @@
 ---
 id: "009"
 status: Superseded
-date: 2026-05-31
+date: 2026-10-16
 category: templates
 supersedes: []
 superseded_by: ["049"]

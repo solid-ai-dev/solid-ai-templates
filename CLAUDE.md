@@ -293,8 +293,9 @@ base/ ──┬── frontend/ ──┐
   without reading this repository — the composition model. Prose style,
   tooling, release procedure, naming and file layout do not, however
   consequential they are.
-- Each ADR documents: context, decision, alternatives considered,
-  consequences
+- Each ADR carries Context, a one-sentence Decision, Rationale, an
+  optional Design, Alternatives considered, Consequences, Compatibility
+  and Security, per `base-docs` Decision logs
 - One coherent architectural decision may cover related choices across
   several issues or PRs; do not require a record per implementation concern.
 - What is immutable in a merged ADR is the decision — the claims
@@ -314,7 +315,7 @@ base/ ──┬── frontend/ ──┐
   `base-docs`
 - ADR schema is governed by ADR-010 — YAML frontmatter required
   (`id` as quoted string, `status` in {Proposed, Accepted,
-  Superseded}, `date` YYYY-MM-DD, `category` in {composition,
+  Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD, `category` in {composition,
   templates, tooling, process, release}, reciprocal `supersedes` /
   `superseded_by` links). Copy `docs/decisions/TEMPLATE.md` when
   authoring a new ADR; `py tests/run_smoke.py ADR-01` enforces
