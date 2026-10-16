@@ -34,6 +34,22 @@ whether a walk of the directives alone is a meaningful view of the graph.
 
 ## Decision
 
+A template MAY declare a core-tier file as a dependency, no chain may rely on that
+declaration to resolve the file, and the specification states the core tier and
+declaration counts from a gated generated block.
+
+## Rationale
+
+- The tree never matched the specification's absolute: 43 directive tokens across 19
+  templates and 19 manifest entries declare a core file, and the resolver deduplicates
+  them.
+- Permitting the declarations lets a template author name the core dependency a file
+  actually has, documenting what a reader would otherwise infer.
+- The false sentence stood because nothing read it, so the claim about the tree's shape
+  is generated and gated rather than corrected by hand.
+
+## Design
+
 1. **Redundant** — a template MAY declare a core-tier file in
    `[DEPENDS ON:]` or in a manifest `depends_on`. The resolver reaches the
    file through the seeding either way, and the duplicate is deduplicated
@@ -72,3 +88,11 @@ whether a walk of the directives alone is a meaningful view of the graph.
 - A walk of the directives alone remains an incomplete view of a chain,
   and the reconciliation between that walk and the resolver stays the
   check that says so
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

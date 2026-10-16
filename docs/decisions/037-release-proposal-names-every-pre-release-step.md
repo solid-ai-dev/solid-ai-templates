@@ -38,6 +38,21 @@ out of eight.
 
 ## Decision
 
+The release proposal names every step of the pre-release sequence and the result it
+produced, including each check a consuming runbook leaves unnumbered, and no such check
+gains a step number.
+
+## Rationale
+
+- An operator working the numbered list reaches its end without running the unnumbered
+  checks; a proposal naming every step makes a step nobody ran a line it does not carry.
+- The record requirement already existed for one step out of eight, scoped too narrowly;
+  covering the whole sequence applies the record this gap needs to every step.
+- A number for the checks in the consuming runbook would claim they belong to its
+  sequence and drift from the one that owns them.
+
+## Design
+
 1. **The record covers the sequence, not one step** — the release proposal
    MUST name every step of the pre-release sequence and the result it
    produced, including each check the consuming runbook does not number.
@@ -92,3 +107,11 @@ out of eight.
   sequence, so a proposal that names a step it did not run is not detected.
 - `v2.73.0` through `v2.76.0` keep their tags, releases and milestones
   unchanged.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

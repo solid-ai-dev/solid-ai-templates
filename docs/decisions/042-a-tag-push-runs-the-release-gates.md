@@ -46,6 +46,23 @@ nothing — the state a check must refuse rather than pass.
 
 ## Decision
 
+Each release gate reads its parameter from the environment, a tag push or a dispatch
+carrying the version runs the gates, and a gate resolves its baseline from the commit
+under release.
+
+## Rationale
+
+- No repository state distinguishes a release commit, but a tag push says a release is
+  happening, so reading the version from it removes the guess without loosening the
+  refusal.
+- The release gates are the checks whose omission is least recoverable, and they ran
+  only when somebody remembered; four consecutive minor releases shipped owing a
+  periodic review.
+- At the tag itself the newest reachable tag is the one being released, so the range is
+  empty; resolving from the commit under release makes the baseline the tag before it.
+
+## Design
+
 1. Each release gate MUST read its parameter from the environment,
    falling back to the empty value that reports the check does not
    apply. Setting the constant by hand remains supported; the
@@ -98,3 +115,11 @@ runbook step carry.
 - Correcting the baseline changes what the gates measure on the release
   commit too: previously the newest tag, now the tag before whichever
   one points at HEAD. On an untagged HEAD the two are the same.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

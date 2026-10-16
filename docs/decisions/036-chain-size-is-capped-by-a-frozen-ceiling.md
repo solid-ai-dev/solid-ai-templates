@@ -40,6 +40,24 @@ no single ticket review is positioned to make.
 
 ## Decision
 
+Every root a project can pick carries a chain-size ceiling frozen at its measured size,
+and the smoke suite fails a chain over its ceiling, a root without one, and a stale one.
+
+## Rationale
+
+- The measured chain size was accurate but not binding, so a rule added to a
+  seventeen-chain file passed every gate and its cost was visible only to a reader who
+  went looking.
+- Every core-tier addition is justified on its own terms and the cost appears only in
+  aggregate, which no single ticket review is positioned to weigh.
+- A percentage band is spent silently, so the ceiling carries no headroom and growth
+  raises a number in the same pull request, where a reviewer sees what the addition
+  costs.
+- A consuming project has no chain to measure, so the cap lives in this repository
+  rather than in the templates.
+
+## Design
+
 1. **Every root carries a ceiling** — `tests/chain-budget.txt` records one
    ceiling per root a project can pick: every stack, and every orthogonal
    template opted into independently of the stack. A root without a ceiling
@@ -98,3 +116,11 @@ no single ticket review is positioned to make.
 - Ceilings only ratchet down by deliberate edit; nothing lowers them
   automatically when a chain shrinks, so slack accumulates unless a
   shrinking change also lowers the number.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

@@ -53,6 +53,24 @@ its job; a template that says two contradictory things is a defect
 
 ## Decision
 
+A claim in a merged record that a later decision falsifies is corrected by a new,
+self-contained record, never by editing, appending to or wholly superseding the record
+that carries it.
+
+## Rationale
+
+- Editing or appending changes what a closed record asserts, which is the operation
+  immutability forbids.
+- Supersession is whole-record, so retiring a record to correct one sentence marks the
+  working rules in it as archived.
+- A decision record is a dated statement of what was decided, and the template chain is
+  the live specification a reader applies, so a correction is complete when the rule is
+  right in the templates.
+- Writing a new record looks like doing nothing about the stale sentence, so the choice
+  is stated explicitly rather than arrived at by default.
+
+## Design
+
 1. **Correct by new record** — a claim in a merged record that a later
    decision falsifies MUST be corrected by writing a new record. It MUST
    NOT be corrected by editing the record that carries it, and MUST NOT
@@ -109,3 +127,11 @@ its job; a template that says two contradictory things is a defect
   with operative instructions, which decision records do not, so the two
   may legitimately resolve differently — but the mechanisms should be
   compared before either is settled.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
