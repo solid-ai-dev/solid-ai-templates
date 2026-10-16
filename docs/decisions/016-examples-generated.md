@@ -32,6 +32,21 @@ output models instead of lagging them.
 
 ## Decision
 
+Example context files are produced through the documented generation path and
+regenerated rather than hand-patched, while `generated/` stays the authoritative chain
+reference.
+
+## Rationale
+
+- Hand maintenance let the examples drift from the templates they claim to demonstrate,
+  modelling an outdated shape until someone audited them manually.
+- Examples are the reference outputs contributors compare against, so an example in an
+  outdated shape misleads them.
+- What examples add over `generated/` is a finished, named, project-specific context
+  file, and that value holds only if examples track the output models.
+
+## Design
+
 Example context files are **outputs of the documented generation
 path**, refreshed by re-running it — not artifacts edited by hand.
 
@@ -91,6 +106,14 @@ path**, refreshed by re-running it — not artifacts edited by hand.
 - `docs/PLAYBOOK.md` gains a "regenerate an example" procedure.
 - The inline-versus-reference body style stays inline for now and is
   revisited when the restructure settles the recommended default.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

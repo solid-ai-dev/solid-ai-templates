@@ -27,6 +27,22 @@ override model produces by design.
 
 ## Decision
 
+Redundancy is detected on each stack's resolved chain, excluding override-superseded
+pairs, and CI fails only on exact duplicates that are not in a baseline allowlist.
+
+## Rationale
+
+- A rule stated in two active sections of one chain dilutes the agent's attention, and
+  smoke never checked content overlap, so duplication accumulated silently.
+- A section tagged `[OVERRIDE: id]` legitimately repeats the section it replaces, so a
+  raw-file scan reports duplicates the override model produces by design.
+- Paraphrase thresholds are subjective and produce false positives, so near duplicates
+  stay an audit aid rather than a gate.
+- The library carried known duplicates owned by other issues, and a baseline ratchet
+  ships protection immediately without forcing premature changes.
+
+## Design
+
 1. **Detect on the resolved chain** — fingerprint rule bullets per
    section across each stack's resolved chain; a duplicate is a
    normalized rule appearing in two active sections of one chain.
@@ -67,6 +83,14 @@ override model produces by design.
   CLAUDE.md command catalogue.
 - `BASELINE` is currently empty — the gate enforces a true zero.
 - Near-duplicate detection remains advisory, not gated.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 
