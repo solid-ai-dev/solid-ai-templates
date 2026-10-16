@@ -63,7 +63,7 @@ generated chains, and stay current by merging upstream.
 | 5 | Forks own their ID prefixes | `stack-*`, `platform-*` and `<org>-*` are reserved for forks; upstream adds no ID under them |
 | 6 | Upstream commits no derived content | No `generated/`, no `examples/`, no stack table; a fork regenerates its own |
 | 7 | Fork-owned files conflict by design | `README.md`, `CLAUDE.md` and `CHANGELOG.md` belong to the fork, which resolves them in its own favour on every merge |
-| 8 | The split merges with `ours` | A fork that predates the split merges the split commit with `git merge -s ours`; an ordinary merge deletes every file the fork left unchanged and upstream removed |
+| 8 | The split merges with `ours` | Upstream lands the split as one commit. A fork that predates it merges the commit's parent normally, then the split commit with `git merge -s ours`; an ordinary merge deletes every file the fork left unchanged and upstream removed |
 | 9 | Generation stays agent-driven | No compiler: a project hands its agent the interview and a resolved chain |
 | 10 | Takes effect in v3.0 | Until then this repository carries both kinds of content, as it does today |
 
@@ -78,16 +78,18 @@ generated chains, and stay current by merging upstream.
 
 ### Merging the split
 
-A fork made before v3.0 takes upstream's changes in three steps. The path
-move comes first and merges normally: `-s ours` marks a commit and all its
-ancestors as merged, so a move merged after it would never apply.
+A fork made before v3.0 takes upstream's changes in three steps. Upstream
+lands the split as one commit. Everything before it merges normally first:
+`-s ours` marks a commit and all its ancestors as merged, so a change not
+merged before it, such as the path move or a policy fix, is skipped for
+good.
 
 ```bash
 git remote add upstream https://github.com/solid-ai-dev/solid-ai-templates.git
 git fetch upstream
 
-# Templates move to their new paths, with IDs unchanged.
-git merge <path-move-commit>
+# Everything before the split, the path move included, merges normally.
+git merge <split-commit>^
 
 # Upstream drops the stacks; the fork keeps them.
 git merge -s ours <split-commit>
