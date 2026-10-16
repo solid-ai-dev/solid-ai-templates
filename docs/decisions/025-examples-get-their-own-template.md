@@ -50,6 +50,26 @@ mistakes, and neither owner was the obvious place to fix them.
 
 ## Decision
 
+Every rule governing an `examples/` directory moves to a dedicated `base-examples`
+template, reached through a stack's `depends_on` rather than the core tier, and the
+README template keeps only a pointer.
+
+## Rationale
+
+- The README template carries one file-level ID, so its offline rule is not addressable;
+  a dedicated template with section IDs lets a project extend one rule without replacing
+  a neighbouring contract.
+- Only one of seventeen stacks prescribes the directory, so a Go or Node library is
+  ungoverned on structure; rules a second language would copy verbatim belong in one
+  shared template.
+- The two gaps found downstream sat in the seam between the two owners, and neither
+  owner was the obvious place to fix them; the new template holds what neither owner
+  did.
+- Most projects ship no examples directory, so the conditional concern is reached by
+  `depends_on` and stays out of the core tier.
+
+## Design
+
 1. **A dedicated template** — `templates/base/core/examples.md`
    (`[ID: base-examples]`) holds every rule governing an `examples/`
    directory: contents, index, offline execution, smoke job. Sections
@@ -151,6 +171,14 @@ mistakes, and neither owner was the obvious place to fix them.
   examples take the exception. The gating leg's pass condition covers
   only what it runs, so a quarantined example cannot be counted as
   passing by a job that never executed it.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 

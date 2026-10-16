@@ -38,6 +38,23 @@ wrong file is not.
 
 ## Decision
 
+A project that publishes versions carries a committed `CHANGELOG.md`, and one adopting
+it late starts at the next version and records earlier versions by naming where they are
+published, never by reconstruction.
+
+## Rationale
+
+- Generated notes take their form from pull request titles, with no grouping, no length
+  bound and no statement of what a reader must do, which is precisely the rule's own
+  content.
+- Reconstructing history from those titles yields a file that satisfies the check while
+  failing the rule's premise, and a plausible wrong file is less visible than an
+  absence.
+- The committed file is present in a clone, a mirror, a vendored copy and an offline
+  archive, and is versioned alongside the code it describes.
+
+## Design
+
 1. **Hosted notes do not discharge the requirement** — a project that
    publishes versions MUST carry a committed `CHANGELOG.md`. A release
    page is where the record MAY additionally be published, never where it
@@ -95,3 +112,11 @@ wrong file is not.
   its later steps and audit table are renumbered.
 - A consuming project that already publishes versions inherits an
   obligation it can discharge without fabricating history.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

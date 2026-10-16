@@ -47,6 +47,25 @@ finding.
 
 ## Decision
 
+A minor or major release carries a current periodic review where the project runs one, a
+patch release owes neither the report nor a record declining it, and the step ships a
+check.
+
+## Rationale
+
+- Most releases are patches, which change no interface, so a review of the project's
+  shape has nothing new to read on one, and declining it was becoming the routine way to
+  clear the gate.
+- The gate was scoped to the wrong event while every available signal said it was
+  working, so the existing rules did not catch it.
+- Replacing the obligation with a backlog condition schedules nothing, because nothing
+  polls a backlog and no release meets the condition.
+- The step carried no pass condition in either direction, and the obligation is
+  mechanically decidable from the version and the dated records, so it ships a runnable
+  check.
+
+## Design
+
 1. **Scope by release kind** — a minor or major release MUST carry a
    current periodic review where the project runs one. A patch release
    owes nothing: neither the report nor a record declining it.
@@ -97,6 +116,14 @@ finding.
 - This repository becomes measurably in arrears: its newest audit record
   predates its last release, and its next release moves the minor
   version, so the check reports a finding it must answer before cutting.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
 
 ## Related
 
