@@ -33,6 +33,21 @@ do not inherit it.
 
 ## Decision
 
+Per-language tool selection lives in the language layer's tooling section, the abstract
+gate names no tool, and a stack binds only the tools its own shape introduces.
+
+## Rationale
+
+- Concrete tools named in the abstract gate make the policy layer change when a tool is
+  replaced as well as when the policy moves.
+- Six Python stacks resolve through one root stack file, so a language file declared
+  from that root reaches the family once instead of a tool being repeated per stack or
+  absent from some.
+- The mapping had no consistent home and settled in three different places; the language
+  layer exists for language bindings.
+
+## Design
+
 1. **The language layer is the home** — per-language tool selection MUST
    live in `templates/base/language/<language>.md`, in a section tagged
    `[ID: base-<language>-tooling]` that binds a concrete tool to each
@@ -82,3 +97,11 @@ do not inherit it.
   what that file's complexity section and recommended-plugins list say.
 - Adding a language means adding one file and one dependency edge, with
   no change to the abstract gate.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

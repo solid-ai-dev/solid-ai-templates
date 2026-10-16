@@ -44,6 +44,21 @@ only "put the command in a fence" would see nothing to do.
 
 ## Decision
 
+A shipped check states its command in a fenced block, with its pass condition in prose
+beside it, and a tool counting the checks it ran also reports how many it could not see.
+
+## Rationale
+
+- The runner sees only fenced blocks, so a check written in running prose was never
+  extracted or run while the conformance run reported clean on a tree violating the
+  rule.
+- The runner's reconciliation is bounded by the fence and cannot count a prose check, so
+  completeness rested on an untrue assumption about how authors typeset their checks.
+- A rule describing an action with no command gives an author nothing to move into a
+  fence, so naming no command is stated as stating no check.
+
+## Design
+
 1. **The command MUST sit in a fenced block.** Prose introduces the check
    and carries its pass condition beside the fence; the runnable form
    lives inside one. A command typed into a sentence cannot be extracted,
@@ -94,3 +109,11 @@ only "put the command in a fence" would see nothing to do.
   every template turn.
 - A future check added in prose is a finding rather than an invisible
   gap, and the count of prose checks is reported on every run.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.

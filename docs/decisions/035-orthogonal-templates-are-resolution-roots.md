@@ -40,6 +40,24 @@ context file does not hold.
 
 ## Decision
 
+An orthogonal template no stack chain reaches is resolved as a root of its own, its
+directives and prose section references resolve within that root's chain, and
+reachability is checked over both corpora.
+
+## Rationale
+
+- Every reachability check resolved only the seventeen stacks, so files reached through
+  the opt-in path were scanned against zero chains and passed by arithmetic rather than
+  by inspection.
+- The stack a project pairs an orthogonal template with is unknown when the template is
+  authored, so only its own root's chain is guaranteed context.
+- Four defects were live under the old reading, giving a project a directive with no
+  parent and a pointer to a section its context file does not hold.
+- One corpus emptying while the other stays full is the failure this replaces, and a
+  single total hides it, so each count is reported.
+
+## Design
+
 1. **An orthogonal template is a root** — an entry no stack chain reaches
    MUST be resolved the way a stack is resolved: the core tier, then its
    `depends_on` tree, then itself. Appending the bare file is not
@@ -90,3 +108,11 @@ context file does not hold.
 - An author adding an orthogonal template gets a smaller guaranteed
   context than a stack author does — six core files plus what the entry
   declares — and the checks now hold them to it.
+
+## Compatibility
+
+Not assessed: this record predates the section.
+
+## Security
+
+Not assessed: this record predates the section.
