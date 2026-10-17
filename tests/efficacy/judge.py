@@ -302,6 +302,11 @@ def copied_dir(base, name):
     # a trial may call one anything, and every one records its own path.
     if os.path.isfile(os.path.join(path, "pyvenv.cfg")):
         return False
+
+    # A half-deleted one has lost that file and still holds launchers that
+    # embed the trial's path, so a venv-shaped name alone keeps it out.
+    if name.lstrip(".").startswith("venv"):
+        return False
     return not any(name == cache and os.path.isdir(os.path.join(path, inner))
                    for cache, inner in USER_CACHE_DIRS)
 
@@ -921,6 +926,9 @@ def bundle_checks(scratch):
         # environment under a name of its own, and two per-user caches.
         os.path.join(".venv-clean", "pyvenv.cfg"): "home = %s\n" % scored,
         os.path.join(".venv-clean", "Scripts", "activate"): scored,
+
+        # One whose removal stopped at a locked launcher: no pyvenv.cfg left.
+        os.path.join(".venv-stale", "Scripts", "tariff-serve.exe"): scored,
         os.path.join("pip", "cache", "selfcheck", "state"): scored,
         os.path.join("Microsoft", "Windows", "PowerShell", "cache"): scored,
     }
