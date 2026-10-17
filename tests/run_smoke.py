@@ -2462,6 +2462,151 @@ def check_sys_19():
     return seen.failures() + failures, seen.notes()
 
 
+# ---------------------------------------------------------------------------
+# SYS-20 -- a fork leaves upstream's manifest keys as it last merged them
+# ---------------------------------------------------------------------------
+
+# A fork appends under `stacks:`, `platform:` and keys of its own, and never
+# edits the keys upstream owns. An edit there is what turns the fork's next
+# upstream merge into a conflict, and nothing else notices it until then.
+#
+# In a fork, SAIT_UPSTREAM_REF names a ref holding upstream's history, and
+# the baseline is the revision the fork last merged: the merge base of HEAD
+# and that ref. Upstream sets no ref, so the manifest is compared with
+# itself and the check passes trivially. Because that run reads no edit,
+# planted manifest pairs exercise the failing path on every run.
+
+UPSTREAM_KEYS = ("core", "base", "backend", "frontend")
+UPSTREAM_REF_ENV = "SAIT_UPSTREAM_REF"
+
+
+def upstream_key_edits(was, now):
+    """Each edit to an upstream-owned manifest key, as one finding."""
+    found = []
+    for key in UPSTREAM_KEYS:
+        before, after = was.get(key) or [], now.get(key) or []
+        if key == "core":
+            if before != after:
+                found.append(f"core: {before} became {after}")
+            continue
+        old = {e["id"]: e for e in before}
+        new = {e["id"]: e for e in after}
+        for eid in sorted(set(old) - set(new)):
+            found.append(f"{key}: {eid} removed")
+        for eid in sorted(set(new) - set(old)):
+            found.append(f"{key}: {eid} added")
+        for eid in sorted(set(old) & set(new)):
+            fields = sorted(k for k in set(old[eid]) | set(new[eid])
+                            if old[eid].get(k) != new[eid].get(k))
+            if fields:
+                found.append(f"{key}: {eid} changed ({', '.join(fields)})")
+    return found
+
+
+OWNED_BASE = """core: [base-a]
+base:
+  - id: base-a
+    file: templates/core/quality.md
+backend:
+  - id: backend-a
+    file: templates/backend/http.md
+    depends_on: [base-a]
+frontend: []
+stacks:
+  - id: stack-a
+    file: templates/stack/a.md
+    depends_on: [backend-a]
+"""
+
+# Each case is a fork's manifest against OWNED_BASE, and the findings the
+# check owes it. The appends are the control: a check that flagged them
+# would fail every fork that did what the contract allows.
+OWNERSHIP_CASES = [
+    ("a stack and a platform appended, and a key of the fork's own",
+     OWNED_BASE + """  - id: stack-b
+    file: templates/stack/b.md
+platform:
+  - id: platform-b
+    file: templates/platform/b.md
+fork:
+  - id: fork-note
+""", []),
+    ("the core tier edited",
+     OWNED_BASE.replace("core: [base-a]", "core: [base-a, backend-a]"),
+     ["core: ['base-a'] became ['base-a', 'backend-a']"]),
+    ("an upstream entry changed",
+     OWNED_BASE.replace("depends_on: [base-a]", "depends_on: []"),
+     ["backend: backend-a changed (depends_on)"]),
+    ("an entry added under an upstream key",
+     OWNED_BASE.replace("frontend: []", """frontend:
+  - id: frontend-b
+    file: templates/frontend/b.md"""),
+     ["frontend: frontend-b added"]),
+    ("an upstream entry removed",
+     OWNED_BASE.replace("""  - id: backend-a
+    file: templates/backend/http.md
+    depends_on: [base-a]
+""", ""),
+     ["backend: backend-a removed"]),
+]
+
+
+def check_sys_20():
+    if not HAS_YAML:
+        return [MISSING_YAML]
+
+    seen = Inspected()
+    failures = []
+
+    seen.count("planted fork manifests", OWNERSHIP_CASES)
+    base = yaml.safe_load(OWNED_BASE)
+    for label, text, want in OWNERSHIP_CASES:
+        got = upstream_key_edits(base, yaml.safe_load(text))
+        if got != want:
+            failures.append(f"  planted, {label}: found {got}, owed {want}")
+
+    manifest = os.path.join(ROOT, "templates", "manifest.yaml")
+    with io.open(manifest, encoding="utf-8") as handle:
+        now_text = handle.read()
+
+    ref = os.environ.get(UPSTREAM_REF_ENV)
+    if ref:
+        merged = subprocess.run(["git", "merge-base", "HEAD", ref],
+                                cwd=ROOT, capture_output=True, text=True)
+        if merged.returncode != 0:
+            failures.append(
+                f"  {UPSTREAM_REF_ENV}={ref} shares no history with HEAD, so "
+                f"the revision the fork last merged is unknown: "
+                f"{merged.stderr.strip()}"
+            )
+            return seen.failures() + failures, seen.notes()
+        revision = merged.stdout.strip()
+        shown = subprocess.run(
+            ["git", "show", f"{revision}:templates/manifest.yaml"],
+            cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+        if shown.returncode != 0:
+            failures.append(f"  the manifest at {revision[:12]} could not be "
+                            f"read: {shown.stderr.strip()}")
+            return seen.failures() + failures, seen.notes()
+        was_text = shown.stdout
+        basis = (f"  baseline: the merge base {revision[:12]} of HEAD and "
+                 f"{ref}")
+    else:
+        was_text = now_text
+        basis = (f"  baseline: {UPSTREAM_REF_ENV} is unset, so this is "
+                 f"upstream and the manifest is compared with itself")
+
+    was, now = yaml.safe_load(was_text), yaml.safe_load(now_text)
+    seen.count("upstream keys compared",
+               [k for k in UPSTREAM_KEYS if k in was])
+    for finding in upstream_key_edits(was, now):
+        failures.append(
+            f"  {finding}: a fork appends under stacks:, platform: and its "
+            f"own keys, and leaves upstream's as it last merged them"
+        )
+
+    return seen.failures() + failures, seen.notes() + [basis]
+
 CHECKS = [
     {"id": "SYS-01", "spec": "SAIT-SMK-SYS-01-001A",
      "title": "DEPENDS ON paths resolve to existing files", "fn": check_sys_01},
@@ -2545,6 +2690,9 @@ CHECKS = [
     {"id": "SYS-19", "spec": "SAIT-SMK-SYS-19-001A",
      "title": "resolve.py names a missing dependency and a dependency cycle",
      "fn": check_sys_19},
+    {"id": "SYS-20", "spec": "SAIT-SMK-SYS-20-001A",
+     "title": "A fork leaves upstream's manifest keys as it last merged them",
+     "fn": check_sys_20},
 ]
 
 

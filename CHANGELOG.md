@@ -30,6 +30,9 @@ alters no template carries no entry.
 - `tools/resolve.py` exits 1 naming a `depends_on` ID with no manifest
   entry and the entry naming it, or a dependency cycle as a path, where it
   used to resolve a shorter chain or crash.
+- Smoke check SYS-20 fails when a fork edits an upstream manifest key
+  (`core`, `base`, `backend`, `frontend`), naming the key and entry,
+  against the upstream revision it last merged, set by `SAIT_UPSTREAM_REF`.
 
 ### Breaking changes
 

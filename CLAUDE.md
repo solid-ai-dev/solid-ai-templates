@@ -427,6 +427,9 @@ Run `py tests/run_smoke.py` before every PR. It checks:
   exemption's recorded reason still holds (ADR-044)
 - SYS-19: `resolve.py` names a missing dependency and a dependency cycle,
   each with its own message and exit 1
+- SYS-20: a fork leaves the manifest's upstream keys (`core`, `base`,
+  `backend`, `frontend`) as it last merged them, against the ref in
+  `SAIT_UPSTREAM_REF`; upstream sets none and passes against itself
 - Prompt builds for all stacks
 
 ## 6. Session protocol

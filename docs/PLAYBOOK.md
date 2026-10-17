@@ -392,6 +392,18 @@ See `tests/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
 full list of specs. Requires `py -m pip install pyyaml` for the manifest
 check.
 
+In a fork, set `SAIT_UPSTREAM_REF` to a ref holding upstream's history
+before running smoke, so SYS-20 compares the manifest's upstream keys with
+the revision the fork last merged:
+
+```bash
+git fetch upstream
+SAIT_UPSTREAM_REF=upstream/main py tests/run_smoke.py SYS-20
+```
+
+Unset, SYS-20 treats the checkout as upstream and compares the manifest
+with itself.
+
 `run_e2e.py` is the one runner that calls a model and costs money, so it
 runs on a cadence rather than on every change: the STK-24 canary runs live
 at every release cut, recorded in the cut's pull request, and the full
