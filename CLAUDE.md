@@ -357,6 +357,7 @@ The suite lives in `tests/`:
 | `tests/providers.py` | Model backends the e2e runner selects between |
 | `tests/conformance.py` | Disposition per embedded check — run here, or skip with a reason |
 | `tests/run_conformance.py` | Runs the templates' own embedded checks against this repository |
+| `tests/run_fork_sync.py` | Merges the change under test into a simulated fork and runs smoke on the result |
 
 ```bash
 py tests/run_smoke.py              # structural checks
@@ -364,6 +365,8 @@ py tests/run_smoke.py SYS-01       # run one check by ID
 
 py tests/run_conformance.py        # the templates' checks, against this repo
 py tests/run_conformance.py --list # dispositions only, run nothing
+
+py tests/run_fork_sync.py         # a fork that only appends merges HEAD
 
 py tests/run_e2e.py                # canary only (fixture stack, needs API key)
 py tests/run_e2e.py --all          # all tests (live, needs API key)
@@ -378,8 +381,9 @@ py tests/run_e2e.py --dry-run      # build prompts, call no model, write no repo
   model and writes none
 - Spec files live in `tests/specs/` — see `tests/CODIFICATION.md`
   for the ID scheme and `tests/INDEX.md` for the full list
-- CI runs smoke, conformance, `sync.py --check`, `resolve.py --check`,
-  the redundancy audit and gitleaks on PRs and on push to main
+- CI runs smoke, conformance, fork sync, `sync.py --check`,
+  `resolve.py --check`, the redundancy audit and gitleaks on PRs and on
+  push to main
 - Live e2e calls a model and costs money, so it runs on a cadence
   rather than per change: the STK-24 canary at every release cut,
   recorded in the cut PR, and the full suite at each periodic review

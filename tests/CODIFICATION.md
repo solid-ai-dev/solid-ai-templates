@@ -97,6 +97,7 @@ reused for a different component within the same area.
 | `03` | Core tier — resolved chains include core tier files |
 | `04` | Prompt assembly — prompt builds for all stacks |
 | `05` | Parser parity — resolve.py resolution matches the PyYAML resolution |
+| `06` | Fork sync — a simulated fork merges an upstream change cleanly |
 
 ### STK - Stack
 
