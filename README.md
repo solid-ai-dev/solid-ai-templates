@@ -212,7 +212,7 @@ meets templates the stacks table does not list.
 | `templates/backend/monitoring.md` | backend | Key metrics, thresholds, alerts, dashboards, incidents |
 | `templates/backend/webhooks.md` | backend | Inbound webhook intake, edge signature verification, fast-ack, retry amplification |
 | `templates/workflow/360.md` | workflow | 360-degree project analysis — four stakeholder perspectives, grading |
-| `templates/core/agents.md` | core | Output structure, models (inline/reference/hybrid), formatting rules |
+| `templates/core/agents.md` | core | Output structure, models (inline/hybrid), formatting rules |
 | `templates/workflow/ai-workflow.md` | workflow | AI-assisted development lifecycle, work item hierarchy |
 | `templates/workflow/communication.md` | workflow | Communication preferences — concise output, shorthand verbs, scope-asking |
 | `templates/workflow/compression.md` | workflow | Re-verifying summaries, tables and rollups derived from verified research |

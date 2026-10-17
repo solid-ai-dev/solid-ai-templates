@@ -54,7 +54,7 @@ Based on what you learned, propose a complete setup:
 Select conventions for the project's needs and material risks. The resolved
 chain supplies candidates, not an obligation to adopt every rule. Keep existing
 adopted conventions unless the user changes them; declining a new candidate
-requires no ADR or ticket. Include that boundary in reference/hybrid output.
+requires no ADR or ticket. Include that boundary in hybrid output.
 
 Present the proposal as a short summary and ask the user to confirm or
 adjust. Proceed to Phase 4 once the user approves.
@@ -70,10 +70,11 @@ Before generating, collect any missing fields in a single question:
 - Repository URL (e.g. github.com/acme/my-service)
 - Output filename: `CLAUDE.md` (Claude Code) or `AGENTS.md`
   (all others)? I'd default to `CLAUDE.md`.
-- **Inline, reference, or hybrid?** "Should I inline all rules, reference
-  solid-ai-templates as a submodule, or use a hybrid (inline critical rules,
-  reference the rest)? I'd default to inline for a single project, hybrid
-  if you plan to use the templates across multiple projects."
+- **Inline or hybrid?** "Should I inline all rules, or use a hybrid
+  (vendor solid-ai-templates as a submodule, inline the rules that would
+  break silently, reference the rest)? I'd default to inline for a single
+  project, hybrid if you plan to use the templates across multiple
+  projects."
 
 ### Inline model (default)
 
@@ -94,41 +95,22 @@ End the file with: `<!-- Generated with solid-ai-templates
 Also generate `docs/ONBOARDING.md` and `docs/PLAYBOOK.md` following the
 required structures in `templates/core/docs.md`.
 
-### Reference model
-
-Generate a leaner agent file that references the templates instead of
-inlining them. The output file:
-
-1. Points to `docs/solid-ai-templates/` as a submodule for base quality,
-   review, and language-specific rules
-2. Lists the relevant template files for this project's stack
-3. Defines code review and structure audit scopes (which templates to
-   read for each)
-4. Contains only project-specific overrides and additions inline
-
-End the file with: `<!-- Generated with solid-ai-templates
-(github.com/solid-ai-dev/solid-ai-templates) -->`
-
-Tell the user to add the submodule:
-```
-git submodule add https://github.com/solid-ai-dev/solid-ai-templates.git docs/solid-ai-templates
-```
-
-Also generate `docs/ONBOARDING.md` and `docs/PLAYBOOK.md` following the
-required structures in `templates/core/docs.md`.
-
 ### Hybrid model
 
-Generate an agent file that inlines critical rules and references the
-templates for the rest. Follow the hybrid model structure in
-`templates/core/agents.md`. The output file:
+Generate an agent file that inlines the rules that would break silently,
+with nothing to catch them, and references the templates for the rest.
+Follow the hybrid model structure in `templates/core/agents.md`. The
+output file:
 
 1. Points to `docs/solid-ai-templates/` as a submodule
 2. Lists ALL template files in the dependency chain
-3. Inlines git conventions, project structure, language-specific
-   safety rules, and content rules
-4. References quality framework, review process, testing, a11y,
-   SEO, and CI/CD from the templates
+3. Inlines every rule "Placing a rule" in `templates/core/agents.md`
+   marks MUST inline — a rule whose breaking is silent and that no test,
+   linter or CI step enforces — wherever it lives: git conventions,
+   project structure, language-specific safety rules and content rules,
+   and any such rule in testing, review, a11y, SEO or CI/CD
+4. References the templates for every other rule; no area is
+   referenced whole
 5. Renders §6.3 (end-of-session audit) by inlining `scope.md`'s
    checklist verbatim or hard-delegating ("execute each item; do not
    summarize") — never paraphrased into bullets (see `agents.md` §6.3)
