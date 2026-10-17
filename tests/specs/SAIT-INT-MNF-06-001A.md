@@ -63,8 +63,8 @@ tags: [manifest, fork, composition, merge]
 3. FS-03: merge HEAD, or a planted `base:` description edit when HEAD
    changes nothing against the base; keep the fork's side of any conflict
    in a fork-owned document, point the fork's own files at each path
-   upstream renamed, as a fork migrating would, then run the merged tree's `run_smoke.py` with
-   `SAIT_UPSTREAM_REF` at the upstream side
+   upstream renamed, as a fork migrating would, then run the merged
+   tree's `run_smoke.py` with `SAIT_UPSTREAM_REF` at the upstream side
 
 ### Assertions
 
