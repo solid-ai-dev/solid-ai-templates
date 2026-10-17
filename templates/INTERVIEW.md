@@ -104,10 +104,13 @@ output file:
 
 1. Points to `docs/solid-ai-templates/` as a submodule
 2. Lists ALL template files in the dependency chain
-3. Inlines git conventions, project structure, language-specific
-   safety rules, and content rules
-4. References quality framework, review process, testing, a11y,
-   SEO, and CI/CD from the templates
+3. Inlines every rule "Placing a rule" in `templates/core/agents.md`
+   marks MUST inline — a rule whose breaking is silent and that no test,
+   linter or CI step enforces — wherever it lives: git conventions,
+   project structure, language-specific safety rules and content rules,
+   and any such rule in testing, review, a11y, SEO or CI/CD
+4. References the templates for every other rule; no area is
+   referenced whole
 5. Renders §6.3 (end-of-session audit) by inlining `scope.md`'s
    checklist verbatim or hard-delegating ("execute each item; do not
    summarize") — never paraphrased into bullets (see `agents.md` §6.3)

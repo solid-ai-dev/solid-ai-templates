@@ -214,6 +214,13 @@ catch them:
 
 ### What to reference
 
+Reference a rule only where "Placing a rule" allows it: its breaking shows
+an error, or a test, linter or CI step enforces it. The areas below are
+where most such rules live, and none is referenced whole. Inline any rule
+in them that breaks silently with nothing to catch it — for example, a
+test that must derive its expected value independently of the code under
+test fails nothing when it does not.
+
 - Quality framework (architecture, readability, maintainability)
 - Review process and priority order
 - Testing conventions and coverage thresholds
@@ -259,8 +266,9 @@ of truth)]
 [INLINED — content rules, data rules, component conventions]
 
 ## 3. Quality
-[Reference templates for testing, SEO, accessibility, performance.
-Inline only project-specific targets or deviations.]
+[INLINED — every testing, SEO, accessibility and performance rule
+"Placing a rule" marks MUST inline, and project-specific targets or
+deviations. Reference the templates for the rest.]
 
 ## 4. Identity
 ### 4.1 Design
@@ -269,6 +277,7 @@ Inline only project-specific targets or deviations.]
 [Interview BRAND answers, if applicable]
 
 ## 5. Review process
+[INLINED — every review rule "Placing a rule" marks MUST inline.]
 Follow templates/core/review.md priority order, apply templates/core/quality.md and
 language-specific templates as the standard.
 
