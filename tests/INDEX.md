@@ -41,6 +41,7 @@ restated in each.
 | `SAIT-SMK-SYS-17-001A` | SMK | P2 | Every registered check names a spec document that exists |
 | `SAIT-SMK-SYS-18-001A` | SMK | P1 | A stack outside the constrained categories resolves the gate tier |
 | `SAIT-SMK-SYS-19-001A` | SMK | P1 | resolve.py names a missing dependency and a dependency cycle |
+| `SAIT-SMK-SYS-20-001A` | SMK | P1 | A fork leaves upstream's manifest keys as it last merged them |
 | `SAIT-SMK-TPL-04-001A` | SMK | P1 | All EXTEND and OVERRIDE directives reference existing IDs |
 | `SAIT-INT-TPL-01-001A` | INT | P0 | DEPENDS ON chain assembles a complete rule set |
 | `SAIT-INT-TPL-02-001A` | INT | P1 | EXTEND adds rules without removing base rules |
