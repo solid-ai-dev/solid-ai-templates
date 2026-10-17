@@ -115,6 +115,11 @@ that has since lifted reads exactly like a live one.
 - Corollary: if swapping the implementation would force a caller to
   change code, the name has leaked. Which library sits behind a tier
   changes without notice and is not the caller's problem
+- A tier whose dependency is heavy, native, or unavailable on some target
+  platform MUST be reached through one module that owns its import, which
+  re-raises with a message naming the extra and the command that installs
+  it. The package MUST import without the extra, checked in a CI leg that
+  does not install it
 - Avoid negative conditions in `if` statements where possible —
   `if isEnabled` reads better than `if !isDisabled`
 
@@ -354,7 +359,8 @@ raise SystemExit(1 if findings else 0)
   the messages as class names and serves the tests, not the callers. The
   contract erodes one commit at a time and no linter reads it — one
   checks that exceptions are handled, never that they are declared — so
-  the language file names the test that walks every raise
+  a test walks every raise in the package and fails on one outside the
+  hierarchy
 - **A caller-side input filter is not a precondition**: when a runner
   filters its inputs by a caller-side criterion (data availability,
   ground-truth presence, a feature flag) that is tighter than the inner
@@ -441,6 +447,17 @@ raise SystemExit(1 if findings else 0)
   collection. They catch every mechanical split error instantly, so the
   full suite runs once — and a green run of the untouched suite plus a
   byte-identical output diff is what proves the split behaviour-neutral
+
+## A library writes nothing to the host's streams
+[ID: quality-library-output]
+
+- A library MUST NOT write to the host's standard output or error, and
+  MUST NOT configure logging beyond its own logger; the host decides
+  where output goes
+- The library's logger MUST be injectable, with its own module logger as
+  the fallback
+- The silence MUST be checked in a fresh process: a test runner that
+  installs its own handler hides the library's default
 
 ## A workaround comment is a half-filed defect report
 

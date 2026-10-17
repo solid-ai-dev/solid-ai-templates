@@ -23,6 +23,10 @@ alters no template carries no entry.
 
 ### Added
 
+- `base-quality` states three language idioms as rules: a library writes
+  nothing to the host's streams (`quality-library-output`), an optional
+  dependency sits behind one module, and a test walks every raise.
+  `base-oop` adds tagged unions for closed type families.
 - `templates/fixture/` adds `stack-fixture` and `platform-fixture`, test
   input marked `fixture: true` in the manifest. Listings and `generated/`
   omit them; per-stack checks select by the manifest's `stacks:` key, and

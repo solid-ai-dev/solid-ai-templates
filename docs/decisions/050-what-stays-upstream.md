@@ -53,19 +53,19 @@ every answer to those questions moves to forks.
 
 ## Design
 
-![Upstream keeps the engine, shared policy, idioms as checks and the questions; each fork carries stacks, platforms, workflow, process and the answers; git.md, docs.md and quality-gates.md split between the two](../diagrams/template-boundary.png)
+![Upstream keeps the engine, shared policy, language-neutral rules and the questions; each fork carries stacks, platforms, workflow, process and the answers; git.md, docs.md and quality-gates.md split between the two](../diagrams/template-boundary.png)
 
 | # | Rule | In practice |
 | - | ---- | ----------- |
 | 1 | The waist test | A rule stays upstream only if changing the stack, the platform or the team's way of working would not change it |
 | 2 | Engine upstream | The manifest schema, IDs, EXTEND and OVERRIDE, the resolver, `tools/`, `tests/`, and a fixture stack and platform as test input |
 | 3 | Shared policy upstream | `core/`: config, oop, quality, testing, readme, the review checklists, and `agents.md` as the output contract; `security/`, `data/`, `infra/`, `backend/` and `frontend/` |
-| 4 | Language idioms as checks | Each idiom becomes the language-specific check beside its generic rule in `core/`, and `language/` leaves upstream (#1926) |
+| 4 | Rules, not language checks | `core/` states each idiom's rule language-neutrally and carries no language-specific code; the check moves with `language/`, which leaves upstream whole (#1926) |
 | 5 | Governance asks, forks answer | Upstream asks who approves a change, how work is tracked and what a release is, and answers none of them. Labels, milestones, merge and review policy, the journal, wrap-up and the release cut move to forks |
 | 6 | Git splits | Upstream keeps never force-push, never rebase a pushed branch, one concern per pull request, committer identity, submodules, off-limits paths and `.gitignore`. Branch prefixes, commit and title form, squash policy, versioning and the release process move |
 | 7 | Decision records stay upstream | The ADR threshold, the record layout, the immutability rules and the schema and layout checks; a fork sets only its categories and the record its layout binds from |
 | 8 | Workflow moves | All of `workflow/` moves, `release.md` included. From `quality-gates.md`, how a check is built stays; when gates run moves: the three-layer gate model, thresholds and periodic audits |
-| 9 | Ends move | `stack/`, `platform/`, `INTERVIEW.md`, `examples/`, `generated/`, `backend/templating.md`, the `language/` Tooling sections, `go.md`, `c.md`, and `core/` cli, skills and examples |
+| 9 | Ends move | `stack/`, `platform/`, `INTERVIEW.md`, `examples/`, `generated/`, `backend/templating.md`, `language/`, and `core/` cli, skills and examples |
 | 10 | Concern directories | Upstream drops `base/`: `core/`, `security/`, `data/` and `infra/` sit beside `backend/` and `frontend/` under `templates/` (#1504) |
 | 11 | IDs never change | A file or section keeps its ID when it moves or splits, so every EXTEND and OVERRIDE still resolves; a split file's moved sections go to a fork-owned file |
 | 12 | The audit is the starting list | Each section not named above is placed by rule 1; the audit's per-section verdicts are the starting list, checked against the test as the path move lands (#1480) |
@@ -74,7 +74,7 @@ every answer to those questions moves to forks.
 | ---- | -------------------- | ----------- |
 | 1, 12 | Mechanism | Review of the path-move pull request (#1504) |
 | 2, 3, 6, 7 | Promise to projects and forks | Review of the split commit; the ownership check then keeps forks from editing these keys (#1923) |
-| 4 | Promise to projects | The idioms fold (#1926) |
+| 4 | Promise to projects | The generic rules land in `core/` (#1926) |
 | 5, 8, 9 | Promise to forks | The split commit and the migration guide (#1292) |
 | 10, 11 | Promise to projects and forks | The path move: every root resolves the same ordered ID list before and after (#1504) |
 
@@ -98,6 +98,7 @@ leaves it for the project or its fork to fill in:
 | Move the whole git policy to forks | The history-safety rules hold for every team, and a project with no fork would lose them. |
 | Move decision records to forks | Every fork would rebuild the same threshold, layout and check. |
 | Split by whole file | Three files mix policy and process, so either half would land on the wrong side. |
+| Fold each language check into `core/` beside its rule | A Python check changes with the stack, so it fails rule 1, and language code in `core/` grows every chain, the non-Python ones included. |
 
 ## Consequences
 
