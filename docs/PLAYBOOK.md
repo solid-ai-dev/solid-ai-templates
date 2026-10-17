@@ -568,8 +568,8 @@ hand.
    - `generated/<stack>.md` — the resolved chain (the rules to apply);
      read any addon templates the example's stack source names but the
      chain does not include
-   - `templates/core/agents.md` — the output models (inline,
-     reference, or hybrid — keep the example's existing model)
+   - `templates/core/agents.md` — the output models (inline or
+     hybrid — keep the example's existing model)
 2. Ask the agent to regenerate `examples/<name>/CLAUDE.md` in the
    six-section structure, keeping the concrete project identity and
    recording the generation inputs in a note near the top.

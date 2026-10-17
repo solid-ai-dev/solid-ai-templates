@@ -64,7 +64,7 @@ core/
 ├── quality.md      # Architecture, code style, calibration, tool trust, testing
 ├── review.md       # Peer review priority, MUST/SHOULD checklists, deviation rules
 ├── testing.md      # Test pyramid, coverage thresholds, naming conventions
-├── agents.md       # Output structure, models (inline/reference/hybrid), formatting rules
+├── agents.md       # Output structure, models (inline/hybrid), formatting rules
 ├── skills.md       # Skill authoring — when to write one, frontmatter, triggering, structure, scripts
 ├── readme.md       # README structure, badges, quick start, contribution guide
 ├── config.md       # Env vars, secrets, fail-fast validation
@@ -176,7 +176,7 @@ stack/
 ### 6. Output format template
 
 Rendering rules for the generated output. Describes structure, model
-selection (inline/reference/hybrid), and formatting constraints.
+selection (inline or hybrid), and formatting constraints.
 Lives in `templates/core/agents.md` alongside the other core
 templates.
 
@@ -382,7 +382,7 @@ Resolution selects source files; project adoption selects operative rules.
 The dependency graph and section overrides remain deterministic discovery
 mechanisms. A consumer update does not automatically adopt new rules or create
 compliance work. Apply "Adopting shared rules" in
-`templates/core/docs.md`, and inline that boundary in reference/hybrid
+`templates/core/docs.md`, and inline that boundary in hybrid
 context files. Existing adopted rules remain effective until deliberately changed.
 
 Each base template section is tagged with a unique ID:

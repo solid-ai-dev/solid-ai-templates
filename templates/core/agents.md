@@ -31,30 +31,38 @@ at the time it was written.
 
 ## Choosing a model
 
-| | Inline | Hybrid | Reference |
-|---|---|---|---|
-| **Runtime** | Rules always in context | Critical rules in context; agent must read the rest | Agent must read all template files first |
-| **Reliability** | Highest — nothing to skip | High — key rules survive even if agent skips references | Lowest — agent may skip referenced files |
-| **Maintenance** | Rules drift from templates | Project-specific rules drift; base rules stay in sync | Single source of truth |
-| **Best for** | Single project | Multi-project with high-stakes rules | Multi-project, disciplined agents |
+| | Inline | Hybrid |
+|---|---|---|
+| **Runtime** | Rules always in context | Silent, unenforced rules in context; the agent reads the rest only when it opens them |
+| **Reliability** | Highest — nothing to skip | High — every rule a missed read would break silently stays in context |
+| **Maintenance** | Rules drift from templates | Project-specific rules drift; referenced rules stay in sync |
+| **Best for** | A project that does not vendor the templates | A project that vendors them as a submodule |
 
-**Recommendation:** default to hybrid for the best trade-off. Use
-inline when the project does not vendor the templates. Use reference
-only when all agents reliably follow startup instructions.
+- Generate inline or hybrid. MUST NOT generate a file that delivers its
+  rules by reference alone: nothing loads a referenced template, so the
+  agent reads it only if it decides to open it.
+- Default to hybrid when the project vendors the templates; use inline
+  otherwise.
+- A file generated under the deprecated reference model keeps working.
+  Regenerate it as hybrid.
 
-### Why not pure reference?
+### Placing a rule
 
-There is no guarantee an agent will read referenced files. Agents may
-skip them due to context limits, instruction-following gaps, or tool
-errors. Any rule that causes significant damage when missed MUST be
-inlined — do not rely on references alone for critical conventions.
+| Breaking the rule... | A test, linter or CI step enforces it | Nothing enforces it |
+|---|---|---|
+| shows an error | MAY reference | MAY reference |
+| is silent | MAY reference | MUST inline |
+
+- MUST inline a rule whose breaking is silent, showing no error to the
+  agent or the user, and that no test, linter or CI step enforces.
+- MAY reference any other rule, naming the template that holds it.
 
 ---
 
 ## Quality bar
 
 What separates a context file that works from one that dilutes itself.
-These apply to all three models; the review process checks them.
+These apply to both models; the review process checks them.
 
 ### Principles
 
@@ -74,10 +82,9 @@ These apply to all three models; the review process checks them.
 - **State precedence when authorities compete.** When a project has
   more than one rule source (ADRs, skills, vendored templates), state
   the override order near the top: who wins when they differ.
-- **Inline load-bearing rules, reference the rest.** A rule whose
-  violation is silent or expensive (safety, git, project landmines)
-  MUST be inlined; the full framework is referenced (see "What to
-  inline", above).
+- **Inline the silent, unenforced rules; reference the rest.** A rule
+  whose breaking is silent and that no tool enforces MUST be inlined;
+  the full framework is referenced (see "Placing a rule", above).
 - **Pair a checkable rule with its check.** A mechanically checkable
   constraint names its agent-runnable check — the command in a fenced
   block, the pass condition in prose beside it; subjective rules stay
@@ -177,90 +184,20 @@ always Review) — never renumber and never omit them. A top-level
 section that does not apply keeps its numbered heading with a one-line
 `Not applicable — <reason>` body (e.g. §4 Identity for a backend
 service). Omit only non-applicable subsections (e.g. 3.2+ if only
-testing applies). This applies to all three models.
-
----
-
-## Reference model
-
-Use only when all agents reliably follow startup instructions. The
-agent file is leaner — it references the templates for base rules and
-only inlines project-specific overrides. Same grouped structure and
-numbering as the inline model.
-
-Add `Model: reference` to section 1.1 so agents know to read the
-referenced templates before starting work.
-
-```
-# [Project Name]
-
-[One-sentence description from interview]
-[Link to architecture docs if applicable]
-
-Quality conventions defined in `docs/solid-ai-templates/` (submodule).
-Key references:
-- [List the relevant base and layer templates for this stack]
-
-Project-specific overrides and additions follow below.
-
-## 1. Project
-### 1.1 Overview
-[Stack template — Stack section]
-### 1.2 Project structure
-[Pointer to README "Project structure" + agent-specific placement
-rules — never a second directory tree (see docs.md, single source
-of truth)]
-### 1.3 Commands
-[Stack template — Commands section]
-
-## 2. Code conventions
-[PROJECT-SPECIFIC SECTIONS ONLY — e.g. Type design, Data rules,
-Component conventions. Omit anything already covered by the
-referenced templates.]
-
-## 3. Quality
-[PROJECT-SPECIFIC SECTIONS ONLY — e.g. SEO, Performance targets.
-Omit anything already covered by the referenced templates.]
-
-## 4. Identity
-### 4.1 Design
-[Interview DESIGN answers, if applicable]
-### 4.2 Brand voice
-[Interview BRAND answers, if applicable]
-
-## 5. Review process
-### 5.1 Code review
-Follow templates/core/review.md priority order, apply templates/core/quality.md and
-language-specific templates as the standard.
-### 5.2 Structure audit
-Verify MUSTs from templates/core/docs.md, templates/core/readme.md, templates/core/git.md, and
-relevant layer/stack templates. Run after: new project, migration,
-new layer, or pre-release.
-
-## 6. Session protocol
-Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
-### 6.1 Start of session
-[templates/workflow/scope.md — Session startup + Mandatory startup block]
-### 6.2 During the session
-[templates/workflow/scope.md — During work]
-### 6.3 End of session
-[templates/workflow/scope.md — End of session audit. Render this
-ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
-with an imperative — "Read scope.md (End of session audit) and execute
-each item sequentially; do not summarize or skip." NEVER paraphrase the
-checklist into a short bullet list: that silently drops steps and the
-"print and execute sequentially" enforcement, producing a thin wrap-up.]
-```
+testing applies). This applies to both models.
 
 ---
 
 ## Hybrid model
 
-Inline the rules that cause the most damage when missed. Reference the
-templates for the full quality framework. The agent file is shorter
-than inline but safer than pure reference.
+Inline every rule "Placing a rule" marks MUST inline, and reference the
+templates for the rest of the quality framework. The agent file is
+shorter than inline.
 
 ### What to inline
+
+These are the rules that most often break silently with nothing to
+catch them:
 
 - **Git conventions** — wrong branch names or commit formats pollute
   history and are hard to fix retroactively
@@ -354,18 +291,17 @@ checklist into a short bullet list: that silently drops steps and the
 
 ## Vendoring the templates
 
-Inline the project's adoption boundary in reference and hybrid output:
+Inline the project's adoption boundary in hybrid output:
 existing adopted rules remain effective, but reading a new upstream rule or
 bumping the pin does not adopt it. Select new conventions for a named local
 need or material risk; declining one needs no ADR or ticket. See
 `templates/core/docs.md` (Adopting shared rules). This boundary takes
 precedence over inherited instructions to apply every newly discovered rule.
 
-The reference and hybrid models both vendor this repository as a
-submodule. That puts files on disk which the consuming repository does
-not track, and any tool that walks the tree rather than the VCS index
-will scan them — linters, formatters, secret scanners, spell checkers,
-link checkers.
+The hybrid model vendors this repository as a submodule. That puts files
+on disk which the consuming repository does not track, and any tool that
+walks the tree rather than the VCS index will scan them — linters,
+formatters, secret scanners, spell checkers, link checkers.
 
 - MUST exclude the submodule path in each such tool's config before the
   first commit. Tools scoped by an explicit file list need no change

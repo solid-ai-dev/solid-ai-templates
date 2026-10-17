@@ -53,6 +53,13 @@ alters no template carries no entry.
   implements it, and a record MAY show a rendered diagram (draw.io, Mermaid)
   with its source committed beside it, instead of inline ASCII.
 
+### Deprecated
+
+- The reference model. `agents.md` and the interview offer inline or
+  hybrid only, and a rule whose breaking is silent and that no tool
+  enforces is inlined. A reference-model file keeps working; regenerate
+  it as hybrid.
+
 ## [2.90.0] - 2026-09-12
 
 ### Added
