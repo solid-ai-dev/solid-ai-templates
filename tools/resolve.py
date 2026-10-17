@@ -178,37 +178,89 @@ def load_catalogue():
     return core_ids, entries, stacks
 
 
+class ResolveError(Exception):
+    """A chain that cannot be resolved; the message names what broke."""
+
+
+# Who names an ID, where no entry does: the core tier itself, or nobody,
+# which makes the ID a root the caller asked for.
+CORE_TIER = object()
+
+
+def _check_graph(roots, entries, named_by):
+    """Raise ResolveError where the trees under `roots` break.
+
+    An ID with no manifest entry is named with the entry that names it, and
+    a dependency cycle is named as a path.
+    """
+    checked = set()
+    path = []
+
+    def visit(eid, by):
+        if eid in checked:
+            return
+        if eid not in entries:
+            if by is CORE_TIER:
+                raise ResolveError(
+                    "Missing dependency: the core tier names %s, which has "
+                    "no manifest entry" % eid)
+            if by is None:
+                raise ResolveError(
+                    "Unknown root: %s has no manifest entry" % eid)
+            raise ResolveError(
+                "Missing dependency: %s depends on %s, which has no manifest "
+                "entry" % (by, eid))
+        if eid in path:
+            cycle = path[path.index(eid):] + [eid]
+            raise ResolveError("Dependency cycle: " + " -> ".join(cycle))
+        path.append(eid)
+        for dep in entries[eid].get("depends_on", []):
+            visit(dep, eid)
+        path.pop()
+        checked.add(eid)
+
+    for root in roots:
+        visit(root, named_by)
+
+
+def _resolve_order(root, core_ids, entries):
+    """The IDs a root's chain adds after the core tier, dependencies first.
+
+    Raises ResolveError for an ID with no manifest entry, naming it and the
+    entry that names it, and for a dependency cycle, naming it as a path.
+    """
+
+    # A fork's stacks depend on upstream IDs the fork does not control, so
+    # a broken chain is a message, not a silently shorter chain or a
+    # RecursionError with no ID in it. The core tier is checked on its own:
+    # its entries are seeded below and never walked, so a fault under one of
+    # them would otherwise pass in every chain.
+    _check_graph(core_ids, entries, CORE_TIER)
+    _check_graph([root], entries, None)
+
+    done = set(core_ids)
+    order = []
+
+    def visit(eid):
+        if eid in done:
+            return
+        done.add(eid)
+        for dep in entries[eid].get("depends_on", []):
+            visit(dep)
+        order.append(eid)
+
+    visit(root)
+    return order
+
+
 def resolve_chain(stack_id, core_ids, entries):
     """Resolve full dependency chain for a stack.
 
-    Returns ordered list of file paths (relative to repo root).
+    Returns ordered list of file paths (relative to repo root). Raises
+    ResolveError when the chain names a missing ID or holds a cycle.
     """
-    resolved = set()
-    files = []
-
-    def add(eid):
-        if eid in resolved:
-            return
-        resolved.add(eid)
-        entry = entries.get(eid)
-        if entry and "file" in entry:
-            files.append(entry["file"])
-
-    def resolve(eid):
-        if eid in resolved:
-            return
-        entry = entries.get(eid)
-        if not entry:
-            return
-        for dep in entry.get("depends_on", []):
-            resolve(dep)
-        add(eid)
-
-    for cid in core_ids:
-        add(cid)
-
-    resolve(stack_id)
-    return files
+    order = list(core_ids) + _resolve_order(stack_id, core_ids, entries)
+    return [entries[eid]["file"] for eid in order if "file" in entries[eid]]
 
 
 def opt_in_roots(core_ids, entries, stacks):
@@ -228,22 +280,7 @@ def opt_in_roots(core_ids, entries, stacks):
 
 def resolve_ids(stack_id, core_ids, entries):
     """Resolve a chain and return the IDs in it rather than the files."""
-    resolved = set()
-
-    def resolve(eid):
-        if eid in resolved:
-            return
-        entry = entries.get(eid)
-        if not entry:
-            return
-        resolved.add(eid)
-        for dep in entry.get("depends_on", []):
-            resolve(dep)
-
-    for cid in core_ids:
-        resolved.add(cid)
-    resolve(stack_id)
-    return resolved
+    return set(core_ids) | set(_resolve_order(stack_id, core_ids, entries))
 
 
 def read_file(rel_path):
@@ -315,7 +352,14 @@ KNOWN_FLAGS = {"--help", "--list", "--roots", "--generate", "--check", "--concat
 
 
 def main():
-    args = sys.argv[1:]
+    try:
+        _cli(sys.argv[1:])
+    except ResolveError as error:
+        print(error)
+        sys.exit(1)
+
+
+def _cli(args):
 
     if not args or args == ["--help"]:
         print(__doc__)

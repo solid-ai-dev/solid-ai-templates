@@ -27,6 +27,9 @@ alters no template carries no entry.
   input marked `fixture: true` in the manifest. Listings and `generated/`
   omit them; per-stack checks select by the manifest's `stacks:` key, and
   the e2e canary is now STK-24 on the fixture.
+- `tools/resolve.py` exits 1 naming a `depends_on` ID with no manifest
+  entry and the entry naming it, or a dependency cycle as a path, where it
+  used to resolve a shorter chain or crash.
 
 ### Breaking changes
 
