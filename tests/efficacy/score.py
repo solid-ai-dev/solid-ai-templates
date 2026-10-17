@@ -26,6 +26,7 @@ import io
 import json
 import os
 import re
+import secrets
 import subprocess
 import sys
 import tarfile
@@ -59,6 +60,13 @@ PACKAGE = "tariff"
 # runs is given one, so the boot check and the probes reach the application.
 ADMIN_PASSWORD_VARIABLE = "TARIFF_ADMIN_PASSWORD"
 ADMIN_PASSWORD = "scoring-admin-password"
+
+# Section 6 signs the session cookie with this variable's value, which is set
+# wherever the application runs. An application that refuses to start
+# without it is following its rules, so scoring always supplies one. It is
+# drawn per run rather than written down, so no fixed key reaches a trial.
+SECRET_KEY_VARIABLE = "TARIFF_SECRET_KEY"
+SECRET_KEY = secrets.token_hex(32)
 
 # Files nobody asked for. The prompt asks for an application; a trial that
 # also writes a decision record or a changelog spent budget on it, which is a
@@ -99,11 +107,13 @@ def run(argv, cwd=None, env=None, timeout=TOOL_TIMEOUT, stdin=None):
     produced a number. A command that does not exist or does not finish is an
     outcome, not an exception: the caller turns it into a missing metric.
     `stdin` is text written to the command's standard input. The command's
-    environment carries the administrator password unless it sets its own.
+    environment carries the administrator password and the secret key unless
+    it sets its own.
     """
     record = {"argv": list(argv), "cwd": cwd}
     env = dict(os.environ if env is None else env)
     env.setdefault(ADMIN_PASSWORD_VARIABLE, ADMIN_PASSWORD)
+    env.setdefault(SECRET_KEY_VARIABLE, SECRET_KEY)
     try:
         proc = subprocess.run(argv, cwd=cwd, env=env, input=stdin,
                               capture_output=True, text=True,
@@ -1513,6 +1523,8 @@ class App(object):
 def create_app(database):
     if not os.environ.get("TARIFF_ADMIN_PASSWORD"):
         raise RuntimeError("seeding refuses without TARIFF_ADMIN_PASSWORD")
+    if not os.environ.get("TARIFF_SECRET_KEY"):
+        raise RuntimeError("no default secret: TARIFF_SECRET_KEY is unset")
     return App()
 '''
 
@@ -1521,21 +1533,26 @@ def boot_checks(scratch, venv):
     """Prove the boot check reaches an application that seeds on start.
 
     The planted application refuses to build without the administrator
-    password, as the specification's seeding does. The launching process's
-    own value is taken away first, so only scoring can have supplied one.
+    password, as the specification's seeding does, or without the secret
+    key, as an application with no default secret does. The launching
+    process's own values are taken away first, so only scoring can have
+    supplied them.
     """
     planted = os.path.join(scratch, "seeding")
     os.makedirs(os.path.join(planted, PACKAGE))
     with io.open(os.path.join(planted, PACKAGE, "__init__.py"), "w",
                  encoding="utf-8") as handle:
         handle.write(PLANTED_SEEDING_APP)
-    inherited = os.environ.pop(ADMIN_PASSWORD_VARIABLE, None)
+    variables = (ADMIN_PASSWORD_VARIABLE, SECRET_KEY_VARIABLE)
+    inherited = {name: os.environ.pop(name, None) for name in variables}
     try:
         booted = boot_check(venv, planted)["value"] or {}
     finally:
-        if inherited is not None:
-            os.environ[ADMIN_PASSWORD_VARIABLE] = inherited
-    return [("an application that seeds on start boots under scoring",
+        for name, value in inherited.items():
+            if value is not None:
+                os.environ[name] = value
+    return [("an application that seeds on start, and has no default "
+             "secret, boots under scoring",
              booted.get("factory") is True
              and booted.get("index_status") == 200)]
 
