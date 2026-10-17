@@ -2332,6 +2332,97 @@ def check_sys_18():
     return seen.failures() + failures, seen.notes()
 
 
+# ---------------------------------------------------------------------------
+# SYS-19 -- resolve.py names a missing dependency and a dependency cycle
+# ---------------------------------------------------------------------------
+
+# A fork's stacks depend on upstream IDs the fork does not control, so a
+# broken chain has to say what broke. The resolver used to drop a missing
+# ID and resolve a shorter chain at exit 0, and to recurse on a cycle until
+# Python stopped it with no ID in the message.
+#
+# Each case resolves a root of a planted manifest through the resolver's own
+# entry point, so the exit status and the printed message are the CLI's.
+# The valid root is the control: it proves a failure comes from the broken
+# entry and not from the planted manifest or the way it is loaded.
+
+BROKEN_MANIFEST = """core: [base-a]
+
+base:
+  - id: base-a
+    file: templates/core/quality.md
+  - id: base-b
+    file: templates/core/git.md
+    depends_on: [base-c]
+  - id: base-c
+    file: templates/core/docs.md
+    depends_on: [base-b]
+
+stacks:
+  - id: stack-valid
+    file: templates/fixture/stack.md
+    depends_on: [base-a]
+  - id: stack-missing
+    file: templates/fixture/stack.md
+    depends_on: [base-a, base-nowhere]
+  - id: stack-cycle
+    file: templates/fixture/stack.md
+    depends_on: [base-b]
+"""
+
+BROKEN_CASES = [
+    ("stack-valid", 0, "templates/fixture/stack.md"),
+    ("stack-missing", 1,
+     "Missing dependency: stack-missing depends on base-nowhere"),
+    ("stack-cycle", 1, "Dependency cycle: base-b -> base-c -> base-b"),
+]
+
+RESOLVE_WITH = (
+    "import sys; sys.path.insert(0, sys.argv[1]); import resolve; "
+    "resolve.MANIFEST = sys.argv[2]; sys.argv = ['resolve.py', sys.argv[3]]; "
+    "resolve.main()"
+)
+
+
+def check_sys_19():
+    import tempfile
+
+    seen = Inspected()
+    seen.count("broken-manifest cases", BROKEN_CASES)
+    failures = []
+
+    with tempfile.TemporaryDirectory() as scratch:
+        manifest = os.path.join(scratch, "manifest.yaml")
+        with io.open(manifest, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(BROKEN_MANIFEST)
+
+        for root, want_code, want_phrase in BROKEN_CASES:
+            proc = subprocess.run(
+                [sys.executable, "-c", RESOLVE_WITH,
+                 os.path.join(ROOT, "tools"), manifest, root],
+                capture_output=True, text=True, encoding="utf-8",
+            )
+            said = proc.stdout + proc.stderr
+            if proc.returncode != want_code:
+                failures.append(
+                    f"  {root}: exit {proc.returncode}, expected {want_code}: "
+                    f"{said.strip()[-200:]}"
+                )
+            elif want_phrase not in said:
+                failures.append(
+                    f"  {root}: exit {want_code} as expected, but the message "
+                    f"does not carry {want_phrase!r}, so the status may be "
+                    f"right for the wrong reason"
+                )
+            elif "Traceback" in said:
+                failures.append(
+                    f"  {root}: the message is right but arrives inside a "
+                    f"traceback, which a fork's maintainer reads as a crash"
+                )
+
+    return seen.failures() + failures, seen.notes()
+
+
 CHECKS = [
     {"id": "SYS-01", "spec": "SAIT-SMK-SYS-01-001A",
      "title": "DEPENDS ON paths resolve to existing files", "fn": check_sys_01},
@@ -2412,6 +2503,9 @@ CHECKS = [
     {"id": "SYS-18", "spec": "SAIT-SMK-SYS-18-001A",
      "title": "A stack outside the constrained categories resolves the gate tier",
      "fn": check_sys_18},
+    {"id": "SYS-19", "spec": "SAIT-SMK-SYS-19-001A",
+     "title": "resolve.py names a missing dependency and a dependency cycle",
+     "fn": check_sys_19},
 ]
 
 
