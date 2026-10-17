@@ -44,6 +44,9 @@ alters no template carries no entry.
   is now `templates/<concern>/` for core, security, workflow, infra, data and
   language. Template and section IDs are unchanged; update any path a
   reference or hybrid file, or a vendored copy, names.
+- `base-quality-gates` moves from `templates/workflow/` to
+  `templates/core/quality-gates.md`, IDs unchanged; update any path a
+  reference or hybrid file, or a vendored copy, names.
 
 ### Changed
 

@@ -1,5 +1,5 @@
 # Stack — Astro (Static Site)
-[DEPENDS ON: templates/frontend/static-site.md, templates/language/typescript.md, templates/workflow/quality-gates.md]
+[DEPENDS ON: templates/frontend/static-site.md, templates/language/typescript.md, templates/core/quality-gates.md]
 
 Extends the static site stack with Astro-specific rules.
 

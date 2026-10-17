@@ -5415,7 +5415,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/core/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -8089,7 +8089,7 @@ DEBUG=false
 ```
 
 
-<!-- templates/workflow/quality-gates.md -->
+<!-- templates/core/quality-gates.md -->
 # Base — Quality Gates
 
 [ID: base-quality-gates]
@@ -9763,7 +9763,7 @@ scheduled whole-tree sweep, not a per-change gate.
 
 <!-- templates/stack/static-site-astro.md -->
 # Stack — Astro (Static Site)
-[DEPENDS ON: templates/frontend/static-site.md, templates/language/typescript.md, templates/workflow/quality-gates.md]
+[DEPENDS ON: templates/frontend/static-site.md, templates/language/typescript.md, templates/core/quality-gates.md]
 
 Extends the static site stack with Astro-specific rules.
 

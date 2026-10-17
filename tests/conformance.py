@@ -373,9 +373,9 @@ CHECKS = [
                "not have -- it ships Markdown and has no dependency graph "
                "to describe."},
 
-    # -- workflow/quality-gates.md -----------------------------------
+    # -- core/quality-gates.md -----------------------------------
 
-    {"file": "workflow/quality-gates.md",
+    {"file": "core/quality-gates.md",
      "find": "family: $FAMILY",
      "title": "Sizing one frozen rule family", "do": SKIP,
      "reason": "Names a rule family and a source root as placeholders, and "
@@ -383,11 +383,11 @@ CHECKS = [
                "This repository ships Markdown, has no `pyproject.toml`, no "
                "linter freeze and no `src/`, so there is no family to size."},
 
-    {"file": "workflow/quality-gates.md", "find": "SUPPRESSIONS = (",
+    {"file": "core/quality-gates.md", "find": "SUPPRESSIONS = (",
      "title": "A suppression names the rule it suppresses", "do": RUN,
      "expect": ["nonzero", "any", "zero"]},
 
-    {"file": "workflow/quality-gates.md",
+    {"file": "core/quality-gates.md",
      "find": "'tests/*'", "title": "A change to an existing test is visible",
      "do": RUN, "expect": MANUAL,
      "reason": "Governance rather than a pass/fail metric: it decides "
@@ -396,12 +396,12 @@ CHECKS = [
                "itself a test edit, so scoring it would fail each "
                "conforming change on arrival."},
 
-    {"file": "workflow/quality-gates.md",
+    {"file": "core/quality-gates.md",
      "find": "A shipped check is a heredoc inside a fenced block",
      "title": "A shipped rule states its check", "do": RUN,
      "expect": ["nonzero", "nonzero", "zero"]},
 
-    {"file": "workflow/quality-gates.md", "find": "CHECK_LANGUAGES = (",
+    {"file": "core/quality-gates.md", "find": "CHECK_LANGUAGES = (",
      "title": "A shipped check is safe to run where it is documented",
      "do": RUN, "expect": ["nonzero", "nonzero", READ],
      "reading": "The continuation count and the lines under it. A non-zero "
@@ -413,7 +413,7 @@ CHECKS = [
                 "meaning the fence pattern drifted and the second the "
                 "language filter."},
 
-    {"file": "workflow/quality-gates.md",
+    {"file": "core/quality-gates.md",
      "find": "checks stated outside a fence",
      "title": "Every stated check is in a form a tool can extract",
      "do": RUN, "expect": ["nonzero", "zero"]},

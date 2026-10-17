@@ -1,5 +1,5 @@
 # Stack — Fixture
-[DEPENDS ON: templates/security/security.md, templates/workflow/quality-gates.md]
+[DEPENDS ON: templates/security/security.md, templates/core/quality-gates.md]
 
 Test input for the checks that read every stack, not a stack to pick. It
 resolves the security and quality-gate tiers and carries each section a

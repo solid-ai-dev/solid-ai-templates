@@ -5415,7 +5415,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/core/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -8246,7 +8246,7 @@ merged PR and a deployed artifact — humans approve, machines execute.
 ## Quality gates
 
 - Stages 2–4 (lint, test, security scan) are defined in detail in
-  `templates/workflow/quality-gates.md` — categories, thresholds, and tool
+  `templates/core/quality-gates.md` — categories, thresholds, and tool
   constraints
 - Platform-specific CI integration is in `platform/github.md` or
   `platform/gitlab.md`
@@ -9169,7 +9169,7 @@ and these rules apply to it there.
   on the path every operator takes first
 
 
-<!-- templates/workflow/quality-gates.md -->
+<!-- templates/core/quality-gates.md -->
 # Base — Quality Gates
 
 [ID: base-quality-gates]
@@ -11024,7 +11024,7 @@ time is the correct first move.
 
 <!-- templates/stack/python-lib.md -->
 # Stack — Python Library / CLI
-[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/language/python.md, templates/core/cli.md, templates/workflow/quality-gates.md, templates/core/examples.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/language/python.md, templates/core/cli.md, templates/core/quality-gates.md, templates/core/examples.md]
 
 A Python library, CLI tool, or shared package intended to be imported or
 installed. No web server, no frontend. May be published to PyPI.
