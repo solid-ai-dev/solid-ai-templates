@@ -50,7 +50,18 @@ SPECS = {
         "rounds 1 and 2",
     "c9e24a3850d1b7033ad8f2261f6e7a2b18c62d490020d1d2d8e5ad5b144da7b2":
         "the calibration trial",
+    "ed9f4352cbd4817edc0830d4b979a82542359bdf630e9a4e0b45cb18bae3edba":
+        "round 4, weaker",
+    "5347f551a4c8a351731a2e846bf90700ea84f066d6fa8a7126e4d1eba194798d":
+        "round 4, thin",
 }
+
+# The paragraph round 5 added to both specifications. Taking it out again
+# gives back the text round 4 ran, which the self-test proves is registered.
+SECRET_KEY_PARAGRAPH = (
+    b"\nThe key that signs the session cookie is the value of the environment\n"
+    b"variable `TARIFF_SECRET_KEY`, which is set and non-empty wherever the\n"
+    b"application runs.\n")
 
 # The model each CLI judges with. The rounds' judge is Claude: it shares a
 # vendor with the generator, which a judge from another vendor would not, but
@@ -984,9 +995,12 @@ def spec_checks(scratch):
     current = spec_text(SPEC)
     earlier = b"# tariff, as an earlier round specified it\n"
     thin = spec_text(THIN_SPEC)
+    round4 = current.replace(SECRET_KEY_PARAGRAPH, b"")
+    round4_thin = thin.replace(SECRET_KEY_PARAGRAPH, b"")
     planted = {"current": current, "thin": thin,
                "crlf": current.replace(b"\n", b"\r\n"),
                "earlier": earlier,
+               "round4": round4, "round4-thin": round4_thin,
                "edited": current + b"\nAlso build a blog.\n",
                "missing": None}
     saved = dict(SPECS)
@@ -1036,6 +1050,15 @@ def spec_checks(scratch):
          judged_against("earlier", earlier)
          and built["earlier"][0]["spec"]["round"] == "an earlier round"),
         ("a tree whose spec was edited is refused", refused("edited")),
+
+        # A replaced specification stays registered, or every tree built
+        # against it is refused as edited and can never be judged again.
+        ("round 4's trees are judged against the spec they ran",
+         round4 != current and round4_thin != thin
+         and judged_against("round4", round4)
+         and built["round4"][0]["spec"]["round"] == "round 4, weaker"
+         and judged_against("round4-thin", round4_thin)
+         and built["round4-thin"][0]["spec"]["round"] == "round 4, thin"),
         ("a tree carrying no spec is refused", refused("missing")),
     ]
 

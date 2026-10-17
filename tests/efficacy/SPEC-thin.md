@@ -206,6 +206,10 @@ application. Reaching it may load Flask; `import tariff` still may not, as
 section 1 requires. Every route below exists with the method and path
 given.
 
+The key that signs the session cookie is the value of the environment
+variable `TARIFF_SECRET_KEY`, which is set and non-empty wherever the
+application runs.
+
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/` | dashboard linking to the pages below |
