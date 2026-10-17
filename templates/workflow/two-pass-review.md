@@ -1,6 +1,6 @@
 # Two-Pass Convention Review
 [ID: base-two-pass-review]
-[DEPENDS ON: templates/workflow/quality-gates.md, templates/core/review.md]
+[DEPENDS ON: templates/core/quality-gates.md, templates/core/review.md]
 
 Convention checking where some rules are mechanical and others need
 judgment. One linter cannot serve both: strict enough to catch the

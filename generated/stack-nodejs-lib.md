@@ -5415,7 +5415,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/core/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -7257,7 +7257,7 @@ DEBUG=false
 ```
 
 
-<!-- templates/workflow/quality-gates.md -->
+<!-- templates/core/quality-gates.md -->
 # Base — Quality Gates
 
 [ID: base-quality-gates]
@@ -9309,7 +9309,7 @@ time is the correct first move.
 
 <!-- templates/stack/nodejs-lib.md -->
 # Stack — Node.js Library / CLI
-[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/workflow/quality-gates.md, templates/language/typescript.md, templates/core/cli.md, templates/core/examples.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/core/quality-gates.md, templates/language/typescript.md, templates/core/cli.md, templates/core/examples.md]
 
 A Node.js library or CLI tool written in TypeScript. Intended to be
 published to npm or used as a shared internal package. No web server,

@@ -1,7 +1,7 @@
 # Platform — GitHub
 
 [ID: platform-github]
-[DEPENDS ON: templates/workflow/quality-gates.md, templates/workflow/issues.md]
+[DEPENDS ON: templates/core/quality-gates.md, templates/workflow/issues.md]
 
 GitHub-specific CI, security, and issue label integration. Maps quality
 gate categories to GitHub Actions workflows and GitHub-native features.

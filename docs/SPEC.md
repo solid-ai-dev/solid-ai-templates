@@ -70,7 +70,8 @@ core/
 ├── config.md       # Env vars, secrets, fail-fast validation
 ├── cli.md          # Entry-point architecture - thin main(argv), shared plumbing, durable output
 ├── examples.md     # Examples directory — contents, index, offline rule, smoke job
-└── oop.md          # SOLID, OOP, GoF design patterns, AOP guidance
+├── oop.md          # SOLID, OOP, GoF design patterns, AOP guidance
+└── quality-gates.md # Three-layer gate model (editor, pre-commit, CI), thresholds
 ```
 
 ```
@@ -85,7 +86,6 @@ workflow/
 ├── issues.md       # Issue templates — epic, task, bug, incident, spike
 ├── scope.md        # Scope guard, session protocol, drift prevention
 ├── compression.md  # Re-verifying summaries, tables and rollups derived from verified research
-├── quality-gates.md # Three-layer gate model (editor, pre-commit, CI), thresholds
 ├── ai-workflow.md  # AI-assisted development lifecycle, work item hierarchy
 ├── 360.md          # 360-degree project analysis — four stakeholder perspectives, grading
 ├── communication.md # Communication preferences — concise output, shorthand verbs, scope-asking
@@ -656,7 +656,7 @@ templates/frontend/quality.md
 templates/frontend/static-site.md
 templates/language/typescript.md
 templates/core/config.md
-templates/workflow/quality-gates.md
+templates/core/quality-gates.md
 templates/stack/static-site-astro.md
 ```
 
@@ -689,7 +689,7 @@ templates/data/data-modeling.md
 templates/data/data-quality.md
 templates/language/python.md
 templates/core/cli.md
-templates/workflow/quality-gates.md
+templates/core/quality-gates.md
 templates/core/examples.md
 templates/stack/python-lib.md
 templates/stack/python-service.md

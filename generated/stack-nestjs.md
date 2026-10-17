@@ -5415,7 +5415,7 @@ driver is TDD — tests are written alongside or before the code.
 - MUST achieve 90% coverage of new code before merging
 - SHOULD cover negative scenarios and edge cases
 - The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/workflow/quality-gates.md` for the coverage policy (80% for
+  `templates/core/quality-gates.md` for the coverage policy (80% for
   new projects,
   warn-only for legacy)
 - Coverage MUST NOT regress between releases
@@ -7257,7 +7257,7 @@ DEBUG=false
 ```
 
 
-<!-- templates/workflow/quality-gates.md -->
+<!-- templates/core/quality-gates.md -->
 # Base — Quality Gates
 
 [ID: base-quality-gates]
@@ -10227,7 +10227,7 @@ merged PR and a deployed artifact — humans approve, machines execute.
 ## Quality gates
 
 - Stages 2–4 (lint, test, security scan) are defined in detail in
-  `templates/workflow/quality-gates.md` — categories, thresholds, and tool
+  `templates/core/quality-gates.md` — categories, thresholds, and tool
   constraints
 - Platform-specific CI integration is in `platform/github.md` or
   `platform/gitlab.md`
@@ -10525,7 +10525,7 @@ a base layer you do not control does not.
 
 <!-- templates/stack/node-nestjs.md -->
 # Stack — NestJS Application
-[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/workflow/quality-gates.md, templates/language/typescript.md, templates/core/config.md, templates/backend/http.md, templates/backend/api.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/auth.md, templates/backend/quality.md, templates/backend/features.md, templates/backend/messaging.md, templates/infra/cicd.md, templates/security/devsecops.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/core/quality-gates.md, templates/language/typescript.md, templates/core/config.md, templates/backend/http.md, templates/backend/api.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/auth.md, templates/backend/quality.md, templates/backend/features.md, templates/backend/messaging.md, templates/infra/cicd.md, templates/security/devsecops.md]
 
 A Node.js backend built with NestJS. Covers modules, controllers, providers,
 dependency injection, guards, pipes, interceptors, database integration,

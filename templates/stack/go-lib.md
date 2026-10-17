@@ -1,5 +1,5 @@
 # Stack — Go Library / CLI
-[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/language/go.md, templates/core/cli.md, templates/core/testing.md, templates/workflow/quality-gates.md, templates/core/examples.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/language/go.md, templates/core/cli.md, templates/core/testing.md, templates/core/quality-gates.md, templates/core/examples.md]
 
 Base Go conventions for any Go module — library, CLI tool, or service.
 Never used directly for services — always extended by

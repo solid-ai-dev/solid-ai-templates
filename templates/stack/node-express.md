@@ -1,5 +1,5 @@
 # Stack — Express.js Application
-[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/workflow/quality-gates.md, templates/language/typescript.md, templates/core/config.md, templates/backend/http.md, templates/backend/api.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/auth.md, templates/backend/quality.md, templates/backend/features.md, templates/backend/messaging.md, templates/infra/cicd.md, templates/security/devsecops.md]
+[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/core/quality-gates.md, templates/language/typescript.md, templates/core/config.md, templates/backend/http.md, templates/backend/api.md, templates/backend/database.md, templates/backend/observability.md, templates/backend/auth.md, templates/backend/quality.md, templates/backend/features.md, templates/backend/messaging.md, templates/infra/cicd.md, templates/security/devsecops.md]
 
 A Node.js REST API built with Express. Covers project structure, middleware,
 routing, validation, error handling, and testing. Express is unopinionated —

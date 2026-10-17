@@ -1,6 +1,6 @@
 # Platform — Fixture
 [ID: platform-fixture]
-[DEPENDS ON: templates/workflow/quality-gates.md]
+[DEPENDS ON: templates/core/quality-gates.md]
 
 Test input for the checks that read a platform, not a platform to pick. It
 resolves as its own root, beside the fixture stack and never inside it.
