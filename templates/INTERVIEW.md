@@ -98,8 +98,9 @@ required structures in `templates/core/docs.md`.
 ### Hybrid model
 
 Generate an agent file that inlines the rules that would break silently,
-with nothing to catch them, and references the templates for the rest. Follow the hybrid model structure in
-`templates/core/agents.md`. The output file:
+with nothing to catch them, and references the templates for the rest.
+Follow the hybrid model structure in `templates/core/agents.md`. The
+output file:
 
 1. Points to `docs/solid-ai-templates/` as a submodule
 2. Lists ALL template files in the dependency chain
