@@ -187,6 +187,42 @@ def merge(repo, fork, upstream):
     return out(repo, "rev-parse", "HEAD"), owned, unexpected
 
 
+def follow_renames(repo, base, upstream, fork, merged):
+    """Point the fork's own files at the paths upstream renamed.
+
+    A rename is the one breaking change a fork migrates mechanically, so the
+    simulation does what the fork would and reports it. Anything a rename
+    does not explain, a deleted file or a removed ID, still reaches smoke.
+    """
+    status = out(repo, "diff", "-M", "--name-status", "--diff-filter=R",
+                 base, upstream).splitlines()
+    renames = [tuple(line.split("\t")[1:3]) for line in status]
+    own = out(repo, "diff", "--name-only", "--diff-filter=A", base,
+              fork).splitlines()
+
+    git(repo, "checkout", "-q", "--detach", merged)
+    touched = []
+    for rel in own:
+        text = read(repo, rel)
+        moved = text
+        for old, new in renames:
+            moved = moved.replace(old, new)
+        if moved != text:
+            touched.append(rel)
+    if not touched:
+        return merged, renames
+
+    def edit(target):
+        for rel in touched:
+            text = read(target, rel)
+            for old, new in renames:
+                text = text.replace(old, new)
+            write(target, rel, text)
+        return touched
+
+    return commit(repo, merged, "fork: follow upstream renames", edit), renames
+
+
 def nested_smoke(repo, upstream):
     """Run the merged tree's own smoke suite, with SYS-20 against upstream."""
     env = dict(os.environ, SAIT_UPSTREAM_REF=upstream)
@@ -239,6 +275,10 @@ def real(repo, base, head, fork):
     if merged is None:
         return {"id": "FS-03", "title": title, "notes": notes, "failures": [
             f"  conflicts outside the fork's own documents: {unexpected}"]}
+
+    merged, renames = follow_renames(repo, base, upstream, fork, merged)
+    notes.append(f"  upstream renames, applied to the fork's own files: "
+                 f"{renames or 'none'}")
 
     if not os.path.exists(os.path.join(repo, FORK_STACK)):
         return {"id": "FS-03", "title": title, "notes": notes, "failures": [

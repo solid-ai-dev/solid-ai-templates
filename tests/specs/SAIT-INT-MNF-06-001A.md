@@ -62,8 +62,9 @@ tags: [manifest, fork, composition, merge]
    title
 3. FS-03: merge HEAD, or a planted `base:` description edit when HEAD
    changes nothing against the base; keep the fork's side of any conflict
-   in a fork-owned document, then run the merged tree's `run_smoke.py` with
-   `SAIT_UPSTREAM_REF` at the upstream side
+   in a fork-owned document, point the fork's own files at each path
+   upstream renamed, as a fork migrating would, then run the merged
+   tree's `run_smoke.py` with `SAIT_UPSTREAM_REF` at the upstream side
 
 ### Assertions
 
@@ -72,7 +73,8 @@ tags: [manifest, fork, composition, merge]
 2. Assert FS-01 conflicts in `templates/manifest.yaml` only, and is caught
 3. Assert FS-02 conflicts in `README.md` only, and completes as the fork's
 4. Assert FS-03 conflicts in no file outside the fork-owned documents,
-   keeps the fork's stack, and its smoke run passes
+   keeps the fork's stack, and its smoke run passes. A rename is migrated
+   and reported; a deleted file or a removed ID is not, and fails smoke
 5. Assert all three scenarios ran
 
 ### Negative controls
