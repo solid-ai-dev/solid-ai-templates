@@ -34,6 +34,10 @@ jobs:
       # mutation that does nothing reads as the judge holding.
       - name: Check the rubric control still builds its trees
         run: python tests/efficacy/control/control.py --self-test
+      # A fork syncs by merging upstream. This merges the change under test
+      # into a simulated fork and runs smoke on the result.
+      - name: Check a fork that only appends merges this change
+        run: python tests/run_fork_sync.py
       - name: Check generated docs are up to date
         run: python tools/sync.py --check
       - name: Check generated/ files are up to date

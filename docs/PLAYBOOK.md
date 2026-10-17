@@ -362,13 +362,14 @@ any entry that no longer applies.
 py tests/run_smoke.py              # structural checks — seconds
 py tests/run_conformance.py        # the templates' own checks, run here
 py tests/run_conformance.py --list # dispositions only, run nothing
+py tests/run_fork_sync.py         # a fork that only appends merges HEAD
 py tests/run_e2e.py                # canary test (fixture stack)
 py tests/run_e2e.py --all          # all agent tests
 py tests/run_e2e.py STK-01 FMT-01  # specific tests only
 py tests/run_e2e.py --dry-run      # build prompts, call no model, write no report
 ```
 
-The efficacy benchmark is a fourth runner and deliberately not in that
+The efficacy benchmark is another runner and deliberately not in that
 list: it costs quota, takes hours, and answers a different question from
 whether this repository is sound. `tests/efficacy/README.md` owns its
 procedure, and `docs/design/efficacy-benchmark.md` owns the method.
