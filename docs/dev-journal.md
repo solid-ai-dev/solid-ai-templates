@@ -8927,3 +8927,64 @@ design's decisions table.
   parent of X normally first, or the changes before X are skipped for good
 - The single-commit subject check reads each `(#N)` on its own, so
   `(#1901, #1902)` names only the first issue
+
+## 2026-10-17 — Round 4 reports, and hybrid becomes the delivery floor
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- A fixture stack and platform under `templates/fixture/`, marked
+  `fixture: true` and listed nowhere a project reads, keep the per-stack
+  checks fed once the stacks move to forks. Those checks select stacks by
+  the manifest's `stacks:` key, and the e2e canary is now STK-24 on the
+  fixture (#1925)
+- Round 4 ran, was judged three times per trial, archived to
+  `braboj/tariff-runs`, and reported. Both registered hypotheses are
+  supported on a few rows at K = 3 (#1875, #1876), and task success did not
+  grow under haiku
+- Thin hybrid's 42 % build suite measured a missing secret key, not its
+  code: its apps refused to start without `TARIFF_SECRET_KEY`, which the
+  spec never named. Both specs now name it and scoring supplies it (#1949).
+  A rescore from the restored archive read 82–95 % and, on two trials,
+  security probes of 0.82 and 1.00. The registered scores stand beside it
+- The judge keeps a virtualenv that lost its `pyvenv.cfg` out of its
+  bundle (#1950), and registers round 4's spec hashes so its trees stay
+  judgeable after the spec changed
+- ADR-052: a generated file is inline or hybrid, never reference alone,
+  and a rule whose breaking is silent and that no tool enforces is inlined
+  (#1920). `agents.md` and the interview implement it, and the CHANGELOG
+  deprecates the reference model (#712). Round 5 adds a reference-only arm
+  to test it (#1957)
+- `resolve.py` names a missing dependency and a dependency cycle,
+  including under the core tier, with SYS-19 (#1922). SYS-20 fails when a
+  fork edits an upstream manifest key against the revision it last merged,
+  set by `SAIT_UPSTREAM_REF` (#1923)
+
+**Pull requests merged:** #1948, #1951, #1952, #1954, #1955, #1956, #1958,
+#1959, #1960.
+
+**Issues closed:** #712, #1875, #1876, #1920, #1922, #1923, #1925, #1949,
+#1950.
+
+**Issues created:** #1949, #1950, #1957.
+
+**ADRs:** ADR-052.
+
+**Gaps flagged:**
+- Round 4 owes an escalation to K = 5 on both runs; not run
+- Round 5's skills arm is undecided, and #414 is to be revisited against
+  ADR-052
+- The worktrees `C:/Workspace/sat-r4` and `sat-r4b` and round 4's roots
+  under `C:/efficacy` remain on disk; all of it is archived
+
+**Lessons:**
+- A uniform result across trials is a fault to trace before judging:
+  three hybrid builds at 42 % were one missing environment variable
+- Changing a spec that trees carry a copy of strands those trees unless
+  the old text's hash is registered first; the judge refuses the copy as
+  edited
+- The single-commit subject check reads each `(#N)` on its own. The lesson
+  was already here, and was repeated: write `(#a) (#b)`, never `(#a, #b)`
+- A rescore belongs in a restored copy of the archive. `--rescore` in
+  place overwrites the registered scores and breaks the archive's
+  verification
