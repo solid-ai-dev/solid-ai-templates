@@ -48,8 +48,11 @@ every answer to those questions moves to forks.
   upstream right for all of them, and each fork supplies its own answer.
 - History-safety rules in git hold for every team; branch prefixes and title
   forms are one team's choice.
-- Recording decisions is documentation practice any team benefits from; only
-  a project's categories are its own.
+- Which documents a project keeps, and how each is laid out, differ across
+  teams and organisations. Upstream requires only the documents every
+  project needs, `README.md`, `AGENTS.md` and `CLAUDE.md`, and prescribes
+  no document's structure, so the core stays as lean as the waist test
+  allows.
 
 ## Design
 
@@ -59,11 +62,11 @@ every answer to those questions moves to forks.
 | - | ---- | ----------- |
 | 1 | The waist test | A rule stays upstream only if changing the stack, the platform or the team's way of working would not change it |
 | 2 | Engine upstream | The manifest schema, IDs, EXTEND and OVERRIDE, the resolver, `tools/`, `tests/`, and a fixture stack and platform as test input |
-| 3 | Shared policy upstream | `core/`: config, oop, quality, testing, readme, the review checklists, and `agents.md` as the output contract; `security/`, `data/`, `infra/`, `backend/` and `frontend/` |
+| 3 | Shared policy upstream | `core/`: config, oop, quality, testing, the review checklists, and `agents.md` as the output contract; `security/`, `data/`, `infra/`, `backend/` and `frontend/` |
 | 4 | Rules, not language checks | `core/` states each idiom's rule language-neutrally and carries no language-specific code; the check moves with `language/`, which leaves upstream whole (#1926) |
 | 5 | Governance asks, forks answer | Upstream asks who approves a change, how work is tracked and what a release is, and answers none of them. Labels, milestones, merge and review policy, the journal, wrap-up and the release cut move to forks |
 | 6 | Git splits | Upstream keeps never force-push, never rebase a pushed branch, one concern per pull request, committer identity, submodules, off-limits paths and `.gitignore`. Branch prefixes, commit and title form, squash policy, versioning and the release process move |
-| 7 | Decision records stay upstream | The ADR threshold, the record layout, the immutability rules and the schema and layout checks; a fork sets only its categories and the record its layout binds from |
+| 7 | Required documents, no structure | Upstream requires `README.md`, `AGENTS.md` and `CLAUDE.md` and prescribes no document's structure. `core/readme.md`, decision records (threshold, layout, immutability, schema and layout checks), the changelog format, arc42, and the ONBOARDING, PLAYBOOK and journal rules move |
 | 8 | Workflow moves | All of `workflow/` moves, `release.md` included. From `quality-gates.md`, how a check is built stays; when gates run moves: the three-layer gate model, thresholds and periodic audits |
 | 9 | Ends move | `stack/`, `platform/`, `INTERVIEW.md`, `examples/`, `generated/`, `backend/templating.md`, `language/`, and `core/` cli, skills and examples |
 | 10 | Concern directories | Upstream drops `base/`: `core/`, `security/`, `data/` and `infra/` sit beside `backend/` and `frontend/` under `templates/` (#1504) |
@@ -96,7 +99,7 @@ leaves it for the project or its fork to fill in:
 | Keep the 2026-09-12 map, with the release rules and gate model upstream | The release cut and the gate schedule are one team's answers, and they would keep the file wrong for teams that work otherwise. |
 | Keep governance upstream and let forks OVERRIDE it | Every fork inherits answers it must find and undo, and a missed one silently governs its projects. |
 | Move the whole git policy to forks | The history-safety rules hold for every team, and a project with no fork would lose them. |
-| Move decision records to forks | Every fork would rebuild the same threshold, layout and check. |
+| Keep decision records and the README structure upstream | A record's layout and a README's sections are one organisation's structure; a fork that works otherwise would have to find and override them, and a lean core outweighs each fork keeping its own. |
 | Split by whole file | Three files mix policy and process, so either half would land on the wrong side. |
 | Fold each language check into `core/` beside its rule | A Python check changes with the stack, so it fails rule 1, and language code in `core/` grows every chain, the non-Python ones included. |
 
