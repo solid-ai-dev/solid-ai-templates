@@ -29,6 +29,10 @@ Apply SOLID at the class, module, and service level:
   types
 - Keep class hierarchies shallow — more than two levels of inheritance is a
   signal to refactor towards composition
+- **Closed type families are tagged unions** — where every variant is
+  known when the type is written, discriminate a union by a literal field
+  (`kind`, `type`) so the compiler checks every branch handles every
+  variant; keep class hierarchies for families callers extend
 - **Internal identifiers must align with their layer** — a module or class
   whose name implies a role it does not hold (an `endpoints.py` with no
   routes, a `*RestApi` class that is not the REST API) misleads readers and
