@@ -21,15 +21,15 @@ three, and `agents.md` recommends hybrid without ruling reference out.
 | No loading mechanism | A referenced template is not loaded at startup, on relevance, or by any cue. It is read only when the agent decides to open it (#712) |
 | A consumer it failed | Under a reference-model file, a project's agent never opened the deferred templates across a session of git, testing and review work. A type-check gate that lived only there was missed and CI went red, and the defer list itself drifted unnoticed (#712) |
 | Adherence | In round 3 hybrid adhered to the project's conventions best of every arm: +21.6 pp against no file, where the short inline file read +11.1 pp (#1893) |
-| Security under a thin spec | In round 4, with a spec that states the contract and not the defences, hybrid scored highest of every arm on the judge's security and data-protection rows. Rescored with the secret key the spec had omitted, its security probes read 0.82 to 1.00 (`docs/audits/2026-10-17-round-4.md`) |
+| Security under a thin spec | In round 4, with a spec that states the contract and not the defences, hybrid scored highest of every arm on the judge's security and data-protection rows (`docs/audits/2026-10-17-round-4.md`). Rescored with the secret key the spec had omitted, two of its three trials read 0.82 and 1.00 on the security probes; the third was not measured (`rounds/2026-10-16-thin-sensitivity/score-py` in `braboj/tariff-runs`) |
 | A cost of length | Under a weaker model in round 4, every template file but the hand-written one lowered task success against no file |
 | A gap in the evidence | No round has run a reference-only arm, so the benchmark has not compared reference with hybrid directly |
 
 ## Decision
 
 A generated context file delivers rules inline or hybrid, never by reference
-alone: a rule whose breaking would go unnoticed is inlined, and only a rule
-that fails loudly or is enforced by a tool may stay a reference.
+alone: a rule whose breaking is silent and that no tool enforces is inlined,
+and any other rule may stay a reference.
 
 ## Rationale
 
@@ -37,8 +37,8 @@ that fails loudly or is enforced by a tool may stay a reference.
   reference is a rule the agent may never read; the consumer failure shows
   the cost lands where nothing catches it.
 - Placement by damage and enforcement keeps every rule an agent must not miss
-  in context, while a rule a test, linter or CI step will catch can stay
-  outside it and keep the file short.
+  in context, while a rule whose breaking shows itself, or that a test,
+  linter or CI step checks, can stay outside it and keep the file short.
 - Hybrid is the arm the benchmark reads best on adherence and on security, so
   making it the floor moves generation towards the measured result rather
   than away from it.
@@ -47,14 +47,15 @@ that fails loudly or is enforced by a tool may stay a reference.
 
 ## Design
 
-![How one rule is placed: if breaking it would go unnoticed, with no test, linter or CI step to fail, it is inlined; otherwise it may be referenced. Inline and hybrid remain; pure reference is deprecated](../diagrams/delivery-model.png)
+![How one rule is placed: if breaking it is silent and no test, linter or CI step enforces it, it is inlined; if it fails visibly or a tool enforces it, it may be referenced. Inline and hybrid remain; pure reference is deprecated](../diagrams/delivery-model.png)
 
 1. **The floor** — Generation MUST NOT produce a file that delivers its
    rules by reference alone. Inline and hybrid remain.
-2. **Inline the silent rules** — A rule whose breaking produces no failing
-   test, lint error or CI step MUST be inlined.
-3. **Reference only what fails loudly** — A rule a tool enforces, or whose
-   breaking fails visibly, MAY be referenced instead of inlined.
+2. **Inline the silent, unenforced rules** — A rule MUST be inlined when its
+   breaking is silent, showing no error to the agent or the user, and no
+   test, linter or CI step enforces it.
+3. **Reference the rest** — A rule whose breaking fails visibly, or that a
+   test, linter or CI step enforces, MAY be referenced instead of inlined.
 4. **Where the rubric lives** — `agents.md` states the rubric, and the
    interview applies it; neither offers the reference model.
 5. **Length is a cost, not a cap** — Inlining SHOULD stop at the rules rule 2
@@ -63,7 +64,7 @@ that fails loudly or is enforced by a tool may stay a reference.
 | Breaking the rule... | Enforced by a tool | Not enforced by a tool |
 | -------------------- | ------------------ | ---------------------- |
 | fails visibly | MAY reference | MAY reference |
-| goes unnoticed | MAY reference | MUST inline |
+| is silent | MAY reference | MUST inline |
 
 ## Alternatives considered
 
