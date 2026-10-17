@@ -2370,11 +2370,47 @@ stacks:
     depends_on: [base-b]
 """
 
+
+def core_fault(depends_on):
+    """A manifest whose one core entry depends on `depends_on`.
+
+    A fault under the core tier breaks every root, so each is planted in a
+    manifest of its own, and the valid stack is the root asked for.
+    """
+    return """core: [base-a]
+
+base:
+  - id: base-a
+    file: templates/core/quality.md
+    depends_on: [%s]
+
+stacks:
+  - id: stack-valid
+    file: templates/fixture/stack.md
+    depends_on: [base-a]
+""" % depends_on
+
+
+# The core tier's entries are seeded before any root is walked, so their own
+# dependencies are a separate path to each fault, and each gets a case.
+MANIFESTS = {
+    "stacks": BROKEN_MANIFEST,
+    "core-missing": core_fault("base-nowhere"),
+    "core-self": core_fault("base-a"),
+    "core-through-stack": core_fault("stack-valid"),
+}
+
 BROKEN_CASES = [
-    ("stack-valid", 0, "templates/fixture/stack.md"),
-    ("stack-missing", 1,
+    ("stacks", "stack-valid", 0, "templates/fixture/stack.md"),
+    ("stacks", "stack-missing", 1,
      "Missing dependency: stack-missing depends on base-nowhere"),
-    ("stack-cycle", 1, "Dependency cycle: base-b -> base-c -> base-b"),
+    ("stacks", "stack-cycle", 1,
+     "Dependency cycle: base-b -> base-c -> base-b"),
+    ("core-missing", "stack-valid", 1,
+     "Missing dependency: base-a depends on base-nowhere"),
+    ("core-self", "stack-valid", 1, "Dependency cycle: base-a -> base-a"),
+    ("core-through-stack", "stack-valid", 1,
+     "Dependency cycle: base-a -> stack-valid -> base-a"),
 ]
 
 RESOLVE_WITH = (
@@ -2392,11 +2428,14 @@ def check_sys_19():
     failures = []
 
     with tempfile.TemporaryDirectory() as scratch:
-        manifest = os.path.join(scratch, "manifest.yaml")
-        with io.open(manifest, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(BROKEN_MANIFEST)
+        for name, text in MANIFESTS.items():
+            with io.open(os.path.join(scratch, name + ".yaml"), "w",
+                         encoding="utf-8", newline="\n") as handle:
+                handle.write(text)
 
-        for root, want_code, want_phrase in BROKEN_CASES:
+        for name, root, want_code, want_phrase in BROKEN_CASES:
+            manifest = os.path.join(scratch, name + ".yaml")
+            case = f"{root} in {name}"
             proc = subprocess.run(
                 [sys.executable, "-c", RESOLVE_WITH,
                  os.path.join(ROOT, "tools"), manifest, root],
@@ -2405,18 +2444,18 @@ def check_sys_19():
             said = proc.stdout + proc.stderr
             if proc.returncode != want_code:
                 failures.append(
-                    f"  {root}: exit {proc.returncode}, expected {want_code}: "
+                    f"  {case}: exit {proc.returncode}, expected {want_code}: "
                     f"{said.strip()[-200:]}"
                 )
             elif want_phrase not in said:
                 failures.append(
-                    f"  {root}: exit {want_code} as expected, but the message "
+                    f"  {case}: exit {want_code} as expected, but the message "
                     f"does not carry {want_phrase!r}, so the status may be "
                     f"right for the wrong reason"
                 )
             elif "Traceback" in said:
                 failures.append(
-                    f"  {root}: the message is right but arrives inside a "
+                    f"  {case}: the message is right but arrives inside a "
                     f"traceback, which a fork's maintainer reads as a crash"
                 )
 

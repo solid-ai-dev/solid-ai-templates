@@ -48,6 +48,10 @@ tags: [tooling, resolver, cli, composition, fork]
 1. Write a planted manifest to a temporary directory: one valid stack, one
    whose `depends_on` names `base-nowhere`, and one whose chain reaches
    `base-b -> base-c -> base-b`
+2. Write three more, each with one fault under the core tier's only entry:
+   it depends on `base-nowhere`, on itself, or on the valid stack, which
+   depends on it. The core tier is seeded before any root is walked, so its
+   entries' dependencies are a separate path to each fault
 
 ### Execution
 
@@ -67,7 +71,11 @@ tags: [tooling, resolver, cli, composition, fork]
    stack-missing depends on base-nowhere`
 3. Assert the cycle root exits 1 with `Dependency cycle: base-b -> base-c
    -> base-b`
-4. Assert the case count is non-zero, per ADR-034
+4. Assert that each core-tier fault fails every root, the valid one
+   included: `Missing dependency: base-a depends on base-nowhere`,
+   `Dependency cycle: base-a -> base-a`, and `Dependency cycle: base-a ->
+   stack-valid -> base-a`
+5. Assert the case count is non-zero, per ADR-034
 
 ### Negative controls
 
@@ -75,7 +83,10 @@ tags: [tooling, resolver, cli, composition, fork]
    with no entry and resolved a shorter chain at exit 0, and recursed on a
    cycle until Python raised `RecursionError`, naming no ID. Both broken
    cases fail against that behaviour
-2. **A status right for the wrong reason.** A planted manifest that fails
+2. **The core tier skipped.** A walker that seeds the core tier as done and
+   checks only the root's tree exits 0 on all three core-tier faults; their
+   cases fail against it
+3. **A status right for the wrong reason.** A planted manifest that fails
    to load also exits non-zero; the valid root's status 0 and each case's
    phrase separate the two
 
