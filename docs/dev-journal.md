@@ -8988,3 +8988,56 @@ design's decisions table.
 - A rescore belongs in a restored copy of the archive. `--rescore` in
   place overwrites the registered scores and breaks the archive's
   verification
+
+## 2026-10-18 — The v3.0 split lands, and the Imbra fork takes it
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Imbra's fork exists: `Imbra-Ltd/imbra-ai-templates`, with seven
+  fork-homed issues moved there (#1943)
+- Fork sync runs on every PR: it merges the change into a simulated fork
+  and runs smoke on the result (#1924)
+- The language idioms become rules in `core/` with no language code; the
+  checks stay with `language/` (#1926). ADR-050 rules 4 and 7 were
+  rewritten in place before release
+- Upstream requires only `README.md`, `AGENTS.md` and `CLAUDE.md`, and
+  prescribes no document's structure (#1964)
+- The resolver reads a fork's own manifest keys and `fork_core:`
+  (SYS-21, #1970)
+- The split removes stacks, platforms, workflow, process, the interview,
+  examples and generated chains from upstream, and rewrites the docs for
+  the fork model (#1944, #1945)
+- The fork took the split: parent merged normally, the split with
+  `-s ours`, its templates moved to `imbra:` and `fork_core:` (fork PR #8)
+
+**Pull requests merged:** #1962, #1963, #1964, #1965, #1966, #1967,
+#1968, #1969, #1970, #1971, #1972, #1973, #1974; fork #8.
+
+**Issues closed:** #1924, #1926, #1943, #1944, #1945; moved to the fork:
+#414, #709, #715, #977, #1495, #1497, #1688.
+
+**Issues created:** #1975; fork #1 to #7 (moved), fork #9.
+
+**ADRs:** ADR-049 rule 4 amended (`fork_core`); ADR-050 rules 4 and 7
+rewritten in place.
+
+**Gaps flagged:**
+- About fifteen e2e, efficacy and process issues are fork-homed but still
+  here, waiting on the owner's go to move them
+- The fork's CI fails one check until `release-gates.yml` registers
+  (fork #9); upstream's release gates check nothing now (#1975)
+- Agents drafted the SPEC, PLAYBOOK and ONBOARDING rewrites; they were
+  spot-checked, not read line by line
+
+**Lessons:**
+- A split commit holds only what the fork must not receive, so the
+  upstream-only doc rewrites belong in it too
+- A simulated fork must take a split as a real fork does, keys moved
+  included; a plain merge of a split fails by design
+- A fork's manifest key goes above `stacks:`, and a manifest rewrite keeps
+  the file's last bytes; either change at the end collides with a
+  downstream fork's appends
+- A fork sync merges with a merge commit, never a squash
+- `run_conformance.py` launched from PowerShell fails eight checks that
+  pass from Git Bash
