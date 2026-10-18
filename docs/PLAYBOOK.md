@@ -406,10 +406,29 @@ adds to every chain's core tier under `fork_core:`, and never edits
 3. Move the fork's templates out of `base:`, `backend:` and `frontend:`
    into a manifest key of its own, and the core IDs upstream dropped from
    `core:` into `fork_core:`. Commit the move
-4. Merge the rest: `git merge upstream/main`. Resolve `README.md`,
+4. Restore each template the commit modified rather than deleted. `-s ours`
+   kept the fork's version of every file the commit touched, so each still
+   holds the text upstream replaced, and nothing reports it:
+   ```bash
+   git diff --name-only --diff-filter=M <commit>^ <commit> -- templates
+   ```
+   For each file other than the manifest, move the fork's own lines into a
+   fork-owned file that reaches the same chains: under `fork_core:` for a
+   core-tier file, otherwise depended on by the fork templates that depend
+   on the upstream one. A line upstream rewrote takes upstream's text
+   unless the fork's states a rule of its own. Then take upstream's text and
+   commit:
+   ```bash
+   git checkout <commit> -- <path>
+   ```
+5. Merge the rest: `git merge upstream/main`. Resolve `README.md`,
    `CLAUDE.md` and `CHANGELOG.md` in the fork's favour; they are
-   fork-owned files
-5. Run smoke with `SAIT_UPSTREAM_REF` set to a ref holding upstream's
+   fork-owned files. Then confirm no upstream template differs from
+   upstream's; the command lists `templates/manifest.yaml` alone:
+   ```bash
+   git diff --name-only upstream/main -- $(git ls-tree -r --name-only upstream/main -- templates)
+   ```
+6. Run smoke with `SAIT_UPSTREAM_REF` set to a ref holding upstream's
    history, so SYS-20 compares the manifest's upstream keys with the
    revision the fork last merged:
    ```bash
