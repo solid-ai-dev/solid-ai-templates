@@ -81,21 +81,19 @@ def _spec_sections(manifest):
     _check_sections(manifest)
     parts = []
 
-    # The base: key spans several concern directories, one listing each, in
-    # the order the manifest first names them.
+    # One listing per directory, in the order the manifest first names it.
+    # Every section but stacks contributes, a fork's own keys included, so a
+    # template a fork keeps under its own key still lists in its directory.
+    from resolve import entry_sections
+
     groups = {}
-    for e in manifest.get("base", []) or []:
-        groups.setdefault(Path(e["file"]).parts[1], []).append(e)
+    for section in entry_sections(manifest):
+        if section == "stacks":
+            continue
+        for e in manifest[section]:
+            groups.setdefault(Path(e["file"]).parts[1], []).append(e)
     for dirname, entries in groups.items():
         parts.append("```\n" + _tree(entries, dirname) + "\n```")
-    for section, dirname in [
-        ("platform", "platform"),
-        ("frontend", "frontend"),
-        ("backend", "backend"),
-    ]:
-        entries = manifest.get(section, [])
-        if entries:
-            parts.append("```\n" + _tree(entries, dirname) + "\n```")
 
     # stacks get a simpler listing
     stacks = manifest.get("stacks", [])
