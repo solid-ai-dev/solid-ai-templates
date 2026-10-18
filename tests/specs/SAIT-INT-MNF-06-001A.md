@@ -66,7 +66,8 @@ tags: [manifest, fork, composition, merge]
    upstream renamed, as a fork migrating would, then run the merged
    tree's `run_smoke.py` with `SAIT_UPSTREAM_REF` at the upstream side
 4. FS-03, when a commit in the range carries the trailer
-   `Fork-merge: ours`: merge with `git merge -s ours`, as a fork takes a
+   `Fork-merge: ours` and no merge in the range already took it with
+   `-s ours` (a merge whose tree is its first parent's): merge with `git merge -s ours`, as a fork takes a
    change that removes what forks carry; move each entry upstream dropped
    from `base:`, `backend:` and `frontend:` to the fork's own `fork:` key
    and each dropped core ID to `fork_core`; then run smoke as in step 3

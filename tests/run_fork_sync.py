@@ -266,6 +266,27 @@ def planted(repo, base, fork, rid, title, edit, owed_owned, owed_unexpected):
     return {"id": rid, "title": title, "notes": notes, "failures": failures}
 
 
+def pending_splits(repo, base, upstream):
+    """The commits in the range declaring `Fork-merge: ours` and not yet taken.
+
+    A fork that took a split already has it in its history, under its own
+    `-s ours` merge: a merge whose tree is its first parent's. Run in that
+    fork, the split is part of the fork's past, not a change a fork of it
+    would merge with `-s ours`, so it is left out.
+    """
+    revs = out(repo, "rev-list", f"{base}..{upstream}").split()
+    declared = [rev for rev in revs
+                if OURS_TRAILER.search(out(repo, "log", "-1", "--format=%B",
+                                           rev))]
+    absorbed = set()
+    for rev in out(repo, "rev-list", "--merges", f"{base}..{upstream}").split():
+        parents = out(repo, "rev-list", "--parents", "-n", "1", rev).split()[1:]
+        if (len(parents) > 1 and out(repo, "rev-parse", f"{rev}^{{tree}}")
+                == out(repo, "rev-parse", f"{parents[0]}^{{tree}}")):
+            absorbed.update(parents[1:])
+    return [rev for rev in declared if rev not in absorbed]
+
+
 def merge_ours(repo, fork, upstream):
     """Take upstream's history and keep the fork's tree, as a split asks."""
     git(repo, "checkout", "-q", "--detach", fork)
@@ -333,8 +354,7 @@ def real(repo, base, head, fork):
                  f"{base[:7]}..{upstream[:7]}")
 
     title = "the upstream change merges into a fork that only appends"
-    log = out(repo, "log", "--format=%B", f"{base}..{upstream}")
-    if OURS_TRAILER.search(log):
+    if pending_splits(repo, base, upstream):
         return split(repo, upstream, fork, notes, title)
 
     merged, owned, unexpected = merge(repo, fork, upstream)
