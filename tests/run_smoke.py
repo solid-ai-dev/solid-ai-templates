@@ -30,7 +30,6 @@ import sys
 
 from lib import (ROOT, PASS, FAIL, ERR, write_report, print_verdict,
                  repository_files, template_files)
-from cases import ALL_TESTS
 
 # Set the output encoding and the line ending at the boundary rather
 # than inheriting the console defaults. The encoding mangles any
@@ -182,13 +181,9 @@ TEMPLATE_DIRS = [
     "templates/core",
     "templates/security",
     "templates/infra",
-    "templates/workflow",
-    "templates/language",
     "templates/data",
     "templates/backend",
     "templates/frontend",
-    "templates/platform",
-    "templates/stack",
     "templates/fixture",
 ]
 
@@ -1056,8 +1051,6 @@ CORE_DIRS = [
     "templates/core",
     "templates/security",
     "templates/infra",
-    "templates/workflow",
-    "templates/language",
     "templates/data",
 ]
 
@@ -1302,144 +1295,6 @@ def check_adr_01():
 
 
 # ---------------------------------------------------------------------------
-# E2E-01 — all cases.py paths resolve to existing files
-# ---------------------------------------------------------------------------
-
-def check_e2e_01():
-    failures = []
-    seen = Inspected()
-
-    interview = os.path.join(ROOT, "templates", "INTERVIEW.md")
-    if not os.path.isfile(interview):
-        failures.append("  INTERVIEW.md not found: templates/INTERVIEW.md")
-
-    required_fields = ("id", "spec", "stack", "answers", "required")
-
-    seen.count("test cases defined", len(ALL_TESTS))
-    validated = 0
-    for test in ALL_TESTS:
-        if "skip" in test:
-            continue
-
-        validated += 1
-        tid = test.get("id", "?")
-
-        # Validate required fields
-        for field in required_fields:
-            if field not in test:
-                failures.append(f"  {tid}: missing field: {field!r}")
-
-        if not test.get("required"):
-            failures.append(f"  {tid}: required list is empty")
-
-        stack = test.get("stack", "")
-        if stack:
-            path = os.path.join(ROOT, stack)
-            if not os.path.isfile(path):
-                failures.append(f"  {tid}: stack file missing: {stack}")
-            elif os.path.getsize(path) == 0:
-                failures.append(f"  {tid}: stack file empty: {stack}")
-
-        output_file = test.get("output_file", "templates/core/agents.md")
-        path = os.path.join(ROOT, output_file)
-        if not os.path.isfile(path):
-            failures.append(f"  {tid}: output_file missing: {output_file}")
-
-        for ef in test.get("extra_files", []):
-            path = os.path.join(ROOT, ef)
-            if not os.path.isfile(path):
-                failures.append(f"  {tid}: extra_file missing: {ef}")
-
-    seen.count("cases validated", validated)
-    return seen.failures() + failures, seen.notes()
-
-
-# ---------------------------------------------------------------------------
-# SYS-05 — end-of-session audit rendered faithfully (inline or delegated)
-# ---------------------------------------------------------------------------
-# A procedural checklist (the scope.md End of session audit) loses steps and
-# its enforcement header when a generator condenses it into bullets. The two
-# compliant renderings — inline-verbatim and hard-delegation — both keep the
-# load-bearing phrase ("execute each item ... do not summarize"); a paraphrase
-# drops it. This check asserts that phrase survives in the output spec
-# (agents.md §6.3 directive, every output model) and in every example
-# CLAUDE.md that declares a session-protocol section. Examples with no such
-# section are out of scope (skipped), not failures.
-
-ENFORCE_RE = re.compile(
-    r"execute each item|do not summari[sz]e|do not paraphrase",
-    re.IGNORECASE,
-)
-
-
-def _section_block(lines, start_index, stop_pattern):
-    """Return text from start_index+1 until a line matching stop_pattern."""
-    body = []
-    for line in lines[start_index + 1:]:
-        if stop_pattern.match(line):
-            break
-        body.append(line)
-    return "\n".join(body)
-
-
-def check_sys_05():
-    failures = []
-    seen = Inspected()
-
-    # 1) Output spec — every §6.3 directive in agents.md carries the rule.
-    agents_path = os.path.join(ROOT, "templates", "core", "agents.md")
-    a_lines = read(agents_path).splitlines()
-    h63 = re.compile(r"^###\s+6\.3\b")
-    stop_spec = re.compile(r"^(#{1,3}\s|```)")
-    found = 0
-    for i, line in enumerate(a_lines):
-        if h63.match(line):
-            found += 1
-            block = _section_block(a_lines, i, stop_spec)
-            if not ENFORCE_RE.search(block):
-                failures.append(
-                    f"  agents.md:{i + 1}: §6.3 directive must require "
-                    f"inline-verbatim or hard-delegation (missing 'execute "
-                    f"each item' / 'do not summarize')"
-                )
-    seen.count("6.3 directives in agents.md", found)
-    if not found:
-        failures.append("  agents.md: no '### 6.3' directive found")
-
-    # 2) Examples — any CLAUDE.md with a session-protocol section must render
-    #    the audit faithfully; examples without one are out of scope.
-    examples_dir = os.path.join(ROOT, "examples")
-    head = re.compile(r"^#{2,3}\s.*([Ss]ession protocol|[Ee]nd of session)")
-    stop_top = re.compile(r"^##\s")
-    examples_read = 0
-    protocols = 0
-    if os.path.isdir(examples_dir):
-        for name in sorted(os.listdir(examples_dir)):
-            cm = os.path.join(examples_dir, name, "CLAUDE.md")
-            if not os.path.isfile(cm):
-                continue
-            examples_read += 1
-            e_lines = read(cm).splitlines()
-            start = next((i for i, l in enumerate(e_lines) if head.match(l)),
-                         None)
-            if start is None:
-                continue
-            protocols += 1
-            block = _section_block(e_lines, start, stop_top)
-            if not ENFORCE_RE.search(block):
-                failures.append(
-                    f"  examples/{name}/CLAUDE.md: session-protocol section "
-                    f"neither inlines the audit verbatim nor hard-delegates "
-                    f"(missing 'execute each item' / 'do not summarize') — a "
-                    f"soft reference or paraphrase drops the wrap-up steps"
-                )
-
-    seen.count("example context files read", examples_read)
-    seen.count("of those, carrying a session-protocol section", protocols)
-    return seen.failures() + failures, seen.notes()
-
-
-# ---------------------------------------------------------------------------
 # SYS-06 — every usable stack's resolved chain carries the MUST sections
 # ---------------------------------------------------------------------------
 # ADR-017 defines the canonical stack-template section structure. The MUST
@@ -1528,56 +1383,6 @@ def check_sys_07():
 
     seen.count("repository files read", walked)
     seen.count("audit reports found", reports)
-    return seen.failures() + failures, seen.notes()
-
-
-# ---------------------------------------------------------------------------
-# SYS-08 — every showcased stack keeps its example CLAUDE.md
-# ---------------------------------------------------------------------------
-# SYS-05 only validates examples that already exist, so a committed example
-# could be removed or renamed without any structural failure. This gate
-# locks in the example->stack mapping (per ADR-016 examples are
-# agent-generated, regenerated on material change): each required example
-# MUST have a non-empty CLAUDE.md, and the stack it demonstrates MUST exist
-# in the manifest. Adding a new example registers it here; two examples may
-# map to the same stack (e.g. astro-portfolio and hybrid-astro).
-
-REQUIRED_EXAMPLES = {
-    "astro-portfolio": "stack-astro",
-    "hybrid-astro": "stack-astro",
-    "fastapi-service": "stack-fastapi",
-    "order-service": "stack-fastapi",
-    "flask-api": "stack-flask",
-    "go-service": "stack-go-service",
-    "metricshub": "stack-go-echo",
-}
-
-
-def check_sys_08():
-    if not HAS_YAML:
-        return [MISSING_YAML]
-
-    _, entries, _ = _load_manifest()
-    failures = []
-    seen = Inspected()
-    seen.count("required examples checked", len(REQUIRED_EXAMPLES))
-    seen.count("stacks they map to", len(set(REQUIRED_EXAMPLES.values())))
-
-    for example, stack_id in sorted(REQUIRED_EXAMPLES.items()):
-        cm = os.path.join(ROOT, "examples", example, "CLAUDE.md")
-        if not os.path.isfile(cm):
-            failures.append(
-                f"  examples/{example}/CLAUDE.md missing — required "
-                f"example for stack '{stack_id}' (ADR-016: regenerate, "
-                f"do not delete)"
-            )
-        elif os.path.getsize(cm) == 0:
-            failures.append(f"  examples/{example}/CLAUDE.md is empty")
-        if stack_id not in entries:
-            failures.append(
-                f"  {example}: mapped stack '{stack_id}' not in manifest"
-            )
-
     return seen.failures() + failures, seen.notes()
 
 
@@ -2260,11 +2065,10 @@ def check_sys_17():
 # model, so it is exempt and the tier file is where the reason lives. The
 # exemption is asserted against that file rather than trusted, so a
 # category that later moves off the tier stops being exempt by omission.
+# The exempt categories are a fork's, since only a fork carries stacks; it
+# names them in fork_checks.py.
 
-QUALITY_GATES_EXEMPT_LAYERS = {
-    "hypermedia": "recorded at the most constrained context tier",
-    "embedded": "recorded at the most constrained context tier",
-}
+QUALITY_GATES_EXEMPT_LAYERS = {}
 
 QUALITY_GATES_ID = "base-quality-gates"
 
@@ -2280,8 +2084,11 @@ def check_sys_18():
     recorded = _recorded_tiers()
     constrained = min(recorded.values(), key=_tier_sort_key) if recorded else None
     seen.count("categories recorded", recorded)
+
+    # Zero exemptions is a real answer: a tree whose only stack is the
+    # fixture has no constrained category to exempt.
     seen.count("exempt layers named with a reason",
-               QUALITY_GATES_EXEMPT_LAYERS)
+               QUALITY_GATES_EXEMPT_LAYERS, floor=0)
 
     # An exemption whose stated reason has expired is worse than none: it
     # reads as a decision and behaves as an omission.
@@ -2640,14 +2447,10 @@ CHECKS = [
      "title": "Every template file has a manifest entry", "fn": check_sys_03},
     {"id": "SYS-04", "spec": "SAIT-SMK-SYS-04-001A",
      "title": "DEPENDS ON headers match manifest depends_on", "fn": check_sys_04},
-    {"id": "SYS-05", "spec": "SAIT-SMK-SYS-05-001A",
-     "title": "End-of-session audit inlined verbatim or hard-delegated", "fn": check_sys_05},
     {"id": "SYS-06", "spec": "SAIT-SMK-SYS-06-001A",
      "title": "Every usable stack's chain carries the MUST sections", "fn": check_sys_06},
     {"id": "SYS-07", "spec": "SAIT-SMK-SYS-07-001A",
      "title": "360 audit reports live only under docs/audits/", "fn": check_sys_07},
-    {"id": "SYS-08", "spec": "SAIT-SMK-SYS-08-001A",
-     "title": "Every showcased stack keeps its example CLAUDE.md", "fn": check_sys_08},
     {"id": "TPL-08", "spec": "SAIT-SMK-TPL-08-001A",
      "title": "Every base template has at least one [ID:] tag", "fn": check_tpl_08},
     {"id": "TPL-09", "spec": "SAIT-SMK-TPL-09-001A",
@@ -2679,8 +2482,6 @@ CHECKS = [
      "fn": check_sys_16},
     {"id": "ADR-01", "spec": "SAIT-SMK-ADR-01-001A",
      "title": "ADR frontmatter matches the ADR-010 schema", "fn": check_adr_01},
-    {"id": "E2E-01", "spec": "SAIT-SMK-E2E-01-001A",
-     "title": "All cases.py paths resolve to existing files", "fn": check_e2e_01},
 
     {"id": "SYS-17", "spec": "SAIT-SMK-SYS-17-001A",
      "title": "Every registered check names a spec document that exists",
@@ -2696,6 +2497,23 @@ CHECKS = [
      "title": "A fork leaves upstream's manifest keys as it last merged them",
      "fn": check_sys_20},
 ]
+
+
+# A fork's own checks read what only a fork carries: stacks, examples, the
+# interview and the e2e cases. They live in fork_checks.py, which extends
+# the registry and the lists above when the file exists, so this runner is
+# the same file in every tree and a fork's merge of it is clean.
+try:
+    import fork_checks
+except ModuleNotFoundError as exc:
+    if exc.name != "fork_checks":
+        raise
+else:
+    fork_checks.bind(globals())
+    CHECKS += fork_checks.CHECKS
+    TEMPLATE_DIRS += fork_checks.TEMPLATE_DIRS
+    CORE_DIRS += fork_checks.CORE_DIRS
+    QUALITY_GATES_EXEMPT_LAYERS.update(fork_checks.QUALITY_GATES_EXEMPT_LAYERS)
 
 
 # ---------------------------------------------------------------------------

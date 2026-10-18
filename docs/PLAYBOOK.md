@@ -434,7 +434,11 @@ checks that this repository OBEYS them — it extracts every fenced check in
 `templates/` and either runs it here or records why it does not apply.
 Adding a fenced check to a template without a disposition in
 `tests/conformance.py` fails the run, which is what stops a new check from
-arriving unexamined. Checks reaching GitHub need `gh` authenticated.
+arriving unexamined. A block in fork-owned content (stacks, platforms,
+workflow, the process sections) takes its entry in
+`tests/fork_dispositions.py` instead, and a smoke check reading such
+content goes in `tests/fork_checks.py`, so both runners stay the same file
+upstream and in every fork. Checks reaching GitHub need `gh` authenticated.
 
 A check whose verdict is a judgement reports `REVIEW` rather than `PASS`,
 and the summary counts it as awaiting a reading. It does not fail the run
