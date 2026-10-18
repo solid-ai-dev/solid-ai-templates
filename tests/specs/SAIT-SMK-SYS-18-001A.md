@@ -34,7 +34,7 @@ tags: [composition, membership, quality-gates, context-window]
 | FAILED | A stack declares no `layer`, so the check cannot classify it |
 | FAILED | An exempt category has no recorded context tier |
 | FAILED | An exempt category is recorded above the most constrained tier, so the stated reason has expired |
-| FAILED | The check read no categories, no exemptions or no stacks |
+| FAILED | The check read no categories or no stacks |
 | SKIPPED | PyYAML not installed |
 | BLOCKED | — |
 | ERROR | — |
@@ -68,7 +68,10 @@ tags: [composition, membership, quality-gates, context-window]
 3. Assert each exemption's stated reason still holds against the tier
    record, so an exemption cannot outlive the constraint that justified
    it and keep reading as a decision
-4. Assert the counts are non-zero, per ADR-034
+4. Assert the category and stack counts are non-zero, per ADR-034. The
+   exemption count may be zero: the exemptions are a fork's, named in
+   `tests/fork_checks.py`, and a tree whose only stack is the fixture has
+   no constrained category to exempt
 
 ### Negative controls
 
