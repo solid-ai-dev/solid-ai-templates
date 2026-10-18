@@ -316,6 +316,11 @@ check.
 In a fork, set `SAIT_UPSTREAM_REF` before running smoke; "Sync with
 upstream as a fork" gives the command.
 
+In CI, a fork sets the repository variable `UPSTREAM_REPO` to its
+upstream (`solid-ai-dev/solid-ai-templates`). Smoke and the release gates
+then fetch upstream's `main` and export `SAIT_UPSTREAM_REF` and
+`UPSTREAM_REF` as `upstream/main`; unset, they skip the fetch.
+
 `run_smoke.py` prints what each check inspected under its verdict — the
 files scanned, the chains resolved, the directives compared. Those lines are
 not findings; read them when a count moves without the tree moving, which is

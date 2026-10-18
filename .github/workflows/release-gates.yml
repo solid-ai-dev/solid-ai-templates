@@ -36,6 +36,19 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         run: pip install pyyaml
+      # A fork names its upstream in the UPSTREAM_REPO repository variable.
+      # Its history then holds upstream's commits, whose issue numbers belong
+      # to another tracker, and SYS-20 needs upstream's manifest to compare
+      # against. Upstream sets no variable and skips this.
+      - name: Fetch the upstream this fork names
+        if: vars.UPSTREAM_REPO != ''
+        env:
+          UPSTREAM_REPO: ${{ vars.UPSTREAM_REPO }}
+        run: |
+          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git"             "+refs/heads/main:refs/remotes/upstream/main"
+          echo "SAIT_UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
+          echo "UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
+          git log -1 --format='upstream/main: %h %s' upstream/main
       - name: Resolve the release and its milestone
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
