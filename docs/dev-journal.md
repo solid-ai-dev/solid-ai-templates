@@ -9041,3 +9041,64 @@ rewritten in place.
 - A fork sync merges with a merge commit, never a squash
 - `run_conformance.py` launched from PowerShell fails eight checks that
   pass from Git Bash
+
+## 2026-10-18 — The fork matches upstream, and the 360 before v3.0.0
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Seventeen e2e, efficacy and arc42 issues moved to the fork (fork #10 to
+  #26), and later #1872 and #1870 (fork #49, #50)
+- The fork's `-s ours` merge had kept its pre-split text in seven upstream
+  templates and three guide docs. Its own lines moved to
+  `templates/imbra/*.md` and `docs/imbra-*.md`, and every upstream-owned
+  template now equals upstream's (fork #32 to #45). PLAYBOOK's fork
+  procedure gained the restore step (#1979)
+- CI fetches a fork's upstream when `UPSTREAM_REPO` is set, so SYS-20 reads
+  a real baseline and the merged-work sweep skips upstream's commits
+  (#1977, fork #34)
+- `tools/release_check.py` gates a release on its changelog cut and SemVer
+  step (#1975); a manifest entry may carry `deprecated:` (SYS-22, #1946);
+  `fork_examples.py` names the document its chain examples go to (#1982)
+- `docs/migrating-to-v3.md` covers projects, pre-v3.0 forks and new forks
+  (#1292). ADR-047 and ADR-048 were withdrawn: upstream no longer
+  prescribes the guide documents they changed
+- The 360 before the major ran with seven isolated reviewers: overall D.
+  Pre-tag fixes landed: gate floors (#1989), core-tier dependencies refused
+  outside the tier (#1990), release-facing text (#1991), and the fork's
+  adopter handoff (fork #52)
+- The hypermedia category moved to the 200K tier and lost its gate-model
+  exemption (fork #38); the fixture canary STK-24 passed live
+
+**Pull requests merged:** #1978, #1980, #1981, #1982, #1983, #1984, #1985,
+#1986, #1988, #1989, #1990, #1991; fork #27, #28, #32, #33, #34, #36, #37,
+#38, #39, #40, #42, #43, #44, #45, #46, #47, #52, #53.
+
+**Issues closed:** #1292, #1946, #1975, #1977, #1979; not planned #1892;
+moved to the fork: #1184, #1707, #1872, #1870, #1873, #1874, #1877, #1878,
+#1879, #1897, #1898, #1903, #1905, #1906, #1908, #1909, #1910, #1930,
+#1957. Fork: #9, #29, #30, #31, #35, #41.
+
+**Issues created:** #1977, #1979, #1987, #1992 to #2001; fork #10 to #26
+and #49, #50 (moved), #29, #30, #31, #35, #41, #48, #51, #54.
+
+**ADRs:** ADR-047 and ADR-048 withdrawn in place before implementation.
+
+**Gaps flagged:**
+- v3.0.0 is not cut: the changelog cut, gates and tag remain (#1927), with
+  two owner calls open (#2000, #2001)
+- The fork has no release, so the guide's "pin `v1.0.0`" names a future
+  tag (fork #54); its evidence run is fork #51
+- The release-documentation check's PNG fix has not run on Linux with a
+  release set
+
+**Lessons:**
+- `-s ours` keeps the fork's version of every file a split commit touched,
+  trimmed and edited ones included; nothing reports it until a later merge
+  conflicts
+- A clone with an `upstream` remote can default `gh` to upstream, and every
+  check reading issues then reads the wrong tracker
+- Several conformance checks read commits: a run before committing passes
+  what CI fails
+- A self-test that compares finding counts passes on the wrong finding;
+  compare the text
