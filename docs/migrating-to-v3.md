@@ -128,11 +128,13 @@ Then add the fork's own content:
 
 ## Guide documents
 
-Pending: the issues that settle this are #1872 and #1870, due before
-the cut. ADR-048 replaces the development journal with a lessons log, and
-#1872 folds onboarding into `CONTRIBUTING.md`. A project changes its files
-in the change that moves it to v3.0, not ahead of it.
+v3.0 renames, merges or retires no guide document upstream. The core
+tier requires `README.md`, `AGENTS.md` and `CLAUDE.md` and prescribes no
+layout for them, so a project's `docs/` keeps the files it has.
 
-Upstream renames no guide document: ADR-047 is withdrawn, since upstream
-no longer names one a project must carry. A fork that prescribes guide
-documents decides their names itself.
+ADR-047, which renamed the guide documents to kebab-case, and ADR-048,
+which replaced the development journal with a lessons log, are both
+withdrawn: each changed a document upstream no longer prescribes. A fork
+that prescribes guide documents, as the Imbra fork does in
+`templates/imbra/docs.md`, decides their names and contents itself, and its
+own migration notes say what its projects change.
