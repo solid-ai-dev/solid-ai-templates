@@ -21,7 +21,7 @@ conversations, the reviews that catch bugs instead of churning style nits.
 
 ## What it does
 
-- Build `CLAUDE.md` or `AGENTS.md` from reusable layers — core, backend/frontend,
+- Build `AGENTS.md` and `CLAUDE.md` from reusable layers — core, backend/frontend,
   and a stack from a fork
 - Fork and extend — layer your team's stacks and process on the shared policy
   without modifying it
@@ -42,7 +42,7 @@ or similar). The optional `tools/` scripts also need Python 3 and
 PyYAML (`pip install pyyaml`); commands below use `python3`, which
 on Windows is `py`.
 
-**Output:** a `CLAUDE.md` or `AGENTS.md` file placed at your project
+**Output:** `AGENTS.md` and `CLAUDE.md`, placed at your project
 root, containing coding conventions tailored to your stack. Works
 for new projects and refactoring alike — the context file describes
 how code *should be written*, giving your agent a consistent target
@@ -186,7 +186,7 @@ chain in one piece.
 | Cursor | `.cursor/rules/project.mdc` |
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | OpenAI Codex CLI | `AGENTS.md` |
-| Generic / other | `AI_CONTEXT.md` |
+| Generic / other | `AGENTS.md` |
 <!-- /generated:readme-agents -->
 
 See `templates/core/agents.md` for structure, models, and formatting rules.

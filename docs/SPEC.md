@@ -3,7 +3,7 @@
 ## Goal
 
 A composable, inheritance-based template library that an LLM agent can
-use to draft a project context file (`CLAUDE.md` or `AGENTS.md`) for
+use to draft a project's context files (`AGENTS.md` and `CLAUDE.md`) for
 any type of project — from a static portfolio to a Python SDK to a
 React SPA. Output quality depends on the model and context window.
 

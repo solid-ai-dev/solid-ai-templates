@@ -8,18 +8,21 @@ context files.
 
 ## Output files
 
-| File | When to use |
-|------|-------------|
-| `CLAUDE.md` | Claude Code is the primary agent |
-| `AGENTS.md` | Cross-agent compatibility, and the fallback for agents with no native file |
+| File | Role |
+|------|------|
+| `AGENTS.md` | The cross-agent file, read by any agent without a native file |
+| `CLAUDE.md` | The file Claude Code reads |
 
-Both files use the same structure. Generate `CLAUDE.md` for Claude
-Code projects, `AGENTS.md` for everything else, or both for maximum
-coverage. A single `AGENTS.md` is sufficient if no Claude-specific
-rules are required.
+Every project MUST carry both, whichever agent it uses:
 
-An agent with a native context file takes that file rather than
-`AGENTS.md`. Exactly one table states which file each agent takes --
+- Generate both files with the same rules
+- `CLAUDE.md` MAY instead import `AGENTS.md` (`@AGENTS.md`) and add only
+  Claude-specific rules, so the rules are written once
+- Never let the two disagree: a change to one is a change to both
+
+An agent with a native context file of another name also takes that file,
+beside the two required ones. Exactly one table states which file each
+agent takes --
 the output-file-by-agent table in the documentation rules. Every other
 copy MUST be generated from it rather than written out, and a project
 that renders one into a README MUST gate the copy with the same

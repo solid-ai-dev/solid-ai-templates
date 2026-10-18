@@ -571,4 +571,4 @@ than the documented one.
 | Cursor           | `.cursor/rules/project.mdc`       |
 | GitHub Copilot   | `.github/copilot-instructions.md` |
 | OpenAI Codex CLI | `AGENTS.md`                       |
-| Generic / other  | `AI_CONTEXT.md`                   |
+| Generic / other  | `AGENTS.md`                       |
