@@ -23,10 +23,10 @@ core: [base-quality, base-git, base-docs, base-testing, base-review, base-oop]
 base:
   - id: base-git
     file: templates/core/git.md
-    description: Committer identity, commits, branching, PR workflow, versioning
+    description: Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore
   - id: base-docs
     file: templates/core/docs.md
-    description: Rule language, documentation standards, ADR, diagrams, docs-as-code
+    description: Rule language, standard documents, writing style, diagrams, docs-as-code, agent output files
   - id: base-quality
     file: templates/core/quality.md
     description: Architecture, code style, calibration, tool trust, testing
@@ -77,7 +77,7 @@ base:
     description: SOLID, OOP, GoF design patterns, AOP guidance
   - id: base-quality-gates
     file: templates/core/quality-gates.md
-    description: Three-layer gate model (editor, pre-commit, CI), thresholds
+    description: How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict
     depends_on: [base-quality, base-git, base-testing, base-config]
 platform:
   - id: platform-fixture

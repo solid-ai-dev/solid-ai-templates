@@ -160,11 +160,11 @@ Picked independently of the stack, each resolving as its own root.
 | `templates/data/data-quality.md` | data | Data sourcing, completeness, freshness, research, scoring — data-heavy projects |
 | `templates/infra/deployment.md` | infra | Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets |
 | `templates/security/devsecops.md` | security | SAST, SCA, SBOM, secret detection, license compliance |
-| `templates/core/docs.md` | core | Rule language, documentation standards, ADR, diagrams, docs-as-code |
-| `templates/core/git.md` | core | Committer identity, commits, branching, PR workflow, versioning |
+| `templates/core/docs.md` | core | Rule language, standard documents, writing style, diagrams, docs-as-code, agent output files |
+| `templates/core/git.md` | core | Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore |
 | `templates/core/oop.md` | core | SOLID, OOP, GoF design patterns, AOP guidance |
 | `templates/core/quality.md` | core | Architecture, code style, calibration, tool trust, testing |
-| `templates/core/quality-gates.md` | core | Three-layer gate model (editor, pre-commit, CI), thresholds |
+| `templates/core/quality-gates.md` | core | How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict |
 | `templates/core/review.md` | core | Peer review priority, MUST/SHOULD checklists, deviation rules |
 | `templates/security/security.md` | security | Application security rules — input, output, injection, auth, sessions, TLS, headers |
 | `templates/core/testing.md` | core | Test pyramid, coverage thresholds, naming conventions |
