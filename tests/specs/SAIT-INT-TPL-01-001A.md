@@ -38,22 +38,20 @@ tags: [composition, depends-on, inheritance]
 
 - Repository cloned locally
 - Claude Code or equivalent agent available
-- `stack/python-flask.md` and its full dependency chain accessible:
-  `stack/python-lib.md`, `stack/python-service.md`, `core/git.md`,
-  `core/docs.md`, `core/quality.md`, `backend/config.md`, `backend/http.md`,
-  `backend/database.md`, `backend/observability.md`, `backend/quality.md`,
-  `backend/features.md`, `backend/messaging.md`
+- `fixture/stack.md` and its full dependency chain accessible: the core
+  tier, `core/config.md`, `core/quality-gates.md` and
+  `security/security.md`. The fixture is the one stack upstream keeps
 
 ### Setup
 
 1. Open Claude Code in the repository root
-2. Attach `stack/python-flask.md` to the conversation
+2. Attach `fixture/stack.md` to the conversation
 
 ### Execution
 
 1. Ask the agent:
    ```
-   List every template in the full DEPENDS ON chain for stack/python-flask.md,
+   List every template in the full DEPENDS ON chain for fixture/stack.md,
    then list every section heading that will appear in the assembled rule set.
    ```
 2. Record the list of templates and sections returned
@@ -61,12 +59,9 @@ tags: [composition, depends-on, inheritance]
 ### Assertions
 
 1. Assert the dependency chain includes all of the following:
-   - `stack/python-lib.md`
-   - `stack/python-service.md`
-   - `core/git.md`, `core/docs.md`, `core/quality.md`
-   - `backend/config.md`, `backend/http.md`, `backend/database.md`
-   - `backend/observability.md`, `backend/quality.md`
-   - `backend/features.md`, `backend/messaging.md`
+   - `core/quality.md`, `core/git.md`, `core/docs.md`, `core/testing.md`
+   - `core/review.md`, `core/oop.md`, `core/config.md`
+   - `core/quality-gates.md`, `security/security.md`
 2. Assert section headings from every template in the chain are present
 3. Assert no template in the chain is referenced but not loaded
 

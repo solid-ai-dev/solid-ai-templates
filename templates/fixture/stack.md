@@ -33,3 +33,17 @@ make lint      # lint and format check
 
 - `src/` — the service, one module per endpoint
 - `tests/` — one test file per module under `src/`, named after it
+
+---
+
+## General testing rules
+[EXTEND: base-testing-general]
+
+- Every endpoint test sends an empty body as well as a non-empty one
+
+---
+
+## Container e2e
+[OVERRIDE: testing-container-e2e]
+
+- The service ships no image, so no test builds or runs a container

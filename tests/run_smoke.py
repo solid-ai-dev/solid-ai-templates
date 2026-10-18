@@ -421,7 +421,7 @@ def check_mnf_01():
 
 
 # ---------------------------------------------------------------------------
-# TPL-01 — DEPENDS ON chain from python-fastapi.md is complete
+# TPL-01 — DEPENDS ON chain from the fixture stack is complete
 # ---------------------------------------------------------------------------
 
 def _collect_chain(rel_path, visited=None):
@@ -440,28 +440,27 @@ def _collect_chain(rel_path, visited=None):
 
 def check_tpl_01():
     failures = []
-    chain = _collect_chain("templates/stack/python-fastapi.md")
+    # The fixture, not a real stack: it is the one stack upstream keeps, so
+    # the check keeps its input in a tree that ships no stack of its own.
+    chain = _collect_chain("templates/fixture/stack.md")
     required = [
-        "templates/stack/python-lib.md",
-        "templates/stack/python-service.md",
+        "templates/core/quality.md",
         "templates/core/git.md",
         "templates/core/docs.md",
-        "templates/core/quality.md",
+        "templates/core/testing.md",
+        "templates/core/review.md",
+        "templates/core/oop.md",
         "templates/core/config.md",
-        "templates/backend/http.md",
-        "templates/backend/database.md",
-        "templates/backend/observability.md",
-        "templates/backend/quality.md",
-        "templates/backend/features.md",
-        "templates/backend/messaging.md",
+        "templates/core/quality-gates.md",
+        "templates/security/security.md",
     ]
     seen = Inspected()
-    seen.count("files in the python-fastapi chain", len(chain))
+    seen.count("files in the fixture chain", len(chain))
     seen.count("files required to be in it", len(required))
 
     for req in required:
         if req not in chain:
-            failures.append(f"  python-fastapi.md chain missing: '{req}'")
+            failures.append(f"  fixture/stack.md chain missing: '{req}'")
     return seen.failures() + failures, seen.notes()
 
 
@@ -503,19 +502,20 @@ def check_tpl_02():
     if not base_content:
         failures.append("  core/testing.md [ID: base-testing] section is empty")
 
-    flask_content = _extract_section(
-        os.path.join(ROOT, "templates", "stack", "python-flask.md"), "python-service-testing"
+    extension = _extract_section(
+        os.path.join(ROOT, "templates", "fixture", "stack.md"),
+        "base-testing-general"
     )
-    if not flask_content:
+    if not extension:
         failures.append(
-            "  stack/python-flask.md [EXTEND: python-service-testing] section is empty "
-            "— base rules may have been lost"
+            "  fixture/stack.md [EXTEND: base-testing-general] section is "
+            "empty — base rules may have been lost"
         )
 
     seen.count("sections extracted", 2)
     seen.count("lines read from base-testing", len(base_content), floor=0)
-    seen.count("lines read from python-service-testing",
-               len(flask_content), floor=0)
+    seen.count("lines read from the fixture's extension",
+               len(extension), floor=0)
     return seen.failures() + failures, seen.notes()
 
 
@@ -528,22 +528,26 @@ def check_tpl_03():
     seen = Inspected()
 
     original = _extract_section(
-        os.path.join(ROOT, "templates", "stack", "go-lib.md"), "go-lib-stack"
+        os.path.join(ROOT, "templates", "core", "testing.md"),
+        "testing-container-e2e"
     )
     override = _extract_section(
-        os.path.join(ROOT, "templates", "stack", "go-service.md"), "go-lib-stack"
+        os.path.join(ROOT, "templates", "fixture", "stack.md"),
+        "testing-container-e2e"
     )
 
     if not original:
-        failures.append("  stack/go-lib.md [ID: go-lib-stack] section is empty")
+        failures.append(
+            "  core/testing.md [ID: testing-container-e2e] section is empty")
     if not override:
         failures.append(
-            "  stack/go-service.md [OVERRIDE: go-lib-stack] section is empty"
+            "  fixture/stack.md [OVERRIDE: testing-container-e2e] section is "
+            "empty"
         )
     if original and override and original == override:
         failures.append(
-            "  [OVERRIDE: go-lib-stack] content is identical to the original "
-            "[ID: go-lib-stack] — override has no effect"
+            "  [OVERRIDE: testing-container-e2e] content is identical to the "
+            "original [ID: testing-container-e2e] — override has no effect"
         )
 
     seen.count("sections extracted", 2)
@@ -2625,7 +2629,7 @@ CHECKS = [
     {"id": "MNF-05", "spec": "SAIT-INT-MNF-05-001A",
      "title": "resolve.py resolution matches PyYAML resolution", "fn": check_mnf_05},
     {"id": "TPL-01", "spec": "SAIT-INT-TPL-01-001A",
-     "title": "DEPENDS ON chain from python-fastapi.md is complete", "fn": check_tpl_01},
+     "title": "DEPENDS ON chain from the fixture stack is complete", "fn": check_tpl_01},
     {"id": "TPL-02", "spec": "SAIT-INT-TPL-02-001A",
      "title": "EXTEND adds rules without removing base rules", "fn": check_tpl_02},
     {"id": "TPL-03", "spec": "SAIT-INT-TPL-03-001A",
