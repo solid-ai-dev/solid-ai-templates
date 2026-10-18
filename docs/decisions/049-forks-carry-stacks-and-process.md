@@ -59,7 +59,7 @@ generated chains, and stay current by merging upstream.
 | 1 | Upstream holds the engine and shared policy | The manifest schema, IDs, EXTEND and OVERRIDE, the resolver, the checks, and the policy that holds for any team. Which file falls on which side is the boundary record's call (#1919) |
 | 2 | Forks hold the rest | Stacks, platforms, the process layer, the interview, examples and generated chains. `imbra-ai-templates` is the first fork; any organisation MAY fork the same way |
 | 3 | A fork merges upstream | A fork syncs with `git merge upstream/main`, never by copying files |
-| 4 | A fork appends, never edits upstream keys | A fork MUST NOT edit `core:`, `base:`, `backend:` or `frontend:` in the manifest; it appends under `stacks:`, `platform:` and keys of its own |
+| 4 | A fork appends, never edits upstream keys | A fork MUST NOT edit `core:`, `base:`, `backend:` or `frontend:` in the manifest; it appends under `stacks:`, `platform:` and keys of its own, and adds to every chain's core tier under `fork_core:` |
 | 5 | Forks own their ID prefixes | `stack-*`, `platform-*` and `<org>-*` are reserved for forks; upstream adds no ID under them |
 | 6 | Upstream commits no derived content | No `generated/`, no `examples/`, no stack table; a fork regenerates its own |
 | 7 | Fork-owned files conflict by design | `README.md`, `CLAUDE.md` and `CHANGELOG.md` belong to the fork, which resolves them in its own favour on every merge |

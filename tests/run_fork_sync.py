@@ -12,6 +12,7 @@ Usage:
 
 import datetime
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -52,6 +53,16 @@ FORK_ENTRY = """
 """
 
 FORK_NOTE = "Simulated fork: this line is the fork's own edit."
+
+# A change that removes what forks carry declares it with this trailer, and a
+# fork takes it with `git merge -s ours`: an ordinary merge deletes every
+# file the fork left unchanged and upstream removed.
+OURS_TRAILER = re.compile(r"^Fork-merge:\s*ours\s*$", re.M | re.I)
+
+# The manifest keys holding upstream's entries, and the key of its own the
+# simulated fork moves its templates to once upstream drops them.
+UPSTREAM_ENTRY_KEYS = ("base", "backend", "frontend")
+FORK_KEY = "fork"
 
 
 def git(cwd, *args, check=True):
@@ -255,6 +266,59 @@ def planted(repo, base, fork, rid, title, edit, owed_owned, owed_unexpected):
     return {"id": rid, "title": title, "notes": notes, "failures": failures}
 
 
+def merge_ours(repo, fork, upstream):
+    """Take upstream's history and keep the fork's tree, as a split asks."""
+    git(repo, "checkout", "-q", "--detach", fork)
+    git(repo, "merge", "--no-edit", "-q", "-s", "ours", upstream)
+    return out(repo, "rev-parse", "HEAD")
+
+
+def leave_upstream_keys(repo, merged, upstream):
+    """Move what upstream dropped out of its keys and into the fork's own.
+
+    After the split the fork still lists the templates upstream removed
+    under upstream's keys, which the fork MUST NOT edit. This is the move
+    the fork makes: entries to a key of its own, core-tier IDs to
+    `fork_core`. Returns the merge commit, the entries and the core IDs.
+    """
+    import yaml
+
+    up = yaml.safe_load(out(repo, "show", f"{upstream}:{MANIFEST}"))
+    git(repo, "checkout", "-q", "--detach", merged)
+    mine = yaml.safe_load(read(repo, MANIFEST))
+    kept_ids = {e["id"] for key in UPSTREAM_ENTRY_KEYS
+                for e in up.get(key) or []}
+    moving = [e["id"] for key in UPSTREAM_ENTRY_KEYS
+              for e in mine.get(key) or [] if e["id"] not in kept_ids]
+    up_core = up.get("core") or []
+    extra_core = [i for i in mine.get("core") or [] if i not in up_core]
+    if not moving and not extra_core:
+        return merged, moving, extra_core
+
+    def edit(target):
+        kept, moved, section, current = [], [], None, False
+        for line in read(target, MANIFEST).split("\n"):
+            top = re.match(r"^(\w[\w-]*):", line)
+            if top:
+                section, current = top.group(1), False
+            entry = re.match(r"^  - id: (\S+)", line)
+            if entry:
+                current = (section in UPSTREAM_ENTRY_KEYS
+                           and entry.group(1) in moving)
+            if section == "core" and top:
+                kept.append("core: [%s]" % ", ".join(up_core))
+                if extra_core:
+                    kept.append("fork_core: [%s]" % ", ".join(extra_core))
+                continue
+            (moved if current else kept).append(line)
+        text = "\n".join(kept).rstrip("\n") + "\n\n%s:\n" % FORK_KEY
+        write(target, MANIFEST, text + "\n".join(moved).rstrip("\n") + "\n")
+        return [MANIFEST]
+
+    return (commit(repo, merged, "fork: move its templates out of upstream's "
+                   "keys", edit), moving, extra_core)
+
+
 def real(repo, base, head, fork):
     """The change under test, merged into the fork, then smoke on the result."""
     notes = []
@@ -269,6 +333,10 @@ def real(repo, base, head, fork):
                  f"{base[:7]}..{upstream[:7]}")
 
     title = "the upstream change merges into a fork that only appends"
+    log = out(repo, "log", "--format=%B", f"{base}..{upstream}")
+    if OURS_TRAILER.search(log):
+        return split(repo, upstream, fork, notes, title)
+
     merged, owned, unexpected = merge(repo, fork, upstream)
     notes.append(f"  conflicts in fork-owned files, kept as the fork's: "
                  f"{owned or 'none'}")
@@ -284,6 +352,23 @@ def real(repo, base, head, fork):
         return {"id": "FS-03", "title": title, "notes": notes, "failures": [
             f"  the merged tree lost the fork's stack, {FORK_STACK}"]}
 
+    return smoke_result(repo, upstream, notes, title)
+
+
+def split(repo, upstream, fork, notes, title):
+    """A change declaring `Fork-merge: ours`: merge it the way a fork must."""
+    notes.append("  the change declares `Fork-merge: ours`, so the fork "
+                 "takes it with `git merge -s ours`")
+    merged = merge_ours(repo, fork, upstream)
+    merged, moving, extra_core = leave_upstream_keys(repo, merged, upstream)
+    notes.append(f"  entries moved to the fork's `{FORK_KEY}:` key: "
+                 f"{len(moving)}; core IDs moved to `fork_core`: "
+                 f"{extra_core or 'none'}")
+    return smoke_result(repo, upstream, notes, title)
+
+
+def smoke_result(repo, upstream, notes, title):
+    """FS-03's verdict: the merged tree's own smoke, with SYS-20 upstream."""
     code, verdict, failing = nested_smoke(repo, upstream)
     notes.append(f"  smoke in the merged tree: {verdict or 'no verdict line'}")
     failures = []

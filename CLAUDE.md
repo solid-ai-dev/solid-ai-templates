@@ -436,6 +436,8 @@ Run `py tests/run_smoke.py` before every PR. It checks:
 - SYS-20: a fork leaves the manifest's upstream keys (`core`, `base`,
   `backend`, `frontend`) as it last merged them, against the ref in
   `SAIT_UPSTREAM_REF`; upstream sets none and passes against itself
+- SYS-21: a fork's templates under a key of its own, and its `fork_core`
+  additions to every chain, resolve
 - Prompt builds for all stacks
 
 ## 6. Session protocol

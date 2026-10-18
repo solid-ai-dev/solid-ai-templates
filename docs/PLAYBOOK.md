@@ -369,6 +369,11 @@ py tests/run_e2e.py STK-01 FMT-01  # specific tests only
 py tests/run_e2e.py --dry-run      # build prompts, call no model, write no report
 ```
 
+A change that removes what forks carry, such as the split, carries the
+commit trailer `Fork-merge: ours`. Fork sync then merges it the way a fork
+must, with `git merge -s ours`, moves the fork's templates out of
+upstream's manifest keys into its own, and runs smoke on the result.
+
 The efficacy benchmark is another runner and deliberately not in that
 list: it costs quota, takes hours, and answers a different question from
 whether this repository is sound. `tests/efficacy/README.md` owns its

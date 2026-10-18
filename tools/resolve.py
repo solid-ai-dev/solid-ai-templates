@@ -137,6 +137,29 @@ def parse_manifest(text):
 
 # ---- resolution engine ----
 
+# The top-level keys that hold something other than template entries. Every
+# other key is a section of entries, so a fork's templates resolve from a key
+# of its own, beside upstream's, without any tool knowing its name.
+NON_ENTRY_KEYS = ("version", "core", "fork_core")
+
+
+def entry_sections(manifest):
+    """The manifest's sections of template entries, in manifest order."""
+    return [key for key, value in manifest.items()
+            if key not in NON_ENTRY_KEYS and isinstance(value, list)
+            and all(isinstance(entry, dict) for entry in value)]
+
+
+def core_tier(manifest):
+    """Every chain's core tier: upstream's `core`, then a fork's `fork_core`.
+
+    A fork MUST NOT edit `core`, so a template it adds to every chain goes in
+    `fork_core`, which is the fork's own.
+    """
+    return list(manifest.get("core") or []) + list(
+        manifest.get("fork_core") or [])
+
+
 def load_manifest():
     """Load and parse manifest.yaml.
 
@@ -146,11 +169,11 @@ def load_manifest():
     manifest = parse_manifest(text)
 
     entries = {}
-    for section in ("base", "platform", "frontend", "backend", "stacks"):
-        for entry in manifest.get(section, []):
+    for section in entry_sections(manifest):
+        for entry in manifest[section]:
             entries[entry["id"]] = entry
 
-    core_ids = manifest.get("core", [])
+    core_ids = core_tier(manifest)
 
     stacks = manifest.get("stacks", [])
     return core_ids, entries, stacks

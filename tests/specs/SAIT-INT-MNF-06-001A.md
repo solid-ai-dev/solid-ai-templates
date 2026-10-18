@@ -65,6 +65,11 @@ tags: [manifest, fork, composition, merge]
    in a fork-owned document, point the fork's own files at each path
    upstream renamed, as a fork migrating would, then run the merged
    tree's `run_smoke.py` with `SAIT_UPSTREAM_REF` at the upstream side
+4. FS-03, when a commit in the range carries the trailer
+   `Fork-merge: ours`: merge with `git merge -s ours`, as a fork takes a
+   change that removes what forks carry; move each entry upstream dropped
+   from `base:`, `backend:` and `frontend:` to the fork's own `fork:` key
+   and each dropped core ID to `fork_core`; then run smoke as in step 3
 
 ### Assertions
 
@@ -74,7 +79,9 @@ tags: [manifest, fork, composition, merge]
 3. Assert FS-02 conflicts in `README.md` only, and completes as the fork's
 4. Assert FS-03 conflicts in no file outside the fork-owned documents,
    keeps the fork's stack, and its smoke run passes. A rename is migrated
-   and reported; a deleted file or a removed ID is not, and fails smoke
+   and reported; a deleted file or a removed ID is not, and fails smoke.
+   Under the trailer, the fork's tree passes smoke once its templates leave
+   upstream's keys; skipping that move fails SYS-20
 5. Assert all three scenarios ran
 
 ### Negative controls
