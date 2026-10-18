@@ -23,6 +23,9 @@ alters no template carries no entry.
 
 ### Added
 
+- A manifest entry may carry `deprecated: <replacement-id>`; from 3.0 a
+  template is deprecated, not removed, inside a major. SYS-22 fails a field
+  naming a missing or deprecated replacement.
 - `docs/migrating-to-v3.md` moves a 2.x project or a pre-v3.0 fork to v3.0:
   re-pinning to a fork, the split merge, restoring the templates it modified,
   and the settings a new fork needs.

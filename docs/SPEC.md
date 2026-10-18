@@ -367,6 +367,27 @@ boundary; the first fork is
 
 ---
 
+## Deprecation
+
+From 3.0.0 a template is not removed inside a major (ADR-051). It is
+deprecated: its manifest entry carries the ID of the template that
+replaces it, and the release that marks it lists it under `Deprecated` in
+`CHANGELOG.md` with that replacement.
+
+```yaml
+- id: base-old
+  file: templates/core/old.md
+  description: ...
+  deprecated: base-new
+```
+
+The resolver and the generators read the entry as before, so a chain that
+carries a deprecated template still resolves. SYS-22 fails when the field
+names no ID, an ID no entry carries, or an entry that is itself deprecated.
+The template is removed at the next major.
+
+---
+
 ## Override mechanism
 
 Resolution selects source files; project adoption selects operative rules.
