@@ -155,3 +155,13 @@ git merge upstream/main
 - solid-ai-dev/solid-ai-templates#1921 - the compatibility record.
 - solid-ai-dev/solid-ai-templates#305 - the extension model this record
   answers.
+
+## Revisions after implementation
+
+The decision rules make a record history from its first merged
+implementation. This record was edited once after that point, before the
+release that ships it. The edit stands, and is listed here.
+
+| Date | Commit | Edit |
+| ---- | ------ | ---- |
+| 2026-10-18 | 3d94bbf (#1970) | Rule 4 gained `fork_core:`, a fork's additions to every chain's core tier, after 52174d0 (#1960) implemented the rule |
