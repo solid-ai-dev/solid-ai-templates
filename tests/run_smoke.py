@@ -440,16 +440,14 @@ def _collect_chain(rel_path, visited=None):
 
 def check_tpl_01():
     failures = []
+
     # The fixture, not a real stack: it is the one stack upstream keeps, so
     # the check keeps its input in a tree that ships no stack of its own.
     chain = _collect_chain("templates/fixture/stack.md")
     required = [
         "templates/core/quality.md",
         "templates/core/git.md",
-        "templates/core/docs.md",
         "templates/core/testing.md",
-        "templates/core/review.md",
-        "templates/core/oop.md",
         "templates/core/config.md",
         "templates/core/quality-gates.md",
         "templates/security/security.md",

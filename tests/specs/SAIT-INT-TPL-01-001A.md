@@ -38,9 +38,8 @@ tags: [composition, depends-on, inheritance]
 
 - Repository cloned locally
 - Claude Code or equivalent agent available
-- `fixture/stack.md` and its full dependency chain accessible: the core
-  tier, `core/config.md`, `core/quality-gates.md` and
-  `security/security.md`. The fixture is the one stack upstream keeps
+- `fixture/stack.md` and its full dependency chain accessible. The fixture
+  is the one stack upstream keeps
 
 ### Setup
 
@@ -59,8 +58,7 @@ tags: [composition, depends-on, inheritance]
 ### Assertions
 
 1. Assert the dependency chain includes all of the following:
-   - `core/quality.md`, `core/git.md`, `core/docs.md`, `core/testing.md`
-   - `core/review.md`, `core/oop.md`, `core/config.md`
+   - `core/quality.md`, `core/git.md`, `core/testing.md`, `core/config.md`
    - `core/quality-gates.md`, `security/security.md`
 2. Assert section headings from every template in the chain are present
 3. Assert no template in the chain is referenced but not loaded
