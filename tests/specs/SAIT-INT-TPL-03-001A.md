@@ -39,29 +39,30 @@ tags: [composition, override, inheritance]
 
 - Repository cloned locally
 - Claude Code or equivalent agent available
-- Test pair: `stack/go-lib.md` (contains `[ID: go-lib-stack]`) and
-  `stack/go-service.md` (contains `[OVERRIDE: go-lib-stack]` in its Stack section)
+- Test pair: `core/testing.md` (contains `[ID: testing-container-e2e]`) and
+  `fixture/stack.md` (contains `[OVERRIDE: testing-container-e2e]`)
 
 ### Setup
 
 1. Open Claude Code in the repository root
-2. Attach `stack/go-lib.md` and `stack/go-service.md`
+2. Attach `core/testing.md` and `fixture/stack.md`
 
 ### Execution
 
 1. Ask the agent:
    ```
-   Show me the assembled Stack section for a Go service project.
-   stack/go-service.md overrides the Stack section from stack/go-lib.md.
+   Show me the assembled container e2e section for the fixture stack.
+   fixture/stack.md overrides it from core/testing.md.
    Which rules appear?
    ```
 2. Record the assembled output
 
 ### Assertions
 
-1. Assert the assembled Stack section contains the rules from
-   `stack/go-service.md` `[OVERRIDE: go-lib-stack]`
-2. Assert the rules from `stack/go-lib.md` `[ID: go-lib-stack]` do NOT appear
+1. Assert the assembled section contains the rules from
+   `fixture/stack.md` `[OVERRIDE: testing-container-e2e]`
+2. Assert the rules from `core/testing.md` `[ID: testing-container-e2e]` do
+   NOT appear
 3. Assert the section is not empty
 
 ### Teardown
