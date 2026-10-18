@@ -1,13 +1,22 @@
 ---
 id: "048"
-status: Accepted
-date: 2026-09-27
+status: Withdrawn
+date: 2026-10-18
 category: templates
 supersedes: []
 superseded_by: []
 ---
 
 # ADR-048: A lessons log replaces the development journal
+
+> **Withdrawn 2026-10-18, before any implementation merged.** The record
+> retired the development journal as a standard document. The v3.0 split
+> (ADR-049, ADR-050) moved the standard-documents table, the journal rule
+> with it, to the forks, and left the core tier requiring `README.md`,
+> `AGENTS.md` and `CLAUDE.md` only. Upstream no longer prescribes a journal
+> to retire, and adding a lessons log to the core tier would widen it
+> against the lean-core decision. Whether a fork's projects keep a journal
+> or a lessons log is the fork's decision.
 
 ## Context
 
