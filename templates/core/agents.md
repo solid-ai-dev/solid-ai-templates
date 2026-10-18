@@ -70,11 +70,9 @@ These apply to both models; the review process checks them.
   applies on the next turn — no changelogs, architecture notes, or
   progress logs. Keep the qualifier or scope a rule needs to be
   followed; never compress away a load-bearing clause. Optimize for
-  clarity, not bytes (see `docs/design/agent-context-tradeoffs.md` and
-  `templates/workflow/compression.md`).
-- **Concise rules.** Keep necessary scope and qualifiers. Length alone does
-  not warrant an ADR; apply the decision threshold in
-  `templates/core/docs.md` and place explanations in their relevant docs.
+  clarity, not bytes (see `docs/design/agent-context-tradeoffs.md`).
+- **Concise rules.** Keep necessary scope and qualifiers, and place
+  explanations in the documents they belong to, not in the context file.
 - **Single source of truth.** Never restate a rule that is
   authoritative in a skill, ADR, README, or template — point to it.
   Duplicated rules drift, and the agent gets no signal which copy
@@ -165,18 +163,12 @@ of truth)]
 [Which templates to verify, when to run]
 
 ## 6. Session protocol
-Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
-### 6.1 Start of session
-[templates/workflow/scope.md — Session startup + Mandatory startup block]
-### 6.2 During the session
-[templates/workflow/scope.md — During work]
-### 6.3 End of session
-[templates/workflow/scope.md — End of session audit. Render this
-ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
-with an imperative — "Read scope.md (End of session audit) and execute
-each item sequentially; do not summarize or skip." NEVER paraphrase the
-checklist into a short bullet list: that silently drops steps and the
-"print and execute sequentially" enforcement, producing a thin wrap-up.]
+[The project's own: how a session starts, proceeds and ends. Where the
+project keeps an end-of-session checklist, render it ONE of two ways:
+inline it VERBATIM, or hard-delegate with an imperative to read it and
+execute each item sequentially, without summarizing or skipping. NEVER
+paraphrase the checklist into a short bullet list: that silently drops
+steps and the "execute sequentially" enforcement.]
 ```
 
 Top-level sections 1–6 are role-fixed (§4 is always Identity, §5 is
@@ -282,18 +274,12 @@ Follow templates/core/review.md priority order, apply templates/core/quality.md 
 language-specific templates as the standard.
 
 ## 6. Session protocol
-Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
-### 6.1 Start of session
-[templates/workflow/scope.md — Session startup + Mandatory startup block]
-### 6.2 During the session
-[templates/workflow/scope.md — During work]
-### 6.3 End of session
-[templates/workflow/scope.md — End of session audit. Render this
-ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
-with an imperative — "Read scope.md (End of session audit) and execute
-each item sequentially; do not summarize or skip." NEVER paraphrase the
-checklist into a short bullet list: that silently drops steps and the
-"print and execute sequentially" enforcement, producing a thin wrap-up.]
+[The project's own: how a session starts, proceeds and ends. Where the
+project keeps an end-of-session checklist, render it ONE of two ways:
+inline it VERBATIM, or hard-delegate with an imperative to read it and
+execute each item sequentially, without summarizing or skipping. NEVER
+paraphrase the checklist into a short bullet list: that silently drops
+steps and the "execute sequentially" enforcement.]
 ```
 
 ---
@@ -392,14 +378,16 @@ extend the root.
 
 ---
 
-## Companion documents
+## Questions every project answers
+[ID: agents-project-questions]
 
-All three models MUST also generate:
-- `docs/ONBOARDING.md` — following the structure in
-  `templates/core/docs.md`
-- `docs/PLAYBOOK.md` — following the structure in `templates/core/docs.md`
-- `docs/dev-journal.md` — following the structure in
-  `templates/core/docs.md`
+The templates answer none of these, because each answer is one team's way
+of working. A generated context file MUST state the project's answer to
+each, or name it as open for the project to decide:
+
+- Who approves a change?
+- How is work tracked?
+- What is a release?
 
 ---
 

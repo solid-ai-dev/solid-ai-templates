@@ -3,239 +3,9 @@
 [ID: base-quality-gates]
 [DEPENDS ON: templates/core/quality.md, templates/core/git.md, templates/core/testing.md, templates/core/config.md]
 
-Stack-agnostic quality gate model. Defines the layers, categories,
-thresholds, and constraints. Stack templates extend with concrete tools.
-Platform templates extend with CI-specific integration.
-
----
-
-## Shift-left principle
-
-[ID: quality-gates-principle]
-
-The earlier a defect is caught, the cheaper it is to fix. Every check
-that can run locally MUST run locally. CI is the backstop, not the first
-line of defense.
-
-```
-Editor (0s) → Pre-commit (1-5s) → CI (1-5min) → Code review (hours)
-```
-
----
-
-## Three-layer gate model
-
-[ID: quality-gates-layers]
-
-### Layer 1 — Editor (instant feedback)
-
-Runs in the developer's IDE as they type. Zero friction.
-
-- Every project MUST provide config files that enable checks automatically
-  when the project is opened in a supported editor
-- Checks: lint, format, type check
-- The editor's type-checker MUST defer to the CI type gate — one
-  type-checker at one strictness, never two. A bundled editor checker
-  runs its own stricter analysis by default and floods the editor with
-  diagnostics the CI gate is configured to ignore, so contributors chase
-  false positives and "green in CI" stops meaning "green in the editor"
-- Turn the bundled checker's type evaluation off, and surface the CI
-  checker's own diagnostics live through its editor extension instead.
-  Only the diagnostics layer defers — completion, hover and rename are
-  unaffected
-- The editor config that mirrors CI MUST be tracked, not left to each
-  contributor to reproduce
-
-### Layer 2 — Pre-commit hooks (1–5 seconds)
-
-Runs automatically before every commit. Blocks bad commits locally.
-
-- Every project MUST have pre-commit hooks
-- The hook framework is stack-specific (see stack template)
-- Checks: lint, format, type check, secret detection, file hygiene
-  (trailing whitespace, merge conflict markers, large files)
-
-### Layer 3 — CI (1–5 minutes)
-
-Runs on every PR. The final gate before merge.
-
-- Every project MUST have a CI workflow that runs on PRs
-- CI checks MUST be configured as required status checks in branch
-  protection — a passing CI run that does not block merge is
-  informational, not a gate
-- The protection MUST bind administrators. The administrator exemption
-  is off by default and easy to leave off, and it satisfies the
-  required-checks rule while leaving a red pull request mergeable. On a
-  single-maintainer repository the exempt administrator is the only
-  person the gate would ever apply to, and the configuration passes any
-  audit that reads the required-checks list
-- Where the member count is below the required approving-review count,
-  that requirement blocks every merge rather than gating it, since
-  nobody can approve their own pull request. Set the count to zero and
-  rely on administrator enforcement. The two settings look
-  interchangeable and are not: the review count governs who reviews,
-  the protection scope governs whom the gate binds
-- CI MUST duplicate Layer 2 checks — pre-commit hooks can be bypassed
-  with `--no-verify`
-- CI adds checks that cannot run locally: deep security analysis (SAST),
-  test suite, coverage measurement, build verification
-- The CI platform is project-specific (see platform template)
-
----
-
-## Gate categories
-
-[ID: quality-gates-categories]
-
-Every project MUST enforce checks in the following categories. Stack
-templates map each category to a concrete tool.
-
-| Category         | Layer 1 | Layer 2 | Layer 3 | Description                                          |
-| ---------------- | ------- | ------- | ------- | ---------------------------------------------------- |
-| Lint             | MUST    | MUST    | MUST    | Code smells, unused variables, complexity            |
-| Format           | MUST    | MUST    | MUST    | Consistent style (indentation, spacing, line length) |
-| Type check       | SHOULD  | SHOULD  | MUST    | Type errors before runtime                           |
-| Secret detection | —       | MUST    | MUST    | API keys, tokens, passwords                          |
-| File hygiene     | —       | MUST    | —       | Trailing whitespace, merge conflicts, large files    |
-| Security (SAST)  | —       | —       | MUST    | Static analysis for vulnerabilities                  |
-| Tests            | —       | —       | MUST    | Unit and integration tests                           |
-| Coverage         | —       | —       | MUST    | Percentage of code exercised by tests                |
-| Build            | —       | —       | MUST    | Does it compile / build successfully                 |
-
-Stack templates MAY add additional categories (e.g. link checking, site
-quality scoring for web projects, docstring enforcement for Python).
-
-### A named tool that cannot run is declined, not left blank
-
-Stack templates name tool pairs for a category — a local scanner plus a
-hosted analysis service is the usual shape. Sometimes only one half is
-reachable: the hosted half needs a paid tier the repository does not have,
-a plan the organisation has not bought, or a visibility setting the project
-deliberately does not want.
-
-- A gate category naming more than one tool is satisfied by the tools that
-  can run, plus a recorded decline for each that cannot
-- The decline MUST name why the tool is unavailable and the concrete
-  condition that would reopen it, and MUST live in a decision record rather
-  than a comment. This is the YAGNI revisit trigger from `base-quality`
-  applied to tooling: a deferral without a trigger gets re-argued or
-  quietly forgotten
-- A category MUST NOT be left blank because one named tool is unavailable.
-  It then reads as unimplemented, the next audit re-raises it as a gap, and
-  someone re-derives the same unavailability from scratch
-- A workflow for a tool that cannot run MUST NOT be committed to fill the
-  row. It sits permanently red or permanently skipped, which is the
-  gate-by-omission shape `quality-gates-scope-agreement` names
-
-This governs what a compliant implementation looks like when a named tool
-is genuinely unreachable. It relaxes no category from MUST.
-
-### Lint-rule bumps: fix the source on its own PR first
-
-When a dependency bump adds a lint rule that flags existing source:
-
-- Write the fix in the older rule's API (usually forward-compatible)
-  on its own branch, and merge that fix-PR to `main` first
-- Then `@dependabot rebase` the bump PR so it lands clean on green
-- Do NOT push the fix onto Dependabot's branch — keep the bump as
-  Dependabot's own commit so it stays recreatable on future runs
-
----
-
-## Thresholds
-
-[ID: quality-gates-thresholds]
-
-| Metric                   | Threshold | Enforcement                  |
-| ------------------------ | --------- | ---------------------------- |
-| Lint errors              | 0         | CI fails                     |
-| Format compliance        | 100%      | CI fails                     |
-| Type errors              | 0         | CI fails                     |
-| Security (high/critical) | 0         | CI fails                     |
-| Secrets detected         | 0         | Pre-commit blocks + CI fails |
-| Build                    | Success   | CI fails                     |
-
-### Coverage policy
-
-- **New projects** — 80% from day one; CI fails below threshold
-- **Legacy projects** — coverage reported as warning only; CI shows the
-  number but never blocks; flip to error when the team has the mandate
-  to invest in testing
-- **Un-runnable code** — omit modules that genuinely cannot execute in
-  CI (native extensions, GPU paths, container-only code with no wheels
-  on the runner) from the coverage denominator, and validate them
-  out-of-band (a separate suite, integration environment, or tracked
-  artifacts). Scoping the denominator keeps the gate honest at 80%
-  instead of dropping the bar to a meaningless number that lets
-  permanently-un-runnable code drag the percentage down as dead weight
-- **Omit-list is a contract** — a new pure module is in scope by
-  default and MUST be tested; adding a module to the omit-list is a
-  reviewable decision, never a silent escape. This is the coverage
-  analogue of the complexity ratchet (see `quality-gates-complexity`):
-  make a partial codebase's gate honest without lowering the bar
-
-Stack templates MAY add additional thresholds (e.g. Lighthouse scores).
-
----
-
-## Complexity gates
-
-[ID: quality-gates-complexity]
-
-- Complexity gates SHOULD measure cognitive complexity (nesting plus
-  control-flow interruptions) rather than only McCabe branch counts.
-  The two metrics genuinely disagree in practice: McCabe flags flat,
-  linear section emitters while passing deeply nested logic — the
-  opposite of what a readability standard is after
-- The gate MUST name a tool, and the language layer is where it is
-  named. A category whose tool is chosen per ecosystem does not belong
-  to this file; `base-<language>-tooling` binds it
-- Where a language's lint tool has no cognitive-complexity rule, the
-  gate needs a second tool rather than a waiver. Stating the gate
-  without one leaves a SHOULD nothing can satisfy
-- Retrofit onto an existing codebase via a ratchet: commit a baseline
-  that freezes current offenders at their recorded values; CI fails
-  only when an over-threshold function is new or has increased. The
-  gate turns on from day one with zero up-front refactoring, and the
-  baseline doubles as a measured refactor priority list
-- Pin the tool version when the baseline file format is
-  version-sensitive
-
----
-
-## Mutation testing, where the suite is mature enough to earn it
-
-[ID: quality-gates-mutation]
-
-The coverage gate answers how much code a run exercised. It cannot answer
-whether the assertions hold anything down, and a suite can sit at eighty
-per cent coverage with toothless assertions while coverage reports the
-same number either way. Mutation testing injects small faults and asks
-whether the suite notices, which measures the tests rather than their
-reach. That matters most where merges ride on green CI, because there the
-gate is only as strong as the tests behind it.
-
-- Mutation testing is OPT-IN. It reruns the suite once per mutant, so its
-  cost is suite runtime times mutant count, and it buys least on an
-  immature suite where nearly everything survives and the report is a
-  backlog rather than a signal
-- Adopt it where the suite is already mature and the code is
-  consequential — a parser, a permission check, a money path — rather
-  than across the whole tree
-- The score MUST be introduced as a baseline with a ratchet, never as a
-  hard cliff. A first run on real code lands far below any figure worth
-  publishing, so a cliff set there is unreachable and a cliff set below
-  it is meaningless. Record the measured score and require that it not
-  fall, the way `quality-gates-retrofit-ratchet` freezes instances
-- Say which scope produced any score recorded. A diff-scoped
-  pull-request run and a whole-module audit answer different questions,
-  and a figure with no scope attached is read as a baseline by whoever
-  finds it next
-- A surviving mutant is a question, not a defect. Some mutants are
-  semantically equivalent to the original and cannot be killed, so the
-  project MUST be able to record one as accepted with its reason.
-  Without that, the ratchet is a gate nobody can satisfy and the first
-  equivalent mutant retires it
+How a check is built: retrofitting a gate without narrowing it, pairing a
+constraint with its check, and running the check in the form it ships.
+When gates run, and against which thresholds, is the project's choice.
 
 ---
 
@@ -243,7 +13,7 @@ gate is only as strong as the tests behind it.
 
 [ID: quality-gates-retrofit-ratchet]
 
-`quality-gates-complexity` gives the ratchet for one metric. It generalises,
+A complexity gate's ratchet is the familiar case. It generalises,
 and it has a look-alike that is far more tempting because it is smaller:
 writing a baseline is work, deleting a field from a comparison is one line
 and the diff reads as a simplification. Both turn a red gate green. Only
@@ -297,9 +67,8 @@ are traps:
   hand. A hand-maintained table drifts and becomes a place to hide findings
 - The linter MUST be pinned to a minor range. The table records one
   version's findings, so a release adding rules to an already-selected
-  family fails the gate on untouched code — the same reason
-  `quality-gates-complexity` pins when the baseline format is
-  version-sensitive
+  family fails the gate on untouched code — the same reason a complexity
+  gate pins its tool when the baseline format is version-sensitive
 - A file MUST NOT be added to the table to make a gate pass, and an existing
   entry MUST NOT be widened. Without that rule the table becomes the global
   ignore list this whole approach exists to avoid
@@ -704,58 +473,6 @@ changes nothing about which gates run.
 
 ---
 
-## Skip noisy gates when input is unchanged
-
-[ID: quality-gates-skip-equivalent]
-
-Some gates measure a property of the *build output* (Lighthouse
-score, bundle size, visual diff, e2e behavior) and have enough
-single-sample variance to produce false positives near their
-threshold. When a PR's file set cannot affect the gate's input —
-e.g. a Dependabot bump of `package.json` + `package-lock.json` for
-a static site — running the gate is pure noise. Failure on a
-byte-identical build output is not a real regression; it is
-runner-variance pretending to be one.
-
-For a gate to be a skip candidate it MUST satisfy all three:
-
-1. **Output-measuring** — the gate evaluates the build output, not
-   the source (Lighthouse, bundle-size, visual diff, e2e, screenshot
-   diff)
-2. **Noisy at sample size 1** — single runs near the threshold
-   produce different verdicts on retry without any code change
-3. **Path-determined input** — there is a file-pattern subset that
-   provably cannot change the build output (lockfile-only changes
-   on a static site, README changes, etc.)
-
-Deterministic gates (lint, type check, unit tests, build success)
-and gates whose input depends on more than file changes (anything
-that hits the network or external state) MUST NOT be skipped.
-
-Example with GitHub Actions `dorny/paths-filter`: skip the
-Lighthouse job when the PR touches only dependency manifests
-(`build` still runs to verify the bump compiles):
-
-```yaml
-- uses: dorny/paths-filter@v3
-  id: changes
-  with:
-    filters: |
-      output_affecting:
-        - '!package.json'
-        - '!package-lock.json'
-
-- name: Lighthouse
-  if: steps.changes.outputs.output_affecting == 'true'
-  run: npm run lighthouse
-```
-
-Document the skip rule and rationale alongside the workflow change in the
-workflow or PR. Use an ADR only for a consequential architectural tradeoff,
-not merely because a gate has a condition.
-
----
-
 ## Reading a gate verdict honestly
 
 [ID: quality-gates-verdict-reading]
@@ -888,41 +605,6 @@ are separate things, and review usually looks only at the check:
 history for the secret scan specifically. This is the general rule that
 the specific one is an instance of, and it holds regardless of which
 platform or security template a project resolves.
-
-### PR gate MUST mirror the deploy gate
-
-- Any check the deploy/release workflow runs unconditionally MUST
-  also run on the PR that could break it
-- A gate that runs only post-merge is not a gate — it is a failure
-  notification. By the time it fires, the broken code is already on
-  the main branch
-- When the deploy workflow runs `validate` (or equivalent) on every
-  push to main, the PR workflow MUST run the same `validate` on
-  every PR, regardless of which paths changed
-
-### Mirror cross-cutting checks with an always-run job
-
-When the deploy gate runs a deterministic check over a broader file
-set than any PR job's path-filter (a formatter or linter over all
-tracked files), mirror it on PRs with a dedicated always-run job —
-not by widening an existing filter:
-
-- A path-filter must enumerate every input the check reads; the next
-  omitted path silently reopens the mirror gap. An always-run job is
-  enumeration-free
-- Keep output-measuring and language-scoped jobs (build, e2e, perf,
-  per-language tests) path-filtered — promote only the cross-cutting
-  deterministic steps to always-run
-- Audit the whole command, not the step that broke. When adding the
-  first mirror job for a composite gate command (`validate` = lint +
-  format + typecheck + test + build), enumerate every step in the same
-  pass and check each for inputs outside the path-filter's coverage.
-  Mirror all exposed steps at once, or record which steps read only
-  covered paths — an unaudited assertion that "the rest are covered"
-  is how the second step surfaces later as its own incident
-- This complements `quality-gates-skip-equivalent`: skip noisy output
-  gates on PRs that provably cannot affect them; always run
-  deterministic cross-cutting gates
 
 ### Green CI does not prove environment independence
 
@@ -1060,7 +742,6 @@ self-check it.
 - A constraint that is inherently subjective (imperative tone, "no
   explanatory prose", heading-case judgment) stays declarative and
   relies on review. Do NOT invent a brittle check to satisfy this rule
-  (see `quality-gates-exclusions`)
 - When the constraint guards a committed generated artifact, wire its
   check into CI as a required status check (see
   `quality-gates-staleness`)
@@ -1115,7 +796,6 @@ BULLET = re.compile(r"\s*(?:[-*+]\s|\d+[.]\s)")
 
 inspected, findings = 0, []
 
-
 def examine(path, para, numbers, marks):
     """Record a finding where the paragraph states a check no fence holds."""
     if not para:
@@ -1135,7 +815,6 @@ def examine(path, para, numbers, marks):
             path, numbers[0], joined[phrase.start():command.end()]))
         break
     return 1
-
 
 for root in ROOTS:
     for parent, _, names in os.walk(root):
@@ -1611,59 +1290,6 @@ records and asserts Y-equality across them.
   fails loud, naming the pair that broke it
 - This applies only to mechanically checkable invariants. Conventions
   that genuinely cannot be tested (subjective code style, prose tone)
-  stay declarative (see `quality-gates-exclusions`)
+  stay declarative
 
 ---
-
-## What NOT to gate
-
-[ID: quality-gates-exclusions]
-
-- **Docstring coverage for non-public functions** — enforcing docs on
-  internal helpers creates busywork
-- **Cyclomatic (McCabe) complexity as a hard gate** — too many false
-  positives on legitimate complex logic; gate cognitive complexity
-  with a ratchet instead (see `quality-gates-complexity`)
-- **100% test coverage** — incentivizes meaningless tests; 80% is the
-  practical sweet spot
-- **Commit message format** — enforce in PR title via repository settings,
-  not per-commit hooks; allow messy WIP commits on feature branches
-- **Mutation score as a universal gate** — it is opt-in and advanced
-  (see `quality-gates-mutation`); requiring it tree-wide spends the
-  budget of a full suite rerun on the modules least likely to need it
-
----
-
-## Periodic whole-tree audits
-
-[ID: quality-gates-tree-audit]
-
-Duplication and dead code are review-time rules, but a reviewer sees
-the diff — and the twin of a pasted block usually lives outside the
-diff. A rule whose violations are invisible in a diff needs a
-scheduled whole-tree sweep, not a per-change gate.
-
-- Duplication and dead-code detectors (pylint duplicate-code, jscpd,
-  vulture) MUST NOT run as per-PR CI gates when the tree measures
-  clean — both tool classes false-positive on legitimate patterns
-  (look-alike scientific/CLI boilerplate for duplication,
-  intentionally unused API parameters for dead code), so a per-PR
-  gate means maintaining suppression lists forever to guard nothing
-- Run them as a documented periodic whole-tree audit instead: record
-  the exact commands and the last-run result in `docs/PLAYBOOK.md`,
-  and run at epic boundaries and release points
-- File audit findings as tickets rather than fixing on the spot —
-  the audit is a discovery pass, not a change PR
-
----
-
-## Tool constraints
-
-[ID: quality-gates-constraints]
-
-- All tools MUST be free for private repositories
-- Prefer open-source tools over SaaS — no vendor lock-in
-- Prefer tools with CI integration for the project's platform
-- Prefer one tool per category — no redundant linters
-- Stack templates define the specific tool per category
-- Platform templates define the CI integration and SAST tool

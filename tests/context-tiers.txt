@@ -5,10 +5,4 @@
 # itself is not capped -- see ADR-041.
 #
 # <layer> <window>
-abstract 200K
-backend 200K
-embedded 128K
-fixture 200K
-hypermedia 128K
-library 200K
-static 200K
+fixture 128K

@@ -65,11 +65,7 @@ core/
 ├── review.md       # Peer review priority, MUST/SHOULD checklists, deviation rules
 ├── testing.md      # Test pyramid, coverage thresholds, naming conventions
 ├── agents.md       # Output structure, models (inline/hybrid), formatting rules
-├── skills.md       # Skill authoring — when to write one, frontmatter, triggering, structure, scripts
-├── readme.md       # README structure, badges, quick start, contribution guide
 ├── config.md       # Env vars, secrets, fail-fast validation
-├── cli.md          # Entry-point architecture - thin main(argv), shared plumbing, durable output
-├── examples.md     # Examples directory — contents, index, offline rule, smoke job
 ├── oop.md          # SOLID, OOP, GoF design patterns, AOP guidance
 └── quality-gates.md # Three-layer gate model (editor, pre-commit, CI), thresholds
 ```
@@ -81,30 +77,10 @@ security/
 ```
 
 ```
-workflow/
-├── release.md      # Semver, version bump propagation, backward compat, cut-over
-├── issues.md       # Issue templates — epic, task, bug, incident, spike
-├── scope.md        # Scope guard, session protocol, drift prevention
-├── compression.md  # Re-verifying summaries, tables and rollups derived from verified research
-├── ai-workflow.md  # AI-assisted development lifecycle, work item hierarchy
-├── 360.md          # 360-degree project analysis — four stakeholder perspectives, grading
-├── communication.md # Communication preferences — concise output, shorthand verbs, scope-asking
-└── two-pass-review.md # Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue
-```
-
-```
 infra/
 ├── cicd.md         # Pipeline stages, triggers, environments, IaC, deployment
 ├── containers.md   # Dockerfile, runtime security, resource limits, Kubernetes
 └── deployment.md   # Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
-```
-
-```
-language/
-├── go.md           # Per-language tool selection for Go - lint, vet, complexity, tests
-├── python.md       # Per-language tool selection for Python - lint, types, complexity, tests
-├── typescript.md   # Type design, naming, strictness — applies to all TypeScript projects
-└── c.md            # Per-language tool selection for C - clang-tidy, clang-format, cppcheck, ctest
 ```
 
 ```
@@ -113,13 +89,6 @@ data/
 ├── data-modeling.md # Schema design, naming, normalization, relationships, data types
 ├── data-governance.md # Classification, PII handling, retention, ownership, audit trail
 └── data-migration.md # Versioned migrations, zero-downtime, rollback strategies
-```
-
-```
-platform/
-├── github.md       # CodeQL, GitHub Actions, gitleaks action, push protection
-├── gitlab.md       # Semgrep OSS, GitLab CI/CD, gitleaks CLI
-└── linear.md       # Label groups, native priority, sub-issues, code-host sync
 ```
 
 ```
@@ -147,29 +116,11 @@ backend/
 ├── features.md     # Feature flags, rollout strategy, experimentation
 ├── observability.md # Log levels, log format, health check, error visibility
 ├── monitoring.md   # Key metrics, thresholds, alerts, dashboards, incidents
-├── quality.md      # Layered architecture, security, performance, API stability
-└── templating.md   # Server-side rendering, partials, escaping, caching, forms, testing
+└── quality.md      # Layered architecture, security, performance, API stability
 ```
 
 ```
 stack/
-├── htmx.md                     # HTMX 2.x, Alpine.js, SSE, OOB swaps, partial responses
-├── static-site-astro.md        # Islands architecture, client directives, content collections
-├── static-site-tutorial.md     # Multi-chapter tutorial, diagrams, CC BY-NC-SA
-├── python-lib.md               # Installable package or CLI tool, mypy, ruff, pytest
-├── python-service.md           # Generic Python web service, SQLAlchemy, Alembic
-├── python-flask.md             # Sync REST API, factory pattern, blueprints
-├── python-fastapi.md           # Async REST API, Pydantic v2, DI, OpenAPI
-├── python-django.md            # Full web framework, ORM, DRF, admin
-├── go-lib.md                   # Importable library or CLI binary
-├── go-service.md               # Generic Go HTTP service, chi, structured logging
-├── go-echo.md                  # REST API, Echo v4, middleware, validation
-├── node-express.md             # Minimal REST API, Zod validation, Supertest
-├── node-nestjs.md              # Modules, controllers, providers, guards, pipes, DI
-├── go-grpc.md                  # gRPC service, bufconn, errgroup
-├── python-grpc.md              # gRPC service, grpcio-aio, proto design
-├── nodejs-lib.md               # TypeScript npm package or CLI, tsup, Vitest
-└── c-embedded.md               # GCC + CMake, Unity tests, HAL, binary + .a
 ```
 <!-- /generated:spec-directories -->
 
@@ -249,16 +200,15 @@ resolution — stacks do not need to list them in `depends_on`:
 - `templates/core/quality.md`
 - `templates/core/git.md`
 - `templates/core/docs.md`
-- `templates/core/readme.md`
 - `templates/core/testing.md`
 - `templates/core/review.md`
 - `templates/core/oop.md`
 
-Measured: 45 `[DEPENDS ON]` tokens across 20 templates name one of these
-files, and 20 manifest entries name a core id in `depends_on`. Declaring one
+Measured: 10 `[DEPENDS ON]` tokens across 5 templates name one of these
+files, and 5 manifest entries name a core id in `depends_on`. Declaring one
 is redundant rather than forbidden — the seeding reaches the file either
 way, and the directive documents a dependency a reader would otherwise
-infer. Reached by the seeding alone: `base-readme`. A chain assembled by
+infer. Reached by the seeding alone: `base-review`. A chain assembled by
 walking the directives does not reach that set and reports nothing about it,
 because nothing declares what is absent.
 <!-- /generated:spec-core-tier -->
@@ -635,67 +585,6 @@ Ordering: base → backend/frontend → stack (topological sort of
 the dependency graph). Within the same depth level, order follows
 the `depends_on` list declaration order.
 
-<!-- generated:spec-chain-examples -->
-### Example: static-site-astro
-
-```bash
-py tools/resolve.py stack-astro
-```
-
-```
-templates/core/quality.md
-templates/core/git.md
-templates/core/docs.md
-templates/core/readme.md
-templates/core/testing.md
-templates/core/review.md
-templates/core/oop.md
-templates/security/security.md
-templates/frontend/ux.md
-templates/frontend/quality.md
-templates/frontend/static-site.md
-templates/language/typescript.md
-templates/core/config.md
-templates/core/quality-gates.md
-templates/stack/static-site-astro.md
-```
-
-### Example: python-flask
-
-```bash
-py tools/resolve.py stack-flask
-```
-
-```
-templates/core/quality.md
-templates/core/git.md
-templates/core/docs.md
-templates/core/readme.md
-templates/core/testing.md
-templates/core/review.md
-templates/core/oop.md
-templates/core/config.md
-templates/backend/http.md
-templates/backend/database.md
-templates/backend/observability.md
-templates/security/security.md
-templates/infra/containers.md
-templates/backend/quality.md
-templates/backend/features.md
-templates/backend/messaging.md
-templates/infra/cicd.md
-templates/security/devsecops.md
-templates/data/data-modeling.md
-templates/data/data-quality.md
-templates/language/python.md
-templates/core/cli.md
-templates/core/quality-gates.md
-templates/core/examples.md
-templates/stack/python-lib.md
-templates/stack/python-service.md
-templates/stack/python-flask.md
-```
-<!-- /generated:spec-chain-examples -->
 
 ---
 
