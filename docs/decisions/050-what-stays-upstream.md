@@ -142,3 +142,14 @@ leaves it for the project or its fork to fill in:
 - ADR-049 - the fork model this record completes.
 - solid-ai-dev/solid-ai-templates#1480 - the audit and its waist test.
 - solid-ai-dev/solid-ai-templates#1504 - the path move.
+
+## Revisions after implementation
+
+The decision rules make a record history from its first merged
+implementation. This record was edited twice after that point, before the
+release that ships it. Both edits stand, and are listed here.
+
+| Date | Commit | Edit |
+| ---- | ------ | ---- |
+| 2026-10-17 | 4090951 (#1963) | Rule 4 changed from "language idioms as checks in `core/`" to "rules in `core/`, checks leave with `language/`"; rule 9 moves `language/` whole; a rejected alternative added for folding checks into `core/` |
+| 2026-10-17 | 4073968 (#1964) | Rule 7 reversed: decision records no longer stay upstream; upstream requires `README.md`, `AGENTS.md` and `CLAUDE.md` and prescribes no structure. `readme` left rule 3, and the rejected alternative inverted from "move records to forks" to "keep them upstream" |
