@@ -438,7 +438,7 @@ def main():
 
     ran = (results[PASS] + results[FAIL] + results[ERR]
            + results[REVIEW] + results[NA])
-    print("\n%d block(s) registered - %d ran, %d skipped as not applicable"
+    print("\n%d block(s) registered - %d ran, %d skipped"
           % (len(CHECKS), ran, results[SKIPPED]))
     print("%d passed  %d failed  %d errors  %d not applicable  "
           "%d awaiting a reading"
@@ -480,9 +480,12 @@ def main():
             for title in reviewed:
                 handle.write("- reading: %s%s" % (title, chr(10)))
 
-    if ran == 0:
-        print("\nFAIL: ran nothing. Every check reported as not applicable "
-              "is a check that never verified anything.")
+    # A check answering "not applicable" ran and verified nothing, so a run
+    # of nothing else is as empty as a run of nothing.
+    verified = ran - results[NA]
+    if verified == 0:
+        print("\nFAIL: verified nothing. %d check(s) ran and every one "
+              "reported that it does not apply." % ran)
         sys.exit(1)
 
     write_report(run_results, started_at, "conformance", {
