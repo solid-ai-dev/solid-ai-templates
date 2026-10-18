@@ -108,9 +108,9 @@ hold; a failing item is a fix, not a note:
 
 ## Inline model
 
-All rules are inlined — the output file is self-contained. Use numbered
-headings for groups and subsections to enable cross-referencing between
-documents (e.g. "see CLAUDE.md section 2.3").
+All rules are inlined — the output file is self-contained. Numbered
+headings for groups and subsections let other documents cross-reference a
+rule (e.g. "see CLAUDE.md section 2.3").
 
 Add `Model: inline` to section 1.1 so agents know the file is
 self-contained and no external templates need to be read.
@@ -171,12 +171,17 @@ paraphrase the checklist into a short bullet list: that silently drops
 steps and the "execute sequentially" enforcement.]
 ```
 
-Top-level sections 1–6 are role-fixed (§4 is always Identity, §5 is
-always Review) — never renumber and never omit them. A top-level
-section that does not apply keeps its numbered heading with a one-line
-`Not applicable — <reason>` body (e.g. §4 Identity for a backend
-service). Omit only non-applicable subsections (e.g. 3.2+ if only
-testing applies). This applies to both models.
+The layout above is a default, not a contract. A project MAY order,
+number and name its sections its own way. Whatever the layout, the file
+MUST carry each part the default names:
+
+- the project's identity, structure and commands
+- the rules it adopts
+- how a change is reviewed
+- its answers to the questions every project answers
+
+A part that does not apply is stated as not applicable, never dropped
+silently. This applies to both models.
 
 ---
 

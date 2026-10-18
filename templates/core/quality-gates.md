@@ -601,10 +601,9 @@ are separate things, and review usually looks only at the check:
 - A reviewer MUST NOT accept a green run as evidence that a scope change
   took effect
 
-`security/devsecops.md` and `platform/github.md` both require full
-history for the secret scan specifically. This is the general rule that
-the specific one is an instance of, and it holds regardless of which
-platform or security template a project resolves.
+`security/devsecops.md` requires full history for the secret scan
+specifically. This is the general rule that the specific one is an
+instance of, and it holds whichever platform a project uses.
 
 ### Green CI does not prove environment independence
 

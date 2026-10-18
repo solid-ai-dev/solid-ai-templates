@@ -26,8 +26,9 @@ levels. Every rule MUST use one of these words:
 
 ## Standard documents
 
-Every project MUST carry these three. Their content and layout are the
-project's own: no template prescribes their structure.
+Every project MUST carry these three. Their layout is the project's own.
+`core/agents.md` states what `AGENTS.md` and `CLAUDE.md` must contain and
+offers a default layout; no template prescribes the README's.
 
 | File        | Purpose                                         |
 | ----------- | ----------------------------------------------- |

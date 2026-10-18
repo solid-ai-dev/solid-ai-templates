@@ -29,12 +29,9 @@ isolation. Dependencies MUST be replaced with mocks or stubs. The primary
 driver is TDD — tests are written alongside or before the code.
 
 - MUST cover all happy paths defined by functional requirements
-- MUST achieve 90% coverage of new code before merging
+- MUST meet the project's coverage threshold for new code before
+  merging; the threshold is the project's to set
 - SHOULD cover negative scenarios and edge cases
-- The total codebase SHOULD maintain 80% unit test coverage — see
-  `templates/core/quality-gates.md` for the coverage policy (80% for
-  new projects,
-  warn-only for legacy)
 - Coverage MUST NOT regress between releases
 - MUST be runnable from CI without human intervention
 - Names are not part of any external report or traceability system — they
