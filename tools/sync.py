@@ -271,13 +271,17 @@ def _interview_stacks(manifest):
 # hand-written copy drifts silently whenever a dependency edge moves and the
 # staleness gate reports the file in sync over it. Each names a stack, and
 # the stacks are a fork's, so the list lives in fork_examples.py beside
-# them; a tree without that file renders no examples.
+# them; a tree without that file renders no examples. The fork may also
+# name the document they go to, so its own prose can hold them and SPEC.md
+# can stay upstream's.
 try:
-    from fork_examples import SPEC_CHAIN_EXAMPLES
+    import fork_examples
 except ModuleNotFoundError as exc:
     if exc.name != "fork_examples":
         raise
-    SPEC_CHAIN_EXAMPLES = []
+    fork_examples = None
+SPEC_CHAIN_EXAMPLES = getattr(fork_examples, "SPEC_CHAIN_EXAMPLES", [])
+CHAIN_EXAMPLES_DOC = getattr(fork_examples, "CHAIN_EXAMPLES_DOC", "docs/SPEC.md")
 
 NEWLINE = "\n"
 
@@ -540,8 +544,8 @@ def main():
         "spec-directories": spec_content,
         "spec-core-tier": spec_core_tier,
     }
-    if SPEC_CHAIN_EXAMPLES:
-        spec_blocks["spec-chain-examples"] = chain_examples
+    examples_doc = ROOT / CHAIN_EXAMPLES_DOC
+    example_blocks = {"spec-chain-examples": chain_examples}
 
     readme_blocks = {
         "readme-stacks": readme_content,
@@ -557,6 +561,16 @@ def main():
         (ROOT / "README.md", readme_blocks),
         (ROOT / "templates" / "INTERVIEW.md", {"interview-stacks": interview_content}),
     ]
+    if SPEC_CHAIN_EXAMPLES:
+        # A named document that is absent would be skipped like an absent
+        # INTERVIEW.md, and the examples would vanish with the run clean.
+        if not examples_doc.exists():
+            raise SystemExit("sync: CHAIN_EXAMPLES_DOC names %s, which "
+                             "does not exist" % CHAIN_EXAMPLES_DOC)
+        if examples_doc == ROOT / "docs" / "SPEC.md":
+            spec_blocks.update(example_blocks)
+        else:
+            targets.append((examples_doc, example_blocks))
 
     changed = []
     for path, replacements in targets:
