@@ -65,15 +65,15 @@ fork it lists the fork's stacks.
 <!-- generated:spec-directories -->
 ```
 core/
-├── git.md          # Committer identity, commits, branching, PR workflow, versioning
-├── docs.md         # Rule language, documentation standards, ADR, diagrams, docs-as-code
+├── git.md          # Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore
+├── docs.md         # Rule language, standard documents, writing style, diagrams, docs-as-code, agent output files
 ├── quality.md      # Architecture, code style, calibration, tool trust, testing
 ├── review.md       # Peer review priority, MUST/SHOULD checklists, deviation rules
 ├── testing.md      # Test pyramid, coverage thresholds, naming conventions
 ├── agents.md       # Output structure, models (inline/hybrid), formatting rules
 ├── config.md       # Env vars, secrets, fail-fast validation
 ├── oop.md          # SOLID, OOP, GoF design patterns, AOP guidance
-└── quality-gates.md # Three-layer gate model (editor, pre-commit, CI), thresholds
+└── quality-gates.md # How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict
 ```
 
 ```
@@ -152,13 +152,8 @@ answers + base templates + stack template + output format template.
 work is tracked and what a release is. Upstream answers none of them; the
 project or its fork does.
 
-| Agent | Output file | Location |
-|-------|-------------|----------|
-| Claude Code | `CLAUDE.md` | project root |
-| Codex CLI, Devin, Cursor, Windsurf | `AGENTS.md` | project root |
-
-Interop: `AGENTS.md` is read by Claude Code as a fallback when no
-`CLAUDE.md` is present.
+Which file each agent reads is the "Output file by agent" table in
+`templates/core/docs.md`; README's agents table is generated from it.
 
 ---
 

@@ -550,8 +550,8 @@ when a stakeholder needs the whole picture.
 6. Merge with the default squash subject — `gh pr merge <number>
    --squash`, with no `--subject`. GitHub composes that subject from
    the title and appends the pull request number; supplying one
-   replaces both. A release's milestone-coverage check, which a fork's
-   `core/git.md` carries, reads those numbers back out of the log, so a
+   replaces both. A release's milestone-coverage check, which a fork
+   carries in a template of its own, reads those numbers back out of the log, so a
    hand-typed subject removes the reference it resolves
 7. After merge: delete the branch and pull `main`
 
@@ -601,8 +601,8 @@ gh issue list --state open --limit 200 --json number,title,milestone --jq '.[] |
   a rule that could go in either of two templates
 - Title the milestone `vA.B.C — <theme>`. The annotated tag message quotes
   the theme, so a bare version leaves the tag with nothing to quote
-- The merged-work sweep belongs to the release sequence a fork's
-  `core/git.md` carries, and upstream's conformance run no longer
+- The merged-work sweep belongs to the release sequence a fork carries
+  in a template of its own, and upstream's conformance run no longer
   includes it. Where a fork's copy is at hand, run it at the groom, where
   a hit is cheapest to act on
 
@@ -687,8 +687,9 @@ commit the tag names.
 
 The release sequence and its pre-release checks — milestone coverage,
 release ordering, changelog completeness, the merged-work sweep — are
-process, so a fork's `core/git.md` carries them (ADR-049) and upstream's
-conformance run includes none of them. The steps below are what this
+process, so a fork carries them in a template of its own (ADR-049; the
+Imbra fork's is `templates/imbra/git.md`), and upstream's conformance run
+includes none of them. The steps below are what this
 repository still does. The `Release gates` workflow runs
 `py tools/release_check.py` and `py tests/run_conformance.py` on every tag
 push, and can be dispatched with the version as an input to run them at

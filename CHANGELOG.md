@@ -21,60 +21,50 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
-### Added
-
-- A manifest entry may carry `deprecated: <replacement-id>`; from 3.0 a
-  template is deprecated, not removed, inside a major. SYS-22 fails a field
-  naming a missing or deprecated replacement.
-- `docs/migrating-to-v3.md` moves a 2.x project or a pre-v3.0 fork to v3.0:
-  re-pinning to a fork, the split merge, restoring the templates it modified,
-  and the settings a new fork needs.
-- A fork keeps its templates under a top-level manifest key of its own and
-  adds to every chain's core tier under `fork_core:`. The resolver reads
-  every top-level list of entries as a section.
-- `base-quality` states three language idioms as rules: a library writes
-  nothing to the host's streams (`quality-library-output`), an optional
-  dependency sits behind one module, and a test walks every raise.
-  `base-oop` adds tagged unions for closed type families.
-- `templates/fixture/` adds `stack-fixture` and `platform-fixture`, test
-  input marked `fixture: true` in the manifest. Listings and `generated/`
-  omit them; per-stack checks select by the manifest's `stacks:` key, and
-  the e2e canary is now STK-24 on the fixture.
-- `tools/resolve.py` exits 1 naming a `depends_on` ID with no manifest
-  entry and the entry naming it, or a dependency cycle as a path, where it
-  used to resolve a shorter chain or crash.
-- Smoke check SYS-20 fails when a fork edits an upstream manifest key
-  (`core`, `base`, `backend`, `frontend`), naming the key and entry,
-  against the upstream revision it last merged, set by `SAIT_UPSTREAM_REF`.
-
 ### Breaking changes
 
 - Stacks, platforms, `workflow/`, `language/`, the interview, `examples/`,
   `generated/`, `core/readme.md`, `cli.md`, `skills.md`, `examples.md`,
   `backend/templating.md` and the process sections of `git.md`, `docs.md`
   and `quality-gates.md` move to forks. Pin `v2.90.0` or a fork.
-- The concern directories leave `templates/base/`: `templates/base/<concern>/`
-  is now `templates/<concern>/` for core, security, workflow, infra, data and
-  language. Template and section IDs are unchanged; update any path a
-  reference or hybrid file, or a vendored copy, names.
-- `base-quality-gates` moves from `templates/workflow/` to
-  `templates/core/quality-gates.md`, IDs unchanged; update any path a
-  reference or hybrid file, or a vendored copy, names.
+- The core tier requires `README.md`, `AGENTS.md` and `CLAUDE.md` only, both
+  agent files on every project, and prescribes no layout for them;
+  `core/agents.md` offers one as a default.
+- `templates/base/<concern>/` is now `templates/<concern>/` for core,
+  security, infra and data, and `templates/base/workflow/quality-gates.md`
+  is `templates/core/quality-gates.md`. IDs are unchanged; update any path a
+  hybrid file or vendored copy names.
+
+### Added
+
+- A fork keeps its templates under a top-level manifest key of its own and
+  adds to every chain's core tier under `fork_core:`. The resolver reads
+  every top-level list of entries as a section.
+- A manifest entry may carry `deprecated: <replacement-id>`; from 3.0 a
+  template is deprecated, not removed, inside a major. SYS-22 fails a field
+  naming a missing or deprecated replacement.
+- `docs/migrating-to-v3.md` moves a 2.x project or a pre-v3.0 fork to v3.0:
+  re-pinning to a fork, the split merge, restoring the templates it modified,
+  and the settings a new fork needs.
+- `base-quality` states three language idioms as rules: a library writes
+  nothing to the host's streams (`quality-library-output`), an optional
+  dependency sits behind one module, and a test walks every raise.
+  `base-oop` adds tagged unions for closed type families.
+- Smoke check SYS-20 fails when a fork edits an upstream manifest key, naming
+  the key and entry. CI runs it against upstream when the repository
+  variable `UPSTREAM_REPO` names the fork's upstream.
+- `tools/resolve.py` exits 1 naming a `depends_on` ID with no manifest
+  entry and the entry naming it, or a dependency cycle as a path, where it
+  used to resolve a shorter chain or crash.
+- `templates/fixture/` holds `stack-fixture` and `platform-fixture`, test
+  input marked `fixture: true`, so the checks resolve a stack and a platform
+  now that both live in forks. Listings leave them out.
 
 ### Changed
 
 - The repository moved to the `solid-ai-dev` organisation. Generated files
   and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
   `braboj/` URL redirects, so existing submodules keep working until updated.
-- `base-docs` Decision logs: an ADR states a one-sentence Decision, then
-  Rationale, an optional Design, and Compatibility and Security sections
-  ("None" when nothing applies); `Rejected` and `Withdrawn` join the status
-  set, and a check gates the layout.
-- A merged decision record MAY be restructured to a new section layout by
-  restatement alone; a section it predates says "Not assessed".
-- A decision record MAY be rewritten in place until the first merge that
-  implements it, and a record MAY show a rendered diagram (draw.io, Mermaid)
-  with its source committed beside it, instead of inline ASCII.
 
 ### Fixed
 
@@ -84,10 +74,9 @@ alters no template carries no entry.
 
 ### Deprecated
 
-- The reference model. `agents.md` and the interview offer inline or
-  hybrid only, and a rule whose breaking is silent and that no tool
-  enforces is inlined. A reference-model file keeps working; regenerate
-  it as hybrid.
+- The reference model. `core/agents.md` offers inline or hybrid only, and a
+  rule whose breaking is silent and that no tool enforces is inlined. A
+  reference-model file keeps working; regenerate it as hybrid.
 
 ## [2.90.0] - 2026-09-12
 

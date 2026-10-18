@@ -41,7 +41,9 @@ fork.
 
 1. Choose the fork: [imbra-ai-templates] for Imbra's stacks, or your own
    (see [Starting a fork](#starting-a-fork))
-2. Point the submodule at the fork and pin a released tag, never a branch:
+2. Point the submodule at the fork and pin a released tag of the fork,
+   never a branch. The fork's own v2.x tags are upstream's, so pin one the
+   fork cut after the split, such as the Imbra fork's `v1.0.0`:
    ```bash
    git submodule set-url <path> https://github.com/<owner>/<fork>.git
    git -C <path> fetch --tags
@@ -56,7 +58,7 @@ fork.
    existing adopted rules stay effective, and declining one needs no ADR
    (`docs/PLAYBOOK.md`, "Adopt a template policy update")
 
-The guide-doc renames are part of the same upgrade — see
+No guide document is renamed upstream — see
 [Guide documents](#guide-documents).
 
 [imbra-ai-templates]: https://github.com/Imbra-Ltd/imbra-ai-templates
