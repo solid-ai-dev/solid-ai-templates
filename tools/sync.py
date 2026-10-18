@@ -271,11 +271,15 @@ def _interview_stacks(manifest):
 # Worked resolved-chain examples in SPEC.md, as (heading, stack id) pairs.
 # Generated rather than hand-maintained: each block is resolver output, so a
 # hand-written copy drifts silently whenever a dependency edge moves and the
-# staleness gate reports the file in sync over it.
-SPEC_CHAIN_EXAMPLES = [
-    ("static-site-astro", "stack-astro"),
-    ("python-flask", "stack-flask"),
-]
+# staleness gate reports the file in sync over it. Each names a stack, and
+# the stacks are a fork's, so the list lives in fork_examples.py beside
+# them; a tree without that file renders no examples.
+try:
+    from fork_examples import SPEC_CHAIN_EXAMPLES
+except ModuleNotFoundError as exc:
+    if exc.name != "fork_examples":
+        raise
+    SPEC_CHAIN_EXAMPLES = []
 
 NEWLINE = "\n"
 
@@ -524,29 +528,35 @@ def main():
     spec_core_tier = _spec_core_tier(core_ids, entries)
     readme_extras = _readme_extras(core_ids, entries, stacks)
     readme_root_counts = _readme_root_counts(core_ids, entries, stacks)
-    model_limits = _readme_model_limits()
+
+    # The model table measures stacks, so a README that carries no table has
+    # none to measure. Where the marker is present the table is owed, and
+    # finding no stack to measure stays the refusal it was.
+    readme_text = io.open(ROOT / "README.md", encoding="utf-8").read()
+    has_model_table = "<!-- generated:readme-model-limits -->" in readme_text
+    model_limits = _readme_model_limits() if has_model_table else None
     agent_outputs = _readme_agents()
     interview_content = _interview_stacks(manifest)
 
+    spec_blocks = {
+        "spec-directories": spec_content,
+        "spec-core-tier": spec_core_tier,
+    }
+    if SPEC_CHAIN_EXAMPLES:
+        spec_blocks["spec-chain-examples"] = chain_examples
+
+    readme_blocks = {
+        "readme-stacks": readme_content,
+        "readme-extras": readme_extras,
+        "readme-root-counts": readme_root_counts,
+        "readme-agents": agent_outputs,
+    }
+    if has_model_table:
+        readme_blocks["readme-model-limits"] = model_limits
+
     targets = [
-        (
-            ROOT / "docs" / "SPEC.md",
-            {
-                "spec-directories": spec_content,
-                "spec-core-tier": spec_core_tier,
-                "spec-chain-examples": chain_examples,
-            },
-        ),
-        (
-            ROOT / "README.md",
-            {
-                "readme-stacks": readme_content,
-                "readme-extras": readme_extras,
-                "readme-root-counts": readme_root_counts,
-                "readme-model-limits": model_limits,
-                "readme-agents": agent_outputs,
-            },
-        ),
+        (ROOT / "docs" / "SPEC.md", spec_blocks),
+        (ROOT / "README.md", readme_blocks),
         (ROOT / "templates" / "INTERVIEW.md", {"interview-stacks": interview_content}),
     ]
 
