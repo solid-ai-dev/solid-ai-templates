@@ -152,34 +152,41 @@ CUT = """## [Unreleased]
 ## [2.90.0] - 2026-09-12
 """
 
-# Each case is (name, changelog, release, previous, findings expected).
+# Each case is (name, changelog, release, previous, the one finding owed as
+# a fragment of its text, or None for a clean cut). Matching the text rather
+# than the count keeps a case from passing on a finding other than its own.
 CASES = [
-    ("a complete major cut", CUT, (3, 0, 0), (2, 90, 0), 0),
-    ("no section for the release", CUT, (3, 1, 0), (3, 0, 0), 1),
+    ("a complete major cut", CUT, (3, 0, 0), (2, 90, 0), None),
+    ("no section for the release", CUT, (3, 1, 0), (3, 0, 0),
+     "0 section(s) named [3.1.0]"),
     ("a minor where the section owes a major", CUT.replace(
-        "3.0.0", "2.91.0"), (2, 91, 0), (2, 90, 0), 1),
-    ("a skipped version", CUT.replace("3.0.0", "2.90.0").replace(
-        "Breaking changes", "Added"), (2, 90, 0), (2, 88, 0), 1),
+        "3.0.0", "2.91.0"), (2, 91, 0), (2, 90, 0), "owes a major"),
+    ("a skipped version", CUT.replace("## [2.90.0] - 2026-09-12\n", "")
+     .replace("3.0.0", "2.90.0").replace("Breaking changes", "Added"),
+     (2, 90, 0), (2, 88, 0), "does not follow v2.88.0 by one SemVer step"),
     ("entries left under Unreleased", CUT.replace(
         "## [Unreleased]\n", "## [Unreleased]\n\n- Left behind.\n"),
-     (3, 0, 0), (2, 90, 0), 1),
+     (3, 0, 0), (2, 90, 0), "Unreleased still holds 1 entry"),
     ("an undated section", CUT.replace(" - 2026-10-20", ""),
-     (3, 0, 0), (2, 90, 0), 1),
+     (3, 0, 0), (2, 90, 0), "carries no date"),
     ("a patch holding only fixes", CUT.replace("3.0.0", "2.90.1").replace(
-        "Breaking changes", "Fixed"), (2, 90, 1), (2, 90, 0), 0),
+        "Breaking changes", "Fixed"), (2, 90, 1), (2, 90, 0), None),
     ("a patch holding an addition", CUT.replace("3.0.0", "2.90.1").replace(
-        "Breaking changes", "Added"), (2, 90, 1), (2, 90, 0), 1),
+        "Breaking changes", "Added"), (2, 90, 1), (2, 90, 0), "owes a minor"),
 ]
 
 
 def self_test():
     failed = 0
-    for name, text, release, previous, expected in CASES:
-        got = len(findings(text, release, previous))
-        ok = got == expected
+    for name, text, release, previous, owed in CASES:
+        got = findings(text, release, previous)
+        if owed is None:
+            ok = not got
+        else:
+            ok = len(got) == 1 and owed in got[0]
         failed += not ok
-        print("  %s  %s: %d finding(s), expected %d"
-              % ("ok  " if ok else "FAIL", name, got, expected))
+        print("  %s  %s: %s" % ("ok  " if ok else "FAIL", name,
+                                 "; ".join(got) or "clean"))
     print("VERDICT: %s - %d case(s), %d failed"
           % ("PASS" if not failed else "FAIL", len(CASES), failed))
     return 1 if failed else 0
