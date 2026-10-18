@@ -2084,6 +2084,7 @@ def check_sys_18():
     recorded = _recorded_tiers()
     constrained = min(recorded.values(), key=_tier_sort_key) if recorded else None
     seen.count("categories recorded", recorded)
+
     # Zero exemptions is a real answer: a tree whose only stack is the
     # fixture has no constrained category to exempt.
     seen.count("exempt layers named with a reason",
