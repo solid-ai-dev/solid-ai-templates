@@ -53,6 +53,10 @@ py tools/resolve.py --roots                   # list every root a project picks
 py tools/resolve.py <stack-id>               # print resolved file list
 py tools/resolve.py <stack-id> --concat      # print concatenated content
 
+# Check a release's changelog cut and SemVer step
+py tools/release_check.py vA.B.C             # from the release commit
+py tools/release_check.py --self-test         # planted cases
+
 # Audit redundant rules across resolved chains
 py tools/audit_redundancy.py                 # exact in-chain duplicates
 py tools/audit_redundancy.py --near          # include near-duplicates

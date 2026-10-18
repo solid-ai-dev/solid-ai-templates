@@ -690,8 +690,17 @@ release ordering, changelog completeness, the merged-work sweep — are
 process, so a fork's `core/git.md` carries them (ADR-049) and upstream's
 conformance run includes none of them. The steps below are what this
 repository still does. The `Release gates` workflow runs
-`py tests/run_conformance.py` on every tag push, and can be dispatched
-with the version as an input to run it at the release commit.
+`py tools/release_check.py` and `py tests/run_conformance.py` on every tag
+push, and can be dispatched with the version as an input to run them at
+the release commit. The first checks step 2's cut:
+```bash
+py tools/release_check.py vA.B.C
+```
+Pass condition: it names the release, the previous tag and the ref the
+changelog was read from, prints `findings: 0`, and exits zero. A finding
+is a section missing or undated, entries left under `Unreleased`, or a
+version that is not the SemVer step its section owes. Exit 2 means no
+release was named or no previous tag was found, so nothing was compared.
 
 1. Confirm the milestone's issues are all closed and `main` is green
    (`py tests/run_smoke.py` passes) and up to date (`git pull`)
@@ -756,7 +765,7 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run_smoke.py`, plus the milestone's own issue list |
-| 2 | nothing — the reconciliation and the version choice are read by hand |
+| 2 | `tools/release_check.py`, for the cut and the version; the reconciliation against the commits is read by hand |
 | 3 | `tag-guard.yml`, which fails a pushed lightweight `v*` tag |
 | 4 | step 7, and nothing before it |
 | 5 | nothing — an open milestone after a published release is silent |

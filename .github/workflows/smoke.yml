@@ -46,6 +46,8 @@ jobs:
       # into a simulated fork and runs smoke on the result.
       - name: Check a fork that only appends merges this change
         run: python tests/run_fork_sync.py
+      - name: Check the release check still reads its planted cases
+        run: python tools/release_check.py --self-test
       - name: Check generated docs are up to date
         run: python tools/sync.py --check
       - name: Check generated/ files are up to date

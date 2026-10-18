@@ -77,6 +77,10 @@ jobs:
 
           echo "release:   ${release}"
           echo "milestone: ${title:-<none resolved>}"
+      # The changelog cut is this repository's own release step; the
+      # conformance run below carries the templates' checks.
+      - name: Check the changelog cut names this release
+        run: python tools/release_check.py "$RELEASE"
       - name: Run the release gates
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
