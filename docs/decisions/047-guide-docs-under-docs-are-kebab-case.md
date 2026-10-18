@@ -1,13 +1,22 @@
 ---
 id: "047"
-status: Accepted
-date: 2026-09-26
+status: Withdrawn
+date: 2026-10-18
 category: templates
 supersedes: []
 superseded_by: []
 ---
 
 # ADR-047: Guide docs under docs are kebab-case, and the playbook keeps its name
+
+> **Withdrawn 2026-10-18, before any implementation merged.** The record
+> rested on `core/docs.md` requiring `docs/ONBOARDING.md`,
+> `docs/PLAYBOOK.md` and `docs/SPEC.md` in every chain. The v3.0 split
+> (ADR-049, ADR-050) left the core tier requiring `README.md`, `AGENTS.md`
+> and `CLAUDE.md` only, and moved the standard-documents table to the
+> forks. Upstream no longer names a guide document any project must carry,
+> so the rename would change only this repository's own files. Whether a
+> fork's projects rename theirs is the fork's decision.
 
 ## Context
 
