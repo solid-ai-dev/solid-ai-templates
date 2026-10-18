@@ -21,6 +21,8 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-18
+
 ### Breaking changes
 
 - Stacks, platforms, `workflow/`, `language/`, the interview, `examples/`,
