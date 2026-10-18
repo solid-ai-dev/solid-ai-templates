@@ -1,0 +1,135 @@
+# Migrating to v3.0
+
+v3.0 splits this repository in two. Upstream keeps the composition engine
+and the policy every team shares; forks carry the stacks, platforms,
+process templates, interview, examples and generated chains (ADR-049,
+ADR-050). This guide covers the move for the two kinds of reader:
+
+| You maintain | Read |
+| ------------ | ---- |
+| A project whose context file was generated from 2.x | [Projects](#projects) |
+| A fork made before v3.0 | [Forks made before v3.0](#forks-made-before-v30) |
+| A new fork | [Starting a fork](#starting-a-fork) |
+
+`CHANGELOG.md` lists every change v3.0 makes. After `v2.90.0`, 2.x
+receives nothing (ADR-051).
+
+---
+
+## What moved
+
+| Content | 2.x | 3.0 |
+| ------- | --- | --- |
+| Engine — resolver, sync, the checks | upstream | upstream |
+| Core, security, infra, data, backend and frontend templates | upstream | upstream |
+| Stacks, platforms | upstream | a fork |
+| Workflow and process templates, the interview | upstream | a fork |
+| `examples/`, `generated/`, the e2e suite | upstream | a fork |
+| Rules for decision records, changelogs and journals | upstream | a fork |
+
+The core tier requires three documents only: `README.md`, `AGENTS.md` and
+`CLAUDE.md`, both agent files on every project. Their layout is the
+project's own; `templates/core/agents.md` offers a default.
+
+---
+
+## Projects
+
+A project pins the templates it was generated from, usually as a
+submodule. Upstream at v3.0 ships no stack, so a project re-pins to a
+fork.
+
+1. Choose the fork: [imbra-ai-templates] for Imbra's stacks, or your own
+   (see [Starting a fork](#starting-a-fork))
+2. Point the submodule at the fork and pin a released tag, never a branch:
+   ```bash
+   git submodule set-url <path> https://github.com/<owner>/<fork>.git
+   git -C <path> fetch --tags
+   git -C <path> checkout <tag>
+   git add <path> .gitmodules
+   ```
+3. Regenerate the context file from the fork's interview and the resolved
+   chain for your stack, per the fork's README. Do not hand-edit the
+   2.x file into shape: the fork's output contract may differ from the one
+   the file was generated against
+4. Review the diff. Adopt a new rule for a named need or a material risk;
+   existing adopted rules stay effective, and declining one needs no ADR
+   (`docs/PLAYBOOK.md`, "Adopt a template policy update")
+
+The guide-doc renames are part of the same upgrade — see
+[Guide documents](#guide-documents).
+
+[imbra-ai-templates]: https://github.com/Imbra-Ltd/imbra-ai-templates
+
+---
+
+## Forks made before v3.0
+
+The split is one upstream commit carrying the trailer `Fork-merge: ours`.
+An ordinary merge of it deletes every file the fork kept and upstream
+removed, so the fork takes it in steps. `docs/PLAYBOOK.md`, "Sync with
+upstream as a fork", gives each command; in outline:
+
+1. Merge the split's parent normally
+2. Merge the split with `git merge -s ours`
+3. Move the fork's entries out of `base:`, `backend:` and `frontend:` into a
+   manifest key of its own, and the core IDs upstream dropped into
+   `fork_core:`
+4. Restore each template the split modified rather than deleted. `-s ours`
+   kept the fork's pre-split text of every file the commit touched; move
+   the fork's own lines into fork-owned files and take upstream's text
+5. Merge the rest of upstream normally, then confirm no upstream template
+   differs from upstream's
+
+Step 4 applies to documents as much as to templates. A fork's
+`docs/PLAYBOOK.md`, `docs/SPEC.md` and `docs/ONBOARDING.md` keep their
+pre-split text after `-s ours`; the Imbra fork moved its own procedures to
+`docs/imbra-*.md` and took upstream's text for the three.
+
+### Traps
+
+| Trap | What happens | Fix |
+| ---- | ------------ | --- |
+| Fork key appended at the manifest's end | A downstream fork's appends conflict with it | Place the key above `stacks:` |
+| Rewriting the manifest | Its trailing blank line goes, and SYS-20 reads an edit | Keep the file's end byte-identical |
+| A sync PR merged by squash | The upstream link is lost, and the next sync re-merges the range | Merge every sync PR with a merge commit |
+| Upstream's history in the fork's log | The merged-work sweep reads upstream's `(#N)` as the fork's issue `#N` | Set `UPSTREAM_REPO` (below), so CI excludes upstream's commits |
+| The changelog-deletion check on a merge | It reads upstream's bullet as one the fork deleted | Run it on `--first-parent` |
+| A tag-triggered workflow never registered | `gh run list --workflow release-gates.yml` returns 404 | Register it (below) |
+
+---
+
+## Starting a fork
+
+Fork the repository on GitHub, then set it up once:
+
+| Setting | Why |
+| ------- | --- |
+| Repository variable `UPSTREAM_REPO` = `solid-ai-dev/solid-ai-templates` | CI fetches upstream, so SYS-20 compares the manifest with what the fork last merged and the merged-work sweep skips upstream's commits |
+| Push upstream's tags to the fork | The release and changelog checks need a tag to bound their range |
+| Turn on delete-branch-on-merge | The merged-head-branch check requires it |
+| Register `release-gates.yml` and `tag-guard.yml` | GitHub lists a workflow only once an event touches it, and these fire on tags alone. Touch both in one pull request and revert the line in the next |
+| `gh repo set-default <owner>/<fork>` in each clone | A clone with an `upstream` remote can default to upstream, and every check reading issues then reads the wrong tracker |
+
+Then add the fork's own content:
+
+- Templates under a manifest key of the fork's own, with core-tier
+  additions under `fork_core:` (SPEC, "Forks")
+- Rules that refine an upstream file in a fork-owned file beside it, never
+  as edits to the upstream file
+- Smoke checks in `tests/fork_checks.py`, dispositions in
+  `tests/fork_dispositions.py`, and chain examples in
+  `tools/fork_examples.py`, whose `CHAIN_EXAMPLES_DOC` names the fork-owned
+  document they go to
+- Procedures in fork-owned documents beside upstream's, so upstream's
+  `docs/` merge cleanly
+
+---
+
+## Guide documents
+
+Pending: #1892, #1872 and #1870 settle this section before the cut.
+ADR-047 renames the guide documents under `docs/` to kebab-case, ADR-048
+replaces the development journal with a lessons log, and #1872 folds
+onboarding into `CONTRIBUTING.md`. A project renames its files in the
+change that moves it to v3.0, not ahead of it.

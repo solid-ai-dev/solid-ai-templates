@@ -195,6 +195,7 @@ See `templates/core/agents.md` for structure, models, and formatting rules.
 
 - [System design and composition rules](docs/SPEC.md)
 - [Changelog](CHANGELOG.md)
+- [Migrating to v3.0](docs/migrating-to-v3.md)
 - [Project status and roadmap](https://github.com/solid-ai-dev/solid-ai-templates/milestones)
 - [Imbra's fork, with stacks and examples](https://github.com/Imbra-Ltd/imbra-ai-templates)
 - [Onboarding guide](docs/ONBOARDING.md)

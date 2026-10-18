@@ -242,6 +242,7 @@ stack and platform are test input only.
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
 | `docs/ONBOARDING.md` | Onboarding guide for new contributors |
 | `docs/PLAYBOOK.md` | Operational reference — how to add templates, validate a change, release |
+| `docs/migrating-to-v3.md` | Moving a 2.x project or fork to v3.0 |
 | `CHANGELOG.md` | Released versions and what changed in each; versions up to v2.63.0 are in the GitHub Releases (ADR-029) |
 | `SECURITY.md` | Private disclosure route, supported versions, scope, acknowledgement window |
 | `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules, branch and commit form |

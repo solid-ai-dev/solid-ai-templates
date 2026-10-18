@@ -23,6 +23,9 @@ alters no template carries no entry.
 
 ### Added
 
+- `docs/migrating-to-v3.md` moves a 2.x project or a pre-v3.0 fork to v3.0:
+  re-pinning to a fork, the split merge, restoring the templates it modified,
+  and the settings a new fork needs.
 - A fork keeps its templates under a top-level manifest key of its own and
   adds to every chain's core tier under `fork_core:`. The resolver reads
   every top-level list of entries as a section.
