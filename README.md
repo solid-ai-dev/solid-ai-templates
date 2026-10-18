@@ -14,10 +14,12 @@ further from your standards every sprint.
 
 This repo gives you composable templates that codify your team's
 conventions once — base rules, stack rules, company rules — and feed
-them to every agent on every project. Tax paid. Move on.
+the same conventions to every agent on every project. You get one
+source for them and one place to change a rule.
 
-Back to the work that actually moves the product. The spikes, the design
-conversations, the reviews that catch bugs instead of churning style nits.
+Whether a generated file makes the agent write better code is measured,
+not assumed, and so far the answer is mixed; see
+[What the benchmark shows](#what-the-benchmark-shows).
 
 ## What it does
 
@@ -33,6 +35,25 @@ shares. Stacks, platforms, process rules, the interview, examples and
 pre-resolved chains live in forks
 ([ADR-049](docs/decisions/049-forks-carry-stacks-and-process.md),
 [ADR-050](docs/decisions/050-what-stays-upstream.md)).
+
+## What the benchmark shows
+
+An efficacy benchmark has an agent build the same app from one spec,
+three times per arm, with no context file, a file generated from these
+templates, or a 39-line hand-written file. Hidden tests, security probes
+and a blind judge score each build. Round 4 (2026-10-17) found:
+
+- The hand-written file was the only one that read as better in both
+  runs
+- With a weaker model, every template-generated file lowered the share
+  of hidden tests passed against no file
+- Security gains showed on a few measures each: a signal at three runs
+  per arm, not proof
+- Every file made the generated code larger
+
+The summary and every figure are in
+[the round-4 report](docs/audits/2026-10-17-round-4.md). The benchmark
+runs in the Imbra fork, and its raw runs are archived privately.
 
 ## How to use
 
