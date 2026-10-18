@@ -28,6 +28,12 @@ import re
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))), "tools"))
+
+# One definition of what a manifest section is, shared with the resolver,
+# so a fork's own key is read here exactly as it is resolved there.
+from resolve import entry_sections, core_tier
 from lib import (ROOT, PASS, FAIL, ERR, write_report, print_verdict,
                  repository_files, template_files)
 
@@ -87,12 +93,12 @@ def _load_manifest():
         data = yaml.safe_load(f)
 
     entries = {}
-    for section in ("base", "platform", "frontend", "backend", "stacks"):
-        for entry in data.get(section, []):
+    for section in entry_sections(data):
+        for entry in data[section]:
             entries[entry["id"]] = entry
 
     file_to_id = {e["file"]: e["id"] for e in entries.values()}
-    return data.get("core", []), entries, file_to_id
+    return core_tier(data), entries, file_to_id
 
 
 def _stacks(entries):
@@ -945,9 +951,8 @@ def check_sys_03():
         manifest = yaml.safe_load(f)
 
     manifest_files = set()
-    for section in ("core", "base", "platform", "frontend",
-                    "backend", "stacks"):
-        for entry in manifest.get(section, []):
+    for section in entry_sections(manifest):
+        for entry in manifest[section]:
             if isinstance(entry, dict) and "file" in entry:
                 manifest_files.add(
                     entry["file"].replace("/", os.sep)
@@ -990,16 +995,14 @@ def check_sys_04():
 
     # Build id→file and file→depends_on(as files) maps
     id_to_file = {}
-    for section in ("core", "base", "platform", "frontend",
-                    "backend", "stacks"):
-        for entry in manifest.get(section, []):
+    for section in entry_sections(manifest):
+        for entry in manifest[section]:
             if isinstance(entry, dict):
                 id_to_file[entry["id"]] = entry["file"]
 
     file_manifest_deps = {}
-    for section in ("base", "platform", "frontend",
-                    "backend", "stacks"):
-        for entry in manifest.get(section, []):
+    for section in entry_sections(manifest):
+        for entry in manifest[section]:
             if isinstance(entry, dict):
                 dep_files = set()
                 for dep_id in entry.get("depends_on", []):
@@ -2229,20 +2232,21 @@ RESOLVE_WITH = (
 )
 
 
-def check_sys_19():
+def _resolve_cases(manifests, cases):
+    """Resolve each case's root in its planted manifest; return the misses.
+
+    A case is (manifest name, root, owed exit status, phrase the output owes).
+    """
     import tempfile
 
-    seen = Inspected()
-    seen.count("broken-manifest cases", BROKEN_CASES)
     failures = []
-
     with tempfile.TemporaryDirectory() as scratch:
-        for name, text in MANIFESTS.items():
+        for name, text in manifests.items():
             with io.open(os.path.join(scratch, name + ".yaml"), "w",
                          encoding="utf-8", newline="\n") as handle:
                 handle.write(text)
 
-        for name, root, want_code, want_phrase in BROKEN_CASES:
+        for name, root, want_code, want_phrase in cases:
             manifest = os.path.join(scratch, name + ".yaml")
             case = f"{root} in {name}"
             proc = subprocess.run(
@@ -2267,7 +2271,60 @@ def check_sys_19():
                     f"  {case}: the message is right but arrives inside a "
                     f"traceback, which a fork's maintainer reads as a crash"
                 )
+    return failures
 
+
+def check_sys_19():
+    seen = Inspected()
+    seen.count("broken-manifest cases", BROKEN_CASES)
+    failures = _resolve_cases(MANIFESTS, BROKEN_CASES)
+    return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-21 -- a fork's own key and its core-tier additions resolve
+# ---------------------------------------------------------------------------
+
+# A fork MUST NOT edit the keys upstream owns, so its templates live under a
+# key of its own and its additions to every chain under `fork_core`. The
+# resolver used to read five fixed keys, which left a fork nowhere legal to
+# put a template once the split moved it out of upstream.
+#
+# The planted manifest uses a key no tool names. Its stack depends on an
+# entry there, and `fork_core` adds a second; each case asserts one of them
+# reaches the chain. The upstream file is the control that the chain
+# resolved at all.
+
+FORK_MANIFEST = """core: [base-a]
+fork_core: [fork-readme]
+
+base:
+  - id: base-a
+    file: templates/core/quality.md
+
+acme:
+  - id: fork-readme
+    file: templates/core/docs.md
+  - id: fork-lib
+    file: templates/core/git.md
+
+stacks:
+  - id: stack-fork
+    file: templates/fixture/stack.md
+    depends_on: [fork-lib]
+"""
+
+FORK_CASES = [
+    ("fork", "stack-fork", 0, "templates/core/quality.md"),
+    ("fork", "stack-fork", 0, "templates/core/git.md"),
+    ("fork", "stack-fork", 0, "templates/core/docs.md"),
+]
+
+
+def check_sys_21():
+    seen = Inspected()
+    seen.count("fork-manifest cases", FORK_CASES)
+    failures = _resolve_cases({"fork": FORK_MANIFEST}, FORK_CASES)
     return seen.failures() + failures, seen.notes()
 
 
@@ -2493,6 +2550,9 @@ CHECKS = [
     {"id": "SYS-19", "spec": "SAIT-SMK-SYS-19-001A",
      "title": "resolve.py names a missing dependency and a dependency cycle",
      "fn": check_sys_19},
+    {"id": "SYS-21", "spec": "SAIT-SMK-SYS-21-001A",
+     "title": "A fork's own key and its core-tier additions resolve",
+     "fn": check_sys_21},
     {"id": "SYS-20", "spec": "SAIT-SMK-SYS-20-001A",
      "title": "A fork leaves upstream's manifest keys as it last merged them",
      "fn": check_sys_20},

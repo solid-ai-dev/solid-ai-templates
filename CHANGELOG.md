@@ -23,6 +23,9 @@ alters no template carries no entry.
 
 ### Added
 
+- A fork keeps its templates under a top-level manifest key of its own and
+  adds to every chain's core tier under `fork_core:`. The resolver reads
+  every top-level list of entries as a section.
 - `base-quality` states three language idioms as rules: a library writes
   nothing to the host's streams (`quality-library-output`), an optional
   dependency sits behind one module, and a test walks every raise.
