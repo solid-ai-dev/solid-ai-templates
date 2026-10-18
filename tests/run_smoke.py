@@ -2473,6 +2473,81 @@ def check_sys_20():
 
     return seen.failures() + failures, seen.notes() + [basis]
 
+# ---------------------------------------------------------------------------
+# SYS-22 -- a deprecation names a live replacement
+# ---------------------------------------------------------------------------
+
+# From 3.0 a template is never removed inside a major; it is deprecated, its
+# manifest entry naming the template that replaces it. A name that resolves
+# to nothing sends every project reading the field nowhere, and a name that
+# is itself deprecated sends it to a second retirement. Upstream deprecates
+# nothing yet, so planted manifests exercise both failing paths on every
+# run.
+
+DEPRECATION_CASES = [
+    ("a live replacement", """base:
+  - {id: base-old, file: a.md, deprecated: base-new}
+  - {id: base-new, file: b.md}
+""", []),
+    ("a replacement that does not exist", """base:
+  - {id: base-old, file: a.md, deprecated: base-gone}
+""", ["base-old names base-gone, which no entry carries"]),
+    ("a replacement that is deprecated too", """base:
+  - {id: base-old, file: a.md, deprecated: base-mid}
+  - {id: base-mid, file: b.md, deprecated: base-new}
+  - {id: base-new, file: c.md}
+""", ["base-old names base-mid, which is deprecated too"]),
+    ("a field that names no ID", """base:
+  - {id: base-old, file: a.md, deprecated: true}
+""", ["base-old carries deprecated: True, which names no ID"]),
+]
+
+
+def deprecation_findings(manifest):
+    """Each deprecation that names no live replacement, as one finding."""
+    entries = [e for v in manifest.values() if isinstance(v, list)
+               for e in v if isinstance(e, dict) and "id" in e]
+    by_id = {e["id"]: e for e in entries}
+    found = []
+    for entry in entries:
+        if "deprecated" not in entry:
+            continue
+        target = entry["deprecated"]
+        if not isinstance(target, str):
+            found.append(f"{entry['id']} carries deprecated: {target}, "
+                         f"which names no ID")
+        elif target not in by_id:
+            found.append(f"{entry['id']} names {target}, which no entry "
+                         f"carries")
+        elif "deprecated" in by_id[target]:
+            found.append(f"{entry['id']} names {target}, which is "
+                         f"deprecated too")
+    return found
+
+
+def check_sys_22():
+    if not HAS_YAML:
+        return [MISSING_YAML]
+
+    seen = Inspected()
+    failures = []
+    seen.count("planted manifests", DEPRECATION_CASES)
+    for label, text, want in DEPRECATION_CASES:
+        got = deprecation_findings(yaml.safe_load(text))
+        if got != want:
+            failures.append(f"  planted, {label}: found {got}, owed {want}")
+
+    manifest = os.path.join(ROOT, "templates", "manifest.yaml")
+    with io.open(manifest, encoding="utf-8") as handle:
+        data = yaml.safe_load(handle)
+    marked = [e for v in data.values() if isinstance(v, list)
+              for e in v if isinstance(e, dict) and "deprecated" in e]
+    seen.count("deprecated entries in the manifest", marked, floor=0)
+    for finding in deprecation_findings(data):
+        failures.append(f"  {finding}")
+    return seen.failures() + failures, seen.notes()
+
+
 CHECKS = [
     {"id": "SYS-01", "spec": "SAIT-SMK-SYS-01-001A",
      "title": "DEPENDS ON paths resolve to existing files", "fn": check_sys_01},
@@ -2556,6 +2631,9 @@ CHECKS = [
     {"id": "SYS-20", "spec": "SAIT-SMK-SYS-20-001A",
      "title": "A fork leaves upstream's manifest keys as it last merged them",
      "fn": check_sys_20},
+    {"id": "SYS-22", "spec": "SAIT-SMK-SYS-22-001A",
+     "title": "A deprecation names a live replacement",
+     "fn": check_sys_22},
 ]
 
 

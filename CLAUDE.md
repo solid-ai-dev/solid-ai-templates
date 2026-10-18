@@ -399,6 +399,8 @@ Run `py tests/run_smoke.py` before every PR. It checks:
   `SAIT_UPSTREAM_REF`; upstream sets none and passes against itself
 - SYS-21: a fork's templates under a key of its own, and its `fork_core`
   additions to every chain, resolve
+- SYS-22: a manifest entry's `deprecated` names an entry that exists and
+  is not itself deprecated
 - Prompt builds for all stacks
 
 ## 6. Session protocol
