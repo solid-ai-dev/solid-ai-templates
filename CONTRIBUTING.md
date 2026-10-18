@@ -9,6 +9,14 @@ step-by-step procedure for each kind of change.
 Start there if you have not worked in this repository before. Come back here
 for the rules your pull request is checked against.
 
+## What belongs upstream
+
+This repository carries the composition engine and the policy every team
+shares. Stacks, platforms, workflow and process rules, and the interview live
+in forks, so a change to one of those goes to the fork that carries it, such
+as [Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
+ADR-050 in `docs/decisions/` sets the boundary.
+
 ## Before you open a pull request
 
 Run the structural checks. They need Python and PyYAML — `pip install
@@ -18,6 +26,15 @@ pyyaml` — and they take about a second:
 py tests/run_smoke.py
 ```
 
+Run fork sync too, which merges your change into a simulated fork and runs
+smoke on the result. If you edited a template's prose, also run the
+templates' own checks against this repository. CI runs both:
+
+```bash
+py tests/run_fork_sync.py
+py tests/run_conformance.py
+```
+
 If you edited anything under `templates/`, regenerate the derived files as
 well, and commit the result with your change:
 
@@ -25,8 +42,9 @@ well, and commit the result with your change:
 py tools/sync.py
 ```
 
-A pull request whose `generated/` files do not match its templates fails CI.
-`py tools/sync.py --check` reports the mismatch without writing anything.
+A pull request whose generated sections in `README.md` and `docs/SPEC.md` do
+not match its templates fails CI. `py tools/sync.py --check` reports the
+mismatch without writing anything.
 
 ## What a change has to carry
 
@@ -43,11 +61,9 @@ A pull request whose `generated/` files do not match its templates fails CI.
   `docs/decisions/TEMPLATE.md`
 - **What it costs every chain carrying it.** A rule added to a widely
   resolved file is read by every project on those chains, on every turn.
-  Nothing refuses the size; `README.md`'s model-limits table reports it
-  per stack category beside the smallest context window that still fits,
-  and `py tools/sync.py --check` fails when that table drifts from the
-  tree. Crossing to a larger window is refused: SYS-16 fails until the
-  new tier is recorded in `tests/context-tiers.txt` in the same change.
+  Nothing refuses the size, but crossing to a larger context window is
+  refused: SYS-16 fails until the new tier is recorded in
+  `tests/context-tiers.txt` in the same change.
   Say in the pull request what the addition is worth, and prefer stating a
   widened rule inside the paragraph that already carries the narrow version
 

@@ -8,18 +8,21 @@ context files.
 
 ## Output files
 
-| File | When to use |
-|------|-------------|
-| `CLAUDE.md` | Claude Code is the primary agent |
-| `AGENTS.md` | Cross-agent compatibility, and the fallback for agents with no native file |
+| File | Role |
+|------|------|
+| `AGENTS.md` | The cross-agent file, read by any agent without a native file |
+| `CLAUDE.md` | The file Claude Code reads |
 
-Both files use the same structure. Generate `CLAUDE.md` for Claude
-Code projects, `AGENTS.md` for everything else, or both for maximum
-coverage. A single `AGENTS.md` is sufficient if no Claude-specific
-rules are required.
+Every project MUST carry both, whichever agent it uses:
 
-An agent with a native context file takes that file rather than
-`AGENTS.md`. Exactly one table states which file each agent takes --
+- Generate both files with the same rules
+- `CLAUDE.md` MAY instead import `AGENTS.md` (`@AGENTS.md`) and add only
+  Claude-specific rules, so the rules are written once
+- Never let the two disagree: a change to one is a change to both
+
+An agent with a native context file of another name also takes that file,
+beside the two required ones. Exactly one table states which file each
+agent takes --
 the output-file-by-agent table in the documentation rules. Every other
 copy MUST be generated from it rather than written out, and a project
 that renders one into a README MUST gate the copy with the same
@@ -70,11 +73,9 @@ These apply to both models; the review process checks them.
   applies on the next turn — no changelogs, architecture notes, or
   progress logs. Keep the qualifier or scope a rule needs to be
   followed; never compress away a load-bearing clause. Optimize for
-  clarity, not bytes (see `docs/design/agent-context-tradeoffs.md` and
-  `templates/workflow/compression.md`).
-- **Concise rules.** Keep necessary scope and qualifiers. Length alone does
-  not warrant an ADR; apply the decision threshold in
-  `templates/core/docs.md` and place explanations in their relevant docs.
+  clarity, not bytes (see `docs/design/agent-context-tradeoffs.md`).
+- **Concise rules.** Keep necessary scope and qualifiers, and place
+  explanations in the documents they belong to, not in the context file.
 - **Single source of truth.** Never restate a rule that is
   authoritative in a skill, ADR, README, or template — point to it.
   Duplicated rules drift, and the agent gets no signal which copy
@@ -110,9 +111,9 @@ hold; a failing item is a fix, not a note:
 
 ## Inline model
 
-All rules are inlined — the output file is self-contained. Use numbered
-headings for groups and subsections to enable cross-referencing between
-documents (e.g. "see CLAUDE.md section 2.3").
+All rules are inlined — the output file is self-contained. Numbered
+headings for groups and subsections let other documents cross-reference a
+rule (e.g. "see CLAUDE.md section 2.3").
 
 Add `Model: inline` to section 1.1 so agents know the file is
 self-contained and no external templates need to be read.
@@ -165,26 +166,25 @@ of truth)]
 [Which templates to verify, when to run]
 
 ## 6. Session protocol
-Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
-### 6.1 Start of session
-[templates/workflow/scope.md — Session startup + Mandatory startup block]
-### 6.2 During the session
-[templates/workflow/scope.md — During work]
-### 6.3 End of session
-[templates/workflow/scope.md — End of session audit. Render this
-ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
-with an imperative — "Read scope.md (End of session audit) and execute
-each item sequentially; do not summarize or skip." NEVER paraphrase the
-checklist into a short bullet list: that silently drops steps and the
-"print and execute sequentially" enforcement, producing a thin wrap-up.]
+[The project's own: how a session starts, proceeds and ends. Where the
+project keeps an end-of-session checklist, render it ONE of two ways:
+inline it VERBATIM, or hard-delegate with an imperative to read it and
+execute each item sequentially, without summarizing or skipping. NEVER
+paraphrase the checklist into a short bullet list: that silently drops
+steps and the "execute sequentially" enforcement.]
 ```
 
-Top-level sections 1–6 are role-fixed (§4 is always Identity, §5 is
-always Review) — never renumber and never omit them. A top-level
-section that does not apply keeps its numbered heading with a one-line
-`Not applicable — <reason>` body (e.g. §4 Identity for a backend
-service). Omit only non-applicable subsections (e.g. 3.2+ if only
-testing applies). This applies to both models.
+The layout above is a default, not a contract. A project MAY order,
+number and name its sections its own way. Whatever the layout, the file
+MUST carry each part the default names:
+
+- the project's identity, structure and commands
+- the rules it adopts
+- how a change is reviewed
+- its answers to the questions every project answers
+
+A part that does not apply is stated as not applicable, never dropped
+silently. This applies to both models.
 
 ---
 
@@ -282,18 +282,12 @@ Follow templates/core/review.md priority order, apply templates/core/quality.md 
 language-specific templates as the standard.
 
 ## 6. Session protocol
-Follow `templates/workflow/scope.md` for scope guard and end-of-session audit.
-### 6.1 Start of session
-[templates/workflow/scope.md — Session startup + Mandatory startup block]
-### 6.2 During the session
-[templates/workflow/scope.md — During work]
-### 6.3 End of session
-[templates/workflow/scope.md — End of session audit. Render this
-ONE of two ways: inline the full checklist VERBATIM, or hard-delegate
-with an imperative — "Read scope.md (End of session audit) and execute
-each item sequentially; do not summarize or skip." NEVER paraphrase the
-checklist into a short bullet list: that silently drops steps and the
-"print and execute sequentially" enforcement, producing a thin wrap-up.]
+[The project's own: how a session starts, proceeds and ends. Where the
+project keeps an end-of-session checklist, render it ONE of two ways:
+inline it VERBATIM, or hard-delegate with an imperative to read it and
+execute each item sequentially, without summarizing or skipping. NEVER
+paraphrase the checklist into a short bullet list: that silently drops
+steps and the "execute sequentially" enforcement.]
 ```
 
 ---
@@ -392,14 +386,16 @@ extend the root.
 
 ---
 
-## Companion documents
+## Questions every project answers
+[ID: agents-project-questions]
 
-All three models MUST also generate:
-- `docs/ONBOARDING.md` — following the structure in
-  `templates/core/docs.md`
-- `docs/PLAYBOOK.md` — following the structure in `templates/core/docs.md`
-- `docs/dev-journal.md` — following the structure in
-  `templates/core/docs.md`
+The templates answer none of these, because each answer is one team's way
+of working. A generated context file MUST state the project's answer to
+each, or name it as open for the project to decide:
+
+- Who approves a change?
+- How is work tracked?
+- What is a release?
 
 ---
 

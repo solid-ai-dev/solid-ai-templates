@@ -21,10 +21,18 @@ conversations, the reviews that catch bugs instead of churning style nits.
 
 ## What it does
 
-- Build `CLAUDE.md` or `AGENTS.md` from reusable layers — base, backend/frontend, stack
-- Fork and extend — layer your team's conventions on the base without modifying it
-- Codify industry standards — 12-factor app, OWASP, SOLID, SemVer, conventional commits
-- Assemble templates you need, override if needed or create new ones
+- Build `AGENTS.md` and `CLAUDE.md` from reusable layers — core, backend/frontend,
+  and a stack from a fork
+- Fork and extend — layer your team's stacks and process on the shared policy
+  without modifying it
+- Codify industry standards — 12-factor app, OWASP, SOLID
+- Assemble the templates you need, override where needed, or create new ones
+
+This repository holds the composition engine and the policy every team
+shares. Stacks, platforms, process rules, the interview, examples and
+pre-resolved chains live in forks
+([ADR-049](docs/decisions/049-forks-carry-stacks-and-process.md),
+[ADR-050](docs/decisions/050-what-stays-upstream.md)).
 
 ## How to use
 
@@ -34,7 +42,7 @@ or similar). The optional `tools/` scripts also need Python 3 and
 PyYAML (`pip install pyyaml`); commands below use `python3`, which
 on Windows is `py`.
 
-**Output:** a `CLAUDE.md` or `AGENTS.md` file placed at your project
+**Output:** `AGENTS.md` and `CLAUDE.md`, placed at your project
 root, containing coding conventions tailored to your stack. Works
 for new projects and refactoring alike — the context file describes
 how code *should be written*, giving your agent a consistent target
@@ -42,197 +50,132 @@ whether starting from scratch or improving existing code. Review and
 adjust the output before adopting it — results vary by model and
 prompt size.
 
-### Try it — clone and point the agent at the templates
+Upstream alone ships no stacks and no interview, so a project generates
+its context file from a fork: use one, or fork this repository.
 
-*Fastest path. The agent picks the stack on its own — least
-input from you, most variance in output.*
+### Use a fork
 
-Clone the repo and tell the agent to generate from it:
+For Imbra's stacks, platforms and process, use
+[imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates). It
+carries the interview and a resolved chain for each stack; its README
+describes how to hand them to your agent.
 
-```bash
-git clone https://github.com/solid-ai-dev/solid-ai-templates.git
-```
+### Fork it
 
-1. Open your agent in your project directory
-2. Tell the agent:
-
-```
-Use solid-ai-templates/ to generate a CLAUDE.md for this
-project. Start by reading templates/manifest.yaml to discover
-the available stacks. Load every id in its core: list, then
-follow the [DEPENDS ON] chain for the stack that fits. The
-resolver seeds the core tier; a template may declare a core
-file as well, but not every core file is declared, so the
-chain alone is not enough.
-```
-
-3. The agent picks a matching stack, resolves the chain, and
-   drafts the file
-4. Review, adjust, and place at your project root
-
-### Use it — clone and run the interview
-
-*Guided path. The agent asks about your project before generating —
-slower, but tighter fit to your context.*
-
-Clone the templates and let the agent guide you through setup:
+To carry your own stacks, platforms and process, fork this repository on
+GitHub and keep it current by merging upstream:
 
 ```bash
-git clone https://github.com/solid-ai-dev/solid-ai-templates.git
+git remote add upstream https://github.com/solid-ai-dev/solid-ai-templates.git
+git fetch upstream
+git merge upstream/main
 ```
 
-1. Open your agent in your project directory
-2. Tell the agent to read `solid-ai-templates/templates/INTERVIEW.md`
-3. The agent asks about your project, proposes a stack, and reads
-   the relevant templates
-4. Confirm the stack — the agent generates `CLAUDE.md` or `AGENTS.md`
-5. Place the generated file at your project root
+A fork follows the rules in
+[ADR-049](docs/decisions/049-forks-carry-stacks-and-process.md):
 
-The interview tends to produce a tighter fit than the
-manifest-discovery path, because the agent gathers project
-specifics from you before resolving the dependency chain (base
-rules, layer rules, stack rules). Results depend on the model and
-context window available.
+- Append under `stacks:`, `platform:` and top-level manifest keys of your
+  own, and add to every chain's core tier under `fork_core:`
+- Never edit `core:`, `base:`, `backend:` or `frontend:` in the manifest;
+  smoke check SYS-20 fails when a fork does
+- Keep `README.md`, `CLAUDE.md` and `CHANGELOG.md` as your own, resolving
+  them in your favour on every merge
+- Merge an upstream commit carrying the `Fork-merge: ours` trailer in two
+  steps: its parent normally, then the commit with `git merge -s ours`.
+  Then move your own templates out of upstream's keys into your own key
+  and `fork_core:`
 
-### Adopt it — vendor as a submodule
-
-For teams that want version-pinned templates inside their repo:
-
-```bash
-cd my-project
-git submodule add https://github.com/solid-ai-dev/solid-ai-templates.git docs/solid-ai-templates
-```
-
-1. Open your agent in your project directory
-2. Tell the agent to read `docs/solid-ai-templates/templates/INTERVIEW.md`
-3. Follow the interview — the agent reads templates from the
-   submodule and generates your context file
-4. Commit the generated file alongside the submodule
-
-To update templates: `git submodule update --remote`. Then
-re-run the interview to regenerate your context file with the
-latest rules.
-
-## Model limitations
+### Take an update
 
 Template updates are selective: adopt new conventions for a project need or
 material risk, not merely because a tag exists. Existing adopted rules remain
 effective; declining a new rule needs no ADR or ticket. See the
 [consumer migration guidance](docs/PLAYBOOK.md#adopt-a-template-policy-update).
 
-<!-- generated:readme-model-limits -->
-| Stack category | Stacks | Largest chain | Prompt | Min context |
-|----------------|--------|---------------|--------|-------------|
-| abstract | 2 | `stack-python-service` — 557K chars | ~159K tokens | 200K |
-| backend | 8 | `stack-django` — 572K chars | ~163K tokens | 200K |
-| embedded | 1 | `stack-c-embedded` — 364K chars | ~104K tokens | 128K |
-| hypermedia | 1 | `stack-htmx` — 383K chars | ~109K tokens | 128K |
-| library | 3 | `stack-python-lib` — 487K chars | ~139K tokens | 200K |
-| static | 2 | `stack-tutorial` — 521K chars | ~149K tokens | 200K |
-<!-- /generated:readme-model-limits -->
-
-Measured rather than estimated. Each row takes the largest resolved
-chain in that category — the file under `generated/` an adopter
-attaches — and converts it at 3.5 characters per token, a rate held
-below the four-per-token rule of thumb because Markdown carrying
-tables, fenced code and hyphenated identifiers tokenizes worse than
-prose. The minimum window adds 18K tokens for the interview and the
-file the model has to write back, then rounds up to the next window a
-model actually sells.
-
-`python3 tools/sync.py` regenerates the table from the chains and
-`python3 tools/sync.py --check` fails when it drifts, so the figures move
-when a base template grows instead of ageing quietly.
-
-- **Output token limit < 16K** (e.g. GPT-4o default): generated file
-  may be truncated — generate section by section or set `max_tokens`
-  to the model maximum
-- **Output token limit 32K+**: full inline file fits in one pass
-
 ## What a project picks
 
-A project does not pick one template. It picks a **stack**, a **platform**,
-and any **extras** it needs, and each one resolves independently: the core
-tier plus that template's own `[DEPENDS ON]` tree. An extra is guaranteed
-nothing from the stack it sits beside, which is why it can be added to any
-of them.
+A project does not pick one template. It picks a **stack** and a
+**platform** from a fork, and any **extras** it needs, and each one resolves
+independently: the core tier plus that template's own `[DEPENDS ON]` tree.
+An extra is guaranteed nothing from the stack it sits beside, which is why
+it can be added to any of them.
 
 ```
 your project
-  |-- one stack        python-fastapi, go-service, htmx, ...
-  |-- one platform     github, gitlab, linear
-  `-- any extras       caching, jobs, release, deployment, ...
+  |-- one stack        from a fork
+  |-- one platform     from a fork
+  `-- any extras       caching, jobs, deployment, ...
 ```
 
-`python3 tools/resolve.py --roots` lists every root a project can pick. The
-stacks are below; the rest are the extras table that follows them.
+`python3 tools/resolve.py --roots` lists every root a project can pick. In
+upstream these are the shared templates below; a fork adds its stacks and
+platforms.
 
 <!-- generated:readme-root-counts -->
-Measured: 17 stacks and 20 orthogonal templates, 37 roots in all. An extra
-resolves to the 7 core-tier files plus 1 to 5 of its own.
+Measured: 0 stacks and 38 orthogonal templates, 38 roots in all. An extra
+resolves to the 6 core-tier files plus 0 to 5 of its own.
 <!-- /generated:readme-root-counts -->
 
-## Supported stacks
+## Stacks
+
+Upstream ships no stacks, so this table is empty here. A fork's sync fills
+it with the stacks that fork carries.
 
 <!-- generated:readme-stacks -->
 | Template | Layer | Description |
 |----------|-------|-------------|
-| `templates/stack/htmx.md` | hypermedia | HTMX 2.x, Alpine.js, SSE, OOB swaps, partial responses |
-| `templates/stack/static-site-astro.md` | static | Islands architecture, client directives, content collections |
-| `templates/stack/static-site-tutorial.md` | static | Multi-chapter tutorial, diagrams, CC BY-NC-SA |
-| `templates/stack/python-lib.md` | library | Installable package or CLI tool, mypy, ruff, pytest |
-| `templates/stack/python-service.md` | abstract | Generic Python web service, SQLAlchemy, Alembic |
-| `templates/stack/python-flask.md` | backend | Sync REST API, factory pattern, blueprints |
-| `templates/stack/python-fastapi.md` | backend | Async REST API, Pydantic v2, DI, OpenAPI |
-| `templates/stack/python-django.md` | backend | Full web framework, ORM, DRF, admin |
-| `templates/stack/go-lib.md` | library | Importable library or CLI binary |
-| `templates/stack/go-service.md` | abstract | Generic Go HTTP service, chi, structured logging |
-| `templates/stack/go-echo.md` | backend | REST API, Echo v4, middleware, validation |
-| `templates/stack/node-express.md` | backend | Minimal REST API, Zod validation, Supertest |
-| `templates/stack/node-nestjs.md` | backend | Modules, controllers, providers, guards, pipes, DI |
-| `templates/stack/go-grpc.md` | backend | gRPC service, bufconn, errgroup |
-| `templates/stack/python-grpc.md` | backend | gRPC service, grpcio-aio, proto design |
-| `templates/stack/nodejs-lib.md` | library | TypeScript npm package or CLI, tsup, Vitest |
-| `templates/stack/c-embedded.md` | embedded | GCC + CMake, Unity tests, HAL, binary + .a |
 <!-- /generated:readme-stacks -->
 
-## Platforms and extras
+## Shared templates
 
-Picked independently of the stack, each resolving as its own root. The
-examples under `examples/` cite several of these, so a reader who opens one
-meets templates the stacks table does not list.
+Picked independently of the stack, each resolving as its own root.
 
 <!-- generated:readme-extras -->
 | Template | Kind | Description |
 |----------|------|-------------|
+| `templates/backend/api.md` | backend | API-first, OpenAPI, versioning, deprecation, pagination |
+| `templates/backend/auth.md` | backend | Authn/authz, JWT, RBAC, sessions, API keys |
 | `templates/backend/caching.md` | backend | Cache-aside, TTL, invalidation, resilience, stampede |
+| `templates/backend/concurrency.md` | backend | Threads vs. processes vs. async, shared state, structured concurrency |
+| `templates/backend/database.md` | backend | Migrations, transactions, no raw SQL, connection pooling |
 | `templates/backend/edge.md` | backend | Reverse proxy / edge — TLS termination, forwarded headers, upstream routing, timeouts, edge security |
+| `templates/backend/errors.md` | backend | Classification, propagation, recovery, external failures |
+| `templates/backend/features.md` | backend | Feature flags, rollout strategy, experimentation |
+| `templates/backend/grpc.md` | backend | Proto design, status codes, interceptors, health check |
+| `templates/backend/http.md` | backend | URI design, methods, headers, HATEOAS, auth, errors |
 | `templates/backend/jobs.md` | backend | Background jobs, idempotency, retry, DLQ, scheduling |
+| `templates/backend/messaging.md` | backend | Brokers, producers, consumers, schema, DLQ, observability |
 | `templates/backend/microservices.md` | backend | Service boundaries, inter-service comms, saga, contract testing |
 | `templates/backend/monitoring.md` | backend | Key metrics, thresholds, alerts, dashboards, incidents |
+| `templates/backend/observability.md` | backend | Log levels, log format, health check, error visibility |
+| `templates/backend/quality.md` | backend | Layered architecture, security, performance, API stability |
 | `templates/backend/webhooks.md` | backend | Inbound webhook intake, edge signature verification, fast-ack, retry amplification |
-| `templates/workflow/360.md` | workflow | 360-degree project analysis — four stakeholder perspectives, grading |
 | `templates/core/agents.md` | core | Output structure, models (inline/hybrid), formatting rules |
-| `templates/workflow/ai-workflow.md` | workflow | AI-assisted development lifecycle, work item hierarchy |
-| `templates/workflow/communication.md` | workflow | Communication preferences — concise output, shorthand verbs, scope-asking |
-| `templates/workflow/compression.md` | workflow | Re-verifying summaries, tables and rollups derived from verified research |
+| `templates/infra/cicd.md` | infra | Pipeline stages, triggers, environments, IaC, deployment |
+| `templates/core/config.md` | core | Env vars, secrets, fail-fast validation |
+| `templates/infra/containers.md` | infra | Dockerfile, runtime security, resource limits, Kubernetes |
 | `templates/data/data-governance.md` | data | Classification, PII handling, retention, ownership, audit trail |
 | `templates/data/data-migration.md` | data | Versioned migrations, zero-downtime, rollback strategies |
+| `templates/data/data-modeling.md` | data | Schema design, naming, normalization, relationships, data types |
+| `templates/data/data-quality.md` | data | Data sourcing, completeness, freshness, research, scoring — data-heavy projects |
 | `templates/infra/deployment.md` | infra | Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets |
-| `templates/workflow/release.md` | workflow | Semver, version bump propagation, backward compat, cut-over |
-| `templates/core/skills.md` | core | Skill authoring — when to write one, frontmatter, triggering, structure, scripts |
-| `templates/workflow/two-pass-review.md` | workflow | Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue |
-| `templates/platform/github.md` | platform | CodeQL, GitHub Actions, gitleaks action, push protection |
-| `templates/platform/gitlab.md` | platform | Semgrep OSS, GitLab CI/CD, gitleaks CLI |
-| `templates/platform/linear.md` | platform | Label groups, native priority, sub-issues, code-host sync |
+| `templates/security/devsecops.md` | security | SAST, SCA, SBOM, secret detection, license compliance |
+| `templates/core/docs.md` | core | Rule language, documentation standards, ADR, diagrams, docs-as-code |
+| `templates/core/git.md` | core | Committer identity, commits, branching, PR workflow, versioning |
+| `templates/core/oop.md` | core | SOLID, OOP, GoF design patterns, AOP guidance |
+| `templates/core/quality.md` | core | Architecture, code style, calibration, tool trust, testing |
+| `templates/core/quality-gates.md` | core | Three-layer gate model (editor, pre-commit, CI), thresholds |
+| `templates/core/review.md` | core | Peer review priority, MUST/SHOULD checklists, deviation rules |
+| `templates/security/security.md` | security | Application security rules — input, output, injection, auth, sessions, TLS, headers |
+| `templates/core/testing.md` | core | Test pyramid, coverage thresholds, naming conventions |
+| `templates/frontend/quality.md` | frontend | CSS conventions, performance, SEO & analytics |
+| `templates/frontend/static-site.md` | frontend | Abstract SSG rules — content, assets, SEO |
+| `templates/frontend/ux.md` | frontend | UX principles, WCAG 2.1 AA, responsive breakpoints |
 <!-- /generated:readme-extras -->
 
-`generated/` holds a pre-resolved chain for each stack and none for these.
-A stack chain spans dozens of files and is tedious to assemble by hand,
-which is what a pre-resolved file is for; an extra brings a handful at
-most, so reading the template and the core tier is the shorter path.
-Attach the template directly, or run `python3 tools/resolve.py <root>
---concat` to get its chain the same way.
+Upstream commits no pre-resolved chains. Attach a template and the core
+tier directly, or run `python3 tools/resolve.py <root> --concat` to get its
+chain in one piece.
 
 ## Supported agents
 
@@ -243,7 +186,7 @@ Attach the template directly, or run `python3 tools/resolve.py <root>
 | Cursor | `.cursor/rules/project.mdc` |
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | OpenAI Codex CLI | `AGENTS.md` |
-| Generic / other | `AI_CONTEXT.md` |
+| Generic / other | `AGENTS.md` |
 <!-- /generated:readme-agents -->
 
 See `templates/core/agents.md` for structure, models, and formatting rules.
@@ -253,7 +196,7 @@ See `templates/core/agents.md` for structure, models, and formatting rules.
 - [System design and composition rules](docs/SPEC.md)
 - [Changelog](CHANGELOG.md)
 - [Project status and roadmap](https://github.com/solid-ai-dev/solid-ai-templates/milestones)
-- [Example generated context files](examples/)
+- [Imbra's fork, with stacks and examples](https://github.com/Imbra-Ltd/imbra-ai-templates)
 - [Onboarding guide](docs/ONBOARDING.md)
 - [Operational playbook](docs/PLAYBOOK.md)
 - [Architecture decision records](docs/decisions/)

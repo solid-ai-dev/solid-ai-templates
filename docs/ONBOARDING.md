@@ -6,19 +6,24 @@ to first PR.
 ## What this project is
 
 A composable, SOLID-inspired template system for generating AI agent context
-files. Instead of writing a `CLAUDE.md` or `AGENTS.md` from scratch for every
-project, you compose templates from three layers:
+files. This repository is upstream: it holds the composition engine and the
+policy every team shares.
 
 ```
 templates/core/       → rules that apply to every project; security/,
-                        workflow/, infra/, data/ and language/ sit beside it
+                        infra/ and data/ sit beside it
 templates/backend/    → rules for backend services and APIs
 templates/frontend/   → rules for frontend and UI projects
-templates/stack/      → concrete, technology-specific rules
+templates/fixture/    → test input for the checks; no project reads it
+tools/, tests/        → the resolver, sync, and the checks
 ```
 
-An agent reads the relevant templates, asks a short interview, and outputs
-a ready-to-use context file for Claude Code, Cursor, Copilot, or Codex CLI.
+Stacks, platforms, workflow and process rules, and the interview live in
+forks. A project uses a fork, or forks upstream to make its own, and hands
+its agent that fork's interview and a resolved chain. The first fork is
+[Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates);
+a stack template change belongs there, not here. ADR-049 and ADR-050 in
+`docs/decisions/` set the boundary.
 
 Read `docs/SPEC.md` for the full composition model before contributing.
 
@@ -26,16 +31,9 @@ Read `docs/SPEC.md` for the full composition model before contributing.
 
 - Git
 - A Markdown editor (any)
-- Python 3.x — for running the structural smoke tests and the
-  conformance runner
+- Python 3.x — for running the smoke, conformance and fork-sync runners
 - GitHub CLI (`gh`), authenticated — for the issue, pull-request and
-  release steps in `docs/PLAYBOOK.md`, and for the conformance checks
-  that read milestones, labels and workflow runs. Without it those
-  checks fail rather than skip, since a check that cannot reach its
-  subject has not verified it
-- An AI agent for validation (Claude Code recommended), and an API key
-  for one of the model providers in `tests/providers.py` — for a live run
-  of the E2E runner
+  release steps in `docs/PLAYBOOK.md`
 
 ## First steps
 
@@ -63,38 +61,36 @@ pre-commit install
 | `docs/SPEC.md` | The full composition model — inheritance, OVERRIDE, EXTEND, IDs |
 | `CLAUDE.md` | Rules for contributing to this repo |
 | `templates/manifest.yaml` | Machine-readable dependency graph |
-| `tools/resolve.py` | Dependency resolver — resolves a stack's full template chain |
-| `generated/` | Pre-resolved template chains — one file per stack |
-| `examples/` | Complete generated CLAUDE.md files — the target output |
+| `tools/resolve.py` | Dependency resolver — resolves a template's full chain |
+| `docs/decisions/` | Decision records, including the fork model (ADR-049, ADR-050) |
 
 ## How templates relate
 
-Every stack template starts with `[DEPENDS ON: ...]` listing its parent
-templates. Read those parent templates first — the stack only adds or overrides
-what differs from the parent.
+Every template that builds on others starts with `[DEPENDS ON: ...]` listing
+its parent templates. Read those parent templates first — the child only adds
+or overrides what differs from the parent. Every chain starts with the core
+tier.
 
 Example chain:
 ```
-templates/core/git.md + templates/core/quality.md + ...
+templates/core/quality.md + templates/core/git.md + ...
     ↓
-templates/stack/python-lib.md
+templates/backend/http.md
     ↓
-templates/stack/python-service.md
-    ↓
-templates/stack/python-flask.md
+templates/backend/api.md
 ```
 
-To see the full resolved chain for any stack, run:
+To see the full resolved chain for any root, run:
 ```bash
-py tools/resolve.py stack-flask          # print file list
-py tools/resolve.py stack-flask --concat # print concatenated content
+py tools/resolve.py --roots              # list every root
+py tools/resolve.py backend-api          # print file list
+py tools/resolve.py backend-api --concat # print concatenated content
 ```
-
-Or read the pre-resolved file directly: `generated/stack-flask.md`
 
 ## Validate your understanding
 
-First, run the structural smoke tests to confirm the repo is in good shape:
+CI runs each of the runners below on every pull request. First, run the
+structural smoke tests to confirm the repo is in good shape:
 
 ```bash
 py tests/run_smoke.py
@@ -107,27 +103,21 @@ repository — it is a consumer of its own base tier:
 py tests/run_conformance.py
 ```
 
-Both runners end with a `VERDICT:` line, printed after the report path so
+Then run fork sync, which merges your change into a simulated fork and
+runs smoke on the result, so a change that would break a fork's merge
+fails here:
+
+```bash
+py tests/run_fork_sync.py
+```
+
+The runners end with a `VERDICT:` line, printed after the report path so
 that reading the last line alone cannot report success over a failed run.
 A conformance run is not clean until any reading it lists is read: the
 counts cover the automatic verdicts only.
 
-Then run the system end-to-end with an agent:
-
-1. Open Claude Code in any project directory
-2. Attach `templates/INTERVIEW.md` and `templates/stack/python-flask.md`
-3. Ask: "Generate a CLAUDE.md for this project using templates/core/agents.md
-   format"
-4. Review the output — this is what users get
-
-Or use the automated E2E runner. It calls a model and costs money, so name
-the provider in the shell; `docs/PLAYBOOK.md` "Run the test suite" lists the
-providers, the model variable and the cadence the suite runs on:
-
-```bash
-E2E_PROVIDER=anthropic py tests/run_e2e.py STK-11   # Flask stack
-py tests/run_e2e.py --dry-run STK-11                 # build the prompt, call no model
-```
+To see what a project receives, use a fork: its interview and a resolved
+stack chain are the input an agent generates a context file from.
 
 ## Making your first contribution
 
@@ -138,7 +128,6 @@ fixing content, and submitting a PR.
 
 - Rules use RFC 2119 keywords: MUST, MUST NOT, SHOULD, MAY
 - Every section that another template might reference needs `[ID: ...]`
-- Stack files follow the `<prefix>-<name>.md` naming convention (see `CLAUDE.md`)
 - `templates/manifest.yaml` must be updated whenever a file is added, removed, or
   renamed
 

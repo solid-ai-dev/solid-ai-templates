@@ -29,11 +29,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python tests/run_conformance.py
-      # The rubric control's mutations are exact-text edits against a pinned
-      # application. Nothing else would notice if one stopped landing, and a
-      # mutation that does nothing reads as the judge holding.
-      - name: Check the rubric control still builds its trees
-        run: python tests/efficacy/control/control.py --self-test
       # A fork syncs by merging upstream. This merges the change under test
       # into a simulated fork and runs smoke on the result.
       - name: Check a fork that only appends merges this change

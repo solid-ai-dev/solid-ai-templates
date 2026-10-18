@@ -9,11 +9,9 @@ merged PR and a deployed artifact — humans approve, machines execute.
 
 ## Quality gates
 
-- Stages 2–4 (lint, test, security scan) are defined in detail in
-  `templates/core/quality-gates.md` — categories, thresholds, and tool
-  constraints
-- Platform-specific CI integration is in `platform/github.md` or
-  `platform/gitlab.md`
+- Stages 2–4 (lint, test, security scan) run the project's own gates.
+  Which gates run, and at which thresholds, is the project's choice
+- How a gate's check is built is in `templates/core/quality-gates.md`
 
 ## Patterns
 

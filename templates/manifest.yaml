@@ -18,7 +18,7 @@
 
 version: "1.0"
 
-core: [base-quality, base-git, base-docs, base-readme, base-testing, base-review, base-oop]
+core: [base-quality, base-git, base-docs, base-testing, base-review, base-oop]
 
 base:
   - id: base-git
@@ -39,56 +39,24 @@ base:
   - id: base-agents
     file: templates/core/agents.md
     description: Output structure, models (inline/hybrid), formatting rules
-  - id: base-skills
-    file: templates/core/skills.md
-    description: Skill authoring — when to write one, frontmatter, triggering, structure, scripts
   - id: base-devsecops
     file: templates/security/devsecops.md
     description: SAST, SCA, SBOM, secret detection, license compliance
   - id: base-security
     file: templates/security/security.md
     description: Application security rules — input, output, injection, auth, sessions, TLS, headers
-  - id: base-release
-    file: templates/workflow/release.md
-    description: Semver, version bump propagation, backward compat, cut-over
   - id: base-cicd
     file: templates/infra/cicd.md
     description: Pipeline stages, triggers, environments, IaC, deployment
   - id: base-containers
     file: templates/infra/containers.md
     description: Dockerfile, runtime security, resource limits, Kubernetes
-  - id: base-readme
-    file: templates/core/readme.md
-    description: README structure, badges, quick start, contribution guide
   - id: base-config
     file: templates/core/config.md
     description: Env vars, secrets, fail-fast validation
-  - id: base-cli
-    file: templates/core/cli.md
-    description: Entry-point architecture - thin main(argv), shared plumbing, durable output
-    depends_on: [base-quality, base-config]
-  - id: base-examples
-    file: templates/core/examples.md
-    description: Examples directory — contents, index, offline rule, smoke job
   - id: base-deployment
     file: templates/infra/deployment.md
     description: Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
-  - id: base-go
-    file: templates/language/go.md
-    description: Per-language tool selection for Go - lint, vet, complexity, tests
-    depends_on: [base-quality]
-  - id: base-python
-    file: templates/language/python.md
-    description: Per-language tool selection for Python - lint, types, complexity, tests
-    depends_on: [base-quality]
-  - id: base-typescript
-    file: templates/language/typescript.md
-    description: Type design, naming, strictness — applies to all TypeScript projects
-    depends_on: [base-quality]
-  - id: base-c
-    file: templates/language/c.md
-    description: Per-language tool selection for C - clang-tidy, clang-format, cppcheck, ctest
-    depends_on: [base-quality]
   - id: base-data-quality
     file: templates/data/data-quality.md
     description: Data sourcing, completeness, freshness, research, scoring — data-heavy projects
@@ -104,15 +72,6 @@ base:
     file: templates/data/data-migration.md
     description: Versioned migrations, zero-downtime, rollback strategies
     depends_on: [base-data-modeling]
-  - id: base-issues
-    file: templates/workflow/issues.md
-    description: Issue templates — epic, task, bug, incident, spike
-  - id: base-scope
-    file: templates/workflow/scope.md
-    description: Scope guard, session protocol, drift prevention
-  - id: base-compression
-    file: templates/workflow/compression.md
-    description: Re-verifying summaries, tables and rollups derived from verified research
   - id: base-oop
     file: templates/core/oop.md
     description: SOLID, OOP, GoF design patterns, AOP guidance
@@ -120,33 +79,7 @@ base:
     file: templates/core/quality-gates.md
     description: Three-layer gate model (editor, pre-commit, CI), thresholds
     depends_on: [base-quality, base-git, base-testing, base-config]
-  - id: base-ai-workflow
-    file: templates/workflow/ai-workflow.md
-    description: AI-assisted development lifecycle, work item hierarchy
-  - id: base-360
-    file: templates/workflow/360.md
-    description: 360-degree project analysis — four stakeholder perspectives, grading
-  - id: base-communication
-    file: templates/workflow/communication.md
-    description: Communication preferences — concise output, shorthand verbs, scope-asking
-  - id: base-two-pass-review
-    file: templates/workflow/two-pass-review.md
-    description: Split convention checks into mechanical (auto-fix) and contextual (over-flag, judge) passes over one catalogue
-    depends_on: [base-quality-gates, base-review]
-
 platform:
-  - id: platform-github
-    file: templates/platform/github.md
-    description: CodeQL, GitHub Actions, gitleaks action, push protection
-    depends_on: [base-quality-gates, base-issues]
-  - id: platform-gitlab
-    file: templates/platform/gitlab.md
-    description: Semgrep OSS, GitLab CI/CD, gitleaks CLI
-    depends_on: [base-quality-gates]
-  - id: platform-linear
-    file: templates/platform/linear.md
-    description: Label groups, native priority, sub-issues, code-host sync
-    depends_on: [base-issues]
   - id: platform-fixture
     file: templates/fixture/platform.md
     description: Test input for the platform checks; listed nowhere a project reads
@@ -229,10 +162,6 @@ backend:
     file: templates/backend/quality.md
     description: Layered architecture, security, performance, API stability
     depends_on: [base-quality, base-oop, base-security, base-containers]
-  - id: backend-templating
-    file: templates/backend/templating.md
-    description: Server-side rendering, partials, escaping, caching, forms, testing
-
 stacks:
   - id: stack-fixture
     file: templates/fixture/stack.md
@@ -241,242 +170,3 @@ stacks:
     description: Test input for the per-stack checks; listed nowhere a project reads
     fixture: true
     depends_on: [base-security, base-quality-gates]
-
-  - id: stack-htmx
-    file: templates/stack/htmx.md
-    label: HTMX + server rendering
-    layer: hypermedia
-    description: HTMX 2.x, Alpine.js, SSE, OOB swaps, partial responses
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-config
-      - base-security
-      - backend-templating
-
-  - id: stack-astro
-    file: templates/stack/static-site-astro.md
-    label: Astro (static site)
-    layer: static
-    description: Islands architecture, client directives, content collections
-    depends_on:
-      - frontend-static-site
-      - base-typescript
-      - base-quality-gates
-
-  - id: stack-tutorial
-    file: templates/stack/static-site-tutorial.md
-    label: Astro tutorial site
-    layer: static
-    description: Multi-chapter tutorial, diagrams, CC BY-NC-SA
-    depends_on:
-      - stack-astro
-      - base-issues
-      - base-scope
-
-  - id: stack-python-lib
-    file: templates/stack/python-lib.md
-    label: Python library / CLI
-    layer: library
-    description: Installable package or CLI tool, mypy, ruff, pytest
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-python
-      - base-cli
-      - base-quality-gates
-      - base-examples
-
-  - id: stack-python-service
-    file: templates/stack/python-service.md
-    label: Python service (no framework)
-    layer: abstract
-    description: Generic Python web service, SQLAlchemy, Alembic
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-config
-      - backend-http
-      - backend-database
-      - backend-observability
-      - backend-quality
-      - backend-features
-      - backend-messaging
-      - base-cicd
-      - base-devsecops
-      - base-data-quality
-      - stack-python-lib
-
-  - id: stack-flask
-    file: templates/stack/python-flask.md
-    label: Python + Flask
-    layer: backend
-    description: Sync REST API, factory pattern, blueprints
-    depends_on:
-      - stack-python-service
-
-  - id: stack-fastapi
-    file: templates/stack/python-fastapi.md
-    label: Python + FastAPI
-    layer: backend
-    description: Async REST API, Pydantic v2, DI, OpenAPI
-    depends_on:
-      - stack-python-service
-      - backend-concurrency
-
-  - id: stack-django
-    file: templates/stack/python-django.md
-    label: Python + Django
-    layer: backend
-    description: Full web framework, ORM, DRF, admin
-    depends_on:
-      - stack-python-service
-      - backend-api
-      - backend-auth
-
-  - id: stack-go-lib
-    file: templates/stack/go-lib.md
-    label: Go library / CLI
-    layer: library
-    description: Importable library or CLI binary
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-go
-      - base-cli
-      - base-testing
-      - base-quality-gates
-      - base-examples
-
-  - id: stack-go-service
-    file: templates/stack/go-service.md
-    label: Go service / API
-    layer: abstract
-    description: Generic Go HTTP service, chi, structured logging
-    depends_on:
-      - stack-go-lib
-      - base-config
-      - backend-http
-      - backend-database
-      - backend-observability
-      - backend-errors
-      - backend-quality
-      - backend-concurrency
-      - backend-features
-      - backend-messaging
-      - base-cicd
-      - base-devsecops
-
-  - id: stack-go-echo
-    file: templates/stack/go-echo.md
-    label: Go + Echo
-    layer: backend
-    description: REST API, Echo v4, middleware, validation
-    depends_on:
-      - stack-go-service
-
-  - id: stack-express
-    file: templates/stack/node-express.md
-    label: Node.js + Express
-    layer: backend
-    description: Minimal REST API, Zod validation, Supertest
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-quality-gates
-      - base-typescript
-      - base-config
-      - backend-http
-      - backend-api
-      - backend-database
-      - backend-observability
-      - backend-auth
-      - backend-quality
-      - backend-features
-      - backend-messaging
-      - base-cicd
-      - base-devsecops
-
-  - id: stack-nestjs
-    file: templates/stack/node-nestjs.md
-    label: Node.js + NestJS
-    layer: backend
-    description: Modules, controllers, providers, guards, pipes, DI
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-quality-gates
-      - base-typescript
-      - base-config
-      - backend-http
-      - backend-api
-      - backend-database
-      - backend-observability
-      - backend-auth
-      - backend-quality
-      - backend-features
-      - backend-messaging
-      - base-cicd
-      - base-devsecops
-
-  - id: stack-grpc-go
-    file: templates/stack/go-grpc.md
-    label: Go + gRPC
-    layer: backend
-    description: gRPC service, bufconn, errgroup
-    depends_on:
-      - stack-go-lib
-      - base-config
-      - backend-grpc
-      - backend-concurrency
-      - base-cicd
-      - base-devsecops
-
-  - id: stack-grpc-python
-    file: templates/stack/python-grpc.md
-    label: Python + gRPC
-    layer: backend
-    description: gRPC service, grpcio-aio, proto design
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-config
-      - backend-grpc
-      - backend-concurrency
-      - stack-python-lib
-      - base-cicd
-      - base-devsecops
-
-  - id: stack-nodejs-lib
-    file: templates/stack/nodejs-lib.md
-    label: Node.js library / CLI
-    layer: library
-    description: TypeScript npm package or CLI, tsup, Vitest
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-quality-gates
-      - base-typescript
-      - base-cli
-      - base-examples
-
-  - id: stack-c-embedded
-    file: templates/stack/c-embedded.md
-    label: Embedded C (bare metal)
-    layer: embedded
-    description: GCC + CMake, Unity tests, HAL, binary + .a
-    depends_on:
-      - base-git
-      - base-docs
-      - base-quality
-      - base-testing
-      - base-c
-
