@@ -263,6 +263,11 @@ walking the directives does not reach that set and reports nothing about it,
 because nothing declares what is absent.
 <!-- /generated:spec-core-tier -->
 
+A fork adds its own templates to every chain under `fork_core:`, which the
+resolver takes after `core:`. It keeps its templates under a top-level key
+of its own: every top-level list of entries except `core` and `fork_core`
+is a section the resolver reads, so a fork never edits a key upstream owns.
+
 SYS-13 compares the walk the README documents against the resolver for
 every root, in both directions.
 
