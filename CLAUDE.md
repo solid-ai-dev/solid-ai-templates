@@ -356,6 +356,8 @@ The suite lives in `tests/`:
 | `tests/run_e2e.py` | E2E test runner (agent-based tests) |
 | `tests/providers.py` | Model backends the e2e runner selects between |
 | `tests/conformance.py` | Disposition per embedded check — run here, or skip with a reason |
+| `tests/fork_dispositions.py` | Dispositions for the blocks in fork-owned content: stacks, platforms, workflow, process sections |
+| `tests/fork_checks.py` | Smoke checks that read fork-owned content (examples, interview, e2e cases), loaded by `run_smoke.py` when present |
 | `tests/run_conformance.py` | Runs the templates' own embedded checks against this repository |
 | `tests/run_fork_sync.py` | Merges the change under test into a simulated fork and runs smoke on the result |
 
@@ -459,7 +461,8 @@ Run `py tests/run_smoke.py` before every PR. It checks:
   still be red in CI: one such edit put a 127-character line into every
   generated chain, 36 findings, with smoke green over it
 - Adding a fenced `bash`/`python` block to a template MUST add its
-  disposition in `tests/conformance.py` — run it here, or skip it with
+  disposition in `tests/conformance.py`, or in `tests/fork_dispositions.py`
+  for a block in fork-owned content — run it here, or skip it with
   the reason it does not apply. `py tests/run_conformance.py` fails on a
   block with no entry, and on a skip stating no reason. A block unrunnable
   only because it names a placeholder is not a skip: resolve the
