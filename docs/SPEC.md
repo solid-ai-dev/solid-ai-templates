@@ -13,48 +13,54 @@ Cursor, or any agent that reads a Markdown context file.
 Inspired by SOLID principles: each template has a single responsibility,
 is open for extension, and can be composed without modification.
 
+This repository holds the composition engine and the policy every team
+shares. Forks carry the stacks, platforms, process layer and interview, and
+stay current by merging this repository (ADR-049, ADR-050). A project uses
+a fork, or forks this repository to make its own; upstream alone ships no
+stack and no interview.
+
 ---
 
 ## Core concepts
 
 ### 1. Base templates (abstract, cross-cutting)
 
-Reusable building blocks covering one concern each. Apply to every project
-regardless of stack. Never used directly — always composed into a higher layer.
+Reusable building blocks covering one concern each: `core/`, `security/`,
+`data/` and `infra/`. Apply to every project regardless of stack. Never
+used directly — always composed into a higher layer.
 
-### 2. Platform templates (CI and security integration)
-
-CI and security tool mappings specific to a hosting platform. Orthogonal
-to the stack choice — a Python project on GitHub and a Python project on
-GitLab use the same tools; only the CI config and SAST tool differ.
-
-### 3. Frontend templates (abstract, frontend layer)
+### 2. Frontend templates (abstract, frontend layer)
 
 Concerns that apply to all frontend projects but not to backend or library
 projects. Extend base templates. Never used directly by a project.
 
-### 4. Backend templates (abstract, backend layer)
+### 3. Backend templates (abstract, backend layer)
 
 Concerns shared by all backend services but not by frontend or pure libraries.
 Extend base templates. Never used directly by a project.
 
-### 5. Stack templates (concrete)
+### 4. Stack and platform templates (concrete, fork-owned)
 
-Technology-specific rules. Each stack declares which layers it depends on.
+A stack template holds technology-specific rules and declares which layers
+it depends on. A platform template maps CI and security tools to one
+hosting platform, orthogonal to the stack choice. Both live in forks: a
+fork appends them under `stacks:` and `platform:` in its manifest. See
+[Forks](#forks).
 
 ### Fixtures (test input)
 
-`templates/fixture/` holds one stack and one platform that exist for the
-checks, not for projects: `stack-fixture` (layer `fixture`) and
-`platform-fixture`. Each manifest entry carries `fixture: true`, so the
-README, this file's listings, the interview and `generated/` leave them out,
+`templates/fixture/` holds upstream's only stack and only platform. They
+exist for the checks, not for projects: `stack-fixture` (layer `fixture`)
+and `platform-fixture`. Each manifest entry carries `fixture: true`, so
+every listing a project reads — upstream's or a fork's — leaves them out,
 while the checks that read every stack or platform read them too. They keep
-those checks fed when the concrete stacks and platforms live in forks, and
-the e2e canary (STK-24) runs against the fixture stack.
+those checks fed in a tree that carries no stack of its own.
 
 ### Directory listings
 
 Generated from `templates/manifest.yaml` — run `py tools/sync.py` to refresh.
+The `stack/` listing leaves out the fixture, so it is empty upstream; in a
+fork it lists the fork's stacks.
 
 <!-- generated:spec-directories -->
 ```
@@ -124,27 +130,27 @@ stack/
 ```
 <!-- /generated:spec-directories -->
 
-### 6. Output format template
+### 5. Output format template
 
 Rendering rules for the generated output. Describes structure, model
 selection (inline or hybrid), and formatting constraints.
 Lives in `templates/core/agents.md` alongside the other core
 templates.
 
-### 7. Interview template (orchestrator)
+### 6. Interview template (orchestrator, fork-owned)
 
 A single file any agent uses to ask the user the required questions before
-generating the output context file. Questions are grouped by concern and
-reference the relevant concern and stack templates.
+generating the output context file. Each fork ships its own, usually as
+`templates/INTERVIEW.md`, and points it at the fork's stacks; upstream
+ships none. See [Interview template structure](#interview-template-structure).
 
-```
-INTERVIEW.md
-```
-
-### 8. Profile (generated output)
+### 7. Profile (generated output)
 
 The context file generated for a specific project by combining interview
 answers + base templates + stack template + output format template.
+`templates/core/agents.md` asks every project who approves a change, how
+work is tracked and what a release is. Upstream answers none of them; the
+project or its fork does.
 
 | Agent | Output file | Location |
 |-------|-------------|----------|
@@ -159,22 +165,27 @@ Interop: `AGENTS.md` is read by Claude Code as a fallback when no
 ## Inheritance model
 
 ```
-templates/core/git.md ────────────────────────────────────────────┐
-templates/core/docs.md ───────────────────────────────────────────┤
-templates/core/quality.md ────────────────────────────────────────┤
-                                                        ▼
-frontend/ux.md ─────────────────────────────► frontend/static-site.md
-frontend/quality.md ────────────────────────►          │
-                                                        ▼
-                                             templates/stack/static-site-astro.md
-                                                        │
-                                             + templates/INTERVIEW.md answers
-                                                        │
-                                             + templates/core/agents.md rules
-                                                        │
-                                                        ▼
-                                                   CLAUDE.md
+upstream                                           fork
+templates/core/git.md ──────────────────────────────┐
+templates/core/docs.md ─────────────────────────────┤
+templates/core/quality.md ──────────────────────────┤
+                                                     ▼
+frontend/ux.md ──────────────────────────► frontend/static-site.md
+frontend/quality.md ─────────────────────►          │
+                                                     ▼
+                                          templates/stack/static-site-astro.md
+                                                     │
+                                          + the fork's interview answers
+                                                     │
+                                          + templates/core/agents.md rules
+                                                     │
+                                                     ▼
+                                                CLAUDE.md
 ```
+
+Everything above the stack template is upstream's; the stack and the
+interview are the fork's. The fork's own `fork_core:` templates join the
+core tier of every chain.
 
 Rules:
 - A stack template MUST reference which base templates it depends on
@@ -225,14 +236,13 @@ every root, in both directions.
 
 Some templates are project-level choices, not stack-level dependencies.
 They are not referenced in any stack's `depends_on` chain — users
-opt in via the `Extras` field in the declaration block or during the
-interview.
+opt in via the `Extras` field in the declaration block or during a
+fork's interview.
 
-Orthogonal templates include platform choices (github, gitlab),
-workflow preferences (360, ai-workflow, release, deployment),
-and the advanced data templates (data-governance, data-migration) —
-opt-in extras no stack pulls automatically (`data-quality` is the only
-data module reached by a chain, via python-service).
+Upstream's orthogonal templates include the advanced data templates
+(data-governance, data-migration), opt-in extras no stack pulls
+automatically. A fork adds its own: platform choices and workflow
+preferences are a fork's.
 
 Orthogonal templates are NOT expected to appear in stack resolution.
 They are resolved as their own roots instead: an orthogonal template is
@@ -244,18 +254,20 @@ there, not in some stack chain the project may never pick.
 
 ### Opt-in tiers
 
-Everything else is explicit. Stacks declare what they need:
+Everything else is explicit. Stacks declare what they need. Upstream's
+opt-in modules:
 
 | Tier | Modules |
 |------|---------|
-| Language | typescript |
 | CI | cicd, quality-gates |
 | Security (app) | security |
 | Security (pipeline) | devsecops |
-| Infrastructure | containers, deployment, release |
-| Session | scope, issues |
-| Specialized | data-quality, 360, ai-workflow |
-| Platform | github, gitlab |
+| Infrastructure | containers, deployment |
+| Configuration | config |
+| Data | data-modeling, data-quality, data-governance, data-migration |
+
+A fork adds tiers of its own, such as language, platform, release and
+session templates, under a manifest key of its own.
 
 ### Governed tiers
 
@@ -269,12 +281,14 @@ fails rather than passing by omission.
 | Tier | Exempt categories | Reason | Check |
 |------|-------------------|--------|-------|
 | Security | library, embedded | a library is imported by a caller that owns the trust boundary; an embedded target has no HTTP surface, sessions or TLS to rule on | SYS-15 |
-| Quality gates | hypermedia, embedded | both are recorded at the most constrained context tier, and admitting the tier would change which models can run the stack | SYS-18 |
+| Quality gates | named by a fork in `tests/fork_checks.py` | a category recorded at the most constrained context tier cannot admit the tier without changing which models can run the stack | SYS-18 |
 
-Where an exemption's reason is a property recorded elsewhere in the tree,
-the check asserts the reason still holds. The quality-gate exemptions are
-read against `tests/context-tiers.txt`, so a category that later moves off
-the most constrained tier stops being exempt rather than staying exempt by
+Upstream names no quality-gate exemption, because only a fork carries
+stacks; the fixture stack is governed by both tiers. Where an exemption's
+reason is a property recorded elsewhere in the tree, the check asserts the
+reason still holds. The quality-gate exemptions are read against
+`tests/context-tiers.txt`, so a category that later moves off the most
+constrained tier stops being exempt rather than staying exempt by
 omission. See ADR-044.
 
 Membership stated as a list of stack identifiers is what this replaces: a
@@ -322,12 +336,34 @@ Current design documents:
   tests, structure audit, and 360
 - `efficacy-benchmark.md` — the experiment, its rules fixed in advance, that
   measures whether a generated context file improves an agent's
-  output, and the harness a template change is measured with
+  output; its harness lives in the Imbra fork, beside the stacks it
+  generates from
 - `efficacy-assessment.md` — what the benchmark's evidence lets the
   library claim, what it contradicts, and what stays untested
 - `testing-ai-assets.md` — the generic method the benchmark applies:
   paired old-versus-new runs, a layered and calibrated judge, and a
   sealed test set, for measuring any template, skill or prompt change
+
+---
+
+## Forks
+
+A fork is a GitHub fork of this repository that carries the content
+upstream leaves out: stacks, platforms, the process layer, the interview,
+examples and generated chains. ADR-049 sets the model and ADR-050 the
+boundary; the first fork is
+[Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
+
+| Mechanism | Rule |
+|-----------|------|
+| Sync by merge | A fork stays current with `git merge upstream/main`, never by copying files |
+| Keys of its own | A fork appends under `stacks:`, `platform:` and top-level manifest keys of its own, and never edits `core:`, `base:`, `backend:` or `frontend:`. The resolver reads every top-level list of entries. SYS-20 checks the upstream keys against the revision named by `SAIT_UPSTREAM_REF` |
+| `fork_core` | A fork adds to every chain's core tier under `fork_core:`, which the resolver takes after `core:`. SYS-21 checks that a fork's key and its `fork_core` entries resolve |
+| ID prefixes | `stack-*`, `platform-*` and `<org>-*` belong to forks; upstream adds no ID under them |
+| `Fork-merge: ours` | An upstream commit that removes what forks carry carries this trailer. A fork merges everything before it normally, merges it with `git merge -s ours`, then moves its own templates out of upstream's keys into its own key and `fork_core`. ADR-049 "Merging the split" gives the commands |
+| Fork-owned files | `README.md`, `CLAUDE.md` and `CHANGELOG.md` belong to the fork, which resolves them in its own favour on every merge |
+| Fork-owned test modules | `tests/fork_checks.py` adds smoke checks for content only a fork carries, `tests/fork_dispositions.py` adds conformance dispositions for its blocks, and `tools/fork_examples.py` names the chain examples `sync.py` renders. `run_smoke.py`, `conformance.py` and `sync.py` load each when present, so the runners stay the same file upstream and in every fork |
+| Fork sync | `py tests/run_fork_sync.py` simulates a fork on every pull request: it lands the change on a fork that appends a stack and edits its fork-owned files, keeps the fork's side of a conflict in those files, and asserts the merge is otherwise clean |
 
 ---
 
@@ -407,9 +443,9 @@ states which categories a project MUST gate" — is not a directive and is
 not resolved. It costs reach instead: the referencing file and the
 referenced one sit at different depths in the graph, so the reference
 reads correctly in the chains carrying both and dangles in the rest.
-`base-git` resolves into every chain and `base-examples` into a subset
-of them, so a reference from the first to the second is unreadable in
-the rest.
+`base-git` resolves into every chain and `base-data-migration` only into
+the chains that opt in, so a reference from the first to the second is
+unreadable in the rest.
 
 State the substance inline instead. Where a cross-file reference is
 genuinely wanted, the declaring file MUST be present in every chain that
@@ -435,7 +471,7 @@ applies — higher numbers win:
 4. **Interview answers** — the highest precedence; always win over any template
 
 Example: `templates/core/testing.md` defines the test naming convention.
-`templates/stack/python-fastapi.md`
+A fork's `templates/stack/python-fastapi.md`
 extends it with a Python-specific pattern. The interview answer "use BDD-style
 names" overrides both. The final output uses the interview answer.
 
@@ -459,7 +495,7 @@ section ID with different directives (`OVERRIDE` vs `EXTEND`).
 A stack that depends on another stack MUST NOT override an ID its
 dependency already overrides — that is the error above, and the chain
 states no winner. The overriding section declares an `[ID:]` of its own,
-and the next level overrides that:
+and the next level overrides that. In Imbra's fork:
 
 ```
 frontend/static-site.md   [ID: static-site-content]
@@ -475,44 +511,44 @@ overrides one ID twice.
 
 1. Show the user both conflicting rules
 2. Ask which takes precedence
-3. Record the decision in the `[OVERRIDES]` section of the interview output
+3. Record the decision in the generated context file
 
 ---
 
 ## Interview template structure
 
-The interview template groups questions by concern:
+Upstream ships no interview; each fork writes its own and points it at the
+fork's stacks. Imbra's fork runs its interview in four phases: explore the
+problem, clarify the open choices, propose a setup, then generate the file.
+Whatever the structure, the interview hands the agent two things upstream
+fixes:
 
-```
-[IDENTITY]     Project name, owner, URL, deployment target
-[STACK]        Framework, JS interactivity, CSS approach, content format
-[DESIGN]       Aesthetic, colours, typography
-[BRAND]        Tagline, tone, copy rules
-[CONTENT]      Sections, data files, pages
-[SERVICES]     Analytics, forms, third-party integrations
-[BROWSERS]     Supported browsers and versions
-[OVERRIDES]    Any base rules the user wants to change
-[OUTPUT]       Target AI tool and output file format
-```
+- The output contract in `templates/core/agents.md`: output file, inline or
+  hybrid model, and the quality bar
+- The questions `templates/core/agents.md` asks every project, which the
+  generated file answers or leaves for the project to fill in
 
-The agent asks all REQUIRED questions before generating anything.
-DEFAULTED sections are pre-filled from the selected base + stack templates.
+The agent asks all required questions before generating anything. Defaults
+come from the selected base and stack templates.
 
 ---
 
 ## How an agent uses the system
 
-1. User provides `templates/INTERVIEW.md` and a stack template (e.g.
-   `templates/stack/python-fastapi.md`)
+1. User provides a fork's interview and a stack template from that fork
+   (e.g. `templates/stack/python-fastapi.md`), or the fork's pre-resolved
+   chain for the stack
 2. Agent reads the stack template, identifies its base dependencies
-3. Agent loads the referenced base templates
-4. Agent runs the interview (REQUIRED questions only)
+3. Agent loads the referenced base templates, upstream's and the fork's
+4. Agent runs the interview (required questions only)
 5. Agent merges: base defaults + stack overrides + interview answers
 6. Agent loads the output format template for the chosen AI tool
 7. Agent renders and outputs the final context file
 
-The interview instructions use neutral language ("ask the user") so any
-agent can follow them without tool-specific interpretation.
+Generation stays an agent reading Markdown: no build step or compiler sits
+between the fork and the context file. The interview instructions use
+neutral language ("ask the user") so any agent can follow them without
+tool-specific interpretation.
 
 ---
 
@@ -527,19 +563,20 @@ a declarative header that the agent resolves at startup.
 ```
 ┌─────────────────────────────────────────────────┐
 │  1. SETUP (once)                                │
-│     Agent runs INTERVIEW.md → generates         │
-│     CLAUDE.md with a declaration block          │
+│     Agent runs the fork's interview →           │
+│     writes CLAUDE.md with a declaration block   │
 ├─────────────────────────────────────────────────┤
 │  2. STARTUP (every session)                     │
-│     Agent reads CLAUDE.md → reads               │
-│     templates/manifest.yaml → resolves dependency chain   │
+│     Agent reads CLAUDE.md → reads the fork's    │
+│     templates/manifest.yaml → resolves chain    │
 ├─────────────────────────────────────────────────┤
 │  3. DEVELOPMENT (during session)                │
 │     Full context loaded — agent applies the     │
 │     resolved rules without prompting            │
 ├─────────────────────────────────────────────────┤
 │  4. UPDATE (on upstream change)                 │
-│     git submodule update --remote               │
+│     The fork merges upstream; the project       │
+│     moves its pin of the fork (submodule)       │
 │     Next session resolves the same chain →      │
 │     picks up new/changed rules on next session  │
 └─────────────────────────────────────────────────┘
@@ -558,25 +595,26 @@ Platform: github
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `Stack` | MUST | Stack ID from `manifest.yaml` |
+| `Stack` | MUST | Stack ID from the fork's `manifest.yaml` |
 | `Extras` | MAY | Comma-separated base template IDs not in the stack's dependency chain |
-| `Platform` | MAY | Platform ID (`github`, `gitlab`) |
+| `Platform` | MAY | Platform ID from the fork (`github`, `gitlab` in Imbra's) |
 
 ### Resolution algorithm
 
-Input: declaration block + `templates/manifest.yaml`.
+Input: declaration block + the fork's `templates/manifest.yaml`.
 Output: ordered list of template files to load.
 
 ```
-1. Look up Stack ID in templates/manifest.yaml
-2. Recursively resolve depends_on → collect all
+1. Seed the core tier: core:, then fork_core:
+2. Look up Stack ID in templates/manifest.yaml
+3. Recursively resolve depends_on → collect all
    transitive dependencies (depth-first, deduplicated)
-3. Resolve each Extra the same way — its depends_on
+4. Resolve each Extra the same way — its depends_on
    tree first, then itself (skip anything already
    in the resolved set)
-4. Resolve the Platform template the same way (if
+5. Resolve the Platform template the same way (if
    declared)
-5. Return the ordered file list
+6. Return the ordered file list
 ```
 
 `templates/core/agents.md` is not appended. It governs how the output
@@ -590,21 +628,24 @@ Ordering: base → backend/frontend → stack (topological sort of
 the dependency graph). Within the same depth level, order follows
 the `depends_on` list declaration order.
 
-
 ---
 
 ## File naming conventions
 
 ```
-templates/[concern]/[name].md             # cross-cutting — core, security, workflow, infra, data, language
-templates/frontend/[concern].md           # frontend layer — UI projects only
-templates/backend/[concern].md            # backend layer — services and APIs only
-templates/stack/[framework].md            # concrete — extends base + frontend or backend
-templates/stack/[framework]-[variant].md  # variant of a framework (e.g. astro-ssr.md)
-templates/core/agents.md    # output format — structure, models, formatting rules
-templates/INTERVIEW.md           # orchestrator — always one file
-docs/SPEC.md                     # this file
+templates/[concern]/[name].md     # cross-cutting — core, security, infra, data
+templates/frontend/[concern].md   # frontend layer — UI projects only
+templates/backend/[concern].md    # backend layer — services and APIs only
+templates/fixture/[name].md       # test input — one stack, one platform
+templates/core/agents.md          # output format — structure, models, formatting rules
+docs/SPEC.md                      # this file
 ```
+
+A fork adds its own directories and names its files by its own convention.
+Imbra's fork keeps `templates/stack/`, `templates/platform/`,
+`templates/workflow/`, `templates/language/` and `templates/INTERVIEW.md`,
+and names a stack `<prefix>-<name>.md` (`python-fastapi.md`, `go-echo.md`),
+with a bare name for a stack that has no variant.
 
 ---
 

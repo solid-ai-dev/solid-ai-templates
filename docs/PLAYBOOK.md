@@ -6,47 +6,15 @@ composition model.
 
 ---
 
-## Add a new stack template
-
-1. Identify the parent template(s) — check `manifest.yaml` for the closest
-   existing stack and trace its `depends_on` chain
-2. Create `stack/<prefix>-<name>.md`:
-   - First line: `# Stack — <Full Name>`
-   - Second line: `[DEPENDS ON: <parent1>, <parent2>, ...]`
-   - One section per concern, each tagged `[ID: <name>]`
-   - Use `[EXTEND: <id>]` to add rules on top of a parent section
-   - Use `[OVERRIDE: <id>]` to replace a parent section entirely
-   - Follow the canonical section structure (ADR-017): MUST sections
-     are Stack, Commands, Project structure (pure libraries exempt
-     from the last); name the language section `<Language> conventions`.
-     SYS-06 gates the MUST tier on the resolved chain, so a derived
-     stack may inherit a MUST section from its parent
-3. Review for terminology carry-over from the source template:
-   - All framework and runtime names match the target stack
-   - CLI commands reference the correct package manager and tools
-   - Server/runtime terms are accurate (e.g. WSGI vs ASGI vs
-     process manager)
-   - Language-specific vocabulary is correct (e.g. "packages" in Go,
-     "crates" in Rust, "modules" in Python)
-4. Register in `manifest.yaml`:
-   ```yaml
-   - id: stack-<name>
-     file: stack/<prefix>-<name>.md
-     depends_on:
-       - <parent-id>
-   ```
-5. Add to the stack list in `SPEC.md` (alphabetical within category)
-6. Add a row to the stacks table in `README.md`
-7. Validate: attach `INTERVIEW.md` + new stack to an agent and review output
-
----
-
 ## Add a new base or layer template
+
+Stacks, platforms, workflow and language templates live in forks
+(ADR-049); a fork's own playbook covers adding one. Upstream takes base
+and layer templates only.
 
 1. Create the file in the correct layer directory:
    - `<concern>/<name>.md` — cross-cutting, applies to all projects; the
-     concern is one of `core`, `security`, `workflow`, `infra`, `data`,
-     `language`
+     concern is one of `core`, `security`, `infra`, `data`
    - `backend/<name>.md` — backend services only
    - `frontend/<name>.md` — frontend/UI projects only
 2. Tag the file root with `[ID: <layer>-<name>]`
@@ -57,8 +25,8 @@ composition model.
      file: <layer>/<name>.md
    ```
 5. Update `docs/SPEC.md` — add to the directory listing for the relevant layer
-6. Add `backend/<name>.md` (or frontend/) references in dependent stack
-   `[DEPENDS ON: ...]` headers as appropriate
+6. Upstream carries no stack to reference the new file. A fork's stacks
+   name it in their `[DEPENDS ON: ...]` headers once the fork merges it
 
 ---
 
@@ -75,7 +43,7 @@ genericity before it becomes template content:
    issue suggests — and know which kind of template you are measuring:
 
    ```bash
-   # how many of the 37 roots resolve a candidate file?
+   # how many roots resolve a candidate file?
    for s in $(py tools/resolve.py --roots); do
      py tools/resolve.py "$s" | grep -q 'core/review.md' && echo "$s"
    done | wc -l
@@ -93,16 +61,16 @@ genericity before it becomes template content:
    An **opt-in template** is a root of its own. Its reach is 1 — itself —
    and that is the point rather than a low score: what it may rely on is
    the core tier plus its own `depends_on` tree, because the stack it is
-   paired with is unknown when it is authored. `platform/` templates are
-   the clearest case, since a project picks one regardless of stack.
+   paired with is unknown when it is authored. A fork's `platform/`
+   templates are the clearest case, since a project picks one regardless
+   of stack.
 
    A **pipeline template** carries rules about generating or consuming a
-   context file, and `templates/INTERVIEW.md` reads it directly rather
-   than any root resolving it into a project. Reach says nothing about
-   whether the rule lands: `core/agents.md` is carried by a single
-   root — its own — and shapes every file the pipeline generates.
-   Recognise one by asking what reads it: a stack, an opt-in root, or
-   INTERVIEW.md.
+   context file, and a fork's interview reads it directly rather than any
+   root resolving it into a project. Reach says nothing about whether the
+   rule lands: `core/agents.md` is carried by a single root — its own —
+   and shapes every file the pipeline generates. Recognise one by asking
+   what reads it: a stack, an opt-in root, or the interview.
 
    A filed issue's suggested home is a hypothesis — it is usually
    written from the downstream project, without running this. Where a
@@ -130,10 +98,9 @@ genericity before it becomes template content:
 1. `git mv <old-path> <new-path>`
 2. Update every `[DEPENDS ON: ...]` header that references the old path
 3. Update `manifest.yaml` — change the `file:` field for the entry
-4. Update `SPEC.md`, `README.md`, `INTERVIEW.md`
-   — search for the old filename and replace
-5. Update any `examples/` files that reference the old path
-6. Verify with `git status` that no old references remain
+4. Update `SPEC.md` and `README.md` — search for the old filename and
+   replace
+5. Verify with `git status` that no old references remain
 
 ---
 
@@ -150,7 +117,7 @@ genericity before it becomes template content:
 ## Author a new ADR
 
 Use this workflow only after applying the decision threshold in
-`templates/core/docs.md`: a record is owed when the decision changes
+`CLAUDE.md` "Decision logs": a record is owed when the decision changes
 what a consuming project observes without reading this repository — the
 composition model. Prose style, tool choice, release procedure, naming and
 file layout need no ADR, however consequential they are. One coherent
@@ -188,7 +155,7 @@ ADRs live in `docs/decisions/`; ADR-010 records the frontmatter schema.
    frontmatter in the same PR — set its `status: Superseded`,
    refresh `date`, and add this ADR's id to its `superseded_by`
    list. Preserve historical claims; format-only changes are also allowed
-   under the decision-log rules in `templates/core/docs.md`.
+   under the decision-log rules in `CLAUDE.md`.
 6. Run `py tests/run_smoke.py ADR-01` to validate the frontmatter
    schema before opening the PR.
 7. If the ADR **removes** a concept, sweep for prose that still
@@ -232,50 +199,19 @@ For consumers adopting the selective-adoption and ADR-threshold update:
 
 ## Generate a context file for a project
 
-### Interview path
-
-1. Open your agent (Claude Code recommended)
-2. Attach `templates/INTERVIEW.md`
-3. The agent explores what you want to build, asks a few clarifying questions,
-   proposes a stack, and generates the file once you confirm
-4. Place the generated file at the project root
-
-### Direct path
+Upstream ships no stacks, no interview and no pre-resolved chains
+(ADR-049). A project generates its context file from a fork: the Imbra
+fork, [`Imbra-Ltd/imbra-ai-templates`](https://github.com/Imbra-Ltd/imbra-ai-templates),
+for Imbra's stacks, or a fork of its own kept current per "Sync with
+upstream as a fork".
 
 1. Open your agent
-2. Attach the relevant stack template (e.g. `templates/stack/python-flask.md`)
-3. Provide your answers inline:
-   ```
-   Generate a CLAUDE.md. Name: X, owner: Y, repo: Z, database: PostgreSQL, auth: JWT.
-   ```
-4. Place the generated file at the project root
+2. Attach the fork's interview and the resolved chain for the stack
+3. Answer the interview, review the file the agent proposes, and place it
+   at the project root
 
-### Pre-resolved path (no shell access)
-
-If the agent cannot run scripts, use the pre-resolved files in
-`generated/`. Each file contains the full template chain for one stack:
-
-1. Attach `generated/stack-flask.md` (or the relevant stack)
-2. Attach `templates/core/agents.md` (output format)
-3. Provide your answers and ask the agent to generate the file
-
-### Path selection guide
-
-| Interface | Recommended path | Why |
-|-----------|-----------------|-----|
-| Local agent (Claude Code, Codex CLI) | Interview or direct | Agent reads files from disk |
-| Web portal (Claude.ai, ChatGPT) | Pre-resolved | Upload one file, no shell needed |
-| REST API | Pre-resolved | Include `generated/<stack>.md` in prompt |
-
-### Model limitations
-
-Prompt sizes and the minimum context window per stack category are in
-README's "Model limitations" section, generated from the resolved
-chains by `py tools/sync.py`. A copy here would be a second set of
-figures with no generator behind it, and the copy is what ages.
-
-- Output token limit < 16K: generate section by section
-- Output token limit 32K+: full inline file fits in one pass
+The fork's own documents own the generation paths, its pre-resolved
+chains and the model limits of its stacks.
 
 ---
 
@@ -290,15 +226,16 @@ figures with no generator behind it, and the copy is what ages.
 
    A rule added to a widely resolved file is read by every project on
    every chain carrying it, on every turn, and nothing refuses that
-   size. `README.md`'s model-limits table reports it per stack
+   size. Say in the pull request what the addition is worth. Upstream
+   carries no stacks, so the size shows in the forks that resolve the
+   file: a fork's `README.md` model-limits table reports it per stack
    category beside the smallest context window that still holds it, and
-   `py tools/sync.py --check` fails when the table drifts from the
-   tree. Read the table's diff before merging, and say in the pull
-   request what the addition is worth.
+   `py tools/sync.py --check` fails there when the table drifts from the
+   tree.
 
-   A category crossing to a larger window is a change to what a consumer
-   needs to run the stack at all, and that is refused rather than
-   reported: SYS-16 fails until the new tier is recorded in
+   In a fork, a category crossing to a larger window is a change to what
+   a consumer needs to run the stack at all, and that is refused rather
+   than reported: SYS-16 fails until the new tier is recorded in
    `tests/context-tiers.txt` in the same change.
 
    Before adding a paragraph, try stating the rule inside the one that
@@ -308,17 +245,15 @@ figures with no generator behind it, and the copy is what ages.
    paragraph to 98 characters shorter than the narrow rule it replaced.
    Measured 2026-09-03 on `core/git.md`.
 
-3. **Agent check**: attach `INTERVIEW.md` + the changed template to an agent
-   and review the output for coherence; or run the
-   relevant E2E test if one exists:
-   ```bash
-   py tests/run_e2e.py STK-01   # example — replace with the relevant ID
-   ```
-   Reports are written to `tests/reports/` after every run that has a
-   result — an e2e dry run writes none — named for
-   the time and the tree — `<timestamp>-<runner>-<short-hash>.md`, with
-   `-dirty` where the working tree was not that commit, and no suffix
-   where there is no repository to read.
+2. **Agent check**: attach a fork's interview and a resolved chain
+   carrying the changed template to an agent, and review the output for
+   coherence. The e2e suite that automates this reading lives in the
+   forks (ADR-049).
+
+Reports are written to `tests/reports/` after every run, named for the
+time and the tree — `<timestamp>-<runner>-<short-hash>.md`, with `-dirty`
+where the working tree was not that commit, and no suffix where there is
+no repository to read.
 
 ---
 
@@ -326,7 +261,7 @@ figures with no generator behind it, and the copy is what ages.
 
 A rule stated in two active sections of the same resolved chain dilutes
 the agent's attention (see `docs/design/template-content-quality.md`). The
-audit scans every root a project can pick -- the stacks and the
+audit scans every root a project can pick -- in a fork, the stacks and the
 orthogonal templates alike -- and reports duplicates, excluding those the
 override model legitimately produces (one section `[OVERRIDE]`s the
 other):
@@ -363,10 +298,6 @@ py tests/run_smoke.py              # structural checks — seconds
 py tests/run_conformance.py        # the templates' own checks, run here
 py tests/run_conformance.py --list # dispositions only, run nothing
 py tests/run_fork_sync.py         # a fork that only appends merges HEAD
-py tests/run_e2e.py                # canary test (fixture stack)
-py tests/run_e2e.py --all          # all agent tests
-py tests/run_e2e.py STK-01 FMT-01  # specific tests only
-py tests/run_e2e.py --dry-run      # build prompts, call no model, write no report
 ```
 
 A change that removes what forks carry, such as the split, carries the
@@ -374,58 +305,16 @@ commit trailer `Fork-merge: ours`. Fork sync then merges it the way a fork
 must, with `git merge -s ours`, moves the fork's templates out of
 upstream's manifest keys into its own, and runs smoke on the result.
 
-The efficacy benchmark is another runner and deliberately not in that
-list: it costs quota, takes hours, and answers a different question from
-whether this repository is sound. `tests/efficacy/README.md` owns its
-procedure, and `docs/design/efficacy-benchmark.md` owns the method.
-
-Its judge has a control of its own, which builds damaged and improved
-copies of two pinned applications and scores every tree. Run it whenever
-the judge model, its effort or the rubric prompt changes, because each of
-those invalidates every reading the benchmark has taken:
-
-```bash
-py tests/efficacy/control/control.py --root C:/efficacy/control-<date>
-py tests/efficacy/judge.py --root C:/efficacy/control-<date>
-```
-
-A row that does not fall on the damaged tree cannot detect damage; one that
-does not rise on the improved tree cannot detect improvement, so no arm can
-win on it. `tests/efficacy/control/README.md` carries the reading rule and
-what the control found when it was first run.
+The e2e suite and the efficacy benchmark read what the templates generate,
+so they live in the forks with the stacks and the interview (ADR-049).
+Smoke and conformance read the templates themselves.
 
 See `tests/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
 full list of specs. Requires `py -m pip install pyyaml` for the manifest
 check.
 
-In a fork, set `SAIT_UPSTREAM_REF` to a ref holding upstream's history
-before running smoke, so SYS-20 compares the manifest's upstream keys with
-the revision the fork last merged:
-
-```bash
-git fetch upstream
-SAIT_UPSTREAM_REF=upstream/main py tests/run_smoke.py SYS-20
-```
-
-Unset, SYS-20 treats the checkout as upstream and compares the manifest
-with itself.
-
-`run_e2e.py` is the one runner that calls a model and costs money, so it
-runs on a cadence rather than on every change: the STK-24 canary runs live
-at every release cut, recorded in the cut's pull request, and the full
-suite runs live at each periodic review. It is also the only runner that
-reads what the templates generate — smoke and conformance read the
-templates themselves. Name the provider and the model in the shell, which
-takes precedence over `.env`:
-
-```bash
-E2E_PROVIDER=anthropic ANTHROPIC_MODEL=claude-opus-5 py tests/run_e2e.py
-```
-
-A live report names its mode, provider and model. A dry run calls no model
-and writes no report, so every e2e report in `tests/reports/` is a run. A
-case that fails is filed as a bug with the strings it missed, not fixed
-inside the cut that ran it.
+In a fork, set `SAIT_UPSTREAM_REF` before running smoke; "Sync with
+upstream as a fork" gives the command.
 
 `run_smoke.py` prints what each check inspected under its verdict — the
 files scanned, the chains resolved, the directives compared. Those lines are
@@ -484,6 +373,48 @@ Adding a judgement disposition therefore means two edits in the same
 change: the `reason` beside the disposition, and the title in the budget.
 Renaming a check means moving its budget line too — the runner reports the
 stale entry as an unbudgeted reading rather than ignoring it.
+
+---
+
+## Sync with upstream as a fork
+
+A fork stays current by merging upstream, never by copying files
+(ADR-049). It appends under `stacks:`, `platform:` and keys of its own,
+adds to every chain's core tier under `fork_core:`, and never edits
+`core:`, `base:`, `backend:` or `frontend:`.
+
+1. Fetch upstream and list the commits carrying `Fork-merge: ours` that
+   the fork has not merged yet:
+   ```bash
+   git fetch upstream
+   git log --reverse --format='%h %s' --grep='^Fork-merge: ours' HEAD..upstream/main
+   ```
+2. For each such commit, oldest first: merge its parent normally, then
+   the commit itself with `-s ours`, so the files upstream removed stay in
+   the fork:
+   ```bash
+   git merge <commit>^
+   git merge -s ours <commit>
+   ```
+   An ordinary merge of that commit deletes every file the fork left
+   unchanged and upstream removed
+3. Move the fork's templates out of `base:`, `backend:` and `frontend:`
+   into a manifest key of its own, and the core IDs upstream dropped from
+   `core:` into `fork_core:`. Commit the move
+4. Merge the rest: `git merge upstream/main`. Resolve `README.md`,
+   `CLAUDE.md` and `CHANGELOG.md` in the fork's favour; they are
+   fork-owned files
+5. Run smoke with `SAIT_UPSTREAM_REF` set to a ref holding upstream's
+   history, so SYS-20 compares the manifest's upstream keys with the
+   revision the fork last merged:
+   ```bash
+   SAIT_UPSTREAM_REF=upstream/main py tests/run_smoke.py
+   ```
+   Unset, SYS-20 treats the checkout as upstream and compares the manifest
+   with itself
+
+`py tests/run_fork_sync.py` simulates a fork merging upstream's `HEAD`
+this way on every upstream pull request.
 
 ---
 
@@ -560,69 +491,23 @@ is the rule.
 
 ---
 
-## Regenerate pre-resolved files
-
-After editing any template or `manifest.yaml`, regenerate the cached
-files in `generated/`:
-
-```bash
-py tools/resolve.py --generate     # regenerate all cached files
-py tools/resolve.py --check        # verify they are up to date
-py tools/sync.py                   # also regenerates via --check
-```
-
-The `generated/` files are committed to the repo so agents without
-shell access can use them directly.
-
----
-
-## Regenerate an example
-
-Per ADR-016, the files in `examples/*/CLAUDE.md` are agent-generated
-outputs, not hand-maintained. When a template in an example's chain
-changes the output shape, regenerate the example — do not patch it by
-hand.
-
-1. Attach three inputs to a local agent:
-   - the existing `examples/<name>/CLAUDE.md` — for the project brief
-     (name, owner, repo, deployment, stack choices, architecture) to
-     preserve
-   - `generated/<stack>.md` — the resolved chain (the rules to apply);
-     read any addon templates the example's stack source names but the
-     chain does not include
-   - `templates/core/agents.md` — the output models (inline or
-     hybrid — keep the example's existing model)
-2. Ask the agent to regenerate `examples/<name>/CLAUDE.md` in the
-   six-section structure, keeping the concrete project identity and
-   recording the generation inputs in a note near the top.
-3. Verify: `py tests/run_smoke.py` (SYS-05 gates the §6.3 audit) and
-   review the diff for coherence. Byte-for-byte reproduction is not
-   expected — generation is non-deterministic.
-
----
-
 ## Run a 360-degree audit
 
-Per `templates/workflow/360.md`, a 360 assesses the whole project
-from independent stakeholder perspectives as parallel, context-isolated
-subagents (the headless adaptation re-projects Quality into engineering
-dimensions). Run one on demand — before a launch, after a milestone or a
-major feature, or when a stakeholder needs the whole picture. A release
-does not trigger one by itself: the pre-release check asks only whether
-the newest record still falls inside the 90-day review interval, so a
-release whose record is current owes neither the audit nor a record
-declining it, whatever version it moves.
+The 360 procedure is process, so a fork carries it in
+`templates/workflow/360.md` (ADR-049), the Imbra fork among them. A 360
+assesses the whole project from independent
+stakeholder perspectives as parallel, context-isolated subagents (the
+headless adaptation re-projects Quality into engineering dimensions). Run
+one on demand — before a launch, after a milestone or a major feature, or
+when a stakeholder needs the whole picture.
 
-- Store each audit as a dated report at `docs/audits/YYYY-MM-DD-360.md`
-  (per §360-tracking) — this is the only audit location; never use a
-  single-file `docs/360-audit.md` history. All audit history lives in
-  the folder.
+- Store each audit as a dated report at `docs/audits/YYYY-MM-DD-360.md` —
+  this is the only audit location; never use a single-file
+  `docs/360-audit.md` history. All audit history lives in the folder.
 - Each report carries a scores table, the issues created, the current
   bottleneck, and per-dimension findings tables with a grade rationale.
 - File a labelled issue for every actionable finding (CLAUDE.md §2.2)
   and reference it from the report.
-- Run the e2e suite live with `py tests/run_e2e.py --all` and record its
-  summary, provider and model in the report — the review is its cadence.
 
 ---
 
@@ -634,28 +519,28 @@ declining it, whatever version it moves.
    committing
 4. Commit with a conventional message:
    ```
-   feat(stack): add go-echo template
+   feat(security): add supply-chain template
    docs(spec): update backend layer listing
    ```
 5. Push and open a PR — one concern per PR
 6. Merge with the default squash subject — `gh pr merge <number>
    --squash`, with no `--subject`. GitHub composes that subject from
    the title and appends the pull request number; supplying one
-   replaces both. The milestone-coverage gate reads those numbers
-   back out of the log, so a hand-typed subject removes the reference
-   it resolves, and the gate reports on the commits it can still read
+   replaces both. A release's milestone-coverage check, which a fork's
+   `core/git.md` carries, reads those numbers back out of the log, so a
+   hand-typed subject removes the reference it resolves
 7. After merge: delete the branch and pull `main`
 
 Where a cut carries more than one pull request, every branch after the
-first goes `BEHIND`. Each merge regenerates `generated/`, so the second
-branch carries pre-resolved chains built from a tree that lacks the
+first goes `BEHIND`. A merge that changes the manifest changes what
+`tools/sync.py` generates into `README.md` and `docs/SPEC.md`, so the
+second branch carries generated sections built from a tree that lacks the
 first one's change. Git reports the branch `MERGEABLE` — the edits fall
 in different regions of the same files — so nothing warns that the
-chains are stale, and smoke does not read `generated/` either. CI is the
-first signal.
+sections are stale. CI is the first signal.
 
 Recover it with `gh pr update-branch`, never a rebase and force-push.
-Then re-run both staleness gates on the updated branch, because
+Then re-run the staleness gate on the updated branch, because
 mergeable is not the same claim as current:
 
 ```bash
@@ -665,26 +550,16 @@ py tools/sync.py --check
 ```
 
 Pass condition: the gate prints `All files in sync` **after** the
-update, having listed every generated chain it compared. `sync.py
---check` is the whole gate — it covers `generated/` as well as the three
-generated documents, so there is no second command to run. Run it before
-the update instead and it reports the previous state, which reads as a
-pass.
-
-`tools/resolve.py --check` is a real gate and a narrower one: it compares
-`generated/` alone, prints the stale chains and exits `1`. CI runs it as a
-required step and every file in `generated/` opens with a banner naming it.
-The gate above subsumes it, so this step still runs one command — and an
-unknown flag on that tool exits `1`, so a typo there cannot read as a
-clean gate.
+update, having listed every document it compared. Run it before the
+update instead and it reports the previous state, which reads as a pass.
 
 ---
 
 ## Groom the backlog
 
 Run this before scoping a cut. The procedure and the reasons behind its
-order are in `templates/workflow/issues.md`, which this repository
-consumes; what follows is only what is particular here.
+order are process, so a fork carries them in `templates/workflow/issues.md`
+(ADR-049); what follows is only what is particular here.
 
 List the backlog — an unmilestoned issue is triaged, not untriaged, so no
 view reports it:
@@ -702,9 +577,10 @@ gh issue list --state open --limit 200 --json number,title,milestone --jq '.[] |
   a rule that could go in either of two templates
 - Title the milestone `vA.B.C — <theme>`. The annotated tag message quotes
   the theme, so a bare version leaves the tag with nothing to quote
-- The merged-work sweep is step 9 of the release sequence in
-  `core/git.md`; `py tests/run_conformance.py` runs it here. Run it at
-  the groom too, where a hit is cheapest to act on
+- The merged-work sweep belongs to the release sequence a fork's
+  `core/git.md` carries, and upstream's conformance run no longer
+  includes it. Where a fork's copy is at hand, run it at the groom, where
+  a hit is cheapest to act on
 
 Where a milestone already exists but its theme describes work that has not
 happened, renumber it rather than dissolving it. A scoped milestone carries
@@ -719,11 +595,12 @@ issue had been put in it solely to satisfy the release gate.
 
 ## Survey the consuming repositories
 
-Run this before proposing a change to a document `core/docs.md` requires
-— `docs/PLAYBOOK.md`, `docs/ONBOARDING.md`, `README.md`, `CHANGELOG.md`,
-`SECURITY.md`, `CONTRIBUTING.md`. `tools/sync.py` reaches this repository and
-nothing else, so the cost of renaming or restructuring one of them sits
-downstream, in repositories no gate here can see.
+Run this before proposing to rename or restructure a document other
+repositories carry — the three `core/docs.md` requires (`README.md`,
+`AGENTS.md`, `CLAUDE.md`) and any a fork's process prescribes, such as
+`docs/PLAYBOOK.md` or `CHANGELOG.md`. `tools/sync.py` reaches this
+repository and nothing else, so the cost sits downstream, in repositories
+no gate here can see.
 
 1. Enumerate every account that generates from these templates. Both are the
    same owner, so no third party is affected, but each repository still needs
@@ -781,111 +658,71 @@ This repo has no version manifest (plain Markdown), so it follows the
 no-build release variant from ADR-006. What that variant removes is the
 version-bump commit and the `chore: release` branch carrying it — there is
 no manifest to bump, so nothing needs one. It does not remove every pull
-request: the changelog cut at step 4 is its own, and it is the release
+request: the changelog cut at step 2 is its own, and it is the release
 commit the tag names.
 
-Run `core/git.md`'s pre-release checks first — that sequence is the
-source, and the nine steps below are this repository's release procedure
-proper, not a restatement of it. Two of those checks bind here and neither
-has a step below: the periodic-review-scope check, which reads the age of
-the newest record in `docs/audits/` and takes no release version, and the
-pipeline-history check.
-
-Read each gate's output as well as its exit status. Every gate below now
-carries its verdict in the status, so a finding fails the run rather than
-printing and exiting zero. That held for five of them only from v2.82, and
-for thirteen more only from v2.88, and this procedure was written against
-the older behaviour. What a status still cannot carry is a reading: three
-of the checks reach no automatic verdict and address their output to
-whoever the failure summons, so a run reporting `0 failed` has not been
-read until those are. Measured during the `v2.77.0` cut, when the status
-carried nothing: milestone-coverage printed `a subject names closed issue
-1456, which carries no milestone` and exited `0`. That gate exits 1 on the
-same finding now.
-
-Each gate below reads its parameter from the environment as well as from
-the constant, so `RELEASE=v2.83.0 py tests/run_conformance.py` runs the
-whole set in one pass without editing a template. The variable is not
-always spelled like the constant it fills: the milestone-coverage gate
-reads `RELEASE_MILESTONE`, and setting `MILESTONE` instead leaves it
-reporting that the release is not scoped to a milestone — the one answer
-that looks like a clean pass. Read the constant's own line before
-exporting. The `Release gates`
-workflow does exactly that on every tag push, resolving the milestone
-titled with the tag's full version, or failing that its `v<major>.<minor>`
-line, and can be dispatched with the version as an input to run them at
-the release commit.
-
-That automatic run is the backstop, not the mechanism. It happens after
-the tag, which cannot be taken back cleanly, so it reports what the steps
-below exist to prevent. Run them here anyway.
+The release sequence and its pre-release checks — milestone coverage,
+release ordering, changelog completeness, the merged-work sweep — are
+process, so a fork's `core/git.md` carries them (ADR-049) and upstream's
+conformance run includes none of them. The steps below are what this
+repository still does. The `Release gates` workflow runs
+`py tests/run_conformance.py` on every tag push, and can be dispatched
+with the version as an input to run it at the release commit.
 
 1. Confirm the milestone's issues are all closed and `main` is green
    (`py tests/run_smoke.py` passes) and up to date (`git pull`)
-2. Confirm the inverse — every issue closed since the previous tag
-   carries the milestone being released. Step 1 reads the milestone
-   and cannot see work merged without one. Run the milestone-coverage
-   check in `templates/core/git.md`, exporting `RELEASE_MILESTONE`
-   as the milestone being released. Left unset it reports that the check does
-   not apply — correct for a routine release on a project that scopes
-   some cuts and not others, and a silent pass here, where every cut is
-   milestoned
-3. Confirm nothing else is ready to merge, or decide which side of the
-   tag it lands on. Run the release-ordering check in
-   `templates/core/git.md` — anything merged between the release
-   commit and the tag ships inside the release with no note naming it,
-   and both pull requests stay green in either order
-4. Cut `CHANGELOG.md` — reconcile the `Unreleased` section against the
-   commits the release carries with the changelog-completeness check in
-   `templates/core/git.md`, setting its `RELEASE` to the version
-   being cut. Left empty it reports that no release is in preparation and
-   does not apply, which is correct on any ordinary day and a silent pass
-   here. Choose the version from the section before naming it: a patch
-   when every entry sits under `### Fixed` or `### Security`, a minor
-   otherwise, per `core/git.md` Versioning — the release-documentation
-   check fails a version that disagrees. A patch's milestone is retitled
-   `vA.B.C — <theme>` before the gates run, or milestone-coverage reads
-   the minor line's milestone instead. Then rename that section to
+2. Cut `CHANGELOG.md` — reconcile the `Unreleased` section against the
+   commits since the previous tag:
+   ```bash
+   git log --oneline "$(git describe --tags --abbrev=0)"..HEAD
+   ```
+   A commit touching no template carries no entry, so a journal or
+   tooling change is expected in that list with nothing answering it.
+   Choose the version from the section before naming it, per ADR-006's
+   SemVer: a patch when every entry sits under `### Fixed` or
+   `### Security`, a major when the section carries
+   `### Breaking changes`, a minor otherwise. A patch's milestone is
+   retitled `vA.B.C — <theme>`. Then rename that section to
    `## [A.B.C] - YYYY-MM-DD` and open an empty `Unreleased` above it.
    This repo has no version manifest to carry the cut, so it is its own
    pull request, and it MUST merge before the tag below — a tag placed
    first names a tree whose changelog does not mention the release. That
    pull request's body is this repository's release proposal: it names
-   every step of `core/git.md`'s pre-release sequence and the result
-   it produced, including the checks that carry no step number here.
-   It also records the STK-24 canary run live against the release commit:
-   the report's tree, provider, model and verdict lines.
-   The check's two counts are not required to match: a commit touching
-   no template carries no entry, so a journal or tooling change is
-   expected to appear in the carried list with nothing answering it
-5. Tag and push, per `core/git.md`'s no-build sequence — the tag
-   is annotated and names a commit, and that commit is step 4's
-   changelog cut, not `main`. The theme in the tag message is the
-   milestone's, which is where this repository keeps it
-6. Publish the release from that tag, per the same sequence. Locally
-   `tag-guard.yml` is what fails a lightweight tag, so the guard the
-   sequence prescribes is enforced here rather than merely advised
-7. Close the release's milestone once the release is published — titled
+   every step here and the result it produced
+3. Tag and push. The tag is annotated and names a commit, and that commit
+   is step 2's changelog cut, not `main`. The theme in the tag message is
+   the milestone's, which is where this repository keeps it:
+   ```bash
+   git tag -a vA.B.C <cut-commit> -m "vA.B.C — <theme>"
+   git push origin vA.B.C
+   ```
+4. Publish the release from that tag, titled with the bare version.
+   `tag-guard.yml` fails a lightweight tag, so the annotated tag is
+   enforced here rather than merely advised:
+   ```bash
+   gh release create vA.B.C --title vA.B.C --generate-notes
+   ```
+5. Close the release's milestone once the release is published — titled
    `vA.B — <theme>` for a minor and `vA.B.C — <theme>` for a patch
-8. Record that the session owes a `docs/dev-journal.md` entry — do not
+6. Record that the session owes a `docs/dev-journal.md` entry — do not
    write it here. The entry is written at the end-of-session audit item
    that owns it, which is the last item for a reason: it is the only one
    whose output is a record of the others, and items above it file
    issues and open pull requests. Written at this point instead, the
-   entry names none of them, and `base-docs` fixes its account once
-   written, so the repair is a second entry for one session. When the
-   entry is written it is still **separate** — its own
-   `docs(journal): ...` PR with **no milestone**, not part of the
-   release. A release cut without a wrap-up still owes the entry;
-   publishing the release does not discharge it
-9. Verify the release exists before closing the session. This is last
-   rather than part of step 6 on purpose: a check inside a step is
+   entry names none of them, and its account is fixed once written, so
+   the repair is a second entry for one session. When the entry is
+   written it is still **separate** — its own `docs(journal): ...` PR
+   with **no milestone**, not part of the release. A release cut without
+   a wrap-up still owes the entry; publishing the release does not
+   discharge it
+7. Verify the release exists before closing the session. This is last
+   rather than part of step 4 on purpose: a check inside a step is
    skipped whenever the step is:
    ```bash
    gh release view vA.B.C --json tagName,name,isDraft --jq '.tagName, .name, .isDraft'
    ```
    Pass condition: prints the tag, the bare-version title, and `false`.
-   `release not found` means step 6 did not happen — and every other
+   `release not found` means step 4 did not happen — and every other
    artifact of the release, the tag and the closed milestone and the
    journal entry, is present either way, so nothing else surfaces it
 
@@ -895,24 +732,14 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run_smoke.py`, plus the milestone's own issue list |
-| 2 | the milestone-coverage check in `core/git.md` |
-| 3 | the release-ordering check in `core/git.md` |
-| 4 | the changelog-completeness check in `core/git.md`, and its release-documentation check, which fails a version whose bump disagrees with the section's headings. The canary record is enforced by nothing |
-| 5 | `tag-guard.yml`, which fails a pushed lightweight `v*` tag |
-| 6 | step 9, and nothing before it |
-| 7 | nothing — an open milestone after a published release is silent |
-| 8 | nothing — a missing entry surfaces at the next wrap-up, or never. The entry itself is gated by the audit item that writes it |
-| 9 | nothing; it is the closing check, so it is the one to run by hand |
+| 2 | nothing — the reconciliation and the version choice are read by hand |
+| 3 | `tag-guard.yml`, which fails a pushed lightweight `v*` tag |
+| 4 | step 7, and nothing before it |
+| 5 | nothing — an open milestone after a published release is silent |
+| 6 | nothing — a missing entry surfaces at the next wrap-up, or never. The entry itself is gated by the audit item that writes it |
+| 7 | nothing; it is the closing check, so it is the one to run by hand |
 
-The pre-release checks above the table are enforced by `core/git.md`
-rather than by a row here, which is why they carry no step number: a
-number would claim they are part of this sequence and drift from the one
-that owns them. What keeps them from being skipped is not a number but
-the record at step 4 — a check nobody ran is a line the release proposal
-does not carry. Four minor cuts shipped before that record was required,
-each owing a periodic review; ADR-037 holds their disposition.
-
-Step 6 is the one to protect first, because its omission cannot be
+Step 4 is the one to protect first, because its omission cannot be
 repaired afterwards: publishing the release later dates it after the
 release that followed it, and a mis-ordered release list is worse than a
 visibly absent entry. `v2.57.0` is the instance — tagged, milestoned and
@@ -921,4 +748,4 @@ reason.
 
 Projects with a version manifest (`package.json`, `pyproject.toml`,
 etc.) instead follow the branch → bump → PR → merge → tag flow; see
-ADR-006 and `core/git.md`.
+ADR-006.

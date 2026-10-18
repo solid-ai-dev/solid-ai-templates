@@ -43,6 +43,10 @@ alters no template carries no entry.
 
 ### Breaking changes
 
+- Stacks, platforms, `workflow/`, `language/`, the interview, `examples/`,
+  `generated/`, `core/readme.md`, `cli.md`, `skills.md`, `examples.md`,
+  `backend/templating.md` and the process sections of `git.md`, `docs.md`
+  and `quality-gates.md` move to forks. Pin `v2.90.0` or a fork.
 - The concern directories leave `templates/base/`: `templates/base/<concern>/`
   is now `templates/<concern>/` for core, security, workflow, infra, data and
   language. Template and section IDs are unchanged; update any path a

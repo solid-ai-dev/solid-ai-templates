@@ -22,23 +22,20 @@ project type.
 templates/          # All template source files
   core/             # Cross-cutting foundation (git, docs, quality, testing, ...)
   security/         # Security rules
-  workflow/         # Session protocol, issues, gates
   infra/            # CI/CD, containers, deployment
   data/             # Data modeling, quality, governance, migration
-  language/         # Language-specific rules
   backend/          # Backend layer — HTTP, API, database, observability
   frontend/         # Frontend layer — UX, accessibility, CSS, SSG
-  platform/         # CI and security tool mappings per hosting platform
   fixture/          # Test-input stack and platform — checked, never listed
-  stack/            # Concrete stacks — extend base + layer templates
-  INTERVIEW.md      # Agent-driven project setup interview
   manifest.yaml     # Machine-readable dependency graph
 docs/               # Onboarding, playbook, decision logs, SPEC.md
-examples/           # Complete generated context files (reference)
-tests/              # Smoke and e2e test runners, specs, reports
+tests/              # Smoke, conformance and fork-sync runners, specs, reports
 tools/              # sync.py, resolve.py, audit_redundancy.py
-generated/          # Pre-resolved template chains (one file per stack)
 ```
+
+Stacks, platforms, the workflow and process templates, the interview,
+examples and generated chains live in forks (ADR-049, ADR-050); the first
+is `Imbra-Ltd/imbra-ai-templates`.
 
 ### 1.3 Commands
 
@@ -47,7 +44,7 @@ generated/          # Pre-resolved template chains (one file per stack)
 git clone https://github.com/solid-ai-dev/solid-ai-templates.git
 
 # Sync generated sections after editing templates/manifest.yaml
-py tools/sync.py            # update SPEC.md, README.md, INTERVIEW.md, generated/
+py tools/sync.py            # update SPEC.md and README.md
 py tools/sync.py --check    # exit 1 if any file is out of sync
 
 # Resolve dependency chain for a stack
@@ -55,19 +52,15 @@ py tools/resolve.py --list                    # list stack IDs
 py tools/resolve.py --roots                   # list every root a project picks
 py tools/resolve.py <stack-id>               # print resolved file list
 py tools/resolve.py <stack-id> --concat      # print concatenated content
-py tools/resolve.py --generate               # regenerate all cached files
 
 # Audit redundant rules across resolved chains
 py tools/audit_redundancy.py                 # exact in-chain duplicates
 py tools/audit_redundancy.py --near          # include near-duplicates
 py tools/audit_redundancy.py --check          # CI gate — fail on new dups
-
-# To generate a context file for a project:
-# 1. Open your agent
-# 2. Attach templates/INTERVIEW.md and the relevant stack template
-#    (or use generated/<stack-id>.md for the pre-resolved chain)
-# 3. Ask the agent to generate CLAUDE.md (or AGENTS.md, etc.)
 ```
+
+A project generates its context file from a fork: the fork's interview and
+a resolved chain, handed to an agent (README, "How to use").
 
 ## 2. Code conventions
 
@@ -137,27 +130,18 @@ backlog (ADR-024).
 
 ### 2.3 Template naming convention
 
-Stack files follow a `<prefix>-<name>.md` pattern:
-
-| Prefix | Examples |
-|--------|---------|
-| `python-` | python-flask, python-fastapi, python-django, python-grpc |
-| `go-` | go-lib, go-service, go-echo, go-grpc |
-| `node-` | node-express, node-nestjs |
-| `nodejs-` | nodejs-lib |
-| `static-site-` | static-site-astro, static-site-tutorial |
-| `c-` | c-embedded |
-
-Stacks without a variant use a bare name (e.g. `htmx.md`).
+Base and layer files are named for their concern (`core/quality.md`,
+`backend/http.md`). Upstream ships no stacks: a fork names its own, and
+upstream's one stack is the fixture, `templates/fixture/stack.md`.
 
 ### 2.4 Inheritance model
 
 ```
 concerns ──┬── frontend/ ──┐
-           ├── backend/  ──┼── stack/
-           └── platform/ ──┘
+           ├── backend/  ──┼── a fork's stacks
+           └── a fork's platforms
 
-concerns = core/, security/, workflow/, infra/, data/, language/
+concerns = core/, security/, infra/, data/
 ```
 
 - Every stack declares `[DEPENDS ON: ...]` at the top
@@ -170,20 +154,12 @@ concerns = core/, security/, workflow/, infra/, data/, language/
   holds for every opt-in extra
 - `templates/manifest.yaml` is the machine-readable dependency graph
 
-### 2.5 Adding a new stack template
+### 2.5 Adding a stack or platform
 
-1. Create `templates/stack/<prefix>-<name>.md` following an existing
-   file of the same category
-2. Add `[DEPENDS ON: ...]` at the top — list every template this
-   extends
-3. Tag every section with `[ID: <name>]` or `[EXTEND: <id>]` /
-   `[OVERRIDE: <id>]`
-4. Register in `templates/manifest.yaml` under `stacks:` with
-   `depends_on`, `description`, `label`, and `layer` fields
-5. Run `py tools/sync.py` — updates SPEC.md, README.md, INTERVIEW.md
-6. Add an example in `examples/<name>/CLAUDE.md` if the stack is
-   concrete — generate it via the pipeline per ADR-016 (see PLAYBOOK
-   "Regenerate an example"); never hand-write it
+Stacks and platforms are added in a fork, never here. A fork registers
+them under `stacks:`, `platform:` or a key of its own and never edits
+`core:`, `base:`, `backend:` or `frontend:` (SPEC, "Forks"). The fixture
+stack and platform are test input only.
 
 ### 2.6 Adding a new base or layer template
 
@@ -191,18 +167,15 @@ concerns = core/, security/, workflow/, infra/, data/, language/
    - `templates/core/` — foundation (git, docs, quality, etc.)
    - `templates/security/` — security rules
    - `templates/infra/` — CI/CD, containers, deployment
-   - `templates/workflow/` — session protocol, issues, gates
-   - `templates/language/` — language-specific rules
    - `templates/data/` — data modeling, quality, governance, migration
    - `templates/backend/` — backend services
    - `templates/frontend/` — frontend/UI projects
-   - `templates/platform/` — CI platform mappings
 2. Tag the file with `[ID: <layer>-<name>]`
 3. Tag every section with a unique `[ID: ...]`
 4. Register in `templates/manifest.yaml` under the correct layer
    key with a `description` field
 5. Run `py tools/sync.py` — updates SPEC.md directory listings
-6. Reference from dependent stack templates via `[DEPENDS ON: ...]`
+6. Reference from dependent templates via `[DEPENDS ON: ...]`
 
 ### 2.7 Template authoring rules
 
@@ -248,8 +221,10 @@ concerns = core/, security/, workflow/, infra/, data/, language/
 - IDs MUST be unique across all layers
 - `depends_on` lists MUST reference valid IDs — no dangling
   references
-- Stack entries go under `stacks:`, base under `base:`, layer under
-  `backend:`, `frontend:`, or `platform:`
+- Base entries go under `base:`, layer under `backend:` or `frontend:`;
+  the fixture stays under `stacks:` and `platform:`. A fork's templates
+  go under a key of its own, and its core-tier additions under
+  `fork_core:`
 
 ### 2.9 Documentation
 
@@ -257,12 +232,12 @@ concerns = core/, security/, workflow/, infra/, data/, language/
 
 | File | Purpose |
 |------|---------|
-| `README.md` | Public-facing overview, quick start, stacks table, agents table |
+| `README.md` | Public-facing overview, the fork model, quick start, agents table |
 | `CLAUDE.md` | AI agent context and project rules (this file) |
 | `docs/SPEC.md` | System design, composition rules, inheritance model, precedence |
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
 | `docs/ONBOARDING.md` | Onboarding guide for new contributors |
-| `docs/PLAYBOOK.md` | Operational reference — how to add templates, run interviews, validate output |
+| `docs/PLAYBOOK.md` | Operational reference — how to add templates, validate a change, release |
 | `CHANGELOG.md` | Released versions and what changed in each; versions up to v2.63.0 are in the GitHub Releases (ADR-029) |
 | `SECURITY.md` | Private disclosure route, supported versions, scope, acknowledgement window |
 | `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules, branch and commit form |
@@ -287,8 +262,7 @@ concerns = core/, security/, workflow/, infra/, data/, language/
     change needing no entry says so in the PR body rather than staying
     silent; a template change almost always needs one, and a change to
     this repo's own tooling or tests usually does not. Keep each entry
-    within the forty-word bound `base-docs` declares, checked in that PR
-    rather than at the cut
+    within forty words, checked in that PR rather than at the cut
 - Do not duplicate content across documents — cross-reference
   instead
 - Write in present tense — past or future tense indicates
@@ -296,14 +270,13 @@ concerns = core/, security/, workflow/, infra/, data/, language/
 
 #### Decision logs
 
-- Apply the ADR threshold in `templates/core/docs.md`: a record is
-  owed when a decision changes something a consuming project can observe
-  without reading this repository — the composition model. Prose style,
-  tooling, release procedure, naming and file layout do not, however
-  consequential they are.
+- A decision record is owed only when a decision changes something a
+  consuming project can observe without reading this repository — the
+  composition model. Prose style, tooling, release procedure, naming and
+  file layout do not, however consequential they are.
 - Each ADR carries Context, a one-sentence Decision, Rationale, an
   optional Design, Alternatives considered, Consequences, Compatibility
-  and Security, per `base-docs` Decision logs
+  and Security
 - One coherent architectural decision may cover related choices across
   several issues or PRs; do not require a record per implementation concern.
 - Until the first implementation of an ADR merges, the record MAY be
@@ -314,15 +287,13 @@ concerns = core/, security/, workflow/, infra/, data/, language/
   current docs and the PR, while material architectural changes need a new ADR.
   Supersession
   metadata (`superseded_by` / `status` / `date`) and format-only
-  edits that move no claim are both permitted; see `base-docs`
-  Decision logs for the test and the evidence it requires
+  edits that move no claim are both permitted
 - Where a merged ADR and the templates disagree, the templates
   govern and the ADR stands as history. This repository owns the
   rules it applies, so a record describes a rule rather than
   departing from one, and a correction is complete when the rule is
   right in the templates — whether or not a new ADR was written. A
-  project consuming the templates declares its own ordering, per
-  `base-docs`
+  project consuming the templates declares its own ordering
 - ADR schema is governed by ADR-010 — YAML frontmatter required
   (`id` as quoted string, `status` in {Proposed, Accepted,
   Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD, `category` in {composition,
@@ -351,13 +322,9 @@ The suite lives in `tests/`:
 | File | Purpose |
 |------|---------|
 | `tests/lib.py` | Shared utilities (constants, file reading, report writing, arg parsing) |
-| `tests/cases.py` | E2E test case definitions, grouped by area (STK, FMT, ITV, DPL) |
 | `tests/run_smoke.py` | Smoke test runner (structural checks) |
-| `tests/run_e2e.py` | E2E test runner (agent-based tests) |
-| `tests/providers.py` | Model backends the e2e runner selects between |
 | `tests/conformance.py` | Disposition per embedded check — run here, or skip with a reason |
-| `tests/fork_dispositions.py` | Dispositions for the blocks in fork-owned content: stacks, platforms, workflow, process sections |
-| `tests/fork_checks.py` | Smoke checks that read fork-owned content (examples, interview, e2e cases), loaded by `run_smoke.py` when present |
+| `tests/fork_checks.py`, `tests/fork_dispositions.py`, `tools/fork_examples.py` | A fork's own smoke checks, dispositions and chain examples, loaded when present; upstream carries none |
 | `tests/run_conformance.py` | Runs the templates' own embedded checks against this repository |
 | `tests/run_fork_sync.py` | Merges the change under test into a simulated fork and runs smoke on the result |
 
@@ -369,30 +336,19 @@ py tests/run_conformance.py        # the templates' checks, against this repo
 py tests/run_conformance.py --list # dispositions only, run nothing
 
 py tests/run_fork_sync.py         # a fork that only appends merges HEAD
-
-py tests/run_e2e.py                # canary only (fixture stack, needs API key)
-py tests/run_e2e.py --all          # all tests (live, needs API key)
-py tests/run_e2e.py --area=STK     # run all stack tests
-py tests/run_e2e.py STK-01 FMT-01  # run specific tests by ID
-py tests/run_e2e.py --fail-fast    # stop on first failure
-py tests/run_e2e.py --dry-run      # build prompts, call no model, write no report
 ```
 
 - Every runner writes a timestamped Markdown report to
-  `tests/reports/` (gitignored), except an e2e dry run, which calls no
-  model and writes none
+  `tests/reports/` (gitignored)
 - Spec files live in `tests/specs/` — see `tests/CODIFICATION.md`
   for the ID scheme and `tests/INDEX.md` for the full list
 - CI runs smoke, conformance, fork sync, `sync.py --check`,
   `resolve.py --check`, the redundancy audit and gitleaks on PRs and on
   push to main
-- Live e2e calls a model and costs money, so it runs on a cadence
-  rather than per change: the STK-24 canary at every release cut,
-  recorded in the cut PR, and the full suite at each periodic review
-  (PLAYBOOK, "Run the test suite")
+- The e2e suite and the efficacy benchmark exercise stacks and the
+  interview, so they live in the Imbra fork
 - To validate a new template: run `py tests/run_smoke.py` and
-  attach `templates/INTERVIEW.md` + the new stack to an agent to
-  confirm coherent output
+  `py tests/run_conformance.py`
 
 ## 4. Identity
 
@@ -463,8 +419,7 @@ Run `py tests/run_smoke.py` before every PR. It checks:
   still be red in CI: one such edit put a 127-character line into every
   generated chain, 36 findings, with smoke green over it
 - Adding a fenced `bash`/`python` block to a template MUST add its
-  disposition in `tests/conformance.py`, or in `tests/fork_dispositions.py`
-  for a block in fork-owned content — run it here, or skip it with
+  disposition in `tests/conformance.py` — run it here, or skip it with
   the reason it does not apply. `py tests/run_conformance.py` fails on a
   block with no entry, and on a skip stating no reason. A block unrunnable
   only because it names a placeholder is not a skip: resolve the
@@ -481,8 +436,8 @@ Run `py tests/run_smoke.py` before every PR. It checks:
   count is not among them: those checks answered by exiting 3 and need no
   reader (PLAYBOOK, "Run the test suite")
 - Run `py tools/sync.py` after the LAST template edit of a change, not
-  the first — smoke does not read `generated/`, so a chain regenerated
-  before a later edit is stale and surfaces only in CI
+  the first — a generated section refreshed before a later edit is stale,
+  and smoke does not read it, so it surfaces only in CI
 - If a change affects multiple documents, update all in the same PR
 - Do not drift from the agreed scope without checking with the user
 - When a path-based shell query (`test -f`, `ls`, `git -C <path>`,
@@ -550,11 +505,9 @@ summarize — visible sequential execution prevents missed steps.
    `docs/decisions/`
 5. **Smoke tests** — run `py tests/run_smoke.py` and confirm all
    checks pass
-6. **CLAUDE.md** — for each new convention/rule, apply the
-   doc-placement decision tree in
-   `templates/workflow/ai-workflow.md` (Doc placement decision
-   tree section): evaluate code → ADR → README → PLAYBOOK →
-   CLAUDE.md → memory in order. CLAUDE.md is the home ONLY if the
+6. **CLAUDE.md** — for each new convention/rule, place it by
+   evaluating code → ADR → README → PLAYBOOK → CLAUDE.md → memory in
+   order. CLAUDE.md is the home ONLY if the
    agent MUST apply the rule on every turn.
 
    CLAUDE.md contains rules only — not changelogs, package
@@ -597,9 +550,7 @@ summarize — visible sequential execution prevents missed steps.
 
 ## 7. Communication
 
-Defaults from `base-communication`, inlined per this project's inline
-model. A downstream project MUST preserve these and MAY add its own
-shorthand verbs.
+Communication defaults, inlined per this project's inline model.
 
 - Concise, direct answers — no filler, no preamble, no restating the
   request before answering
