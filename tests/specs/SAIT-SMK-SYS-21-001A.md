@@ -30,6 +30,7 @@ tags: [tooling, resolver, manifest, composition, fork]
 | PASSED | The planted stack resolves at status 0 and its chain names all three files |
 | FAILED | The resolver exits non-zero, or the chain omits one of the three files |
 | FAILED | The output arrives inside a traceback |
+| FAILED | A `fork_core` entry depending on an ID outside the core tier resolves at status 0 |
 | FAILED | No case was run |
 | SKIPPED | — |
 | BLOCKED | — |
@@ -53,6 +54,8 @@ tags: [tooling, resolver, manifest, composition, fork]
    depending on `fork-lib`
 2. Resolve `stack-fork` through `resolve.py`'s own entry point, with the
    planted manifest in place of the real one
+3. Write `FORK_OUTSIDE_MANIFEST`, the same manifest with `fork-readme`
+   depending on `fork-lib`, and resolve `stack-fork` against it
 
 ### Assertions
 
@@ -62,7 +65,10 @@ tags: [tooling, resolver, manifest, composition, fork]
 2. Assert it names `templates/core/git.md`, the fork's own dependency read
    from a key no tool names
 3. Assert it names `templates/core/docs.md`, the fork's core-tier addition
-4. Assert the case count is non-zero, per ADR-034
+4. Assert the second manifest exits 1 with "Core-tier entry fork-readme
+   depends on fork-lib, which is outside the core tier": the tier is seeded
+   and never walked, so that dependency would vanish from every chain
+5. Assert the case count is non-zero, per ADR-034
 
 ### Negative controls
 
@@ -70,6 +76,10 @@ tags: [tooling, resolver, manifest, composition, fork]
    keys. Run against that resolver, the planted manifest exits 1 with
    "Missing dependency: stack-fork depends on fork-lib", so the fork's
    template was invisible
+2. **The dependency the core tier dropped.** Against the resolver before the
+   core-tier refusal, the second manifest exits 0 and its chain lacks
+   `fork-lib`'s file, which the 2026-10-18 360 review found with every gate
+   green
 
 ## Related
 

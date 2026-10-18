@@ -76,6 +76,12 @@ alters no template carries no entry.
   implements it, and a record MAY show a rendered diagram (draw.io, Mermaid)
   with its source committed beside it, instead of inline ASCII.
 
+### Fixed
+
+- A `fork_core` entry depending on an ID outside the core tier is refused,
+  naming both, rather than resolving with that dependency missing from
+  every chain.
+
 ### Deprecated
 
 - The reference model. `agents.md` and the interview offer inline or

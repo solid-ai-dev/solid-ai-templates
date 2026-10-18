@@ -358,7 +358,7 @@ boundary; the first fork is
 |-----------|------|
 | Sync by merge | A fork stays current with `git merge upstream/main`, never by copying files |
 | Keys of its own | A fork appends under `stacks:`, `platform:` and top-level manifest keys of its own, and never edits `core:`, `base:`, `backend:` or `frontend:`. The resolver reads every top-level list of entries. SYS-20 checks the upstream keys against the revision named by `SAIT_UPSTREAM_REF` |
-| `fork_core` | A fork adds to every chain's core tier under `fork_core:`, which the resolver takes after `core:`. SYS-21 checks that a fork's key and its `fork_core` entries resolve |
+| `fork_core` | A fork adds to every chain's core tier under `fork_core:`, which the resolver takes after `core:`. A core-tier entry depends only on core-tier IDs: the tier is seeded and never walked, so the resolver refuses a dependency outside it. SYS-21 checks that a fork's key and its `fork_core` entries resolve, and that refusal |
 | ID prefixes | `stack-*`, `platform-*` and `<org>-*` belong to forks; upstream adds no ID under them |
 | `Fork-merge: ours` | An upstream commit that removes what forks carry carries this trailer. A fork merges everything before it normally, merges it with `git merge -s ours`, then moves its own templates out of upstream's keys into its own key and `fork_core`, and restores each template the commit modified to upstream's text, moving its own lines into fork-owned files. ADR-049 "Merging the split" gives the commands |
 | Fork-owned files | `README.md`, `CLAUDE.md` and `CHANGELOG.md` belong to the fork, which resolves them in its own favour on every merge |

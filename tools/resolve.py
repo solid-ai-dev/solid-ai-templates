@@ -261,6 +261,18 @@ def _resolve_order(root, core_ids, entries):
     _check_graph(core_ids, entries, CORE_TIER)
     _check_graph([root], entries, None)
 
+    # Every chain seeds the core tier and walks none of its dependencies,
+    # so one outside the tier would be dropped from every chain with the
+    # resolve clean. A fork's `fork_core` entry is where this arises.
+    core = set(core_ids)
+    for cid in core_ids:
+        for dep in entries[cid].get("depends_on", []):
+            if dep not in core:
+                raise ResolveError(
+                    "Core-tier entry %s depends on %s, which is outside the "
+                    "core tier; add %s to core or fork_core, or drop the "
+                    "dependency" % (cid, dep, dep))
+
     done = set(core_ids)
     order = []
 

@@ -2314,17 +2314,29 @@ stacks:
     depends_on: [fork-lib]
 """
 
+# A `fork_core` entry depending on an ID outside the core tier: the tier is
+# seeded and never walked, so the dependency would vanish from every chain.
+FORK_OUTSIDE_MANIFEST = FORK_MANIFEST.replace(
+    "  - id: fork-readme\n    file: templates/core/docs.md\n",
+    "  - id: fork-readme\n    file: templates/core/docs.md\n"
+    "    depends_on: [fork-lib]\n")
+
 FORK_CASES = [
     ("fork", "stack-fork", 0, "templates/core/quality.md"),
     ("fork", "stack-fork", 0, "templates/core/git.md"),
     ("fork", "stack-fork", 0, "templates/core/docs.md"),
+    ("fork-outside", "stack-fork", 1,
+     "Core-tier entry fork-readme depends on fork-lib, which is outside the "
+     "core tier"),
 ]
 
 
 def check_sys_21():
     seen = Inspected()
     seen.count("fork-manifest cases", FORK_CASES)
-    failures = _resolve_cases({"fork": FORK_MANIFEST}, FORK_CASES)
+    failures = _resolve_cases({"fork": FORK_MANIFEST,
+                               "fork-outside": FORK_OUTSIDE_MANIFEST},
+                              FORK_CASES)
     return seen.failures() + failures, seen.notes()
 
 
