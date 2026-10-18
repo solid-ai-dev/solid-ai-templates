@@ -128,7 +128,8 @@ Then add the fork's own content:
 
 ## Guide documents
 
-Pending: #1892, #1872 and #1870 settle this section before the cut.
+Pending: the issues that settle this are #1892, #1872 and #1870, due
+before the cut.
 ADR-047 renames the guide documents under `docs/` to kebab-case, ADR-048
 replaces the development journal with a lessons log, and #1872 folds
 onboarding into `CONTRIBUTING.md`. A project renames its files in the
