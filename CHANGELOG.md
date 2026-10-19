@@ -50,6 +50,8 @@ Releases up to 2.63.0 are listed in
   ([#2048])
 - The Markdown lint config moves to .github/linters; a fork keeps its own
   .markdownlint.json ([#2049])
+- The release check and quality scorer are renamed check_release and
+  score_templates ([#2052])
 - The repository moved to the solid-ai-dev organisation; old links
   redirect ([#1841])
 - Paths, IDs, the manifest and the core rules stay stable until 4.0
@@ -102,6 +104,7 @@ Releases up to 2.63.0 are listed in
 [#2046]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2046
 [#2048]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2048
 [#2049]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2049
+[#2052]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2052
 
 ## [2.90.0] - 2026-09-12
 
