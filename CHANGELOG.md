@@ -33,6 +33,13 @@ alters no template carries no entry.
   pytest's two import modes forbid opposite things, a package test root
   satisfies both, and a probe checks the layout before any file moves.
 
+### Fixed
+
+- A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
+  naming both files, where the later entry silently replaced the earlier.
+  SPEC names the IDs and directories upstream holds, which a fork leaves
+  clear.
+
 ## [3.0.0] - 2026-10-18
 
 ### Breaking changes
