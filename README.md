@@ -1,32 +1,36 @@
 # SOLID-AI Templates
 
-Composable rule templates that an AI coding agent reads to write a
-project's `AGENTS.md` and `CLAUDE.md`. Your team's conventions live in one
-place and reach every agent on every project.
+Ready-made coding rules your AI agent turns into your project's
+`AGENTS.md` and `CLAUDE.md`.
 
-> **3.0 is the shared engine only.** Stacks, platforms, the process layer
-> and the interview live in forks. Coming from 2.x:
-> [Migrating to v3](docs/migrating-to-v3.md).
+## Features
 
-## Use it
+- Engineering standards for solo developers and small teams, like large
+  companies have
+- The same rules for every team member and every project
+- Ready-made rules for testing, security, Git, CI/CD and APIs
+- Skip, adapt or override the rules
+- New rules never change your project without your say
 
-- **Use a fork.** [imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates)
-  carries stacks, platforms and the interview; its README shows how to hand
-  them to your agent.
-- **Fork it.** Carry your own stacks and process, and stay current by
-  merging upstream: [Sync with upstream as a fork](docs/playbook.md#sync-with-upstream-as-a-fork).
-- **Build a chain by hand.** Load every file in the `core:` list of
-  `templates/manifest.yaml`, then your template and its `[DEPENDS ON]` tree.
-  With Python and PyYAML, `python3 tools/resolve.py <root> --concat` does it.
-- **Take updates selectively.** A new tag adopts nothing by itself:
-  [Adopt a template policy update](docs/playbook.md#adopt-a-template-policy-update).
+## Quick setup
 
-## Does it help?
+1. Fork this repository on GitHub and clone your fork.
 
-Measured, not assumed, and so far mixed: in round 4 of the efficacy
-benchmark, a 39-line hand-written file did best, and with a weaker model
-every template-generated file lowered the hidden-test pass rate.
-[The round-4 report](docs/audits/2026-10-17-round-4.md) has every figure.
+2. List the templates, then build the one your project needs into a single
+   file (Python 3 and PyYAML):
+
+   ```bash
+   pip install pyyaml
+   python3 tools/resolve.py --roots                 # lists the templates
+   python3 tools/resolve.py backend-api --concat > chain.md
+   ```
+
+   No Python? Give your agent the files in the manifest's `core:` list,
+   then the template you picked and the files it names as dependencies.
+
+3. Give your agent `chain.md` and `templates/core/agents.md`, and ask it to
+   write `AGENTS.md` and `CLAUDE.md` for your project. Review the result
+   before you commit it.
 
 ## Documentation
 
@@ -34,6 +38,7 @@ every template-generated file lowered the hidden-test pass rate.
 |------|-----|
 | [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
 | [Changelog](CHANGELOG.md) | What changed in each release |
+| [Migrating from 2.x](docs/migrating-to-v3.md) | Moving a 2.x project or fork to 3.0 |
 | [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
 | [Playbook](docs/playbook.md) | Step-by-step procedures |
 | [Decisions](docs/decisions/) | Why the design is what it is |
