@@ -46,8 +46,9 @@ keep your team on design and testing.
 
 ## License
 
-[CC BY 4.0](LICENSE). Use, share and adapt the templates for any purpose,
-including commercial use, with attribution.
+[MIT](LICENSE). Use, copy and adapt the templates and tools for any
+purpose, including in closed and commercial projects, keeping the copyright
+notice. Releases before 3.0.0 remain under CC BY 4.0.
 
 ## Author
 
