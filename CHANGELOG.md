@@ -1,24 +1,12 @@
 # Changelog
 
-All notable changes to this project are recorded here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
-uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+What changed in each release, newest first. Each entry is one line and
+links the pull request with the details.
 
-Versions up to and including `v2.63.0` predate this file. They are recorded
-in the project's
-[GitHub Releases](https://github.com/solid-ai-dev/solid-ai-templates/releases) —
-62 published versions from `v2.1.0` to `v2.63.0`. That set is closed and
-does not grow; every version released after `v2.63.0` has its own section
-below.
-
-`v2.57.0` is tagged and has no Release. Its tag was cut 36 minutes before
-`v2.58.0` was published, so publishing it now would sort it above `v2.58.0`
-on the releases page. The tag holds the tree; the notes are not written.
-
-The entries describe changes to the templates, which are what a consuming
-project receives. A change to this repository's own tooling or tests that
-alters no template carries no entry. Each entry is one line of plain text
-and links the pull request that holds the detail.
+Releases follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
+and this file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Releases up to 2.63.0 are listed in
+[GitHub Releases](https://github.com/solid-ai-dev/solid-ai-templates/releases).
 
 ## [Unreleased]
 
