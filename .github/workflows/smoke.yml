@@ -10,8 +10,50 @@ permissions:
   contents: read
 
 jobs:
-  smoke:
+  # Each gate is its own job, so one failure does not hide the rest.
+  gates:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Run smoke tests
+            run: python tests/run_smoke.py
+
+          - name: Run the templates' own checks against this repository
+            run: python tests/run_conformance.py
+
+          # A fork syncs by merging upstream. This merges the change under
+          # test into a simulated fork and runs smoke on the result.
+          - name: Check a fork that only appends merges this change
+            run: python tests/run_fork_sync.py
+
+          - name: Check the release check still reads its planted cases
+            run: python tools/release_check.py --self-test
+
+          - name: Check generated docs are up to date
+            run: python tools/sync.py --check
+
+          # Upstream offers no stack, so this reads a fork's cache of
+          # resolved chains; upstream's run confirms the manifest parses.
+          - name: Check the resolved stack chains are up to date
+            run: python tools/resolve.py --check
+
+          - name: Check for new redundant rules
+            run: python tools/audit_redundancy.py --check
+
+          # A template may get better, never worse: each file's score is
+          # held to its row in tests/template-quality-baseline.txt.
+          - name: Check no template's quality score fell
+            run: python tools/template_quality.py --check
+
+          # The tooling is the gate, so an unused import or an undefined
+          # name in it is a defect nothing else reports.
+          - name: Lint the Python tooling
+            run: |
+              pip install pyflakes==4.0.2
+              python -m pyflakes tools tests
     steps:
       # Fork sync forks from the merge base of HEAD and origin/main, and a
       # fork's release checks read its tag history, so a shallow clone
@@ -19,69 +61,78 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+        with:
+          upstream-repo: ${{ vars.UPSTREAM_REPO }}
+
+      - name: ${{ matrix.name }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ${{ matrix.run }}
+
+  # Reads .markdownlint.json for the rules and .markdownlint-cli2.jsonc for
+  # the files: every tracked Markdown file, with no exemptions. The version
+  # is pinned so a release cannot turn a green tree red.
+  markdown:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - run: npx --yes markdownlint-cli2@0.23.3
+
+  # The same hooks a contributor runs locally, so the config cannot drift
+  # from what CI enforces. gitleaks has its own job below.
+  pre-commit:
+    name: Run the pre-commit hooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Install dependencies
-        run: pip install pyyaml
-      # A fork names its upstream in the UPSTREAM_REPO repository variable.
-      # Its history then holds upstream's commits, whose issue numbers belong
-      # to another tracker, and SYS-20 needs upstream's manifest to compare
-      # against. Upstream sets no variable and skips this.
-      - name: Fetch the upstream this fork names
-        if: vars.UPSTREAM_REPO != ''
-        env:
-          UPSTREAM_REPO: ${{ vars.UPSTREAM_REPO }}
-        run: |
-          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git" \
-            "+refs/heads/main:refs/remotes/upstream/main"
-          echo "SAIT_UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
-          echo "UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
-          git log -1 --format='upstream/main: %h %s' upstream/main
-      - name: Run smoke tests
-        run: python tests/run_smoke.py
-      - name: Run the templates' own checks against this repository
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python tests/run_conformance.py
-      # A fork syncs by merging upstream. This merges the change under test
-      # into a simulated fork and runs smoke on the result.
-      - name: Check a fork that only appends merges this change
-        run: python tests/run_fork_sync.py
-      - name: Check the release check still reads its planted cases
-        run: python tools/release_check.py --self-test
-      - name: Check generated docs are up to date
-        run: python tools/sync.py --check
-      - name: Check generated/ files are up to date
-        run: python tools/resolve.py --check
-      - name: Check for new redundant rules
-        run: python tools/audit_redundancy.py --check
-      # A template may get better, never worse: each file's score is held to
-      # its row in tests/template-quality-baseline.txt.
-      - name: Check no template's quality score fell
-        run: python tools/template_quality.py --check
-      # The tooling is the gate, so an unused import or an undefined name in
-      # it is a defect nothing else reports. Versions are pinned so a release
-      # of either linter cannot turn a green tree red.
-      - name: Lint the Python tooling
-        run: |
-          pip install pyflakes==4.0.2
-          python -m pyflakes tools tests
-      # Reads .markdownlint.json for the rules and .markdownlint-cli2.jsonc
-      # for the files: every tracked Markdown file, with no exemptions.
-      - name: Lint Markdown
-        run: npx --yes markdownlint-cli2@0.23.3
-      # The same hooks a contributor runs locally, so the config cannot drift
-      # from what CI enforces. gitleaks has its own step below.
-      - name: Run the pre-commit hooks
-        env:
+
+      - env:
           SKIP: gitleaks
         run: |
           pip install pre-commit==4.3.0
           pre-commit run --all-files --show-diff-on-failure
+
+  # The binary is verified against the release's published SHA-256 before
+  # it runs, so a replaced download fails here rather than scanning.
+  gitleaks:
+    name: Secret detection (gitleaks)
+    runs-on: ubuntu-latest
+    env:
+      ARCHIVE: gitleaks_8.21.2_linux_x64.tar.gz
+      SHA256: 5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
       - name: Install gitleaks
         run: |
-          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz
+          curl -sSfLO "https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/${ARCHIVE}"
+          echo "${SHA256}  ${ARCHIVE}" | sha256sum --check
+          tar -xzf "${ARCHIVE}" gitleaks
           sudo mv gitleaks /usr/local/bin/
-      - name: Secret detection (gitleaks)
-        run: gitleaks detect --source . --verbose
+
+      - run: gitleaks detect --source . --verbose
+
+  # Branch protection requires one check named smoke. This job carries that
+  # name and passes only when every job above passed.
+  smoke:
+    if: always()
+    needs: [gates, markdown, pre-commit, gitleaks]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "results: ${RESULTS}"
+          for result in ${RESULTS}; do
+            [ "${result}" = success ] || exit 1
+          done

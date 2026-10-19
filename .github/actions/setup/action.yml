@@ -1,0 +1,35 @@
+name: Set up the checks
+description: Python, the pinned dependencies, and the upstream a fork names.
+
+inputs:
+  upstream-repo:
+    description: The upstream a fork names in its UPSTREAM_REPO variable.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v7
+      with:
+        python-version: "3.12"
+
+    # Pinned so a release of PyYAML cannot turn a green tree red.
+    - name: Install dependencies
+      shell: bash
+      run: pip install pyyaml==6.0.3
+
+    # A fork's history holds upstream's commits, whose issue numbers belong
+    # to another tracker, and SYS-20 needs upstream's manifest to compare
+    # against. Upstream passes no repository and skips this.
+    - name: Fetch the upstream this fork names
+      if: inputs.upstream-repo != ''
+      shell: bash
+      env:
+        UPSTREAM_REPO: ${{ inputs.upstream-repo }}
+      run: |
+        git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git" \
+          "+refs/heads/main:refs/remotes/upstream/main"
+        echo "SAIT_UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
+        echo "UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
+        git log -1 --format='upstream/main: %h %s' upstream/main
