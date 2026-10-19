@@ -29,6 +29,9 @@ alters no template carries no entry.
 - `base-agents` gates a hybrid consumer's chain list: a check resolves the
   selected roots from the vendored manifest and lists each file the context
   file omits or names beyond the chain, for the consumer's test suite.
+- `base-testing`'s tier-by-directory rule states its import prerequisite:
+  pytest's two import modes forbid opposite things, a package test root
+  satisfies both, and a probe checks the layout before any file moves.
 
 ## [3.0.0] - 2026-10-18
 
