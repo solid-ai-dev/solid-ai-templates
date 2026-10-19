@@ -33,7 +33,20 @@ alters no template carries no entry.
   pytest's two import modes forbid opposite things, a package test root
   satisfies both, and a probe checks the layout before any file moves.
 
+### Changed
+
+- `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
+  read as MUST or MUST NOT, where it required an RFC 2119 key word in
+  every rule. Key words mark strength where it matters.
+
 ### Fixed
+
+- `base-quality-gates` fences its own example check, and its prose-check
+  detector also finds a command followed by its verdict ("output must be
+  empty"). `base-git` and `base-quality` fence the two such checks it
+  found.
+- `base-agents` states the README-map rule's substance in place of this
+  repository's record number.
 
 - A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
   naming both files, where the later entry silently replaced the earlier.

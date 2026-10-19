@@ -392,7 +392,8 @@ compliance work. Apply "Adopting shared rules" in
 `templates/core/docs.md`, and inline that boundary in hybrid
 context files. Existing adopted rules remain effective until deliberately changed.
 
-Each base template section is tagged with a unique ID:
+A base template section that something references is tagged with a unique
+ID:
 
 ```markdown
 ## Git conventions [ID: base-git]

@@ -1255,7 +1255,8 @@ def check_adr_01():
                 failures.append(f"  {rel}: missing field {field!r}")
             elif not isinstance(data[field], list):
                 failures.append(
-                    f"  {rel}: {field} must be a list (got {type(data[field]).__name__})"
+                    f"  {rel}: {field} must be a list "
+                    f"(got {type(data[field]).__name__})"
                 )
 
         supersedes = data.get("superseded_by") or []
@@ -2753,15 +2754,19 @@ CHECKS = [
     {"id": "MNF-04", "spec": "SAIT-INT-MNF-04-001A",
      "title": "Prompt builds for all stacks", "fn": check_mnf_04},
     {"id": "MNF-05", "spec": "SAIT-INT-MNF-05-001A",
-     "title": "resolve.py resolution matches PyYAML resolution", "fn": check_mnf_05},
+     "title": "resolve.py resolution matches PyYAML resolution",
+     "fn": check_mnf_05},
     {"id": "TPL-01", "spec": "SAIT-INT-TPL-01-001A",
-     "title": "DEPENDS ON chain from the fixture stack is complete", "fn": check_tpl_01},
+     "title": "DEPENDS ON chain from the fixture stack is complete",
+     "fn": check_tpl_01},
     {"id": "TPL-02", "spec": "SAIT-INT-TPL-02-001A",
      "title": "EXTEND adds rules without removing base rules", "fn": check_tpl_02},
     {"id": "TPL-03", "spec": "SAIT-INT-TPL-03-001A",
-     "title": "OVERRIDE replaces parent section with different content", "fn": check_tpl_03},
+     "title": "OVERRIDE replaces parent section with different content",
+     "fn": check_tpl_03},
     {"id": "TPL-06", "spec": "SAIT-INT-TPL-06-001A",
-     "title": "EXTEND/OVERRIDE targets reachable in resolved chain", "fn": check_tpl_06},
+     "title": "EXTEND/OVERRIDE targets reachable in resolved chain",
+     "fn": check_tpl_06},
     {"id": "TPL-07", "spec": "SAIT-INT-TPL-07-001A",
      "title": "EXTEND sections do not duplicate parent rules", "fn": check_tpl_07},
     {"id": "SYS-03", "spec": "SAIT-SMK-SYS-03-001A",
@@ -2769,7 +2774,8 @@ CHECKS = [
     {"id": "SYS-04", "spec": "SAIT-SMK-SYS-04-001A",
      "title": "DEPENDS ON headers match manifest depends_on", "fn": check_sys_04},
     {"id": "SYS-06", "spec": "SAIT-SMK-SYS-06-001A",
-     "title": "Every usable stack's chain carries the MUST sections", "fn": check_sys_06},
+     "title": "Every usable stack's chain carries the MUST sections",
+     "fn": check_sys_06},
     {"id": "SYS-07", "spec": "SAIT-SMK-SYS-07-001A",
      "title": "360 audit reports live only under docs/audits/", "fn": check_sys_07},
     {"id": "TPL-08", "spec": "SAIT-SMK-TPL-08-001A",

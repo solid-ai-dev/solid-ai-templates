@@ -105,7 +105,7 @@ hold; a failing item is a fix, not a note:
   is stated.
 - Every mechanically checkable constraint names its check.
 - The Project structure section points to the README map, not a
-  duplicated directory tree (ADR-020).
+  duplicated directory tree — the README holds the only directory map.
 
 ---
 

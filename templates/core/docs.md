@@ -4,8 +4,10 @@
 
 ## Rule language
 
-All rules use the key words defined in **RFC 2119** to indicate requirement
-levels. Every rule MUST use one of these words:
+A rule is either a plain imperative ("Use X", "Never Y") or a sentence
+carrying one of the **RFC 2119** key words below. A plain imperative reads
+as MUST or MUST NOT. Use a key word where strength matters: SHOULD or MAY
+for anything weaker, MUST to stress an absolute one.
 
 | Word       | Meaning                                                         |
 | ---------- | --------------------------------------------------------------- |

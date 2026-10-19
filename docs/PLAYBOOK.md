@@ -19,7 +19,8 @@ and layer templates only.
    - `templates/backend/<name>.md` — backend services only
    - `templates/frontend/<name>.md` — frontend/UI projects only
 2. Tag the file root with `[ID: <layer>-<name>]`
-3. Tag every section with a unique `[ID: <layer>-<name>-<section>]`
+3. Tag each section another template or a rule references with a unique
+   `[ID: <layer>-<name>-<section>]`
 4. Register in `templates/manifest.yaml` under the correct layer key —
    `base:` for a concern, `backend:` or `frontend:` — with a description:
    ```yaml

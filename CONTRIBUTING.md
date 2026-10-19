@@ -75,9 +75,12 @@ mismatch without writing anything.
 Template content is rules, not prose. The full authoring conventions are in
 `CLAUDE.md` section 2.7; the ones contributors most often miss:
 
-- Use RFC 2119 keywords — MUST, MUST NOT, SHOULD, MAY
-- Write imperatively. "Use X", "Never Y" — no explanatory paragraphs
-  between rules
+- Write imperatively: "Use X", "Never Y". An RFC 2119 keyword — MUST,
+  SHOULD, MAY — marks a rule's strength where it matters
+- A short reason may sit in the bullet beside its rule; an explanatory
+  paragraph between two rules of one list may not
+- Give a section an `[ID: ...]` when another template or a rule
+  references it, and never remove an existing one
 - Keep lines under 88 characters. Table rows, fenced code and
   `[DEPENDS ON: ...]` lines are exempt
 - A rule that can be checked mechanically MUST name the command that checks
