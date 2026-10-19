@@ -341,13 +341,15 @@ py tests/run_conformance.py        # the templates' own checks, run here
 py tests/run_conformance.py --list # dispositions only, run nothing
 py tests/run_fork_sync.py         # a fork that only appends merges HEAD
 py -m pyflakes tools tests        # the tooling's own lint
-npx markdownlint-cli2              # every tracked Markdown file
+npx markdownlint-cli2 --config .github/linters/.markdownlint-cli2.jsonc
 pre-commit run --all-files         # whitespace, final newline, YAML
 ```
 
-CI pins the linters' versions in `.github/workflows/smoke.yml`. No
-Markdown file is exempt from the lint; never add an `ignores` entry to
-`.markdownlint-cli2.jsonc`.
+CI pins the linters' versions in `.github/workflows/smoke.yml`. The
+Markdown lint reads every tracked Markdown file, and none is exempt; never
+add an `ignores` entry to its config. The 88-character width is declared
+twice: in that config for the linter, and in `.editorconfig` for the
+templates' own line-width check.
 
 A change that removes what forks carry, such as the split, carries the
 commit trailer `Fork-merge: ours`. Fork sync then merges it the way a fork

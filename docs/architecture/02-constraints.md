@@ -32,4 +32,4 @@ The givens the design accepts rather than chooses.
 | 1 | arc42 | The architecture is one chapter per file, indexed by `docs/spec.md` |
 | 2 | RFC 2119 | A rule is a plain imperative or carries MUST, SHOULD or MAY |
 | 3 | Kebab-case file names | Every document under `docs/` and every template |
-| 4 | Line width 88 | Declared in `.markdownlint.json` and enforced on every Markdown file |
+| 4 | Line width 88 | Declared in `.editorconfig` and the markdownlint config, and enforced on every Markdown file |

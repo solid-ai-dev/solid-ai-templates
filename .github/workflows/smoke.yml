@@ -71,16 +71,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ${{ matrix.run }}
 
-  # Reads .markdownlint.json for the rules and .markdownlint-cli2.jsonc for
-  # the files: every tracked Markdown file, with no exemptions. The version
-  # is pinned so a release cannot turn a green tree red.
+  # The config holds the rules and the files: every tracked Markdown file,
+  # with no exemptions. The version is pinned so a release cannot turn a
+  # green tree red.
   markdown:
     name: Lint Markdown
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - run: npx --yes markdownlint-cli2@0.23.3
+      - run: >-
+          npx --yes markdownlint-cli2@0.23.3
+          --config .github/linters/.markdownlint-cli2.jsonc
 
   # The same hooks a contributor runs locally, so the config cannot drift
   # from what CI enforces. gitleaks has its own job below.

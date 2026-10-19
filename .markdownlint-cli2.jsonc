@@ -1,8 +1,0 @@
-// markdownlint-cli2 options. The rules themselves are in .markdownlint.json,
-// which the templates' own checks read too.
-{
-  // Every Markdown file .gitignore does not exclude, so a test report is not
-  // linted and a new document is. No file is exempt.
-  "globs": ["**/*.md"],
-  "gitignore": true
-}

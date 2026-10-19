@@ -119,7 +119,7 @@ labels are terminal, applied when closing without action: `duplicate`
   rename an existing ID — shipped IDs are frozen surface (ADR-051)
 - Optional sections are marked `(if applicable)` in the heading
 - Keep line length under 88 characters, the width declared in
-  `.markdownlint.json` for Markdown and `.editorconfig` for Python —
+  `.editorconfig` for Markdown and Python —
   exempt: table rows, fenced code, `[DEPENDS ON: ...]` directives, and
   unbreakable tokens (long URLs, Markdown link targets)
 - No HTML — Markdown only
@@ -200,7 +200,7 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 - Every runner writes a timestamped report to `tests/reports/`
   (gitignored); `tests/INDEX.md` lists every check
 - markdownlint holds every tracked Markdown file to the rules; never add
-  an `ignores` entry to `.markdownlint-cli2.jsonc`
+  an `ignores` entry to `.github/linters/.markdownlint-cli2.jsonc`
 
 ### 3.2 Review priority
 

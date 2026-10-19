@@ -2267,7 +2267,7 @@ so annotated-tag discipline plus the CI guard propagate to every consumer.
 
 **Issues closed:** #812. Journal PR carries no milestone.
 
-## 2026-08-02 — v2.36 Branch & session hygiene and v2.37 Documentation & README conventions
+## 2026-08-02 — v2.36 Branch & session hygiene, v2.37 Documentation & README
 
 **Tool:** Claude Code (Opus 5 [1M]).
 
@@ -6646,7 +6646,7 @@ gated-figure check stops at `docs/`)
 
 ---
 
-## 2026-09-06 — The fix that landed on one enumerator, and the audit that found the other two
+## 2026-09-06 — The fix on one enumerator, and the audit that found the other two
 
 **Tool:** Claude Code (Opus 5, 1M context)
 
@@ -7790,7 +7790,7 @@ measurement method, benchmark input, or this repository's own tooling.
   is why the specification chose it too — a piece of evidence for what the
   benchmark is about to measure, arriving before any trial
 
-## 2026-09-13 — The benchmark's scorer, judge and report, and what their controls found
+## 2026-09-13 — The benchmark's scorer, judge and report, and what controls found
 
 **Tool:** Claude Code (Opus 5 1M)
 
