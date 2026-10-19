@@ -1704,7 +1704,7 @@ def _declared_closure(start_file):
 # ---------------------------------------------------------------------------
 # SYS-13 - the instructed manual walk reaches what the resolver carries
 # ---------------------------------------------------------------------------
-# README tells an adopter without shell access to build a context file by
+# The runtime chapter tells an adopter without Python to build a chain by
 # reading the manifest and walking DEPENDS ON. That walk is not the
 # resolver: the resolver seeds a core tier unconditionally, and no
 # DEPENDS ON directive in the tree declares those files. An adopter
@@ -1716,6 +1716,9 @@ def _declared_closure(start_file):
 # resolver carries and the walk cannot reach is a rule the adopter
 # silently loses, and a file the walk reaches that the resolver drops is
 # an instruction that overshoots.
+
+MANUAL_WALK_DOC = "docs/architecture/06-runtime-view.md"
+
 
 def check_sys_13():
     if not HAS_YAML:
@@ -1731,14 +1734,16 @@ def check_sys_13():
     roots = sorted(sizes)
     failures = list(seen.failures())
 
-    # The instruction is half the pair, so a README that stops naming the
+    # The instruction is half the pair, so a document that stops naming the
     # core tier has to fail here too -- otherwise this check keeps passing
-    # against a document that no longer tells anyone to seed it.
-    if "core:" not in read(os.path.join(ROOT, "README.md")):
+    # against a document that no longer tells anyone to seed it. The phrase
+    # is the prose instruction's; the algorithm block's bare `core:` would
+    # pass with the instruction gone.
+    if "`core:` list" not in read(os.path.join(ROOT, MANUAL_WALK_DOC)):
         failures.append(
-            "  README.md no longer tells the manual path to load the "
-            "manifest's core: list, so the walk it instructs misses every "
-            "file the resolver seeds"
+            f"  {MANUAL_WALK_DOC} no longer tells the manual path to load "
+            "the manifest's `core:` list, so the walk it instructs misses "
+            "every file the resolver seeds"
         )
 
     missed_without_core = 0
@@ -1760,7 +1765,7 @@ def check_sys_13():
         for path in sorted(resolved - instructed):
             failures.append(
                 f"  {root}: the resolver carries {path} and the instructed "
-                f"walk cannot reach it — an adopter following README loses "
+                f"walk cannot reach it — an adopter following the chapter loses "
                 f"it with no error, because nothing declares what is absent"
             )
         for path in sorted(instructed - resolved):

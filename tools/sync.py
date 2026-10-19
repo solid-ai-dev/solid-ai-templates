@@ -501,14 +501,27 @@ def main():
     examples_doc = ROOT / CHAIN_EXAMPLES_DOC
     example_blocks = {"spec-chain-examples": chain_examples}
 
-    readme_blocks = {
-        "readme-stacks": readme_content,
-        "readme-extras": readme_extras,
-        "readme-root-counts": readme_root_counts,
-        "readme-agents": agent_outputs,
-    }
-    if has_model_table:
-        readme_blocks["readme-model-limits"] = model_limits
+    # The README is fork-owned. Upstream's is a short front page with no
+    # generated section; a fork keeps the markers for the tables it shows,
+    # and each pair present is filled, so --check still sees its drift. A
+    # section is absent only when both markers are: one marker deleted from
+    # a pair would otherwise leave a stale table outside every check.
+    readme_blocks = {}
+    for marker, content in (
+            ("readme-stacks", readme_content),
+            ("readme-extras", readme_extras),
+            ("readme-root-counts", readme_root_counts),
+            ("readme-agents", agent_outputs),
+            ("readme-model-limits", model_limits)):
+        opens = "<!-- generated:%s -->" % marker in readme_text
+        closes = "<!-- /generated:%s -->" % marker in readme_text
+        if opens != closes:
+            raise SystemExit(
+                "sync: README.md carries one marker of %s without the "
+                "other; restore the pair or delete both with the section"
+                % marker)
+        if opens:
+            readme_blocks[marker] = content
 
     # The interview lives in forks, so its absence upstream is expected. The
     # other targets always exist; one renamed away must fail the run, or

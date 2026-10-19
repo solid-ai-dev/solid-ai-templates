@@ -71,7 +71,7 @@ py tools/template_quality.py --update        # re-record after improving a file
 ```
 
 A project generates its context file from a fork: the fork's interview and
-a resolved chain, handed to an agent (README, "How to use").
+a resolved chain, handed to an agent (README, "Quick setup").
 
 ## 2. Code conventions
 
@@ -255,7 +255,7 @@ stack and platform are test input only.
 
 | File | Purpose |
 |------|---------|
-| `README.md` | Public-facing overview, the fork model, quick start, agents table |
+| `README.md` | Front page: what it is, features, quick setup, links to the docs |
 | `CLAUDE.md` | AI agent context and project rules (this file) |
 | `docs/spec.md` | arc42 index of `docs/architecture/` — goals, context, building blocks, runtime, composition rules, quality, risks |
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
@@ -271,8 +271,7 @@ stack and platform are test input only.
 - Before every PR, update all relevant documents:
   - `CLAUDE.md` — if architecture, naming conventions, or authoring
     rules change
-  - `README.md` — if the stacks table, project structure, or quick
-    start change
+  - `README.md` — if the features or the quick setup change
   - `docs/architecture/` — if the composition model, inheritance rules,
     or ID system change
   - `templates/manifest.yaml` — if any template is added, removed,

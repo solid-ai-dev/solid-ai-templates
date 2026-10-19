@@ -56,5 +56,5 @@ not justify a shared rule.
 | Role | Who | Expectation |
 |------|-----|-------------|
 | Owner and maintainer | Imbra Ltd, Branimir Georgiev | A library that is cheap to keep correct |
-| First fork | [Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates) | Stable contract, merges without conflict |
+| First fork | Imbra's fork, private | Stable contract, merges without conflict |
 | Consumer projects | Teams generating from a fork | Rules that fit the project and do not create adoption work on every release |

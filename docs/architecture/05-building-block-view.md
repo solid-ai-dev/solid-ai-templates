@@ -77,7 +77,7 @@ and never edits one upstream owns.
 | Tool | Does |
 |------|------|
 | `tools/resolve.py` | Resolves a root to its ordered file list, or the concatenated chain |
-| `tools/sync.py` | Regenerates the derived sections in README and this specification; `--check` fails on drift |
+| `tools/sync.py` | Regenerates the derived sections in this specification and in a fork's README; `--check` fails on drift |
 | `tools/release_check.py` | Checks a release's changelog cut and SemVer step |
 | `tools/audit_redundancy.py` | Finds duplicate rules across resolved chains |
 | `tools/template_quality.py` | Scores each template and holds the score to its baseline |
