@@ -16,8 +16,8 @@ tags: [composition, adoption, readme, resolver-parity]
 
 ## Short description
 
-> **Given** a README that instructs an adopter without shell access to
-> build a context file by reading the manifest and walking DEPENDS ON
+> **Given** the runtime chapter, which instructs an adopter without Python
+> to build a chain by reading the manifest and walking DEPENDS ON
 > **When** that walk is performed for every root a project can pick and
 > compared against what the resolver produces for the same root
 > **Then** a file the resolver carries that the walk cannot reach fails,
@@ -31,7 +31,7 @@ tags: [composition, adoption, readme, resolver-parity]
 | PASSED | For every root, the instructed walk and the resolved chain hold the same files |
 | FAILED | The resolver carries a file the instructed walk cannot reach |
 | FAILED | The instructed walk reaches a file the resolver does not carry |
-| FAILED | README no longer tells the manual path to load the manifest's `core:` list |
+| FAILED | The runtime chapter no longer tells the manual path to load the manifest's `core:` list |
 | FAILED | The check compared no roots, or the core tier is empty |
 | SKIPPED | PyYAML not installed |
 | BLOCKED | — |
@@ -56,13 +56,13 @@ tags: [composition, adoption, readme, resolver-parity]
    orthogonal template that resolves as its own root
 3. For each root, walk `[DEPENDS ON:]` transitively from the root's own
    file. The directives are read out of the files rather than from the
-   manifest's `depends_on`, because a reader following the README has
+   manifest's `depends_on`, because a reader following the chapter has
    only the files
-4. Union that walk with the core tier — this is what the README's
+4. Union that walk with the core tier — this is what the chapter's
    instruction produces when followed exactly
 5. Compare it against the resolved chain in both directions of
    membership
-6. Assert README still instructs the core-tier load, since the
+6. Assert the chapter still instructs the core-tier load, since the
    instruction is half of the pair under test
 7. Report the core-tier size, the stacks and opt-in roots compared as
    two counts, and how many files the
@@ -74,7 +74,8 @@ tags: [composition, adoption, readme, resolver-parity]
    walk — that is a rule the adopter silently loses
 2. Assert no file is in the instructed walk and outside the resolved
    chain — that is an instruction that overshoots the chain
-3. Assert README names the manifest's `core:` list, so this check cannot
+3. Assert `docs/architecture/06-runtime-view.md` names the manifest's
+   `` `core:` list ``, so this check cannot
    keep passing against a document that stopped saying to seed it
 4. Assert the root count and the core-tier count are non-zero, per
    ADR-034: a check that compared nothing reports what parity reports

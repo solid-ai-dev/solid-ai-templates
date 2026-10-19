@@ -25,9 +25,6 @@ Ready-made coding rules your AI agent turns into your project's
    python3 tools/resolve.py backend-api --concat > chain.md
    ```
 
-   No Python? Give your agent the files in the manifest's `core:` list,
-   then the template you picked and the files it names as dependencies.
-
 3. Give your agent `chain.md` and `templates/core/agents.md`, and ask it to
    write `AGENTS.md` and `CLAUDE.md` for your project. Review the result
    before you commit it.

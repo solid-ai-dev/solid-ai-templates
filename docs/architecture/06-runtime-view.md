@@ -73,6 +73,11 @@ Input: a root and the manifest. Output: the ordered list of files to load.
 Today `tools/resolve.py` resolves one root, steps 1 to 3 and 6. Steps 4 and
 5 belong to the declaration block of section 6.3 and are proposed.
 
+Without Python, follow steps 1 to 3 by hand: load every file in the
+manifest's `core:` list, then the root's file and every file its
+`[DEPENDS ON]` lines name, transitively. Skipping the `core:` list loses
+rules with no error, because no template declares those files.
+
 ```text
 1. Seed the core tier: core:, then fork_core:
 2. Look up the stack ID in the manifest
