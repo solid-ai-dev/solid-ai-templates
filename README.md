@@ -1,8 +1,8 @@
 # SOLID-AI Templates
 
 Ready-made coding rules that help your AI agents make the same choices
-your team would. Hand routine coding and review to the agents, and keep
-your team on design and testing.
+your team would. Hand over routine coding and review to the agents, and
+keep your team on design and testing.
 
 ## Features
 
