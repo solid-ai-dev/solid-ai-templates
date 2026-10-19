@@ -10,11 +10,15 @@
 # beside the reason it was accepted. A title here that reaches a verdict, or
 # reports it does not apply, passes freely: shrinking is the direction this
 # file exists to encourage, and the set moves with the release moment --
-# release-ordering answers "does not apply" while HEAD is the tag.
+# in a fork, release-ordering answers "does not apply" while HEAD is the
+# tag.
 #
 # Adding a line means answering first why the check cannot reach a verdict.
 # A pass condition that declares a threshold has one available and belongs
 # in a predicate instead.
+#
+# A reason below with no title under it is for a check a fork carries; the
+# fork's copy of this file holds the title beneath it.
 
 # Each pull request it lists as ready is a decision about which side of the
 # tag the work lands on, which the check states is not a warning it can

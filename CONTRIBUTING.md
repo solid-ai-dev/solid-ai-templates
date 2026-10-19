@@ -20,7 +20,8 @@ ADR-050 in `docs/decisions/` sets the boundary.
 ## Before you open a pull request
 
 Run the structural checks. They need Python and PyYAML — `pip install
-pyyaml` — and they take about a second:
+pyyaml` — and they take about ten seconds. The commands use `py`, the
+Windows launcher; on macOS and Linux run `python3` instead:
 
 ```bash
 py tests/run_smoke.py
@@ -56,9 +57,11 @@ mismatch without writing anything.
 - **Updated documents.** If your change moves the composition model, update
   `docs/SPEC.md`; if it changes a command or the project structure, update
   `README.md`. `CLAUDE.md` section 2.9 lists which document owns what
-- **A decision record** for a structural decision — a new layer, a change to
-  the override model, a naming convention. See `docs/decisions/` and copy
-  `docs/decisions/TEMPLATE.md`
+- **A decision record** when the change moves what a consuming project
+  observes without reading this repository — the composition model, such as
+  a new layer or a change to the override model. Naming, prose style,
+  tooling and file layout need none (`CLAUDE.md`, "Decision logs"). See
+  `docs/decisions/` and copy `docs/decisions/TEMPLATE.md`
 - **What it costs every chain carrying it.** A rule added to a widely
   resolved file is read by every project on those chains, on every turn.
   Nothing refuses the size, but crossing to a larger context window is

@@ -31,7 +31,9 @@ Read `docs/SPEC.md` for the full composition model before contributing.
 
 - Git
 - A Markdown editor (any)
-- Python 3.x — for running the smoke, conformance and fork-sync runners
+- Python 3.x — for running the smoke, conformance and fork-sync runners.
+  The contributor documents write it as `py`, the Windows launcher; on
+  macOS and Linux run `python3` instead, and CI runs `python`
 - GitHub CLI (`gh`), authenticated — for the issue, pull-request and
   release steps in `docs/PLAYBOOK.md`
 

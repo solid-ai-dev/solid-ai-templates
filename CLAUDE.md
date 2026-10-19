@@ -30,7 +30,7 @@ templates/          # All template source files
   manifest.yaml     # Machine-readable dependency graph
 docs/               # Onboarding, playbook, decision logs, SPEC.md
 tests/              # Smoke, conformance and fork-sync runners, specs, reports
-tools/              # sync.py, resolve.py, audit_redundancy.py
+tools/              # sync.py, resolve.py, release_check.py, audit_redundancy.py
 ```
 
 Stacks, platforms, the workflow and process templates, the interview,
@@ -40,7 +40,8 @@ is `Imbra-Ltd/imbra-ai-templates`.
 ### 1.3 Commands
 
 ```bash
-# No build step — all templates are plain Markdown
+# No build step — all templates are plain Markdown. `py` is the Windows
+# launcher; on macOS and Linux run python3 instead
 git clone https://github.com/solid-ai-dev/solid-ai-templates.git
 
 # Sync generated sections after editing templates/manifest.yaml
@@ -299,13 +300,14 @@ stack and platform are test input only.
   departing from one, and a correction is complete when the rule is
   right in the templates — whether or not a new ADR was written. A
   project consuming the templates declares its own ordering
-- ADR schema is governed by ADR-010 — YAML frontmatter required
-  (`id` as quoted string, `status` in {Proposed, Accepted,
-  Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD, `category` in {composition,
-  templates, tooling, process, release}, reciprocal `supersedes` /
-  `superseded_by` links). Copy `docs/decisions/TEMPLATE.md` when
-  authoring a new ADR; `py tests/run_smoke.py ADR-01` enforces
-  the schema
+- ADR schema, introduced by ADR-010 with three statuses — YAML
+  frontmatter required (`id` as quoted string, `status` in {Proposed,
+  Accepted, Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD,
+  `category` in {composition, templates, tooling, process, release},
+  reciprocal `supersedes` / `superseded_by` links). Copy
+  `docs/decisions/TEMPLATE.md` when authoring a new ADR;
+  `py tests/run_smoke.py ADR-01` enforces the schema and governs where
+  it and ADR-010 differ
 
 #### Rule language
 
@@ -347,9 +349,9 @@ py tests/run_fork_sync.py         # a fork that only appends merges HEAD
   `tests/reports/` (gitignored)
 - Spec files live in `tests/specs/` — see `tests/CODIFICATION.md`
   for the ID scheme and `tests/INDEX.md` for the full list
-- CI runs smoke, conformance, fork sync, `sync.py --check`,
-  `resolve.py --check`, the redundancy audit and gitleaks on PRs and on
-  push to main
+- CI runs smoke, conformance, fork sync, `release_check.py --self-test`,
+  `sync.py --check`, `resolve.py --check`, the redundancy audit and
+  gitleaks on PRs and on push to main
 - The e2e suite and the efficacy benchmark exercise stacks and the
   interview, so they live in the Imbra fork
 - To validate a new template: run `py tests/run_smoke.py` and

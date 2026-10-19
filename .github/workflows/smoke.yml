@@ -13,8 +13,9 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      # The conformance runner reads the tag history to reconcile a
-      # release against its changelog, so a shallow clone fails it.
+      # Fork sync forks from the merge base of HEAD and origin/main, and a
+      # fork's release checks read its tag history, so a shallow clone
+      # fails both.
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
@@ -32,7 +33,8 @@ jobs:
         env:
           UPSTREAM_REPO: ${{ vars.UPSTREAM_REPO }}
         run: |
-          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git"             "+refs/heads/main:refs/remotes/upstream/main"
+          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git" \
+            "+refs/heads/main:refs/remotes/upstream/main"
           echo "SAIT_UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
           echo "UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
           git log -1 --format='upstream/main: %h %s' upstream/main

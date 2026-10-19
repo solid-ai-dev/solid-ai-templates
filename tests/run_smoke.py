@@ -1151,7 +1151,8 @@ def check_tpl_09():
 # ---------------------------------------------------------------------------
 # ADR-01 — ADR frontmatter schema enforcement
 # ---------------------------------------------------------------------------
-# Enforces the schema defined in docs/decisions/010-adr-governance.md:
+# Enforces the schema docs/decisions/010-adr-governance.md introduced,
+# with the two statuses added since:
 # - frontmatter present and parses as YAML
 # - id is 3-digit string matching filename leading digits
 # - status in closed set: Proposed | Accepted | Superseded | Rejected |
