@@ -67,7 +67,7 @@ jobs:
           DISPATCH_RELEASE: ${{ inputs.release }}
         run: |
           release="${DISPATCH_RELEASE:-${GITHUB_REF_NAME}}"
-          title="$(python tools/release_check.py --milestone "${release}")"
+          title="$(python tools/check_release.py --milestone "${release}")"
           echo "RELEASE=${release}" >> "$GITHUB_ENV"
           echo "RELEASE_MILESTONE=${title}" >> "$GITHUB_ENV"
           echo "release:   ${release}"
@@ -76,7 +76,7 @@ jobs:
       # The changelog cut is this repository's own release step; the
       # conformance run below carries the templates' checks.
       - name: Check the changelog cut names this release
-        run: python tools/release_check.py "$RELEASE"
+        run: python tools/check_release.py "$RELEASE"
 
       - name: Run the release gates
         env:
@@ -103,7 +103,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF_NAME}"
-          python tools/release_check.py --notes "${tag}" > notes.md
+          python tools/check_release.py --notes "${tag}" > notes.md
           if gh release view "${tag}" > /dev/null 2>&1; then
             gh release edit "${tag}" --title "${tag}" --notes-file notes.md
           else

@@ -19,10 +19,10 @@ milestone names it, and what the release's notes are. Each prints its
 answer and exits 1 when it cannot give one.
 
 Usage:
-    py tools/release_check.py v3.0.0              # the release being cut
-    py tools/release_check.py --milestone v3.0.0  # the milestone naming it
-    py tools/release_check.py --notes v3.0.0      # its changelog section
-    py tools/release_check.py --self-test         # the planted cases below
+    py tools/check_release.py v3.0.0              # the release being cut
+    py tools/check_release.py --milestone v3.0.0  # the milestone naming it
+    py tools/check_release.py --notes v3.0.0      # its changelog section
+    py tools/check_release.py --self-test         # the planted cases below
 """
 
 import os

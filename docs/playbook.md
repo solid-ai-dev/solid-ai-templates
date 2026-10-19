@@ -308,17 +308,17 @@ applies.
 
 ## Score template quality
 
-`tools/template_quality.py` scores each template's form against the
+`tools/score_templates.py` scores each template's form against the
 criteria in `docs/design/template-content-quality.md`, "Measured criteria":
 rule length, prose share, sentence length, instructions, hedges, history and
 section size, from 0 to 100.
 
 ```bash
-py tools/template_quality.py              # every template, lowest first
-py tools/template_quality.py templates/core/testing.md   # one file in detail
-py tools/template_quality.py --sections   # the lowest-scoring sections
-py tools/template_quality.py --check      # the CI ratchet
-py tools/template_quality.py --update     # re-record the baseline
+py tools/score_templates.py              # every template, lowest first
+py tools/score_templates.py templates/core/testing.md   # one file in detail
+py tools/score_templates.py --sections   # the lowest-scoring sections
+py tools/score_templates.py --check      # the CI ratchet
+py tools/score_templates.py --update     # re-record the baseline
 ```
 
 Pass condition for `--check`: `findings: 0` and exit zero. It runs the
@@ -899,13 +899,13 @@ process, so a fork carries them in a template of its own (ADR-049; the
 Imbra fork's is `templates/imbra/git.md`), and upstream's conformance run
 includes none of them. The steps below are what this
 repository still does. On every tag push the `Release gates` workflow
-fails a lightweight tag, runs `py tools/release_check.py` and
+fails a lightweight tag, runs `py tools/check_release.py` and
 `py tests/run_conformance.py`, and then publishes the release with the
 tag's `CHANGELOG.md` section as its notes. It can be dispatched with the
 version as an input to run the gates at the release commit, where it
 publishes nothing. The first gate checks step 2's cut:
 ```bash
-py tools/release_check.py vA.B.C
+py tools/check_release.py vA.B.C
 ```
 Pass condition: it names the release, the previous tag and the ref the
 changelog was read from, prints `findings: 0`, and exits zero. A finding
@@ -982,7 +982,7 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run_smoke.py`, plus the milestone's own issue list |
-| 2 | `tools/release_check.py`, for the cut and the version; the reconciliation against the commits is read by hand |
+| 2 | `tools/check_release.py`, for the cut and the version; the reconciliation against the commits is read by hand |
 | 3 | `release-gates.yml`, whose first job fails a pushed lightweight `v*` tag |
 | 4 | `release-gates.yml`, which publishes only after its gates pass; step 7 confirms it |
 | 5 | nothing — an open milestone after a published release is silent |

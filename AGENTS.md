@@ -193,7 +193,7 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 
 ### 3.1 Checks
 
-- CI runs smoke, conformance, fork sync, `release_check.py --self-test`,
+- CI runs smoke, conformance, fork sync, `check_release.py --self-test`,
   `sync.py --check`, `resolve.py --check`, the redundancy audit, the
   template-quality ratchet, pyflakes, markdownlint, the pre-commit hooks
   and gitleaks on every PR and on push to `main`

@@ -30,7 +30,7 @@ jobs:
             run: python tests/run_fork_sync.py
 
           - name: Check the release check still reads its planted cases
-            run: python tools/release_check.py --self-test
+            run: python tools/check_release.py --self-test
 
           - name: Check generated docs are up to date
             run: python tools/sync.py --check
@@ -46,7 +46,7 @@ jobs:
           # A template may get better, never worse: each file's score is
           # held to its row in tests/template-quality-baseline.txt.
           - name: Check no template's quality score fell
-            run: python tools/template_quality.py --check
+            run: python tools/score_templates.py --check
 
           # The tooling is the gate, so an unused import or an undefined
           # name in it is a defect nothing else reports.

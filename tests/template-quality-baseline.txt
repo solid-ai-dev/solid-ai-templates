@@ -1,4 +1,4 @@
-# Template quality scores, recorded by `py tools/template_quality.py --update`.
+# Template quality scores, recorded by `py tools/score_templates.py --update`.
 # `--check` fails a template scoring below its row here, a template with no
 # row scoring below the new-file floor, and a row naming no template. Raise
 # a row by improving the template and re-recording; never lower one by hand.
