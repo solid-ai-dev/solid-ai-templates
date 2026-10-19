@@ -77,6 +77,16 @@ CHECKS = [
                     'SOURCES = ("templates/", "generated/", "examples/", '
                     '"tests/efficacy/arms/")'}},
 
+    # -- core/agents.md ----------------------------------------------
+
+    {"file": "core/agents.md", "find": "scope silently lost",
+     "title": "A consumer's chain list matches what its pin resolves",
+     "do": SKIP,
+     "reason": "Applies to a hybrid consumer that vendors this repository "
+               "and lists its chain in its context file. This repository "
+               "vendors nothing, and its CLAUDE.md is inline, so it holds "
+               "no chain list to compare."},
+
     # -- core/git.md -------------------------------------------------
 
     {"file": "core/git.md", "find": "<regenerate-command>",
