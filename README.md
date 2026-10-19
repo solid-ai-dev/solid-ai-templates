@@ -19,7 +19,7 @@ your team would.
    ```text
    Clone https://github.com/solid-ai-dev/solid-ai-templates next to this
    project. Read its templates/manifest.yaml, propose the templates that
-   fit this project, and wait for my answer.
+   fit this project, and ask me to confirm before going on.
 
    Then write AGENTS.md and CLAUDE.md for this project:
    - Load every file in the manifest's core: list
