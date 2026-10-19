@@ -270,7 +270,13 @@ other):
 py tools/audit_redundancy.py           # exact in-chain duplicates
 py tools/audit_redundancy.py --near    # also paraphrase near-duplicates
 py tools/audit_redundancy.py --check   # exit 1 if any exact duplicate
+py tools/audit_redundancy.py --self-test  # the planted cases only
 ```
+
+Every run prints how many rules it read and refuses a chain it read none
+from. `--check` first runs planted chains that owe a known number of
+findings, so a detector that stops matching fails instead of reporting a
+clean corpus.
 
 `--check` gates the exact tier only and prints the near count beside
 its verdict, so a passing run states what it did not gate (ADR-038).
