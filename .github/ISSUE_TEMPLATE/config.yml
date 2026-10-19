@@ -10,5 +10,5 @@ contact_links:
     url: https://github.com/Imbra-Ltd/imbra-ai-templates/issues
     about: These live in forks. Report them to the fork that carries them.
   - name: How the templates compose and how to use them
-    url: https://github.com/solid-ai-dev/solid-ai-templates/blob/main/docs/ONBOARDING.md
+    url: https://github.com/solid-ai-dev/solid-ai-templates/blob/main/README.md
     about: Read this before asking a question; most are answered here.

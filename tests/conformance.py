@@ -148,7 +148,7 @@ CHECKS = [
      "do": RUN, "expect": ["line", "line", "line"],
      "substitute": {'PATHS = ["<file>"]':
                     'PATHS = ["CLAUDE.md", "docs/SPEC.md", '
-                    '"docs/PLAYBOOK.md"]'}},
+                    '"docs/playbook.md"]'}},
 
     {"file": "core/git.md", "find": "BASE = \"origin/main\"",
      "title": "A diff touching an off-limits path says so", "do": RUN,
@@ -231,7 +231,7 @@ CHECKS = [
      "title": "A filed issue's claim is re-measured against the tree",
      "do": SKIP,
      "reason": "Takes the issue's filing date as an argument; run per issue "
-               "during a groom, which the PLAYBOOK covers."},
+               "during a groom, which the playbook covers."},
 
     # -- core/testing.md ---------------------------------------------
 

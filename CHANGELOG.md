@@ -80,6 +80,9 @@ alters no template carries no entry.
 
 ### Changed
 
+- `docs/PLAYBOOK.md` is `docs/playbook.md`, `docs/decisions/TEMPLATE.md` is
+  `template.md`, and `docs/ONBOARDING.md` is merged into `CONTRIBUTING.md`.
+  A fork takes the renames with its merge.
 - The repository moved to the `solid-ai-dev` organisation. Generated files
   and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
   `braboj/` URL redirects, so existing submodules keep working until updated.

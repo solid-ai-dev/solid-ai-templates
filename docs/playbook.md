@@ -2,8 +2,8 @@
 
 Operational reference for common tasks. Each section is a self-contained
 procedure. See `CLAUDE.md` for authoring rules and `SPEC.md` for the
-composition model. Commands use `py`; `docs/ONBOARDING.md`,
-"Prerequisites", gives the launcher on macOS and Linux.
+composition model. Commands use `py`; `CONTRIBUTING.md`, "Set up",
+gives the launcher on macOS and Linux.
 
 ---
 
@@ -135,7 +135,7 @@ schema; smoke check ADR-01 enforces the current one, which adds
 1. Copy the template:
    ```bash
    NNN=$(printf "%03d" $(($(ls docs/decisions/[0-9]*.md | wc -l) + 1)))
-   cp docs/decisions/TEMPLATE.md docs/decisions/${NNN}-<slug>.md
+   cp docs/decisions/template.md docs/decisions/${NNN}-<slug>.md
    ```
    Slug is kebab-case, sentence-meaningful (e.g. `011-provenance-principle`).
 2. Fill in the frontmatter — `id` (quoted string matching `NNN`),
@@ -359,7 +359,7 @@ so they live in the forks with the stacks and the interview (ADR-049).
 Smoke and conformance read the templates themselves.
 
 See `tests/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
-full list of specs. Setup, PyYAML included, is in `docs/ONBOARDING.md`.
+full list of specs. Setup, PyYAML included, is in `CONTRIBUTING.md`, "Set up".
 
 The runners end with a `VERDICT:` line, printed after the report path so
 that reading the last line alone cannot report success over a failed run.

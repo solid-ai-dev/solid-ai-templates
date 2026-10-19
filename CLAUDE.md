@@ -28,7 +28,7 @@ templates/          # All template source files
   frontend/         # Frontend layer — UX, accessibility, CSS, SSG
   fixture/          # Test-input stack and platform — checked, never listed
   manifest.yaml     # Machine-readable dependency graph
-docs/               # Onboarding, playbook, decision logs, SPEC.md
+docs/               # Playbook, decision logs, SPEC.md
 tests/              # Smoke, conformance and fork-sync runners, specs, reports
 tools/              # sync.py, resolve.py, release_check.py, audit_redundancy.py
 ```
@@ -114,7 +114,7 @@ are terminal — applied when closing without action.
 A report filed through an issue form carries only the form's type
 label, and the missing priority marks it untriaged. Triage adds the
 priority when it accepts the report; a report closed without being
-accepted needs none (PLAYBOOK, "Triage a report").
+accepted needs none (playbook, "Triage a report").
 
 #### Type labels (pick one)
 
@@ -259,12 +259,11 @@ stack and platform are test input only.
 | `CLAUDE.md` | AI agent context and project rules (this file) |
 | `docs/SPEC.md` | System design, composition rules, inheritance model, precedence |
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
-| `docs/ONBOARDING.md` | New contributors' setup — prerequisites, first steps, a setup check — and orientation |
-| `docs/PLAYBOOK.md` | Operational reference — how to add templates, validate a change, release |
+| `docs/playbook.md` | Operational reference — how to add templates, validate a change, release |
 | `docs/migrating-to-v3.md` | Moving a 2.x project or fork to v3.0 |
 | `CHANGELOG.md` | Released versions and what changed in each; versions up to v2.63.0 are in the GitHub Releases (ADR-029) |
 | `SECURITY.md` | Private disclosure route, supported versions, scope, acknowledgement window |
-| `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules; links §2.1 for branch and commit form |
+| `CONTRIBUTING.md` | Setup, orientation, and what a change is checked against — gates, manifest duty, authoring rules; links §2.1 for branch and commit form |
 | `docs/design/` | Design documents about the library itself — the design record, agent-context tradeoffs, template-content quality (see SPEC "Design documents") |
 
 #### Documentation rules
@@ -278,9 +277,9 @@ stack and platform are test input only.
     or ID system change
   - `templates/manifest.yaml` — if any template is added, removed,
     renamed, or re-depended
-  - `docs/PLAYBOOK.md` — if the workflow for generating or
+  - `docs/playbook.md` — if the workflow for generating or
     validating changes
-  - `docs/ONBOARDING.md` — if prerequisites or first steps change
+  - `CONTRIBUTING.md` — if prerequisites or first steps change
   - `CHANGELOG.md` — add an `Unreleased` entry for any change a
     consuming project would notice, in the same PR that makes it. A
     change needing no entry says so in the PR body rather than staying
@@ -323,7 +322,7 @@ stack and platform are test input only.
   Accepted, Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD,
   `category` in {composition, templates, tooling, process, release},
   reciprocal `supersedes` / `superseded_by` links). Copy
-  `docs/decisions/TEMPLATE.md` when authoring a new ADR;
+  `docs/decisions/template.md` when authoring a new ADR;
   `py tests/run_smoke.py ADR-01` enforces the schema and governs where
   it and ADR-010 differ
 
@@ -468,7 +467,7 @@ Run `py tests/run_smoke.py` before every PR. It checks:
 - A conformance run is NOT clean until its judgement readings are read —
   `0 failed` counts only the automatic verdicts. The `not applicable`
   count is not among them: those checks answered by exiting 3 and need no
-  reader (PLAYBOOK, "Run the test suite")
+  reader (playbook, "Run the test suite")
 - Run `py tools/sync.py` after the LAST template edit of a change, not
   the first — a generated section refreshed before a later edit is stale,
   and smoke does not read it, so it surfaces only in CI
@@ -540,7 +539,7 @@ summarize — visible sequential execution prevents missed steps.
 5. **Smoke tests** — run `py tests/run_smoke.py` and confirm all
    checks pass
 6. **CLAUDE.md** — for each new convention/rule, place it by
-   evaluating code → ADR → README → PLAYBOOK → CLAUDE.md → memory in
+   evaluating code → ADR → README → playbook → CLAUDE.md → memory in
    order. CLAUDE.md is the home ONLY if the
    agent MUST apply the rule on every turn.
 
@@ -553,9 +552,9 @@ summarize — visible sequential execution prevents missed steps.
    system, is it reflected? Name the section.
 9. **templates/manifest.yaml** — for each template added, removed,
    or re-depended, is it registered? Name the entry.
-10. **docs/ONBOARDING.md** — for each new tool, prerequisite, or
+10. **CONTRIBUTING.md** — for each new tool, prerequisite, or
     setup step, is it documented? Name the section.
-11. **docs/PLAYBOOK.md** — for each new command, script, or
+11. **docs/playbook.md** — for each new command, script, or
     workflow added, is it documented? Name the section.
 12. **Template feedback** — consider a demonstrated shared defect or recurring
     need, reconcile existing issues, and act within the authorized scope.

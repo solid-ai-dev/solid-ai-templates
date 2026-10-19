@@ -556,10 +556,14 @@ def main():
     if has_model_table:
         readme_blocks["readme-model-limits"] = model_limits
 
+    # The interview lives in forks, so its absence upstream is expected. The
+    # other targets always exist; one renamed away must fail the run, or
+    # --check passes with nothing checked.
     targets = [
-        (ROOT / "docs" / "SPEC.md", spec_blocks),
-        (ROOT / "README.md", readme_blocks),
-        (ROOT / "templates" / "INTERVIEW.md", {"interview-stacks": interview_content}),
+        (ROOT / "docs" / "SPEC.md", spec_blocks, True),
+        (ROOT / "README.md", readme_blocks, True),
+        (ROOT / "templates" / "INTERVIEW.md",
+         {"interview-stacks": interview_content}, False),
     ]
     if SPEC_CHAIN_EXAMPLES:
         # A named document that is absent would be skipped like an absent
@@ -570,11 +574,14 @@ def main():
         if examples_doc == ROOT / "docs" / "SPEC.md":
             spec_blocks.update(example_blocks)
         else:
-            targets.append((examples_doc, example_blocks))
+            targets.append((examples_doc, example_blocks, True))
 
     changed = []
-    for path, replacements in targets:
+    for path, replacements, required in targets:
         if not path.exists():
+            if required:
+                raise SystemExit("sync: %s does not exist; update the "
+                                 "target list if it moved" % path)
             print(f"  SKIP  {path.name} (not found)")
             continue
         if _update_file(path, replacements, check_mode):

@@ -1536,7 +1536,7 @@ The five areas a change or release is weighed on, and where each stands:
 | Agent task success | Benchmark hidden suite and change task | Measured, rounds 1 to 4 |
 | Regressions | CI on every pull request; the benchmark's growth over the previous round | Measured |
 | Context and execution cost | Chain size per category; benchmark tokens, turns, time and cost; latency (#368) | Measured except latency |
-| Consumer adoption effort | The adoption objective in section 3.3; the consumer survey in `docs/PLAYBOOK.md` | Not measured |
+| Consumer adoption effort | The adoption objective in section 3.3; the consumer survey in `docs/playbook.md` | Not measured |
 | Recurring policy-induced work | Issues by source through the intake forms (#1512); fork merge effort | Not measured; on 2026-10-19 all 66 issues filed in the previous 30 days came from the maintainer |
 
 ### 22.2 Representative quality scenarios
@@ -1799,7 +1799,7 @@ Repository sources:
 - `templates/workflow/360.md`
 - `templates/workflow/issues.md`
 - `docs/SPEC.md`
-- `docs/PLAYBOOK.md`
+- `docs/playbook.md`
 - `docs/audits/2026-09-01-360.md`
 - `docs/design/agent-context-tradeoffs.md`
 - `docs/design/template-content-quality.md`

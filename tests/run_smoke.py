@@ -1202,7 +1202,7 @@ def check_adr_01():
     for name in sorted(os.listdir(decisions_dir)):
         m = ADR_FILENAME.match(name)
         if not m:
-            # TEMPLATE.md and any non-numbered files are skipped
+            # template.md and any non-numbered files are skipped
             continue
         numbered += 1
         filepath = os.path.join(decisions_dir, name)
