@@ -858,7 +858,10 @@ release was named or no previous tag was found, so nothing was compared.
    pull request, and it MUST merge before the tag below — a tag placed
    first names a tree whose changelog does not mention the release. That
    pull request's body is this repository's release proposal: it names
-   every step here and the result it produced
+   every step here and the result it produced, and the quality evidence
+   that moved since the previous release — a benchmark round, the
+   template-quality scores — or says that none was taken. The qualities
+   and their instruments are in `docs/design/design-notes.md`, section 22.1
 3. Tag and push. The tag is annotated and names a commit, and that commit
    is step 2's changelog cut, not `main`. The theme in the tag message is
    the milestone's, which is where this repository keeps it:
