@@ -1,260 +1,49 @@
 # SOLID-AI Templates
 
-*Forged in real work, not theorized — every rule here came from a real
-AI-assisted project.*
+Composable rule templates that an AI coding agent reads to write a
+project's `AGENTS.md` and `CLAUDE.md`. Your team's conventions live in one
+place and reach every agent on every project.
 
 > **3.0 is the shared engine only.** Stacks, platforms, the process layer
-> and the interview moved to forks, so a project generates its files from
-> a fork such as
-> [imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
-> Coming from 2.x: [Migrating to v3](docs/migrating-to-v3.md).
+> and the interview live in forks. Coming from 2.x:
+> [Migrating to v3](docs/migrating-to-v3.md).
 
-You've shipped the same CLAUDE.md three times this quarter. Each copy is
-slightly different, none of them are right, and the agent still doesn't
-know your team's conventions.
+## Use it
 
-You're not alone, and it's not negligence — writing context files from
-scratch is the quiet cost of every agent-assisted team. Everyone pays
-it, few teams have a system for it, and the codebase drifts a little
-further from your standards every sprint.
+- **Use a fork.** [imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates)
+  carries stacks, platforms and the interview; its README shows how to hand
+  them to your agent.
+- **Fork it.** Carry your own stacks and process, and stay current by
+  merging upstream: [Sync with upstream as a fork](docs/playbook.md#sync-with-upstream-as-a-fork).
+- **Build a chain by hand.** Load every file in the `core:` list of
+  `templates/manifest.yaml`, then your template and its `[DEPENDS ON]` tree.
+  With Python and PyYAML, `python3 tools/resolve.py <root> --concat` does it.
+- **Take updates selectively.** A new tag adopts nothing by itself:
+  [Adopt a template policy update](docs/playbook.md#adopt-a-template-policy-update).
 
-This repo gives you composable templates that codify your team's
-conventions once — base rules, stack rules, company rules — and feed
-the same conventions to every agent on every project. You get one
-source for them and one place to change a rule.
+## Does it help?
 
-Whether a generated file makes the agent write better code is measured,
-not assumed, and so far the answer is mixed; see
-[What the benchmark shows](#what-the-benchmark-shows).
+Measured, not assumed, and so far mixed: in round 4 of the efficacy
+benchmark, a 39-line hand-written file did best, and with a weaker model
+every template-generated file lowered the hidden-test pass rate.
+[The round-4 report](docs/audits/2026-10-17-round-4.md) has every figure.
 
-## What it does
+## Documentation
 
-- Build `AGENTS.md` and `CLAUDE.md` from reusable layers — core, backend/frontend,
-  and a stack from a fork
-- Fork and extend — layer your team's stacks and process on the shared policy
-  without modifying it
-- Codify industry standards — 12-factor app, OWASP, SOLID
-- Assemble the templates you need, override where needed, or create new ones
-
-This repository holds the composition engine and the policy every team
-shares. Stacks, platforms, process rules, the interview, examples and
-pre-resolved chains live in forks
-([ADR-049](docs/decisions/049-forks-carry-stacks-and-process.md),
-[ADR-050](docs/decisions/050-what-stays-upstream.md)).
-
-## What the benchmark shows
-
-An efficacy benchmark has an agent build the same app from one spec,
-three times per arm, with no context file, a file generated from these
-templates, or a 39-line hand-written file. Hidden tests, security probes
-and a blind judge score each build. Round 4 (2026-10-17) found:
-
-- The hand-written file was the only one that read as better in both
-  runs
-- With a weaker model, every template-generated file lowered the share
-  of hidden tests passed against no file
-- Security gains showed on a few measures each: a signal at three runs
-  per arm, not proof
-- Every file made the generated code larger
-
-The summary and every figure are in
-[the round-4 report](docs/audits/2026-10-17-round-4.md). The benchmark
-runs in the Imbra fork, and its raw runs are archived privately.
-
-## Compared with the alternatives
-
-| Approach | Where the rules live | Across projects | Evidence so far |
-|---|---|---|---|
-| A hand-written file per project | In each project | Copies drift apart | Round 4's best file was a 39-line hand-written one |
-| A copied template or snippet list | In each project, from one start | Drift after the copy | None measured |
-| This repository and a fork | Upstream policy, the fork's stacks, one generated file per project | One source; a pin bump updates every project | Mixed; see above |
-
-For what a generated file looks like, see the Imbra fork's
-[examples](https://github.com/Imbra-Ltd/imbra-ai-templates/tree/main/examples).
-
-## How to use
-
-**Prerequisites:** a local coding agent that can read files from
-your project directory (Claude Code, Cursor, Codex CLI, Windsurf,
-or similar). The optional `tools/` scripts also need Python 3 and
-PyYAML (`pip install pyyaml`); commands below use `python3`, which
-on Windows is `py`.
-
-**Output:** `AGENTS.md` and `CLAUDE.md`, placed at your project
-root, containing coding conventions tailored to your stack. Works
-for new projects and refactoring alike — the context file describes
-how code *should be written*, giving your agent a consistent target
-whether starting from scratch or improving existing code. Review and
-adjust the output before adopting it — results vary by model and
-prompt size.
-
-Upstream alone ships no stacks and no interview, so a project generates
-its context file from a fork: use one, or fork this repository.
-
-### Use a fork
-
-For Imbra's stacks, platforms and process, use
-[imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates). It
-carries the interview and a resolved chain for each stack; its README
-describes how to hand them to your agent.
-
-### Fork it
-
-To carry your own stacks, platforms and process, fork this repository on
-GitHub and keep it current by merging upstream:
-
-```bash
-git remote add upstream https://github.com/solid-ai-dev/solid-ai-templates.git
-git fetch upstream
-git merge upstream/main
-```
-
-A fork follows the rules in
-[ADR-049](docs/decisions/049-forks-carry-stacks-and-process.md):
-
-- Append under `stacks:`, `platform:` and top-level manifest keys of your
-  own, and add to every chain's core tier under `fork_core:`
-- Never edit `core:`, `base:`, `backend:` or `frontend:` in the manifest;
-  smoke check SYS-20 fails when a fork does
-- Keep `README.md`, `CLAUDE.md` and `CHANGELOG.md` as your own, resolving
-  them in your favour on every merge
-- Merge an upstream commit carrying the `Fork-merge: ours` trailer in two
-  steps: its parent normally, then the commit with `git merge -s ours`.
-  Then move your own templates out of upstream's keys into your own key
-  and `fork_core:`, and restore each template the commit modified. The
-  playbook's
-  [Sync with upstream as a fork](docs/playbook.md#sync-with-upstream-as-a-fork)
-  gives every step's command
-
-### Take an update
-
-Template updates are selective: adopt new conventions for a project need or
-material risk, not merely because a tag exists. Existing adopted rules remain
-effective; declining a new rule needs no ADR or ticket. See the
-[consumer migration guidance](docs/playbook.md#adopt-a-template-policy-update).
-
-## What a project picks
-
-A project does not pick one template. It picks a **stack** and a
-**platform** from a fork, and any **extras** it needs, and each one resolves
-independently: the core tier plus that template's own `[DEPENDS ON]` tree.
-An extra is guaranteed nothing from the stack it sits beside, which is why
-it can be added to any of them.
-
-```
-your project
-  |-- one stack        from a fork
-  |-- one platform     from a fork
-  `-- any extras       caching, jobs, deployment, ...
-```
-
-`python3 tools/resolve.py --roots` lists every root a project can pick. In
-upstream these are the shared templates below; a fork adds its stacks and
-platforms.
-
-<!-- generated:readme-root-counts -->
-Measured: 0 stacks and 39 orthogonal templates, 39 roots in all. An extra
-resolves to the 6 core-tier files plus 0 to 5 of its own.
-<!-- /generated:readme-root-counts -->
-
-## Stacks
-
-Upstream ships no stacks, so this table is empty here. A fork's sync fills
-it with the stacks that fork carries.
-
-<!-- generated:readme-stacks -->
-| Template | Layer | Description |
-|----------|-------|-------------|
-<!-- /generated:readme-stacks -->
-
-## Shared templates
-
-Picked independently of the stack, each resolving as its own root.
-
-<!-- generated:readme-extras -->
-| Template | Kind | Description |
-|----------|------|-------------|
-| `templates/backend/api.md` | backend | API-first, OpenAPI, versioning, deprecation, pagination |
-| `templates/backend/auth.md` | backend | Authn/authz, JWT, RBAC, sessions, API keys |
-| `templates/backend/caching.md` | backend | Cache-aside, TTL, invalidation, resilience, stampede |
-| `templates/backend/concurrency.md` | backend | Threads vs. processes vs. async, shared state, structured concurrency |
-| `templates/backend/database.md` | backend | Migrations, transactions, no raw SQL, connection pooling |
-| `templates/backend/edge.md` | backend | Reverse proxy / edge — TLS termination, forwarded headers, upstream routing, timeouts, edge security |
-| `templates/backend/errors.md` | backend | Classification, propagation, recovery, external failures |
-| `templates/backend/features.md` | backend | Feature flags, rollout strategy, experimentation |
-| `templates/backend/grpc.md` | backend | Proto design, status codes, interceptors, health check |
-| `templates/backend/http.md` | backend | URI design, methods, headers, HATEOAS, auth, errors |
-| `templates/backend/jobs.md` | backend | Background jobs, idempotency, retry, DLQ, scheduling |
-| `templates/backend/messaging.md` | backend | Brokers, producers, consumers, schema, DLQ, observability |
-| `templates/backend/microservices.md` | backend | Service boundaries, inter-service comms, saga, contract testing |
-| `templates/backend/monitoring.md` | backend | Key metrics, thresholds, alerts, dashboards, incidents |
-| `templates/backend/observability.md` | backend | Log levels, log format, health check, error visibility |
-| `templates/backend/quality.md` | backend | Layered architecture, security, performance, API stability |
-| `templates/backend/webhooks.md` | backend | Inbound webhook intake, edge signature verification, fast-ack, retry amplification |
-| `templates/core/agents.md` | core | Output structure, models (inline/hybrid), formatting rules |
-| `templates/infra/cicd.md` | infra | Pipeline stages, triggers, environments, IaC, deployment |
-| `templates/core/config.md` | core | Env vars, secrets, fail-fast validation |
-| `templates/infra/containers.md` | infra | Dockerfile, runtime security, resource limits, Kubernetes |
-| `templates/data/data-governance.md` | data | Classification, PII handling, retention, ownership, audit trail |
-| `templates/data/data-migration.md` | data | Versioned migrations, zero-downtime, rollback strategies |
-| `templates/data/data-modeling.md` | data | Schema design, naming, normalization, relationships, data types |
-| `templates/data/data-quality.md` | data | Data sourcing, completeness, freshness, research, scoring — data-heavy projects |
-| `templates/infra/deployment.md` | infra | Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets |
-| `templates/security/devsecops.md` | security | SAST, SCA, SBOM, secret detection, license compliance |
-| `templates/core/docs.md` | core | Rule language, standard documents, writing style, diagrams, docs-as-code, agent output files |
-| `templates/core/git.md` | core | Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore |
-| `templates/core/oop.md` | core | SOLID, OOP, GoF design patterns, AOP guidance |
-| `templates/core/quality.md` | core | Architecture, code style, calibration, tool trust, testing |
-| `templates/core/quality-gates.md` | core | How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict |
-| `templates/core/review.md` | core | Peer review priority, MUST/SHOULD checklists, deviation rules |
-| `templates/security/security.md` | security | Application security rules — input, output, injection, auth, sessions, TLS, headers |
-| `templates/core/testing.md` | core | Test pyramid, coverage thresholds, naming conventions |
-| `templates/frontend/content.md` | frontend | Build-agnostic content rules — content, assets, SEO, structured data |
-| `templates/frontend/quality.md` | frontend | CSS conventions, performance, analytics |
-| `templates/frontend/static-site.md` | frontend | Abstract SSG rules — build, serving, CSS, typography, theme, performance |
-| `templates/frontend/ux.md` | frontend | UX principles, WCAG 2.1 AA, responsive breakpoints |
-<!-- /generated:readme-extras -->
-
-Upstream commits no pre-resolved chains. Attach a template and the core
-tier directly, or run `python3 tools/resolve.py <root> --concat` to get its
-chain in one piece.
-
-## Supported agents
-
-<!-- generated:readme-agents -->
-| Agent | Output file |
-|-------|-------------|
-| Claude Code | `CLAUDE.md` |
-| Cursor | `.cursor/rules/project.mdc` |
-| GitHub Copilot | `.github/copilot-instructions.md` |
-| OpenAI Codex CLI | `AGENTS.md` |
-| Generic / other | `AGENTS.md` |
-<!-- /generated:readme-agents -->
-
-See `templates/core/agents.md` for structure, models, and formatting rules.
-
-## Links
-
-- [Specification (arc42)](docs/spec.md)
-- [Changelog](CHANGELOG.md)
-- [Migrating to v3.0](docs/migrating-to-v3.md)
-- [Project status and roadmap](https://github.com/solid-ai-dev/solid-ai-templates/milestones)
-- [Imbra's fork, with stacks and examples](https://github.com/Imbra-Ltd/imbra-ai-templates)
-- [Architecture decision records](docs/decisions/)
-- [Security policy](SECURITY.md)
-- [Open an issue](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose)
-
-## Contributing
-
-To change this repository itself, start at [CONTRIBUTING.md](CONTRIBUTING.md),
-which covers setup and what a change must carry. The
-[playbook](docs/playbook.md) gives each procedure step by step.
+| Read | For |
+|------|-----|
+| [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
+| [Changelog](CHANGELOG.md) | What changed in each release |
+| [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
+| [Playbook](docs/playbook.md) | Step-by-step procedures |
+| [Decisions](docs/decisions/) | Why the design is what it is |
+| [Security](SECURITY.md) | Reporting a vulnerability |
+| [Issues](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose) | Defects, proposals, questions |
 
 ## License
 
-[CC BY 4.0](LICENSE) — Creative Commons Attribution 4.0 International.
-You are free to use, share, and adapt the templates for any purpose,
-including commercial use, as long as you give attribution.
+[CC BY 4.0](LICENSE). Use, share and adapt the templates for any purpose,
+including commercial use, with attribution.
 
 ## Author
 
