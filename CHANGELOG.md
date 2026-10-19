@@ -33,6 +33,13 @@ alters no template carries no entry.
   pytest's two import modes forbid opposite things, a package test root
   satisfies both, and a probe checks the layout before any file moves.
 
+### Changed
+
+- `frontend-content` holds the build-agnostic content, asset, SEO and
+  structured-data rules, with one SEO copy; `frontend-static-site` depends
+  on it, and `frontend-quality` drops its SEO rules — a chain taking
+  `frontend-quality` alone adds `frontend-content`.
+
 ### Fixed
 
 - A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
