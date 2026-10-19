@@ -6,7 +6,8 @@
 **What runs:** the harness, scorer, judge and report under `tests/efficacy/`
 in the Imbra fork, which is private, described in its README. Every
 `tests/efficacy/` path below is in that fork, which carries the benchmark
-since the v3.0 split (ADR-049). The hidden test suite lives in a private repository (§10).
+since the v3.0 split (ADR-049). The hidden test suite lives in a private
+repository (§10).
 
 ## 1. Goal
 
