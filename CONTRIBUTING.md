@@ -49,6 +49,11 @@ mismatch without writing anything.
 
 ## What a change has to carry
 
+- **What it improves.** Name the quality the change serves — correctness,
+  effectiveness, relevance, efficiency, predictability or maintainability,
+  defined in `docs/design/design-notes.md`, section 22.1 — and the evidence
+  that it does, or the defect it corrects. A measured result beats a
+  plausible one, and a rule one team prefers is not evidence for every team
 - **A manifest entry.** Every file under `templates/` has one in
   `templates/manifest.yaml`. A new template without an entry fails smoke
 - **Resolvable references.** `[DEPENDS ON: ...]`, `[EXTEND: ...]` and

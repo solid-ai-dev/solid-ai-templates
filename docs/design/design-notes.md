@@ -1500,14 +1500,17 @@ High quality means agents complete real engineering work correctly, with fewer
 recurring mistakes, at an affordable cost to understand, run, adopt, and maintain.
 Structural correctness is necessary; it does not establish useful behaviour.
 
-| Dimension | Evidence to seek |
-|-----------|------------------|
-| Correctness | Valid composition and precedence; no harmful conflicting instructions or lost user work |
-| Effectiveness | Representative tasks complete correctly; changes reduce observable failures |
-| Relevance | Selected policy fits the project and task without unrelated obligations |
-| Efficiency | Context, elapsed time, retries, and adoption effort relative to outcomes |
-| Predictability | Versioned changes and overrides have explainable effects and manageable migration |
-| Maintainability | Lower recurring defects, reconciliation effort, and policy-induced work |
+Each quality names the instrument that measures it and the baseline measured
+so far. A blank baseline is a gap, not a pass.
+
+| Quality | Evidence to seek | Instrument | Measured baseline |
+|---------|------------------|------------|-------------------|
+| Correctness | Valid composition and precedence; no harmful conflicting instructions or lost user work | Smoke, conformance, fork sync and the redundancy audit, in CI on every pull request | All pass on `main`, 2026-10-19 |
+| Effectiveness | Representative tasks complete correctly; changes reduce observable failures | The efficacy benchmark (#1184), which runs in the Imbra fork; live e2e (#1368) | Round 4, 2026-10-17: no template-generated file beat a 39-line hand-written one; under Haiku 4.5 every template file lowered the hidden-test pass rate against no file (`docs/audits/2026-10-17-round-4.md`) |
+| Relevance | Selected policy fits the project and task without unrelated obligations | Each root's resolved chain (`tools/resolve.py`); the adoption boundary in `core/agents.md` | Not measured |
+| Efficiency | Context, elapsed time, retries and adoption effort relative to outcomes | Chain size per stack category (the fork's README model-limits table, gated by `sync.py --check`); benchmark tokens, turns, time and cost; latency (#368) | Round 4, Sonnet 5: $2.91 per build with no file, $4.57 to $7.25 with one; latency and adoption effort not measured |
+| Predictability | Versioned changes and overrides have explainable effects and manageable migration | The 3.x frozen surface (ADR-051, ADR-053); `tools/release_check.py`; SYS-22 deprecation; the freeze check (#1992) | Not measured: 3.0.0 is the first frozen release |
+| Maintainability | Lower recurring defects, reconciliation effort and policy-induced work | `tools/template_quality.py` and its ratchet (#2019); intake dispositions (#1512) | Template scores, 2026-10-19: median 91.7, five `core/` files under 50 (`docs/audits/2026-10-19-template-quality.md`) |
 
 The change-admission question is: does this improve a demonstrated outcome enough
 to justify the cost carried by affected consumers? Credible material risks,
@@ -1519,19 +1522,36 @@ or safety failures separately; an average score must not conceal them. Counts of
 rules, checks, ADRs, releases, or issues closed are activity measures, not proof
 of quality. A smaller context is useful when it preserves or improves outcomes.
 
+A severe failure is reported on its own, never folded into an average:
+
+- The benchmark gives each primary row its own verdict and reports every lost
+  or unbootable trial by name, as round 4 did for the thin-spec hybrid arm
+- The template scorer caps a file's score on a cited ticket or a 150-word rule
+- A failing structural or conformance check fails CI whatever any score says
+
+The five areas a change or release is weighed on, and where each stands:
+
+| Area | Instrument | Status |
+|------|------------|--------|
+| Agent task success | Benchmark hidden suite and change task | Measured, rounds 1 to 4 |
+| Regressions | CI on every pull request; the benchmark's growth over the previous round | Measured |
+| Context and execution cost | Chain size per category; benchmark tokens, turns, time and cost; latency (#368) | Measured except latency |
+| Consumer adoption effort | The adoption objective in section 3.3; the consumer survey in `docs/PLAYBOOK.md` | Not measured |
+| Recurring policy-induced work | Issues by source through the intake forms (#1512); fork merge effort | Not measured; on 2026-10-19 all 66 issues filed in the previous 30 days came from the maintainer |
+
 ### 22.2 Representative quality scenarios
 
 These are initial evaluation cases, not claims that the current system passes.
 Each starts from a pinned fixture and records observable actions or artifacts.
 
-| Context and stimulus | Expected response | Observable result |
-|----------------------|-------------------|-------------------|
-| A small library requests generated context | Include relevant policy and resolve project overrides correctly | Applicable rules present; overridden rules replaced; context size recorded |
-| An agent receives a bounded code task | Complete the task with relevant checks | Task tests pass; unrelated files and tracker records remain untouched |
-| A consumer starts with uncommitted edits | Preserve the user's work while making the requested change | Original edits survive; no unsolicited commit or publication |
-| A newer template version becomes available | Assess applicability and adoption cost | No automatic compliance tickets or mandatory pin bump merely for a new tag |
-| A maintainer moves an ordinary document | Update affected references | References work; no ADR created solely because a path changed |
-| A consequential compatibility choice arises | Explain alternatives and durable consequences | Decision is reviewable; related work can share one qualifying ADR |
+| Context and stimulus | Expected response | Observable result | Instrument and status |
+|----------------------|-------------------|-------------------|-----------------------|
+| A small library requests generated context | Include relevant policy and resolve project overrides correctly | Applicable rules present; overridden rules replaced; context size recorded | Overrides: smoke's TPL checks, measured. Context size: the fork's model-limits table, measured. Relevance: not measured |
+| An agent receives a bounded code task | Complete the task with relevant checks | Task tests pass; unrelated files and tracker records remain untouched | Benchmark build task, measured in rounds 1 to 4; a trial reaching past its workspace is voided and reported |
+| A consumer starts with uncommitted edits | Preserve the user's work while making the requested change | Original edits survive; no unsolicited commit or publication | No fixture; not measured |
+| A newer template version becomes available | Assess applicability and adoption cost | No automatic compliance tickets or mandatory pin bump merely for a new tag | The adoption boundary in `core/agents.md`; not measured |
+| A maintainer moves an ordinary document | Update affected references | References work; no ADR created solely because a path changed | The decision-record threshold in `CLAUDE.md`; not measured |
+| A consequential compatibility choice arises | Explain alternatives and durable consequences | Decision is reviewable; related work can share one qualifying ADR | The ADR-01 schema check, measured; reviewability is read by a person |
 
 Compare baseline and candidate on the same task, model/settings, fixture, and
 permissions. Include a minimal/no-template baseline when testing the value claim.
