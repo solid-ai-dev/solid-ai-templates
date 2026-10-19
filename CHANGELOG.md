@@ -17,8 +17,8 @@ on the releases page. The tag holds the tree; the notes are not written.
 
 The entries describe changes to the templates, which are what a consuming
 project receives. A change to this repository's own tooling or tests that
-alters no template carries no entry. Each entry is one line and links the
-pull request that holds the detail.
+alters no template carries no entry. Each entry is one line of plain text
+and links the pull request that holds the detail.
 
 ## [Unreleased]
 
@@ -26,62 +26,57 @@ pull request that holds the detail.
 
 ### Breaking changes
 
-- Stacks, platforms, process templates and the interview move to forks;
-  pin `v2.90.0` or a fork ([#1972])
-- The core tier requires only `README.md`, `AGENTS.md` and `CLAUDE.md`
-  ([#1964])
-- `templates/base/<concern>/` is `templates/<concern>/`, and
-  `quality-gates.md` is in `core/`; IDs are unchanged ([#1941], [#1966])
-- SEO rules move from `frontend-quality` to the new `frontend-content`;
-  add it where a chain lacks `frontend-static-site` ([#2016])
+- Stacks, platforms, process rules and the interview move to forks; pin
+  2.90.0 or a fork ([#1972])
+- The core rules require only a README and the two agent files ([#1964])
+- Template folders move out of the base folder; template IDs are unchanged
+  ([#1941], [#1966])
+- SEO rules move from the frontend quality template to a new content
+  template ([#2016])
 
 ### Added
 
-- A fork keeps its templates under its own manifest key and `fork_core:`
-  ([#1970])
-- `deprecated: <id>` marks a replaced template; SYS-22 checks it ([#1984])
-- `docs/migrating-to-v3.md` moves a 2.x project or fork to 3.0 ([#1983])
-- `base-quality` and `base-oop` state language idioms as rules ([#1963])
-- SYS-20 fails when a fork edits an upstream manifest key ([#1960])
-- `resolve.py` names a missing dependency or a cycle and exits 1
-  ([#1955])
-- A fixture stack and platform feed the per-stack checks upstream
-  ([#1948])
-- `base-git`: a pull request with no registered check has not passed CI
-  ([#2007])
-- `base-agents` checks a hybrid consumer's chain list against its pin
-  ([#2008])
-- `base-testing` states the import prerequisite for tests by tier
-  ([#2009])
-- `frontend-content` holds the content, asset, SEO and structured-data
-  rules ([#2016])
+- A fork keeps its own templates apart from upstream's ([#1970])
+- A replaced template can be marked deprecated, with its successor ([#1984])
+- A guide for moving a 2.x project or fork to 3.0 ([#1983])
+- Language idioms stated as rules in the quality and design templates
+  ([#1963])
+- A check that fails when a fork edits upstream's part of the manifest
+  ([#1960])
+- The resolver names a missing dependency or a cycle ([#1955])
+- A test stack and platform keep the checks fed upstream ([#1948])
+- A pull request with no checks counts as not passed ([#2007])
+- A check for the template list in a hybrid context file ([#2008])
+- The testing rules state the layout tests by tier need ([#2009])
+- A content template for content, assets, SEO and structured data
+  ([#2016])
 
 ### Changed
 
-- Docs reorganised: an arc42 spec, `docs/playbook.md`, and onboarding in
-  `CONTRIBUTING.md`; forks take it by merge ([#2036], [#2037])
-- `docs/wiki/` is removed ([#2039])
-- `AGENTS.md` holds the agent rules, and forks own it like `CLAUDE.md`
-  ([#2041])
-- The repository moved to `solid-ai-dev`; old URLs redirect ([#1841])
-- Paths, IDs, manifest schema, core tier and exit codes are frozen until
-  4.0.0 ([#1940], [#2014])
-- `base-docs` reads a plain imperative as MUST ([#2017])
+- The docs are reorganised around an arc42 specification ([#2036],
+  [#2037])
+- The wiki pages are removed ([#2039])
+- The agent rules live in AGENTS.md, which forks own ([#2041])
+- The repository moved to the solid-ai-dev organisation; old links
+  redirect ([#1841])
+- Paths, IDs, the manifest and the core rules stay stable until 4.0
+  ([#1940], [#2014])
+- A plain imperative counts as a binding rule ([#2017])
 
 ### Deprecated
 
-- The reference model: generate inline or hybrid ([#1959])
+- The reference delivery model; generate inline or hybrid files instead
+  ([#1959])
 
 ### Fixed
 
-- The Python checks in `core/docs.md` and `core/quality.md` render as code
-  ([#2034])
-- Over-long `[DEPENDS ON]` lines are split to fit 88 characters ([#2034])
-- A `fork_core` entry depending outside the core tier is refused ([#1990])
-- `base-quality-gates` fences its example check and finds more prose
-  checks ([#2017])
-- `base-agents` states the README-map rule, not a record number ([#2017])
-- A duplicate manifest ID fails MNF-01 and stops the resolver ([#2010])
+- Two shipped checks render as code again ([#2034])
+- Long dependency lines are split to fit the line width ([#2034])
+- A fork's core addition with an invalid dependency is refused ([#1990])
+- The quality-gates template fences its example and finds more checks
+  ([#2017])
+- The agents template states a rule instead of citing a record ([#2017])
+- A duplicate template ID stops the resolver ([#2010])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
