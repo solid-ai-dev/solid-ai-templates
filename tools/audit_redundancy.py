@@ -20,10 +20,15 @@ BASELINE below, so new redundancy is blocked while known dups are worked
 off through their owning issues. Remove a BASELINE entry once its dup is
 resolved; `--check` reports any baseline entry that no longer applies.
 
+Every run refuses a chain from which it read no rule, and `--check` first
+runs the planted cases below, so a detector that stopped matching fails
+rather than reporting a clean corpus.
+
 Usage:
-    py tools/audit_redundancy.py            # exact in-chain duplicates
-    py tools/audit_redundancy.py --near     # also show near-duplicates
-    py tools/audit_redundancy.py --check    # exit 1 on NEW exact dups
+    py tools/audit_redundancy.py              # exact in-chain duplicates
+    py tools/audit_redundancy.py --near       # also show near-duplicates
+    py tools/audit_redundancy.py --check      # exit 1 on NEW exact dups
+    py tools/audit_redundancy.py --self-test  # the planted cases only
 """
 
 import io
@@ -80,11 +85,16 @@ def parse_sections(rel_path):
     Returns a list of dicts: {file, heading, ids, overrides, rules}
     where rules is {fingerprint: original_line}.
     """
+    return parse_text(read_file(rel_path), rel_path)
+
+
+def parse_text(text, rel_path):
+    """parse_sections() over a file's text, labelled with `rel_path`."""
     sections = []
     current = None
     in_fence = False
 
-    for raw in read_file(rel_path).splitlines():
+    for raw in text.splitlines():
         if raw.lstrip().startswith("```"):
             in_fence = not in_fence
             continue
@@ -134,7 +144,11 @@ def chain_sections(stack_id, core_ids, entries):
     sections = []
     for f in files:
         sections.extend(parse_sections(f))
+    return sections, supersession(sections)
 
+
+def supersession(sections):
+    """Each section's index -> the indices it supersedes via [OVERRIDE]."""
     id_to_idx = {}
     for i, s in enumerate(sections):
         for sid in s["ids"]:
@@ -157,7 +171,7 @@ def chain_sections(stack_id, core_ids, entries):
                 supersedes[i].add(j)
                 stack.extend(direct[j])
 
-    return sections, supersedes
+    return supersedes
 
 
 def related(a, b, supersedes):
@@ -252,8 +266,12 @@ def collect(core_ids, entries, roots, want_near=False):
     # key -> {"original", "sites", "chains"}
     exact = {}
     near = {}
+
+    # root -> rules read from its chain, which is what the floor reads.
+    read = {}
     for sid in roots:
         sections, supersedes = chain_sections(sid, core_ids, entries)
+        read[sid] = sum(len(s["rules"]) for s in sections)
 
         for fp, original, ia, ib in find_exact(sections, supersedes):
             files = tuple(sorted(
@@ -285,7 +303,59 @@ def collect(core_ids, entries, roots, want_near=False):
                  "chains": set()},
             )
             rec["chains"].add(sid)
-    return exact, near
+    return exact, near, read
+
+
+# Planted chains with the findings each owes, run before every --check. The
+# real corpus holds no exact duplicate, so a clean run over it cannot tell a
+# working detector from one that matches nothing; these can. Each case is
+# (label, {file: text}, exact findings owed, near findings owed).
+PLANTED_RULE = "- MUST state each planted rule once, in the file that owns it"
+PLANTED_NEAR = "- MUST state every planted rule once, in the file that owns it"
+PLANTED_CASES = [
+    ("a rule stated in two unrelated sections",
+     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+      "b.md": "# B\n[ID: b]\n\n" + PLANTED_RULE + "\n"}, 1, 0),
+    ("a rule restated by the section that overrides it",
+     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+      "b.md": "# B\n[OVERRIDE: a]\n\n" + PLANTED_RULE + "\n"}, 0, 0),
+    ("a rule repeated only in a fence and a table row",
+     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+      "b.md": "# B\n[ID: b]\n\n```\n" + PLANTED_RULE + "\n```\n\n| "
+              + PLANTED_RULE + " |\n"}, 0, 0),
+    ("a rule paraphrased in an unrelated section",
+     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+      "b.md": "# B\n[ID: b]\n\n" + PLANTED_NEAR + "\n"}, 0, 1),
+]
+
+
+def self_test():
+    """Run the planted cases; return a line per case that missed."""
+    misses = []
+    for label, files, want_exact, want_near in PLANTED_CASES:
+        sections = []
+        for name, text in files.items():
+            sections.extend(parse_text(text, name))
+        supersedes = supersession(sections)
+        got_exact = len(list(find_exact(sections, supersedes)))
+        got_near = len(list(find_near(sections, supersedes)))
+        if (got_exact, got_near) != (want_exact, want_near):
+            misses.append(f"  {label}: found {got_exact} exact and "
+                          f"{got_near} near, owed {want_exact} and "
+                          f"{want_near}")
+    return misses
+
+
+def run_self_test():
+    """Print the planted-case verdict; exit 1 on a miss."""
+    misses = self_test()
+    print(f"planted cases: {len(PLANTED_CASES)}, missed: {len(misses)}")
+    for line in misses:
+        print(line)
+    if misses:
+        print("FAIL: the detector's findings differ from what the planted "
+              "cases owe, so its audit of the corpus cannot be trusted")
+        sys.exit(1)
 
 
 def main():
@@ -293,6 +363,13 @@ def main():
     if "--help" in args:
         print(__doc__)
         sys.exit(0)
+
+    if "--self-test" in args:
+        run_self_test()
+        sys.exit(0)
+
+    if "--check" in args:
+        run_self_test()
 
     core_ids, entries, stacks = load_manifest()
     roots = [s["id"] for s in stacks]
@@ -305,9 +382,20 @@ def main():
     # --check reports the near count, so it must compute that tier too.
     # A --check that skipped it printed "0" while six pairs stood.
     want_near = "--near" in args or "--check" in args
-    exact, near = collect(core_ids, entries, roots, want_near=want_near)
+    exact, near, read = collect(core_ids, entries, roots, want_near=want_near)
     print(f"roots scanned: {len(roots)} "
           f"({len(stacks)} stack, {len(roots) - len(stacks)} orthogonal)")
+    print(f"rules read: {sum(read.values())} "
+          f"(fewest in one chain: {min(read.values())})")
+
+    # Every chain carries the core tier, which states rules as bullets, so a
+    # chain that yields none means the parser stopped matching, not that the
+    # chain is free of duplicates.
+    empty = sorted(sid for sid, n in read.items() if n == 0)
+    if empty:
+        print(f"no rule read from {len(empty)} chain(s): {', '.join(empty)}; "
+              f"refusing to report a clean audit over rules it never read")
+        sys.exit(1)
 
     print("=" * 70)
     print("EXACT in-chain rule duplicates")

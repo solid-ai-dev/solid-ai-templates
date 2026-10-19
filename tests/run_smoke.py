@@ -2026,15 +2026,43 @@ def check_sys_16():
 # catch it was already in the registry, beside the function the runner does
 # resolve.
 
+#
+# The reverse direction holds too. A document no check cites and no runner
+# names is a procedure nothing runs, and an index row naming no document
+# sends a reader to nothing; either survived a repointed registry entry with
+# every gate green. A spec declaring `automatable: manual` has no runner by
+# design and is exempt from the first.
+
+SPEC_ID = re.compile(r"SAIT-[A-Z0-9]+-[A-Z0-9]+-\d+-\d+[A-Z]")
+MANUAL_SPEC = re.compile(r"^automatable:\s*manual\s*$", re.M)
+
+
+def _runner_text():
+    """The text of every runner in tests/ other than this one.
+
+    This file's registry is read as data; its prose names specs it does not
+    run, so it is not searched as text.
+    """
+    tests = os.path.join(ROOT, "tests")
+    texts = []
+    for name in sorted(os.listdir(tests)):
+        if name.endswith(".py") and name != os.path.basename(__file__):
+            with io.open(os.path.join(tests, name), encoding="utf-8") as f:
+                texts.append(f.read())
+    return "\n".join(texts)
+
+
 def check_sys_17():
     failures = []
     seen = Inspected()
 
     spec_dir = os.path.join(ROOT, "tests", "specs")
-    on_disk = set()
+    on_disk = {}
     for name in os.listdir(spec_dir):
         if name.endswith(".md"):
-            on_disk.add(os.path.splitext(name)[0])
+            with io.open(os.path.join(spec_dir, name),
+                         encoding="utf-8") as handle:
+                on_disk[os.path.splitext(name)[0]] = handle.read()
 
     with io.open(os.path.join(ROOT, "tests", "INDEX.md"),
                  encoding="utf-8") as handle:
@@ -2042,6 +2070,27 @@ def check_sys_17():
 
     seen.count("checks registered", CHECKS)
     seen.count("spec documents on disk", on_disk)
+    indexed = set(SPEC_ID.findall(index))
+    seen.count("specs the index names", indexed)
+
+    cited = {check.get("spec") for check in CHECKS}
+    runners = _runner_text()
+    for spec in sorted(on_disk):
+        if spec not in index:
+            failures.append(f"  {spec}: on disk with no row in "
+                            f"tests/INDEX.md")
+        if spec in cited or spec in runners:
+            continue
+        if MANUAL_SPEC.search(on_disk[spec]):
+            continue
+        failures.append(
+            f"  {spec}: no registered check cites it, no runner in tests/ "
+            f"names it, and it does not declare automatable: manual -- a "
+            f"procedure nothing runs"
+        )
+    for spec in sorted(indexed - set(on_disk)):
+        failures.append(f"  {spec}: named in tests/INDEX.md with no "
+                        f"document under tests/specs/")
 
     for check in CHECKS:
         spec = check.get("spec")
@@ -2248,7 +2297,8 @@ RESOLVE_WITH = (
 def _resolve_cases(manifests, cases):
     """Resolve each case's root in its planted manifest; return the misses.
 
-    A case is (manifest name, root, owed exit status, phrase the output owes).
+    A case is (manifest name, root, owed exit status, phrase the output owes),
+    optionally followed by a phrase the output MUST NOT carry.
     """
     import tempfile
 
@@ -2259,7 +2309,7 @@ def _resolve_cases(manifests, cases):
                          encoding="utf-8", newline="\n") as handle:
                 handle.write(text)
 
-        for name, root, want_code, want_phrase in cases:
+        for name, root, want_code, want_phrase, *absent in cases:
             manifest = os.path.join(scratch, name + ".yaml")
             case = f"{root} in {name}"
             proc = subprocess.run(
@@ -2278,6 +2328,11 @@ def _resolve_cases(manifests, cases):
                     f"  {case}: exit {want_code} as expected, but the message "
                     f"does not carry {want_phrase!r}, so the status may be "
                     f"right for the wrong reason"
+                )
+            elif absent and absent[0] in said:
+                failures.append(
+                    f"  {case}: the output carries {absent[0]!r}, which the "
+                    f"case owes it not to"
                 )
             elif "Traceback" in said:
                 failures.append(
@@ -2307,6 +2362,10 @@ def check_sys_19():
 # entry there, and `fork_core` adds a second; each case asserts one of them
 # reaches the chain. The upstream file is the control that the chain
 # resolved at all.
+#
+# Inclusion alone passes a resolver that returns every entry it can see, so
+# a third entry under the fork's key, which nothing names, MUST stay out,
+# and the whole chain is asserted in its order.
 
 FORK_MANIFEST = """core: [base-a]
 fork_core: [fork-readme]
@@ -2320,6 +2379,8 @@ acme:
     file: templates/core/docs.md
   - id: fork-lib
     file: templates/core/git.md
+  - id: fork-unused
+    file: templates/core/testing.md
 
 stacks:
   - id: stack-fork
@@ -2334,10 +2395,15 @@ FORK_OUTSIDE_MANIFEST = FORK_MANIFEST.replace(
     "  - id: fork-readme\n    file: templates/core/docs.md\n"
     "    depends_on: [fork-lib]\n")
 
+FORK_CHAIN = "\n".join([
+    "templates/core/quality.md", "templates/core/docs.md",
+    "templates/core/git.md", "templates/fixture/stack.md"])
+
 FORK_CASES = [
     ("fork", "stack-fork", 0, "templates/core/quality.md"),
     ("fork", "stack-fork", 0, "templates/core/git.md"),
     ("fork", "stack-fork", 0, "templates/core/docs.md"),
+    ("fork", "stack-fork", 0, FORK_CHAIN, "templates/core/testing.md"),
     ("fork-outside", "stack-fork", 1,
      "Core-tier entry fork-readme depends on fork-lib, which is outside the "
      "core tier"),
@@ -2442,6 +2508,117 @@ fork:
 ]
 
 
+def _git(repo, *args):
+    return subprocess.run(["git", "-C", repo] + list(args),
+                          capture_output=True, text=True, encoding="utf-8")
+
+
+def fork_baseline(repo, ref):
+    """The manifest the fork in `repo` last merged from `ref`.
+
+    Returns (text, basis, refusal): the manifest text and a line naming
+    where it came from, or a refusal naming why no baseline exists.
+    """
+
+    # A ref that does not resolve and a ref with no shared history are
+    # different faults with different remedies -- fetch upstream, or point
+    # at the right one -- so each is named as itself.
+    resolved = _git(repo, "rev-parse", "--verify", "--quiet",
+                    f"{ref}^{{commit}}")
+    if resolved.returncode != 0:
+        return None, None, (
+            f"{UPSTREAM_REF_ENV}={ref} names no commit in this repository, "
+            f"so there is no upstream to compare with; fetch it first")
+    merged = _git(repo, "merge-base", "HEAD", ref)
+    if merged.returncode != 0:
+        return None, None, (
+            f"{UPSTREAM_REF_ENV}={ref} shares no history with HEAD, so the "
+            f"revision the fork last merged is unknown")
+    revision = merged.stdout.strip()
+    shown = _git(repo, "show", f"{revision}:templates/manifest.yaml")
+    if shown.returncode != 0:
+        return None, None, (f"the manifest at {revision[:12]} could not be "
+                            f"read: {shown.stderr.strip()}")
+    return shown.stdout, (f"  baseline: the merge base {revision[:12]} of "
+                          f"HEAD and {ref}"), None
+
+
+# The git path, planted. Upstream sets no ref, so its own run never reaches
+# that path, and a fork's run reaches it only in the passing direction. Each
+# case is (label, the ref the fork names, the findings or the refusal owed),
+# run in order against one throwaway repository whose `upstream` branch is
+# OWNED_BASE and whose HEAD is the fork.
+GIT_CASES = [
+    ("a fork that only appended since its last merge", "upstream", []),
+    ("a fork that edited the core tier since its last merge", "upstream",
+     ["core: ['base-a'] became ['base-a', 'backend-a']"]),
+    ("a ref that names no commit", "upstream/missing", "names no commit"),
+    ("a ref with no history in common", "unrelated", "shares no history"),
+]
+
+
+def _git_cases():
+    """Run GIT_CASES; return a failure line per case that missed."""
+    import tempfile
+
+    manifest = os.path.join("templates", "manifest.yaml")
+    edits = {
+        GIT_CASES[0][0]: OWNED_BASE + "  - id: stack-b\n"
+                                      "    file: templates/stack/b.md\n",
+        GIT_CASES[1][0]: OWNED_BASE.replace(
+            "core: [base-a]", "core: [base-a, backend-a]") +
+            "  - id: stack-b\n    file: templates/stack/b.md\n",
+    }
+    failures = []
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
+
+        def commit(text, message):
+            # Each commit MUST change the manifest, or the case after it
+            # reads the state before it and passes for the wrong reason.
+            path = os.path.join(repo, manifest)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+                f.write(text)
+            _git(repo, "add", manifest)
+            done = _git(repo, "commit", "-q", "-m", message)
+            if done.returncode != 0:
+                raise RuntimeError(f"planted commit {message!r} failed: "
+                                   f"{done.stderr.strip()}")
+
+        _git(repo, "init", "-q")
+        for key, value in (("core.autocrlf", "false"),
+                           ("user.name", "smoke"),
+                           ("user.email", "smoke@localhost")):
+            _git(repo, "config", key, value)
+        commit(OWNED_BASE, "upstream")
+        _git(repo, "branch", "upstream")
+        _git(repo, "checkout", "-q", "--orphan", "unrelated")
+        commit(OWNED_BASE, "unrelated root")
+        _git(repo, "checkout", "-q", "upstream")
+        _git(repo, "checkout", "-q", "-b", "fork")
+
+        for label, ref, owed in GIT_CASES:
+            if label in edits:
+                commit(edits[label], label)
+            was, _, refused = fork_baseline(repo, ref)
+            if isinstance(owed, str):
+                if not refused or owed not in refused:
+                    failures.append(f"  planted git, {label}: refused "
+                                    f"{refused!r}, owed {owed!r}")
+                continue
+            if refused:
+                failures.append(f"  planted git, {label}: refused {refused!r}")
+                continue
+            with io.open(os.path.join(repo, manifest),
+                         encoding="utf-8") as f:
+                now = f.read()
+            got = upstream_key_edits(yaml.safe_load(was), yaml.safe_load(now))
+            if got != owed:
+                failures.append(f"  planted git, {label}: found {got}, "
+                                f"owed {owed}")
+    return failures
+
+
 def check_sys_20():
     if not HAS_YAML:
         return [MISSING_YAML]
@@ -2456,32 +2633,19 @@ def check_sys_20():
         if got != want:
             failures.append(f"  planted, {label}: found {got}, owed {want}")
 
+    seen.count("planted fork repositories", GIT_CASES)
+    failures += _git_cases()
+
     manifest = os.path.join(ROOT, "templates", "manifest.yaml")
     with io.open(manifest, encoding="utf-8") as handle:
         now_text = handle.read()
 
     ref = os.environ.get(UPSTREAM_REF_ENV)
     if ref:
-        merged = subprocess.run(["git", "merge-base", "HEAD", ref],
-                                cwd=ROOT, capture_output=True, text=True)
-        if merged.returncode != 0:
-            failures.append(
-                f"  {UPSTREAM_REF_ENV}={ref} shares no history with HEAD, so "
-                f"the revision the fork last merged is unknown: "
-                f"{merged.stderr.strip()}"
-            )
+        was_text, basis, refused = fork_baseline(ROOT, ref)
+        if refused:
+            failures.append(f"  {refused}")
             return seen.failures() + failures, seen.notes()
-        revision = merged.stdout.strip()
-        shown = subprocess.run(
-            ["git", "show", f"{revision}:templates/manifest.yaml"],
-            cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
-        if shown.returncode != 0:
-            failures.append(f"  the manifest at {revision[:12]} could not be "
-                            f"read: {shown.stderr.strip()}")
-            return seen.failures() + failures, seen.notes()
-        was_text = shown.stdout
-        basis = (f"  baseline: the merge base {revision[:12]} of HEAD and "
-                 f"{ref}")
     else:
         was_text = now_text
         basis = (f"  baseline: {UPSTREAM_REF_ENV} is unset, so this is "

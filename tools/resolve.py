@@ -17,7 +17,6 @@ The resolution algorithm follows ADR-004:
 """
 
 import io
-import os
 import re
 import sys
 from pathlib import Path
@@ -371,7 +370,8 @@ def generate_all(core_ids, entries, stacks):
 def check_generated(core_ids, entries, stacks):
     """Check that generated/ files match current resolution.
 
-    Returns list of stale stack IDs.
+    Returns (stale stack IDs, orphaned cache files). An orphan is a file
+    under generated/ that no stack in `stacks` produces.
     """
     stale = []
     for stack in stacks:
@@ -385,12 +385,47 @@ def check_generated(core_ids, entries, stacks):
         actual = io.open(out, encoding="utf-8").read()
         if expected != actual:
             stale.append(sid)
-    return stale
+    owed = {f"{stack['id']}.md" for stack in stacks}
+    cached = sorted(p.name for p in GENERATED.glob("*.md")) \
+        if GENERATED.is_dir() else []
+    orphans = [name for name in cached if name not in owed]
+    return stale, orphans
 
 
 # ---- CLI ----
 
 KNOWN_FLAGS = {"--help", "--list", "--roots", "--generate", "--check", "--concat"}
+
+
+def _check(core_ids, offered, catalogue, stacks):
+    """--check: compare generated/ with the catalogue; exit with the verdict.
+
+    `stacks` is every stack the manifest holds, fixtures included, and
+    `catalogue` the ones a project can pick, which are the ones cached.
+    """
+
+    # Upstream offers no stack, so its cache is legitimately empty and a
+    # zero count alone proves nothing. The fixture is always there, though,
+    # so a manifest that parses to no stack at all is a parse that failed.
+    if not stacks:
+        print("The manifest parsed to no stack, not even the fixture; "
+              "refusing to report an empty cache as up to date.")
+        sys.exit(1)
+
+    stale, orphans = check_generated(core_ids, offered, catalogue)
+    print(f"stacks in the manifest: {len(stacks)}, of which a project can "
+          f"pick {len(catalogue)}; generated files checked: {len(catalogue)}")
+    for sid in stale:
+        print(f"  stale: {sid}")
+    for name in orphans:
+        print(f"  orphaned: generated/{name}, which no stack produces")
+    if stale or orphans:
+        print(f"{len(stale) + len(orphans)} generated file(s) out of date. "
+              f"Run py tools/resolve.py --generate for a stale one, and "
+              f"delete an orphaned one.")
+        sys.exit(1)
+    print("All generated files up to date.")
+    sys.exit(0)
 
 
 def main():
@@ -407,7 +442,7 @@ def _cli(args):
         print(__doc__)
         sys.exit(0)
 
-    core_ids, entries, _ = load_manifest()
+    core_ids, entries, stacks = load_manifest()
 
     # The listings and the cache offer what a project can pick. A fixture
     # still resolves when named, which is how the checks reach it.
@@ -431,15 +466,7 @@ def _cli(args):
         sys.exit(0)
 
     if "--check" in args:
-        stale = check_generated(core_ids, offered, catalogue)
-        if stale:
-            print(f"{len(stale)} stale file(s):")
-            for sid in stale:
-                print(f"  {sid}")
-            sys.exit(1)
-        else:
-            print("All generated files up to date.")
-            sys.exit(0)
+        _check(core_ids, offered, catalogue, stacks)
 
     do_concat = "--concat" in args
 

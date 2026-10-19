@@ -34,7 +34,7 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from conformance import CHECKS, RUN, SKIP, MANUAL, READ
+from conformance import CHECKS, SKIP, MANUAL, READ, SKIP_BUDGETS
 from lib import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
                  print_verdict, template_documents)
 
@@ -333,6 +333,21 @@ def main():
             first = next((l.strip() for l in block[3] if l.strip()), "")
             problems.append("%s:%d has no disposition -- %s"
                             % (block[0], block[1], first[:50]))
+
+    # A reason justifies one skip; nothing bounded how many there are. The
+    # count is held to the number each registry declares, so a new skip
+    # arrives as a moved number in the diff rather than as one more
+    # sentence in the pile.
+    for where, entries, budget in SKIP_BUDGETS:
+        skips = sum(1 for e in entries if e["do"] == SKIP)
+        print("skips in %s: %d, budgeted: %s" % (where, skips, budget))
+        if budget is None:
+            problems.append("%s declares no SKIP_BUDGET; it carries %d "
+                            "skip(s)" % (where, skips))
+        elif skips != budget:
+            problems.append("%s carries %d skip(s) against a SKIP_BUDGET of "
+                            "%d -- move the budget in the change that moves "
+                            "the count" % (where, skips, budget))
 
     if problems:
         print("\nRegistry does not account for the templates:\n")

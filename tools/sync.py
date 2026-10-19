@@ -586,7 +586,9 @@ def main():
     # Check generated/ files via resolve.py
     from resolve import load_catalogue as _load, check_generated, generate_all
     core_ids, entries, stacks = _load()
-    stale = check_generated(core_ids, entries, stacks)
+    stale, orphans = check_generated(core_ids, entries, stacks)
+    for name in orphans:
+        print(f"  ORPHAN generated/{name} (no stack produces it; delete it)")
     if stale:
         if check_mode:
             print(f"  STALE {len(stale)} generated file(s)")
@@ -594,6 +596,8 @@ def main():
         else:
             generate_all(core_ids, entries, stacks)
             changed.append("generated/")
+    elif orphans and check_mode:
+        changed.append("generated/")
 
     if check_mode and changed:
         print(f"\n{len(changed)} file(s) out of sync.")

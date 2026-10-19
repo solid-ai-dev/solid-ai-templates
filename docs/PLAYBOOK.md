@@ -277,7 +277,13 @@ other):
 py tools/audit_redundancy.py           # exact in-chain duplicates
 py tools/audit_redundancy.py --near    # also paraphrase near-duplicates
 py tools/audit_redundancy.py --check   # exit 1 if any exact duplicate
+py tools/audit_redundancy.py --self-test  # the planted cases only
 ```
+
+Every run prints how many rules it read and refuses a chain it read none
+from. `--check` first runs planted chains that owe a known number of
+findings, so a detector that stops matching fails instead of reporting a
+clean corpus.
 
 `--check` gates the exact tier only and prints the near count beside
 its verdict, so a passing run states what it did not gate (ADR-038).
@@ -306,7 +312,14 @@ py tests/run_smoke.py              # structural checks — seconds
 py tests/run_conformance.py        # the templates' own checks, run here
 py tests/run_conformance.py --list # dispositions only, run nothing
 py tests/run_fork_sync.py         # a fork that only appends merges HEAD
+py -m pyflakes tools tests        # the tooling's own lint
+npx markdownlint-cli2              # Markdown, outside the recorded files
 ```
+
+CI pins both linters' versions in `.github/workflows/smoke.yml`.
+`.markdownlint-cli2.jsonc` lists the files that carried findings when the
+Markdown lint first ran. Every other file is held to the rules in full; fix
+a listed file and remove its line, never add one.
 
 A change that removes what forks carry, such as the split, carries the
 commit trailer `Fork-merge: ours`. Fork sync then merges it the way a fork
@@ -368,6 +381,12 @@ a `substitute` map instead and the check runs. That distinction is not
 cosmetic: the release-pipeline check was skipped for naming
 `<release-workflow>.yml` while `.github/workflows/release-gates.yml` had
 been shipping for weeks, and nothing re-read the reason.
+
+The number of skips is fixed too. `SKIP_BUDGET` in `tests/conformance.py`
+states how many of its entries skip, and the runner fails when the count
+differs, so adding or retiring a skip moves that number in the same change.
+A fork declares its own `SKIP_BUDGET` in `tests/fork_dispositions.py`; a
+fork file that declares none fails the run.
 
 A check only earns that status where nothing in its output can be decided.
 The changelog bound declares a limit and counts against it, so it is a
