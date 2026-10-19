@@ -372,6 +372,12 @@ cosmetic: the release-pipeline check was skipped for naming
 `<release-workflow>.yml` while `.github/workflows/release-gates.yml` had
 been shipping for weeks, and nothing re-read the reason.
 
+The number of skips is fixed too. `SKIP_BUDGET` in `tests/conformance.py`
+states how many of its entries skip, and the runner fails when the count
+differs, so adding or retiring a skip moves that number in the same change.
+A fork declares its own `SKIP_BUDGET` in `tests/fork_dispositions.py`; a
+fork file that declares none fails the run.
+
 A check only earns that status where nothing in its output can be decided.
 The changelog bound declares a limit and counts against it, so it is a
 scored verdict now, and each check that stays a judgement carries a

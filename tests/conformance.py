@@ -11,6 +11,9 @@ A block is located by a string only its body contains, never by position:
 already found the wrong one.
 """
 
+import os
+import sys
+
 # Disposition values.
 RUN = "run"
 SKIP = "skip"
@@ -52,8 +55,22 @@ SKIP = "skip"
 # "reason" is required on every SKIP and every MANUAL entry. A skip is a
 # check that does not run, and the reason is the whole of what justifies
 # it.
+#
+# SKIP_BUDGET is how many entries below are SKIP, and the runner fails when
+# the count differs. A reason is prose nothing re-reads, so without a count
+# the largest population in the registry could grow with every gate green;
+# adding a skip, or retiring one, moves this number in the same diff. A
+# fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
+# declares beside them.
+SKIP_BUDGET = 17
+
 MANUAL = "manual"
 READ = "read"
+
+# The interpreter running this suite, for a substitution that runs a tool.
+# A bare `py` exists on Windows only and `python3` on Windows may be a stub,
+# so the block runs the one already running.
+PYTHON = '"%s"' % sys.executable.replace(os.sep, "/")
 
 CHECKS = [
 
@@ -79,11 +96,17 @@ CHECKS = [
 
     # -- core/git.md -------------------------------------------------
 
+    # This repository's regenerator is sync.py, and what it writes depends
+    # on the tree -- a fork's examples document among them -- so the diff
+    # covers the whole tree. The run therefore reads committed work only,
+    # which is how the suite is run anyway. sync.py's own report is
+    # silenced, so anything printed is a diff.
     {"file": "core/git.md", "find": "<regenerate-command>",
-     "title": "Regenerated artifact matches its sources", "do": SKIP,
-     "reason": "The regeneration command is a placeholder the consuming "
-               "project fills in. This repository's equivalent is "
-               "`py tools/sync.py`, already gated in CI."},
+     "title": "Regenerated artifact matches its sources", "do": RUN,
+     "expect": [],
+     "substitute": {"<regenerate-command>":
+                    PYTHON + " tools/sync.py > /dev/null || exit 1",
+                    "<artifact-path>": "."}},
 
     {"file": "core/git.md", "find": "mask() {",
      "title": "Volatile parts of a binary artifact are masked before diffing",
@@ -91,11 +114,15 @@ CHECKS = [
      "reason": "Needs the paths of two generated bundles to compare. This "
                "repository commits no binary artifact."},
 
+    # The documents here with a numbered structure that concurrent branches
+    # edit. Run on every pass, the check holds them consistent whichever
+    # branch merged last.
     {"file": "core/git.md", "find": "PATHS = [\"<file>\"]",
      "title": "Numbered headings stay consistent across concurrent edits",
-     "do": SKIP,
-     "reason": "PATHS is a placeholder naming the documents two open "
-               "branches both edit; it is set per release, not per repo."},
+     "do": RUN, "expect": ["line", "line", "line"],
+     "substitute": {'PATHS = ["<file>"]':
+                    'PATHS = ["CLAUDE.md", "docs/SPEC.md", '
+                    '"docs/PLAYBOOK.md"]'}},
 
     {"file": "core/git.md", "find": "BASE = \"origin/main\"",
      "title": "A diff touching an off-limits path says so", "do": RUN,
@@ -279,10 +306,19 @@ CHECKS = [
 # fork_dispositions.py, which this registry takes in when the file exists,
 # so a tree without those templates carries no entry for a block it lacks.
 try:
-    from fork_dispositions import CHECKS as FORK_CHECKS
+    import fork_dispositions
 except ModuleNotFoundError as exc:
     if exc.name != "fork_dispositions":
         raise
-    FORK_CHECKS = []
+    fork_dispositions = None
+
+# Each registry's entries beside the skip count it declares. A fork's file
+# that declares none is reported with None, which the runner refuses.
+SKIP_BUDGETS = [("tests/conformance.py", CHECKS, SKIP_BUDGET)]
+FORK_CHECKS = []
+if fork_dispositions is not None:
+    FORK_CHECKS = fork_dispositions.CHECKS
+    SKIP_BUDGETS.append(("tests/fork_dispositions.py", FORK_CHECKS,
+                         getattr(fork_dispositions, "SKIP_BUDGET", None)))
 
 CHECKS = CHECKS + FORK_CHECKS
