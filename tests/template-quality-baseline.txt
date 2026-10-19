@@ -26,7 +26,7 @@ templates/core/git.md 27.0
 templates/core/oop.md 83.2
 templates/core/quality-gates.md 18.8
 templates/core/quality.md 23.8
-templates/core/review.md 47.6
+templates/core/review.md 54.2
 templates/core/testing.md 30.5
 templates/data/data-governance.md 100.0
 templates/data/data-migration.md 99.8
@@ -35,7 +35,7 @@ templates/data/data-quality.md 83.0
 templates/frontend/content.md 85.6
 templates/frontend/quality.md 88.0
 templates/frontend/static-site.md 84.0
-templates/frontend/ux.md 92.0
+templates/frontend/ux.md 93.5
 templates/infra/cicd.md 86.8
 templates/infra/containers.md 86.9
 templates/infra/deployment.md 95.4

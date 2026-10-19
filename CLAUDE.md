@@ -62,6 +62,12 @@ py tools/release_check.py --self-test         # planted cases
 py tools/audit_redundancy.py                 # exact in-chain duplicates
 py tools/audit_redundancy.py --near          # include near-duplicates
 py tools/audit_redundancy.py --check          # CI gate — fail on new dups
+
+# Score template documents (docs/design/template-content-quality.md)
+py tools/template_quality.py                 # every template's score
+py tools/template_quality.py <file>          # one file's metrics and worst parts
+py tools/template_quality.py --check         # CI gate — no score below baseline
+py tools/template_quality.py --update        # re-record after improving a file
 ```
 
 A project generates its context file from a fork: the fork's interview and
@@ -360,7 +366,8 @@ py tests/run_fork_sync.py         # a fork that only appends merges HEAD
 - Spec files live in `tests/specs/` — see `tests/CODIFICATION.md`
   for the ID scheme and `tests/INDEX.md` for the full list
 - CI runs smoke, conformance, fork sync, `release_check.py --self-test`,
-  `sync.py --check`, `resolve.py --check`, the redundancy audit, pyflakes
+  `sync.py --check`, `resolve.py --check`, the redundancy audit, the
+  template-quality ratchet, pyflakes
   over `tools/` and `tests/`, markdownlint and gitleaks on PRs and on push
   to main
 - markdownlint skips the files `.markdownlint-cli2.jsonc` records as

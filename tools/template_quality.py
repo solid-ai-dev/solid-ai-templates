@@ -109,6 +109,9 @@ class Item:
     def is_directive(self):
         if RFC_KEYWORDS.search(self.text) or OBLIGATION.search(self.text):
             return True
+        # A checklist item is an instruction to check what it names.
+        if re.match(r"^\[[ xX]\]\s", self.text):
+            return True
         lead = re.sub(r"^[*_`]+", "", self.text)
         match = re.match(r"[A-Za-z']+", lead)
         return bool(match) and match.group(0) in IMPERATIVES
@@ -284,8 +287,8 @@ def score(doc):
     value = sum(subs[n] * CRITERIA[n]["weight"] for n in CRITERIA) / total
     applied = []
     for metric, threshold, cap in CAPS:
-        if raw[metric] > threshold and value > cap:
-            value = cap
+        if raw[metric] > threshold:
+            value = min(value, cap)
             applied.append(f"{metric}={raw[metric]:g}")
     return round(value, 1), subs, raw, applied
 
