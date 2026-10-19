@@ -353,8 +353,8 @@ def run_self_test():
     for line in misses:
         print(line)
     if misses:
-        print("FAIL: the detector no longer finds what the planted cases "
-              "owe, so a clean audit of the corpus means nothing")
+        print("FAIL: the detector's findings differ from what the planted "
+              "cases owe, so its audit of the corpus cannot be trusted")
         sys.exit(1)
 
 
