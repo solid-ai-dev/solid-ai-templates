@@ -48,28 +48,28 @@ section size).
 | `backend/webhooks.md` | 86.9 | 263 | 19 | 27 | sent 46, para 53 |  |
 | `infra/containers.md` | 86.9 | 820 | 14.5 | 93 | sent 48 |  |
 | `frontend/quality.md` | 88.0 | 504 | 17.5 | 35 | hedge 26, dir 49 |  |
-| `backend/edge.md` | 89.7 | 493 | 17 | 32 | — |  |
+| `backend/edge.md` | 89.7 | 493 | 17 | 32 | â€” |  |
 | `backend/features.md` | 90.9 | 442 | 19 | 28 | dir 54 |  |
-| `backend/concurrency.md` | 91.7 | 426 | 17 | 67 | — |  |
+| `backend/concurrency.md` | 91.7 | 426 | 17 | 67 | â€” |  |
 | `backend/errors.md` | 91.7 | 398 | 21 | 29 | sent 56 |  |
 | `backend/database.md` | 92.0 | 396 | 12 | 25 | hedge 0 |  |
-| `backend/microservices.md` | 93.5 | 703 | 18 | 29 | — |  |
+| `backend/microservices.md` | 93.5 | 703 | 18 | 29 | â€” |  |
 | `frontend/ux.md` | 93.5 | 660 | 11 | 40 | dir 19 |  |
 | `backend/api.md` | 94.9 | 605 | 10 | 63 | dir 39 |  |
 | `infra/deployment.md` | 95.4 | 962 | 14 | 26 | dir 49 |  |
-| `backend/http.md` | 96.0 | 519 | 10 | 63 | — |  |
+| `backend/http.md` | 96.0 | 519 | 10 | 63 | â€” |  |
 | `backend/grpc.md` | 96.1 | 485 | 14 | 27 | dir 52 |  |
-| `security/security.md` | 96.2 | 1,334 | 14 | 76 | — |  |
-| `backend/jobs.md` | 97.2 | 415 | 14 | 21 | — |  |
-| `backend/messaging.md` | 97.5 | 649 | 17 | 31 | — |  |
-| `backend/observability.md` | 97.7 | 502 | 12 | 32 | — |  |
-| `backend/quality.md` | 98.3 | 448 | 13 | 25 | — |  |
-| `backend/auth.md` | 98.4 | 450 | 15 | 26 | — |  |
-| `backend/monitoring.md` | 98.5 | 277 | 13 | 22 | — |  |
-| `data/data-migration.md` | 99.8 | 351 | 13 | 26 | — |  |
-| `backend/caching.md` | 100.0 | 434 | 13 | 23 | — |  |
-| `data/data-governance.md` | 100.0 | 355 | 11 | 22 | — |  |
-| `data/data-modeling.md` | 100.0 | 348 | 12 | 20 | — |  |
+| `security/security.md` | 96.2 | 1,334 | 14 | 76 | â€” |  |
+| `backend/jobs.md` | 97.2 | 415 | 14 | 21 | â€” |  |
+| `backend/messaging.md` | 97.5 | 649 | 17 | 31 | â€” |  |
+| `backend/observability.md` | 97.7 | 502 | 12 | 32 | â€” |  |
+| `backend/quality.md` | 98.3 | 448 | 13 | 25 | â€” |  |
+| `backend/auth.md` | 98.4 | 450 | 15 | 26 | â€” |  |
+| `backend/monitoring.md` | 98.5 | 277 | 13 | 22 | â€” |  |
+| `data/data-migration.md` | 99.8 | 351 | 13 | 26 | â€” |  |
+| `backend/caching.md` | 100.0 | 434 | 13 | 23 | â€” |  |
+| `data/data-governance.md` | 100.0 | 355 | 11 | 22 | â€” |  |
+| `data/data-modeling.md` | 100.0 | 348 | 12 | 20 | â€” |  |
 
 ## The six lowest, read by hand
 

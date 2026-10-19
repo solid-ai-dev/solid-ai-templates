@@ -109,6 +109,7 @@ class Item:
     def is_directive(self):
         if RFC_KEYWORDS.search(self.text) or OBLIGATION.search(self.text):
             return True
+
         # A checklist item is an instruction to check what it names.
         if re.match(r"^\[[ xX]\]\s", self.text):
             return True
