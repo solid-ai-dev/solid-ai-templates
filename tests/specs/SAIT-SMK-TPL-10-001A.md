@@ -59,7 +59,7 @@ tags: [structure, composition, override, conflict]
 
 ## Notes
 
-`docs/SPEC.md` calls two templates overriding one ID an error the agent
+The spec, chapter 8.3, calls two templates overriding one ID an error the agent
 MUST surface, and states no winner. Nothing reported it: `TPL-03`,
 `TPL-04` and `TPL-06` check that a directive's target exists and is
 reachable, not how many templates claim it.

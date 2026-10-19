@@ -895,10 +895,10 @@ def check_tpl_07():
 # TPL-10 -- at most one OVERRIDE of a given ID per resolved chain
 # ---------------------------------------------------------------------------
 
-# SPEC's conflict table calls two templates overriding one ID an error the
+# The spec's conflict table calls two templates overriding one ID an error the
 # agent MUST surface. TPL-03, TPL-04 and TPL-06 check that an EXTEND or
 # OVERRIDE target exists and is reachable; none checks multiplicity, so the
-# error SPEC names is one no tool reports. A chain that carries two
+# error the spec names is one no tool reports. A chain that carries two
 # replacements of one section leaves the agent to pick, and the resolved
 # file states both.
 #
@@ -940,7 +940,7 @@ def check_tpl_10():
             if len(homes) > 1:
                 failures.append(
                     f"  {sid}: `{target}` is overridden by "
-                    f"{len(homes)} templates ({', '.join(homes)}) — SPEC "
+                    f"{len(homes)} templates ({', '.join(homes)}) — spec "
                     f"calls this an error and states no winner. Give the "
                     f"earlier override an [ID:] of its own and have the "
                     f"later one override that"

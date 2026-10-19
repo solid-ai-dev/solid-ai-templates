@@ -72,4 +72,4 @@ tags: [composition, override, inheritance]
 ## Related
 
 - Related procedures: `SAIT-INT-TPL-01-001A`, `SAIT-INT-TPL-02-001A`
-- Implements: SPEC.md §Override mechanism
+- Implements: docs/architecture/08-crosscutting-concepts.md §8.1

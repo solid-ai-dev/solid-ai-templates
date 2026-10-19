@@ -72,4 +72,4 @@ tags: [structure, extend, override, ids]
 ## Related
 
 - Related procedures: `SAIT-SMK-SYS-02-001A`
-- Implements: SPEC.md §Override mechanism
+- Implements: docs/architecture/08-crosscutting-concepts.md §8.1

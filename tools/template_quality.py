@@ -272,7 +272,7 @@ CAPS = (
     ("longest_rule", 150, 60),
 )
 
-# The manifest keys a fork never edits (SPEC, "Forks"). A template filed
+# The manifest keys a fork never edits (spec, chapter 8.6). A template filed
 # under one is upstream's and its score goes in the upstream baseline; every
 # other template is a fork's, whatever directory it sits in.
 UPSTREAM_KEYS = ("base", "backend", "frontend")

@@ -1,5 +1,5 @@
-"""Generate derived sections in README.md, INTERVIEW.md, and SPEC.md
-from manifest.yaml.
+"""Generate derived sections in README.md, INTERVIEW.md and the
+architecture chapters from manifest.yaml.
 
 Usage:
     py tools/sync.py           # update all targets
@@ -47,11 +47,10 @@ SECTION_DIRS = {
 def _check_sections(manifest):
     """Refuse a manifest entry filed outside the directory its section names."""
 
-    # The listings below print a section heading and each entry's basename, so
-    # an entry registered under the wrong section renders at a path that does
-    # not exist and omits itself from the one that does. Neither listing can
-    # be told from a correct one by reading it, and regenerating reproduces
-    # the same wrong tree, so --check stays green over it.
+    # A section names a kind of template and the path names a directory, so
+    # an entry registered under the wrong section is one kind to the tools
+    # that group by section and another to a reader of the tree. Nothing
+    # else reports the disagreement.
     misfiled = []
     for section, dirnames in SECTION_DIRS.items():
         for e in manifest.get(section, []) or []:
@@ -62,50 +61,6 @@ def _check_sections(manifest):
             "manifest: entries filed outside their section's directory:\n  "
             + "\n  ".join(misfiled)
         )
-
-
-def _tree(entries, dirname):
-    """Generate a directory tree listing."""
-    lines = [f"{dirname}/"]
-    for i, e in enumerate(entries):
-        fname = Path(e["file"]).name
-        desc = e.get("description", "")
-        prefix = "└──" if i == len(entries) - 1 else "├──"
-        pad = " " * max(1, 16 - len(fname))
-        lines.append(f"{prefix} {fname}{pad}# {desc}")
-    return "\n".join(lines)
-
-
-def _spec_sections(manifest):
-    """Generate SPEC.md directory listings."""
-    _check_sections(manifest)
-    parts = []
-
-    # One listing per directory, in the order the manifest first names it.
-    # Every section but stacks contributes, a fork's own keys included, so a
-    # template a fork keeps under its own key still lists in its directory.
-    from resolve import entry_sections
-
-    groups = {}
-    for section in entry_sections(manifest):
-        if section == "stacks":
-            continue
-        for e in manifest[section]:
-            groups.setdefault(Path(e["file"]).parts[1], []).append(e)
-    for dirname, entries in groups.items():
-        parts.append("```\n" + _tree(entries, dirname) + "\n```")
-
-    # stacks get a simpler listing
-    stacks = manifest.get("stacks", [])
-    lines = ["stack/"]
-    for i, e in enumerate(stacks):
-        fname = Path(e["file"]).name
-        desc = e.get("description", "")
-        prefix = "└──" if i == len(stacks) - 1 else "├──"
-        pad = " " * max(1, 28 - len(fname))
-        lines.append(f"{prefix} {fname}{pad}# {desc}")
-    parts.append("```\n" + "\n".join(lines) + "\n```")
-    return "\n\n".join(parts)
 
 
 def _readme_stacks(manifest):
@@ -183,7 +138,7 @@ def _readme_root_counts(core_ids, entries, stacks):
 
 
 def _spec_core_tier(core_ids, entries):
-    """Generate SPEC's statement of the core tier and how it is reached.
+    """Generate the statement of the core tier and how it is reached.
 
     Hand-written, the seeding claim sat outside every gate and was false:
     it said no directive anywhere declares a core file while dozens did.
@@ -198,7 +153,7 @@ def _spec_core_tier(core_ids, entries):
     # git ls-files reads the index, so a template added to the manifest
     # and to disk in the same change is invisible to it until staged --
     # the first sync run after `Write` undercounts, and the next run
-    # (after `git add`) writes a different SPEC. Union with the entries
+    # (after `git add`) writes a different chapter. Union with the entries
     # the manifest already names, which come from the working-tree file
     # this function is already passed and needs no staging.
     tracked = set(subprocess.check_output(
@@ -266,14 +221,14 @@ def _interview_stacks(manifest):
     return "\n".join(lines)
 
 
-# Worked resolved-chain examples in SPEC.md, as (heading, stack id) pairs.
+# Worked resolved-chain examples, as (heading, stack id) pairs.
 # Generated rather than hand-maintained: each block is resolver output, so a
 # hand-written copy drifts silently whenever a dependency edge moves and the
 # staleness gate reports the file in sync over it. Each names a stack, and
 # the stacks are a fork's, so the list lives in fork_examples.py beside
 # them; a tree without that file renders no examples. The fork may also
-# name the document they go to, so its own prose can hold them and SPEC.md
-# can stay upstream's.
+# name the document they go to, so its own prose can hold them and the
+# runtime chapter can stay upstream's.
 try:
     import fork_examples
 except ModuleNotFoundError as exc:
@@ -281,13 +236,14 @@ except ModuleNotFoundError as exc:
         raise
     fork_examples = None
 SPEC_CHAIN_EXAMPLES = getattr(fork_examples, "SPEC_CHAIN_EXAMPLES", [])
-CHAIN_EXAMPLES_DOC = getattr(fork_examples, "CHAIN_EXAMPLES_DOC", "docs/SPEC.md")
+CHAIN_EXAMPLES_DOC = getattr(fork_examples, "CHAIN_EXAMPLES_DOC",
+                             "docs/architecture/06-runtime-view.md")
 
 NEWLINE = "\n"
 
 
 def _spec_chain_examples():
-    """Render SPEC.md's worked chain examples from the resolver itself."""
+    """Render the worked chain examples from the resolver itself."""
     from resolve import load_catalogue as _load, resolve_chain
 
     core_ids, entries, stacks = _load()
@@ -456,7 +412,7 @@ def _catalogue(manifest):
     from resolve import is_fixture
 
     # Every block this script writes describes what a project can pick. A
-    # fixture is test input, so it stays off the README, SPEC and interview.
+    # fixture is test input, so it stays off the README, spec and interview.
     return {
         key: ([e for e in value
                if not (isinstance(e, dict) and is_fixture(e))]
@@ -516,7 +472,7 @@ def main():
 
     manifest = _catalogue(parse_manifest(manifest_text))
 
-    spec_content = _spec_sections(manifest)
+    _check_sections(manifest)
     chain_examples = _spec_chain_examples()
     readme_content = _readme_stacks(manifest)
 
@@ -540,10 +496,8 @@ def main():
     agent_outputs = _readme_agents()
     interview_content = _interview_stacks(manifest)
 
-    spec_blocks = {
-        "spec-directories": spec_content,
-        "spec-core-tier": spec_core_tier,
-    }
+    spec_doc = ROOT / "docs" / "architecture" / "05-building-block-view.md"
+    spec_blocks = {"spec-core-tier": spec_core_tier}
     examples_doc = ROOT / CHAIN_EXAMPLES_DOC
     example_blocks = {"spec-chain-examples": chain_examples}
 
@@ -560,7 +514,7 @@ def main():
     # other targets always exist; one renamed away must fail the run, or
     # --check passes with nothing checked.
     targets = [
-        (ROOT / "docs" / "SPEC.md", spec_blocks, True),
+        (spec_doc, spec_blocks, True),
         (ROOT / "README.md", readme_blocks, True),
         (ROOT / "templates" / "INTERVIEW.md",
          {"interview-stacks": interview_content}, False),
@@ -571,7 +525,7 @@ def main():
         if not examples_doc.exists():
             raise SystemExit("sync: CHAIN_EXAMPLES_DOC names %s, which "
                              "does not exist" % CHAIN_EXAMPLES_DOC)
-        if examples_doc == ROOT / "docs" / "SPEC.md":
+        if examples_doc == spec_doc:
             spec_blocks.update(example_blocks)
         else:
             targets.append((examples_doc, example_blocks, True))

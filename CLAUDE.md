@@ -28,7 +28,7 @@ templates/          # All template source files
   frontend/         # Frontend layer — UX, accessibility, CSS, SSG
   fixture/          # Test-input stack and platform — checked, never listed
   manifest.yaml     # Machine-readable dependency graph
-docs/               # Playbook, decision logs, SPEC.md
+docs/               # spec.md and architecture/ (arc42), playbook, decisions
 tests/              # Smoke, conformance and fork-sync runners, specs, reports
 tools/              # sync.py, resolve.py, release_check.py, audit_redundancy.py
 ```
@@ -45,7 +45,7 @@ is `Imbra-Ltd/imbra-ai-templates`.
 git clone https://github.com/solid-ai-dev/solid-ai-templates.git
 
 # Sync generated sections after editing templates/manifest.yaml
-py tools/sync.py            # update SPEC.md and README.md
+py tools/sync.py            # update generated sections in docs and README
 py tools/sync.py --check    # exit 1 if any file is out of sync
 
 # Resolve dependency chain for a stack
@@ -176,7 +176,7 @@ concerns = core/, security/, infra/, data/
 
 Stacks and platforms are added in a fork, never here. A fork registers
 them under `stacks:`, `platform:` or a key of its own and never edits
-`core:`, `base:`, `backend:` or `frontend:` (SPEC, "Forks"). The fixture
+`core:`, `base:`, `backend:` or `frontend:` (spec, chapter 8.6). The fixture
 stack and platform are test input only.
 
 ### 2.6 Adding a new base or layer template
@@ -193,7 +193,7 @@ stack and platform are test input only.
    (see 2.7)
 4. Register in `templates/manifest.yaml` under the correct layer
    key with a `description` field
-5. Run `py tools/sync.py` — updates SPEC.md directory listings
+5. Run `py tools/sync.py` — updates the generated sections
 6. Reference from dependent templates via `[DEPENDS ON: ...]`
 
 ### 2.7 Template authoring rules
@@ -226,7 +226,7 @@ stack and platform are test input only.
   refusal is a finding, never exit 3; see `base-quality`
 - Never name another file's section ID in running prose unless that file
   resolves into every chain carrying yours — state the substance inline
-  instead; SYS-11 checks it per chain (see SPEC.md "Naming another file's
+  instead; SYS-11 checks it per chain (see spec, chapter 8.4, "Reach";
   section in prose")
 - When a rule could live in either of two templates, measure both files'
   chain reach first and put it in the wider one, leaving the narrower to
@@ -257,14 +257,14 @@ stack and platform are test input only.
 |------|---------|
 | `README.md` | Public-facing overview, the fork model, quick start, agents table |
 | `CLAUDE.md` | AI agent context and project rules (this file) |
-| `docs/SPEC.md` | System design, composition rules, inheritance model, precedence |
+| `docs/spec.md` | arc42 index of `docs/architecture/` — goals, context, building blocks, runtime, composition rules, quality, risks |
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
 | `docs/playbook.md` | Operational reference — how to add templates, validate a change, release |
 | `docs/migrating-to-v3.md` | Moving a 2.x project or fork to v3.0 |
 | `CHANGELOG.md` | Released versions and what changed in each; versions up to v2.63.0 are in the GitHub Releases (ADR-029) |
 | `SECURITY.md` | Private disclosure route, supported versions, scope, acknowledgement window |
 | `CONTRIBUTING.md` | Setup, orientation, and what a change is checked against — gates, manifest duty, authoring rules; links §2.1 for branch and commit form |
-| `docs/design/` | Design documents about the library itself — the design record, agent-context tradeoffs, template-content quality (see SPEC "Design documents") |
+| `docs/design/` | Design documents deeper than a chapter — agent-context tradeoffs, template-content quality |
 
 #### Documentation rules
 
@@ -273,7 +273,7 @@ stack and platform are test input only.
     rules change
   - `README.md` — if the stacks table, project structure, or quick
     start change
-  - `docs/SPEC.md` — if the composition model, inheritance rules,
+  - `docs/architecture/` — if the composition model, inheritance rules,
     or ID system change
   - `templates/manifest.yaml` — if any template is added, removed,
     renamed, or re-depended
@@ -433,7 +433,7 @@ Run `py tests/run_smoke.py` before every PR. It checks:
 
 ### 6.1 Startup
 
-1. Read `CLAUDE.md` (this file) and `docs/SPEC.md`
+1. Read `CLAUDE.md` (this file) and `docs/spec.md`
 2. Check for stale branches: run `git branch --no-merged main`
    and flag any unmerged branches to the user — they may contain
    lost work
@@ -548,7 +548,7 @@ summarize — visible sequential execution prevents missed steps.
    qualifiers; paragraph length does not require an ADR.
 7. **README.md** — for each new command, dependency, or structural
    change, is it reflected? Name the section.
-8. **docs/SPEC.md** — for each change to composition model or ID
+8. **docs/architecture/** — for each change to composition model or ID
    system, is it reflected? Name the section.
 9. **templates/manifest.yaml** — for each template added, removed,
    or re-depended, is it registered? Name the entry.
