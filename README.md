@@ -27,8 +27,6 @@ your team would.
    - Follow templates/core/agents.md for the output
    ```
 
-   To adapt the rules, fork this repository first and use your fork's URL.
-
 2. Review the result before you commit it.
 
 ## Documentation
@@ -36,6 +34,7 @@ your team would.
 | Read | For |
 |------|-----|
 | [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
+| [Adapt the rules](docs/playbook.md#sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
 | [Changelog](CHANGELOG.md) | What changed in each release |
 | [Migrating from 2.x](docs/migrating-to-v3.md) | Moving a 2.x project or fork to 3.0 |
 | [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
