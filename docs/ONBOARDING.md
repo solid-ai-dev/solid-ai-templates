@@ -36,6 +36,9 @@ Read `docs/SPEC.md` for the full composition model before contributing.
   macOS and Linux run `python3` instead, and CI runs `python`
 - GitHub CLI (`gh`), authenticated — for the issue, pull-request and
   release steps in `docs/PLAYBOOK.md`
+- Optional, to run CI's two linters before pushing: `pip install
+  pyflakes==4.0.2` for the Python tooling, and Node.js for
+  `npx --yes markdownlint-cli2@0.23.3`. CI pins both versions
 
 ## First steps
 
