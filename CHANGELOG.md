@@ -21,6 +21,25 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
+### Added
+
+- `base-git` treats a pull request with no registered check as not having
+  passed CI, and ships a check that waits for one, watches every check and
+  exits non-zero on zero checks or any failing one.
+- `base-agents` gates a hybrid consumer's chain list: a check resolves the
+  selected roots from the vendored manifest and lists each file the context
+  file omits or names beyond the chain, for the consumer's test suite.
+- `base-testing`'s tier-by-directory rule states its import prerequisite:
+  pytest's two import modes forbid opposite things, a package test root
+  satisfies both, and a probe checks the layout before any file moves.
+
+### Fixed
+
+- A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
+  naming both files, where the later entry silently replaced the earlier.
+  SPEC names the IDs and directories upstream holds, which a fork leaves
+  clear.
+
 ## [3.0.0] - 2026-10-18
 
 ### Breaking changes

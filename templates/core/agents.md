@@ -363,6 +363,52 @@ apply the project's adoption boundary to the candidate rules they contain.
   surfaces as a local document maintaining a convention upstream
   already owns; the over-included one as a repository enforcing rules
   it never adopted
+- MUST gate that cache, not merely acknowledge it. The drift starts
+  upstream, so it never appears in the consumer's diff and no review
+  of that diff catches it. Resolve the roots the project selects from
+  the vendored manifest, add what the project's own decision record
+  adds deliberately, and compare the result with the files the context
+  file names. Put the check in the consumer's test suite, where a bump
+  runs it, rather than in a bump recipe a reader may skip:
+
+```python
+import pathlib
+import re
+import subprocess
+import sys
+
+SUBMODULE = pathlib.Path("<submodule>")
+ROOTS = ["<stack-id>"]
+CONTEXT = pathlib.Path("CLAUDE.md")
+# Files the project's own decision record adds beyond the chain.
+ADDED = set()
+
+resolved = set(ADDED)
+for root in ROOTS:
+    out = subprocess.run(
+        [sys.executable, "tools/resolve.py", root],
+        cwd=SUBMODULE, capture_output=True, text=True, check=True,
+    ).stdout
+    resolved |= {ln.strip() for ln in out.splitlines() if ln.strip()}
+listed = set(re.findall(r"templates/[\w./-]+\.md", CONTEXT.read_text()))
+lost = sorted(resolved - listed)
+extra = sorted(listed - resolved)
+print(f"files the chain resolves: {len(resolved)}")
+print(f"files the context file names: {len(listed)}")
+print(f"resolved but not named, scope silently lost: {len(lost)}")
+for name in lost:
+    print(f"  {name}")
+print(f"named but not resolved, scope never adopted: {len(extra)}")
+for name in extra:
+    print(f"  {name}")
+sys.exit(1 if lost or extra else 0)
+```
+
+  Pass condition: both counts of files are above zero, both difference
+  counts are zero, and the block exits zero. Each difference is listed
+  under its side because the two need opposite corrections: a lost file
+  is added to the list, and a file never adopted is removed from it or
+  recorded as a deliberate addition
 
 ---
 

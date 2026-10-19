@@ -242,7 +242,7 @@ def find_near(sections, supersedes):
             continue
 
         # The same rule pair is compared once per chain carrying both
-        # files, and the core tier is in all 37. The ratio does not
+        # files, and the core tier is in every one. The ratio does not
         # depend on the chain, so it is computed once per pair.
         ratio = _RATIO.get(key)
         if ratio is None:

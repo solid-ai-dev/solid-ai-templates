@@ -30,7 +30,7 @@ templates/          # All template source files
   manifest.yaml     # Machine-readable dependency graph
 docs/               # Onboarding, playbook, decision logs, SPEC.md
 tests/              # Smoke, conformance and fork-sync runners, specs, reports
-tools/              # sync.py, resolve.py, audit_redundancy.py
+tools/              # sync.py, resolve.py, release_check.py, audit_redundancy.py
 ```
 
 Stacks, platforms, the workflow and process templates, the interview,
@@ -40,7 +40,8 @@ is `Imbra-Ltd/imbra-ai-templates`.
 ### 1.3 Commands
 
 ```bash
-# No build step — all templates are plain Markdown
+# No build step — all templates are plain Markdown. `py` is the Windows
+# launcher; on macOS and Linux run python3 instead
 git clone https://github.com/solid-ai-dev/solid-ai-templates.git
 
 # Sync generated sections after editing templates/manifest.yaml
@@ -94,6 +95,8 @@ a resolved chain, handed to an agent (README, "How to use").
   checks pass; no approving review is required, and none is enforced
 - After a PR is merged, delete branch and pull main before starting
   new work
+- Never force-push, including with `--force-with-lease`. To bring a
+  branch up to date, merge `main` into it or run `gh pr update-branch`
 - Do not commit `.idea/`, editor config, or any generated output
 
 ### 2.2 Issue labels
@@ -240,12 +243,12 @@ stack and platform are test input only.
 | `CLAUDE.md` | AI agent context and project rules (this file) |
 | `docs/SPEC.md` | System design, composition rules, inheritance model, precedence |
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
-| `docs/ONBOARDING.md` | Onboarding guide for new contributors |
+| `docs/ONBOARDING.md` | New contributors' setup — prerequisites, first steps, a setup check — and orientation |
 | `docs/PLAYBOOK.md` | Operational reference — how to add templates, validate a change, release |
 | `docs/migrating-to-v3.md` | Moving a 2.x project or fork to v3.0 |
 | `CHANGELOG.md` | Released versions and what changed in each; versions up to v2.63.0 are in the GitHub Releases (ADR-029) |
 | `SECURITY.md` | Private disclosure route, supported versions, scope, acknowledgement window |
-| `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules, branch and commit form |
+| `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules; links §2.1 for branch and commit form |
 | `docs/design/` | Design documents about the library itself — the design record, agent-context tradeoffs, template-content quality (see SPEC "Design documents") |
 
 #### Documentation rules
@@ -299,13 +302,14 @@ stack and platform are test input only.
   departing from one, and a correction is complete when the rule is
   right in the templates — whether or not a new ADR was written. A
   project consuming the templates declares its own ordering
-- ADR schema is governed by ADR-010 — YAML frontmatter required
-  (`id` as quoted string, `status` in {Proposed, Accepted,
-  Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD, `category` in {composition,
-  templates, tooling, process, release}, reciprocal `supersedes` /
-  `superseded_by` links). Copy `docs/decisions/TEMPLATE.md` when
-  authoring a new ADR; `py tests/run_smoke.py ADR-01` enforces
-  the schema
+- ADR schema, introduced by ADR-010 with three statuses — YAML
+  frontmatter required (`id` as quoted string, `status` in {Proposed,
+  Accepted, Superseded, Rejected, Withdrawn}, `date` YYYY-MM-DD,
+  `category` in {composition, templates, tooling, process, release},
+  reciprocal `supersedes` / `superseded_by` links). Copy
+  `docs/decisions/TEMPLATE.md` when authoring a new ADR;
+  `py tests/run_smoke.py ADR-01` enforces the schema and governs where
+  it and ADR-010 differ
 
 #### Rule language
 
@@ -347,9 +351,10 @@ py tests/run_fork_sync.py         # a fork that only appends merges HEAD
   `tests/reports/` (gitignored)
 - Spec files live in `tests/specs/` — see `tests/CODIFICATION.md`
   for the ID scheme and `tests/INDEX.md` for the full list
-- CI runs smoke, conformance, fork sync, `sync.py --check`,
-  `resolve.py --check`, the redundancy audit, pyflakes over `tools/` and
-  `tests/`, markdownlint and gitleaks on PRs and on push to main
+- CI runs smoke, conformance, fork sync, `release_check.py --self-test`,
+  `sync.py --check`, `resolve.py --check`, the redundancy audit, pyflakes
+  over `tools/` and `tests/`, markdownlint and gitleaks on PRs and on push
+  to main
 - markdownlint skips the files `.markdownlint-cli2.jsonc` records as
   predating it; fix a file and remove its line, never add one
 - The e2e suite and the efficacy benchmark exercise stacks and the

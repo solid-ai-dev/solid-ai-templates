@@ -104,7 +104,10 @@ A fork follows the rules in
 - Merge an upstream commit carrying the `Fork-merge: ours` trailer in two
   steps: its parent normally, then the commit with `git merge -s ours`.
   Then move your own templates out of upstream's keys into your own key
-  and `fork_core:`
+  and `fork_core:`, and restore each template the commit modified. The
+  playbook's
+  [Sync with upstream as a fork](docs/PLAYBOOK.md#sync-with-upstream-as-a-fork)
+  gives every step's command
 
 ### Take an update
 
@@ -219,12 +222,15 @@ See `templates/core/agents.md` for structure, models, and formatting rules.
 - [Migrating to v3.0](docs/migrating-to-v3.md)
 - [Project status and roadmap](https://github.com/solid-ai-dev/solid-ai-templates/milestones)
 - [Imbra's fork, with stacks and examples](https://github.com/Imbra-Ltd/imbra-ai-templates)
-- [Onboarding guide](docs/ONBOARDING.md)
-- [Operational playbook](docs/PLAYBOOK.md)
 - [Architecture decision records](docs/decisions/)
-- [How to contribute](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 - [Report an issue](https://github.com/solid-ai-dev/solid-ai-templates/issues)
+
+## Contributing
+
+To change this repository itself, start at [CONTRIBUTING.md](CONTRIBUTING.md).
+It links the onboarding guide, which covers setup, and the playbook, which
+gives each procedure step by step.
 
 ## License
 

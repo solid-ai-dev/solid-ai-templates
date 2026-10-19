@@ -7,8 +7,8 @@ a block with no entry, which is what stops a check added to a template from
 arriving unexamined.
 
 A block is located by a string only its body contains, never by position:
-`core/git.md` alone holds ten of them, and selecting by index has
-already found the wrong one.
+one template can hold several, and selecting by index has already found
+the wrong one.
 """
 
 import os
@@ -62,7 +62,7 @@ SKIP = "skip"
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 17
+SKIP_BUDGET = 20
 
 MANUAL = "manual"
 READ = "read"
@@ -76,10 +76,12 @@ CHECKS = [
 
     # -- core/docs.md ------------------------------------------------
 
-    # The efficacy benchmark's arm files are a generator's verbatim output,
-    # which its design forbids editing; `short`'s is held to its own budget
-    # and the others to none. They are source material the benchmark
-    # measures, not documentation, so both checks leave them out.
+    # A fork carrying the efficacy benchmark keeps its arm files under
+    # `tests/efficacy/arms/`, which upstream does not have. They are a
+    # generator's verbatim output, which the benchmark's design forbids
+    # editing; `short`'s is held to its own budget and the others to none.
+    # They are source material the benchmark measures, not documentation,
+    # so both checks leave them out wherever they exist.
     {"file": "core/docs.md", "find": "width, source = None, None",
      "title": "Documentation line width matches the declared one",
      "do": RUN, "expect": ["nonzero"],
@@ -93,6 +95,16 @@ CHECKS = [
      "substitute": {'SOURCES = ("templates/", "generated/", "examples/")':
                     'SOURCES = ("templates/", "generated/", "examples/", '
                     '"tests/efficacy/arms/")'}},
+
+    # -- core/agents.md ----------------------------------------------
+
+    {"file": "core/agents.md", "find": "scope silently lost",
+     "title": "A consumer's chain list matches what its pin resolves",
+     "do": SKIP,
+     "reason": "Applies to a hybrid consumer that vendors this repository "
+               "and lists its chain in its context file. This repository "
+               "vendors nothing, and its CLAUDE.md is inline, so it holds "
+               "no chain list to compare."},
 
     # -- core/git.md -------------------------------------------------
 
@@ -113,6 +125,12 @@ CHECKS = [
      "do": SKIP,
      "reason": "Needs the paths of two generated bundles to compare. This "
                "repository commits no binary artifact."},
+
+    {"file": "core/git.md", "find": "checks not passing",
+     "title": "A pull request with no registered check has not passed CI",
+     "do": SKIP,
+     "reason": "Takes the pull request about to merge as `<N>`. Run per "
+               "merge, before `gh pr merge`, not against a tree."},
 
     # The documents here with a numbered structure that concurrent branches
     # edit. Run on every pass, the check holds them consistent whichever
@@ -202,6 +220,13 @@ CHECKS = [
 
     # -- core/testing.md ---------------------------------------------
 
+    {"file": "core/testing.md", "find": "tests.helper import X",
+     "title": "The tier layout's imports hold on the project's runner",
+     "do": SKIP,
+     "reason": "Probes the runner a project adopts the tier layout on. "
+               "This repository's tests are standalone scripts run with "
+               "`py`, with no pytest suite and no tier directories."},
+
     {"file": "core/testing.md", "find": "module-under-change",
      "title": "A remedy naming another check is re-read before narrowing it",
      "do": SKIP,
@@ -236,7 +261,7 @@ CHECKS = [
     {"file": "core/testing.md", "find": "pkg.__all__",
      "title": "Everything in __all__ is importable", "do": SKIP,
      "reason": "This repository ships no importable package. It applies to "
-               "a library stack, where `stack/python-lib.md` carries it."},
+               "a library stack, which a fork carries."},
 
     {"file": "core/testing.md", "find": "def fingerprint(path)",
      "title": "A mechanical move leaves the fingerprint unchanged",

@@ -20,7 +20,7 @@ tags: [adr, frontmatter, governance, schema]
 > **Given** the repository is cloned and all files under `docs/decisions/`
 > matching `NNN-*.md` are present
 > **When** each file's YAML frontmatter is parsed
-> **Then** the frontmatter conforms to the schema defined in
+> **Then** the frontmatter conforms to the schema introduced in
 > `docs/decisions/010-adr-governance.md` — `id`, `status`, `date`,
 > `category`, `supersedes`, and `superseded_by` are all present, valid,
 > and internally consistent
@@ -48,7 +48,7 @@ For every file in `docs/decisions/` matching the pattern `NNN-*.md`
    as integer 8). Unquoted integer ids fail with an explicit "quote it
    as `NNN`" diagnostic
 3. **status in closed set** — one of `Proposed`, `Accepted`,
-   `Superseded`
+   `Superseded`, `Rejected`, `Withdrawn`
 4. **date in YYYY-MM-DD form** — must match `\d{4}-\d{2}-\d{2}`
 5. **category in closed set** — one of `composition`, `templates`,
    `tooling`, `process`, `release`
@@ -90,9 +90,10 @@ For every file in `docs/decisions/` matching the pattern `NNN-*.md`
 
 ## Notes
 
-The schema is defined in `docs/decisions/010-adr-governance.md` (ADR-010).
-This check is the enforcement mechanism — the ADR is the source of truth
-for the schema.
+ADR-010 (`docs/decisions/010-adr-governance.md`) introduced the schema
+with three statuses; the status set gained `Rejected` and `Withdrawn` in
+issue #1901. Where the two differ, this check and the rules above govern,
+and ADR-010 stands as history (`CLAUDE.md`, "Decision logs").
 
 The `id: "NNN"` quoting requirement is not in ADR-010's prose body
 (which is immutable per the rule it defines) but is documented in
@@ -101,7 +102,7 @@ authors who copy TEMPLATE.md get the quoting right by default.
 
 ## Related
 
-- Source of truth: `docs/decisions/010-adr-governance.md`
+- Origin of the schema: `docs/decisions/010-adr-governance.md`
 - Canonical example: `docs/decisions/TEMPLATE.md`
 - Related procedures: `SAIT-SMK-SYS-02-001A` (similar schema-enforcement
   pattern for `[ID: ...]` declarations)

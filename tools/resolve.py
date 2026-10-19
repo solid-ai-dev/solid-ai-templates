@@ -170,6 +170,13 @@ def load_manifest():
     entries = {}
     for section in entry_sections(manifest):
         for entry in manifest[section]:
+            # A second entry under one ID would replace the first, and the
+            # chain would carry whichever file came last with no warning.
+            if entry["id"] in entries:
+                raise ResolveError(
+                    f"Manifest ID '{entry['id']}' is declared twice: "
+                    f"{entries[entry['id']].get('file', '?')} and "
+                    f"{entry.get('file', '?')} ({section}:)")
             entries[entry["id"]] = entry
 
     core_ids = core_tier(manifest)

@@ -31,7 +31,9 @@ Read `docs/SPEC.md` for the full composition model before contributing.
 
 - Git
 - A Markdown editor (any)
-- Python 3.x — for running the smoke, conformance and fork-sync runners
+- Python 3.x — for running the smoke, conformance and fork-sync runners.
+  The contributor documents write it as `py`, the Windows launcher; on
+  macOS and Linux run `python3` instead, and CI runs `python`
 - GitHub CLI (`gh`), authenticated — for the issue, pull-request and
   release steps in `docs/PLAYBOOK.md`
 
@@ -87,42 +89,23 @@ py tools/resolve.py backend-api          # print file list
 py tools/resolve.py backend-api --concat # print concatenated content
 ```
 
-## Validate your understanding
+## Check your setup
 
-CI runs each of the runners below on every pull request. First, run the
-structural smoke tests to confirm the repo is in good shape:
+Run the structural smoke tests once. A `VERDICT: PASS` line confirms
+Python, PyYAML and the checkout:
 
 ```bash
 py tests/run_smoke.py
 ```
-
-Then run the checks the templates themselves prescribe, against this
-repository — it is a consumer of its own base tier:
-
-```bash
-py tests/run_conformance.py
-```
-
-Then run fork sync, which merges your change into a simulated fork and
-runs smoke on the result, so a change that would break a fork's merge
-fails here:
-
-```bash
-py tests/run_fork_sync.py
-```
-
-The runners end with a `VERDICT:` line, printed after the report path so
-that reading the last line alone cannot report success over a failed run.
-A conformance run is not clean until any reading it lists is read: the
-counts cover the automatic verdicts only.
 
 To see what a project receives, use a fork: its interview and a resolved
 stack chain are the input an agent generates a context file from.
 
 ## Making your first contribution
 
-See `docs/PLAYBOOK.md` for step-by-step instructions on adding templates,
-fixing content, and submitting a PR.
+- What a pull request must pass and carry: [CONTRIBUTING.md](../CONTRIBUTING.md)
+- Step-by-step procedures, from adding a template to submitting a PR, and
+  what each runner reports: [docs/PLAYBOOK.md](PLAYBOOK.md)
 
 ## Conventions to know before you write
 

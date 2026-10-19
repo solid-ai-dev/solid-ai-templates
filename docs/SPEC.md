@@ -305,8 +305,8 @@ this contract.
 
 The wiki (`docs/wiki/`) gathers human reference documentation
 for *projects that use the templates*. It is NOT part of the
-dependency graph or agent context. Parent rules files reference
-the relevant wiki pages as one-line conventions.
+dependency graph or agent context, and no template references
+it.
 
 Current wiki pages: `backend.md`, `cicd.md`, `devsecops.md`,
 `frontend.md`, `security.md`, `testing.md`.
@@ -354,7 +354,7 @@ boundary; the first fork is
 | Sync by merge | A fork stays current with `git merge upstream/main`, never by copying files |
 | Keys of its own | A fork appends under `stacks:`, `platform:` and top-level manifest keys of its own, and never edits `core:`, `base:`, `backend:` or `frontend:`. The resolver reads every top-level list of entries. SYS-20 checks the upstream keys against the revision named by `SAIT_UPSTREAM_REF` |
 | `fork_core` | A fork adds to every chain's core tier under `fork_core:`, which the resolver takes after `core:`. A core-tier entry depends only on core-tier IDs: the tier is seeded and never walked, so the resolver refuses a dependency outside it. SYS-21 checks that a fork's key and its `fork_core` entries resolve, and that refusal |
-| ID prefixes | `stack-*`, `platform-*` and `<org>-*` belong to forks; upstream adds no ID under them |
+| ID and path namespace | Upstream holds the IDs `base-*`, `backend-*` and `frontend-*` and the directories `templates/core/`, `security/`, `infra/`, `data/`, `backend/`, `frontend/` and `fixture/`; a fork adds no ID and no file under them. `stack-*`, `platform-*` and `<org>-*` belong to forks, which keep their files in directories upstream does not hold, such as `templates/<org>/`; upstream adds no ID under those prefixes beyond its fixture. An ID declared twice fails MNF-01 and stops the resolver, so a clash surfaces at the merge that brings it rather than as a chain carrying the wrong file |
 | `Fork-merge: ours` | An upstream commit that removes what forks carry carries this trailer. A fork merges everything before it normally, merges it with `git merge -s ours`, then moves its own templates out of upstream's keys into its own key and `fork_core`, and restores each template the commit modified to upstream's text, moving its own lines into fork-owned files. ADR-049 "Merging the split" gives the commands |
 | Fork-owned files | `README.md`, `CLAUDE.md` and `CHANGELOG.md` belong to the fork, which resolves them in its own favour on every merge |
 | Fork-owned test modules | `tests/fork_checks.py` adds smoke checks for content only a fork carries, `tests/fork_dispositions.py` adds conformance dispositions for its blocks, and `tools/fork_examples.py` names the chain examples `sync.py` renders and, in `CHAIN_EXAMPLES_DOC`, the document they go to (default `docs/SPEC.md`). `run_smoke.py`, `conformance.py` and `sync.py` load each when present, so the runners stay the same file upstream and in every fork |
@@ -604,16 +604,19 @@ The generated CLAUDE.md contains a machine-readable header instead of
 a hand-curated file list:
 
 ```markdown
-Stack: static-site-astro
-Extras: data-quality, 360, issues, scope, review, readme
-Platform: github
+Stack: stack-astro
+Extras: base-data-quality, base-360, base-issues, base-scope, base-readme
+Platform: platform-github
 ```
+
+The IDs are the Imbra fork's; `py tools/resolve.py --roots` lists the
+ones a checkout carries.
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | `Stack` | MUST | Stack ID from the fork's `manifest.yaml` |
 | `Extras` | MAY | Comma-separated base template IDs not in the stack's dependency chain |
-| `Platform` | MAY | Platform ID from the fork (`github`, `gitlab` in Imbra's) |
+| `Platform` | MAY | Platform ID from the fork (`platform-github`, `platform-gitlab` in Imbra's) |
 
 ### Resolution algorithm
 

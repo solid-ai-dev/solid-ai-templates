@@ -391,16 +391,28 @@ def check_mnf_01():
     declared_ids = set()
     entries = []
 
-    for section in manifest.values():
+    # Every declaration of each ID, as (section, file). The resolver keys
+    # entries by ID, so a second declaration would silently replace the
+    # first; a fork adding an ID upstream later adds too must fail here.
+    declarations = {}
+    for key, section in manifest.items():
         if isinstance(section, list):
             for entry in section:
                 if isinstance(entry, dict):
                     entries.append(entry)
                     if "id" in entry:
                         declared_ids.add(entry["id"])
+                        declarations.setdefault(entry["id"], []).append(
+                            (key, entry.get("file", "?")))
 
     seen.count("manifest entries read", len(entries))
     seen.count("IDs declared in the manifest", len(declared_ids))
+
+    for eid, places in declarations.items():
+        if len(places) > 1:
+            where = ", ".join(f"{key}: {path}" for key, path in places)
+            failures.append(
+                f"  ID '{eid}' declared {len(places)} times — {where}")
 
     for entry in entries:
         path = entry.get("file", "")
@@ -1139,7 +1151,8 @@ def check_tpl_09():
 # ---------------------------------------------------------------------------
 # ADR-01 — ADR frontmatter schema enforcement
 # ---------------------------------------------------------------------------
-# Enforces the schema defined in docs/decisions/010-adr-governance.md:
+# Enforces the schema docs/decisions/010-adr-governance.md introduced,
+# with the two statuses added since:
 # - frontmatter present and parses as YAML
 # - id is 3-digit string matching filename leading digits
 # - status in closed set: Proposed | Accepted | Superseded | Rejected |

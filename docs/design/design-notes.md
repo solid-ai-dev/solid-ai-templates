@@ -837,16 +837,21 @@ Primary authoring principle:
 
 ### 11.2 Largest policy-quality concerns
 
-| Rank | Template | Approx. size | Quality | Main concern |
-|-----:|----------|-------------:|--------:|--------------|
-| 1 | `workflow/quality-gates.md` | 62 KB | 4/10 | Encyclopedic implementation mandates |
-| 2 | `core/docs.md` | 65 KB | 4.5/10 | Documentation governance became a handbook |
-| 3 | `core/git.md` | 53 KB | 5/10 | Git invariants mixed with incident procedures |
-| 4 | `core/quality.md` | 51 KB | 5.5/10 | Principles buried under special cases |
-| 5 | `core/testing.md` | 47 KB | 6/10 | One test philosophy over-generalized |
-| 6 | `workflow/ai-workflow.md` | 39 KB | 6/10 | Policy, tutorial, and methodology mixed |
-| 7 | `workflow/360.md` | 21 KB | 6.5/10 | Heavy default procedure |
-| 8 | `core/review.md` | 19 KB | 7/10 | Useful but oversized |
+| Rank | Template | Approx. size | Size 2026-10-19 | Quality | Main concern |
+|-----:|----------|-------------:|----------------:|--------:|--------------|
+| 1 | `workflow/quality-gates.md` | 62 KB | 66 KB | 4/10 | Encyclopedic implementation mandates |
+| 2 | `core/docs.md` | 65 KB | 29 KB | 4.5/10 | Documentation governance became a handbook |
+| 3 | `core/git.md` | 53 KB | 21 KB | 5/10 | Git invariants mixed with incident procedures |
+| 4 | `core/quality.md` | 51 KB | 78 KB | 5.5/10 | Principles buried under special cases |
+| 5 | `core/testing.md` | 47 KB | 58 KB | 6/10 | One test philosophy over-generalized |
+| 6 | `workflow/ai-workflow.md` | 39 KB | 39 KB | 6/10 | Policy, tutorial, and methodology mixed |
+| 7 | `workflow/360.md` | 21 KB | 22 KB | 6.5/10 | Heavy default procedure |
+| 8 | `core/review.md` | 19 KB | 22 KB | 7/10 | Useful but oversized |
+
+"Approx. size" is this assessment's, from 2026-09-01. The 2026-10-19 column
+is measured in bytes over 1,000. `quality-gates.md` has since moved to
+`templates/core/`, and the two remaining `workflow/` files live in the
+Imbra fork (ADR-049), where their sizes were read.
 
 Smaller language, backend, platform, and stack-specific templates generally
 demonstrate healthier scope.
@@ -949,8 +954,9 @@ Measurements taken on 2026-09-01:
 | `MUST` / `MUST NOT` / `SHOULD` | 748 / 100 / 104 |
 | Runnable shell or Python fences | 38 |
 
-Generated chains range from approximately 270 KB and 5,385 lines to 457 KB
-and 9,574 lines.
+On that date, generated chains ranged from approximately 270 KB and 5,385
+lines to 457 KB and 9,574 lines. Upstream has committed no generated chains
+since the v3.0 split; they live in the forks (ADR-049).
 
 ### 12.2 Issue flow
 

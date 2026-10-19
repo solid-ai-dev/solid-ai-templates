@@ -19,8 +19,9 @@ ADR-050 in `docs/decisions/` sets the boundary.
 
 ## Before you open a pull request
 
-Run the structural checks. They need Python and PyYAML — `pip install
-pyyaml` — and they take about a second:
+Set up first: Python, PyYAML and the `py` versus `python3` launcher are in
+[docs/ONBOARDING.md, "Prerequisites"](docs/ONBOARDING.md#prerequisites).
+Then run the structural checks, which take about ten seconds:
 
 ```bash
 py tests/run_smoke.py
@@ -56,9 +57,11 @@ mismatch without writing anything.
 - **Updated documents.** If your change moves the composition model, update
   `docs/SPEC.md`; if it changes a command or the project structure, update
   `README.md`. `CLAUDE.md` section 2.9 lists which document owns what
-- **A decision record** for a structural decision — a new layer, a change to
-  the override model, a naming convention. See `docs/decisions/` and copy
-  `docs/decisions/TEMPLATE.md`
+- **A decision record** when the change moves what a consuming project
+  observes without reading this repository — the composition model, such as
+  a new layer or a change to the override model. Naming, prose style,
+  tooling and file layout need none (`CLAUDE.md`, "Decision logs"). See
+  `docs/decisions/` and copy `docs/decisions/TEMPLATE.md`
 - **What it costs every chain carrying it.** A rule added to a widely
   resolved file is read by every project on those chains, on every turn.
   Nothing refuses the size, but crossing to a larger context window is
@@ -84,23 +87,18 @@ Template content is rules, not prose. The full authoring conventions are in
 
 ## Branches, commits and pull requests
 
-- `main` is protected. Work on a branch named `feat/<scope>`,
-  `fix/<scope>`, `docs/<scope>` or `chore/<scope>`
-- Commits are `<type>(<scope>): <summary>`, where type is one of `feat`,
-  `fix`, `chore`, `docs`, `refactor`
-- Pull request titles take the same form with the issue number appended:
-  `fix(base-quality): exempt a comment that opens a block (#1245)`
-- One concern per pull request. A change touching two unrelated rules is
-  two pull requests, even when they are both small
-- Never force-push, including with `--force-with-lease`. To bring a branch
-  up to date, merge `main` into it or use `gh pr update-branch`
+Branch names, the commit and pull-request title form, one concern per pull
+request and the no-force-push rule are in
+[`CLAUDE.md` section 2.1](CLAUDE.md#21-git). Agents apply them on every
+turn, and human contributors follow the same ones.
+[docs/PLAYBOOK.md, "Submit a pull request"](docs/PLAYBOOK.md#submit-a-pull-request)
+gives the steps in order.
 
 ## Issues
 
-Every issue carries exactly one type label (`bug`, `task`, `spike`, `epic`,
-`incident`) and one priority label (`P0` to `P3`), applied when it is
-created. Issue titles are sentence case with an imperative verb and no type
-prefix — the label carries the type.
+Issue titles are in [`CLAUDE.md` section 2.1](CLAUDE.md#21-git), and the
+type and priority labels every issue carries are in
+[section 2.2](CLAUDE.md#22-issue-labels).
 
 If you are reporting a problem with a rule, say which template file and
 section, and what the rule made you do that was wrong. A rule that produced

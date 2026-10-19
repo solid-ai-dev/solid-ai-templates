@@ -3,9 +3,12 @@
 **Owning issue:** #1184, applying the generic method in
 `testing-ai-assets.md`.
 **Results:** one dated report per round under `docs/audits/`.
-**What runs:** the harness, scorer, judge and report under `tests/efficacy/`,
-described in its README. The hidden test suite lives in a private
-repository (§10).
+**What runs:** the harness, scorer, judge and report under `tests/efficacy/`
+in the
+[Imbra fork](https://github.com/Imbra-Ltd/imbra-ai-templates/tree/main/tests/efficacy),
+described in its README. Every `tests/efficacy/` path below is in that
+fork, which carries the benchmark since the v3.0 split (ADR-049). The
+hidden test suite lives in a private repository (§10).
 
 ## 1. Goal
 
@@ -229,7 +232,8 @@ Round 1 named its arms by letter. Reading its report, A is `none`, B is
 questions.** `tests/efficacy/generate_arm.py` hands the generator:
 
 - `INTERVIEW.md` and the chain resolved at `v2.90.0`
-- the project brief, [`tests/efficacy/brief.txt`](../../tests/efficacy/brief.txt)
+- the project brief,
+  [`tests/efficacy/brief.txt`](https://github.com/Imbra-Ltd/imbra-ai-templates/blob/main/tests/efficacy/brief.txt)
 - the arm's output model (inline or hybrid) and, for `short`, its budget
 
 A record of each generation is committed beside its file as
@@ -373,7 +377,7 @@ change it was not built for.
 - There is one per build trial. A build trial with nothing scorable has
   none.
 - Its prompt is fixed in
-  [`tests/efficacy/change-prompt.txt`](../../tests/efficacy/change-prompt.txt).
+  [`tests/efficacy/change-prompt.txt`](https://github.com/Imbra-Ltd/imbra-ai-templates/blob/main/tests/efficacy/change-prompt.txt).
 
 §5.4 describes the task and how it is scored.
 
