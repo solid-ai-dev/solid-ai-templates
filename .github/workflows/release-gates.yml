@@ -23,7 +23,30 @@ permissions:
   issues: read
 
 jobs:
+  # A lightweight tag carries no author, date or message, so a release
+  # tag MUST be annotated. A dispatched run has no tag and skips this.
+  annotated-tag:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Require an annotated release tag
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          git fetch --force origin "refs/tags/${tag}:refs/tags/${tag}"
+          type="$(git cat-file -t "${tag}")"
+          if [ "${type}" != "tag" ]; then
+            echo "::error::Release tag ${tag} is lightweight (${type})." \
+                 "Tags MUST be annotated: git tag -a ${tag} -m '${tag}'."
+            exit 1
+          fi
+          echo "Release tag ${tag} is annotated. OK."
+
+  # Runs after the tag check passed, or after it was skipped on dispatch.
   gates:
+    needs: annotated-tag
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       # The gates read the tag history to resolve the release they
@@ -31,58 +54,60 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v7
+
+      - uses: ./.github/actions/setup
         with:
-          python-version: "3.12"
-      - name: Install dependencies
-        run: pip install pyyaml
-      # A fork names its upstream in the UPSTREAM_REPO repository variable.
-      # Its history then holds upstream's commits, whose issue numbers belong
-      # to another tracker, and SYS-20 needs upstream's manifest to compare
-      # against. Upstream sets no variable and skips this.
-      - name: Fetch the upstream this fork names
-        if: vars.UPSTREAM_REPO != ''
-        env:
-          UPSTREAM_REPO: ${{ vars.UPSTREAM_REPO }}
-        run: |
-          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git" \
-            "+refs/heads/main:refs/remotes/upstream/main"
-          echo "SAIT_UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
-          echo "UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
-          git log -1 --format='upstream/main: %h %s' upstream/main
+          upstream-repo: ${{ vars.UPSTREAM_REPO }}
+
+      # A release never scoped to a milestone leaves RELEASE_MILESTONE
+      # empty, and the checks reading it report that they do not apply.
       - name: Resolve the release and its milestone
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISPATCH_RELEASE: ${{ inputs.release }}
         run: |
           release="${DISPATCH_RELEASE:-${GITHUB_REF_NAME}}"
+          title="$(python tools/release_check.py --milestone "${release}")"
           echo "RELEASE=${release}" >> "$GITHUB_ENV"
-
-          # A milestone names its release alone or before " — " and a
-          # theme: a minor's names the minor line, a patch's the full
-          # version. The full version wins and the minor line is the
-          # fallback. Matching the separator rather than a bare prefix
-          # stops v2.8 claiming every v2.8x title. A release never scoped
-          # to one leaves this unset, and the check reports that it does
-          # not apply -- the correct reading, not a failure.
-          titles="$(gh api "repos/${GITHUB_REPOSITORY}/milestones?state=all" --paginate --jq '.[].title')"
-          named() { printf '%s\n' "${titles}" | awk -v v="$1" '$0 == v || index($0, v " — ") == 1'; }
-          title="$(named "${release}")"
-          [ -n "${title}" ] || title="$(named "$(echo "${release}" | cut -d. -f1,2)")"
-          if [ "$(printf '%s' "${title}" | grep -c .)" -gt 1 ]; then
-            echo "more than one milestone names ${release}:"
-            printf '%s\n' "${title}"
-            exit 1
-          fi
           echo "RELEASE_MILESTONE=${title}" >> "$GITHUB_ENV"
-
           echo "release:   ${release}"
           echo "milestone: ${title:-<none resolved>}"
+
       # The changelog cut is this repository's own release step; the
       # conformance run below carries the templates' checks.
       - name: Check the changelog cut names this release
         run: python tools/release_check.py "$RELEASE"
+
       - name: Run the release gates
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python tests/run_conformance.py
+
+  # The release's notes are its CHANGELOG.md section, so each entry is
+  # written once. A rerun updates the notes of a release already made.
+  publish:
+    needs: gates
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Publish the release with its changelog section
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          python tools/release_check.py --notes "${tag}" > notes.md
+          if gh release view "${tag}" > /dev/null 2>&1; then
+            gh release edit "${tag}" --title "${tag}" --notes-file notes.md
+          else
+            gh release create "${tag}" --title "${tag}" \
+              --notes-file notes.md --verify-tag
+          fi
+          gh release view "${tag}" --json tagName,name,isDraft
