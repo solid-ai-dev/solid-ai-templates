@@ -19,10 +19,12 @@ your team would.
    ```text
    Clone https://github.com/solid-ai-dev/solid-ai-templates next to this
    project. Read its templates/manifest.yaml, propose the templates that
-   fit this project, and wait for my answer. Then load every file in the
-   core: list, the chosen templates and every file their [DEPENDS ON]
-   lines name. Following templates/core/agents.md, write AGENTS.md and
-   CLAUDE.md for this project.
+   fit this project, and wait for my answer.
+
+   Then write AGENTS.md and CLAUDE.md for this project:
+   - Load every file in the manifest's core: list
+   - Load the chosen templates and every file their [DEPENDS ON] lines name
+   - Follow templates/core/agents.md for the output
    ```
 
    To adapt the rules, fork this repository first and use your fork's URL.
