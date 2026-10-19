@@ -490,7 +490,6 @@ re-verify or re-word alongside it. A scanned count of zero is the failure
 -- the search reached nothing -- while a naming count of zero against a
 non-zero scan is a real answer.
 
-
 ## Tests should name what they pin
 [ID: testing-name-what-pinned]
 

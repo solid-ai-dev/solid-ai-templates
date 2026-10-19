@@ -14,14 +14,12 @@ the outputs with a layered judge that stays honest by calibrating against
 human readings. The conclusion is a checklist any asset change can run, plus
 a hand-off to this library's own measurement, `efficacy-benchmark.md`.
 
-
 ## Question
 
 How do we measure whether a change to an AI template, skill, or prompt
 delivers better results, so that the claim rests on evidence rather than
 intuition? The method must be generic enough to apply to any prompt-shaped
 asset and cheap enough for a solo shop to actually run.
-
 
 ## Context
 
@@ -55,7 +53,6 @@ asset learns those tasks and the score climbs while real performance does
 not. This is overfitting, and it is easy to do by accident.
 
 A method that answers the question has to defeat all four.
-
 
 ## The measurement method
 
@@ -116,7 +113,6 @@ interval that crosses zero means the change is not yet shown to help. That
 is the falsification working. Reporting it honestly is the point of the
 method.
 
-
 ## Metrics
 
 Measure the whole vector, never a single number, because a change usually
@@ -149,7 +145,6 @@ result up to "improved". With a small sample, report the effect size and
 its interval rather than a binary verdict, because a solo shop's budget
 rarely reaches textbook statistical power and pretending otherwise is
 dishonest.
-
 
 ## The judge - alternatives considered
 
@@ -207,7 +202,6 @@ elsewhere. Ground truth comes from raw artifacts rather than from a suspect
 earlier pass, reference values carry a source and a verified flag, and a
 measuring tool is verified before its output is trusted.
 
-
 ## Keeping the judge honest
 
 The judge is the load-bearing part of the method, and it fails quietly.
@@ -241,7 +235,6 @@ compression of many runs down to one claim, and compression is where a
 qualifier gets dropped and a hedged result becomes a confident one. Re-read
 the verdict against the raw runs. An interval that crosses zero must reach
 the report as "no improvement shown", never as "improved".
-
 
 ## The eval harness
 
@@ -278,7 +271,6 @@ identical, it repeats without getting bored, it strips the condition label
 before the judge sees the output, and it reports the spread rather than a
 tidy point estimate.
 
-
 ## Recommendation
 
 Any change to a template, skill, or prompt is measured by running
@@ -305,7 +297,6 @@ produces it.
 This document defines the method, not any one measurement. Its output is the
 checklist above and the calibration rules that keep it honest.
 
-
 ## Hand-off - the solid-ai-templates measurement
 
 The concrete application of this method to the template library itself is
@@ -329,7 +320,6 @@ generic.
 
 The generic method here owns the design and the honesty rules. The
 downstream spike owns the stacks, the task set, and the numbers.
-
 
 ## Open questions
 

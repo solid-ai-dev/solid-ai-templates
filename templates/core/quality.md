@@ -145,42 +145,42 @@ that has since lifted reads exactly like a live one.
   itself
 
   ```bash
-  py - <<'EOF'
-import ast, pathlib
+    py - <<'EOF'
+  import ast, pathlib
 
-# A project's own boundary: (forbidden importer prefix, forbidden
-# imported prefix). Empty until a project declares one.
-FORBIDDEN = ()
-ROOT = pathlib.Path(".")
+  # A project's own boundary: (forbidden importer prefix, forbidden
+  # imported prefix). Empty until a project declares one.
+  FORBIDDEN = ()
+  ROOT = pathlib.Path(".")
 
-def imported(tree):
-    names = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            names.extend(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            names.append(node.module)
-    return names
+  def imported(tree):
+      names = []
+      for node in ast.walk(tree):
+          if isinstance(node, ast.Import):
+              names.extend(alias.name for alias in node.names)
+          elif isinstance(node, ast.ImportFrom) and node.module:
+              names.append(node.module)
+      return names
 
-files = sorted(ROOT.rglob("*.py"))
-print("modules inspected: %d" % len(files))
+  files = sorted(ROOT.rglob("*.py"))
+  print("modules inspected: %d" % len(files))
 
-findings = []
-for path in files:
-    module = ".".join(path.relative_to(ROOT).with_suffix("").parts)
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    for name in imported(tree):
-        for banned_from, banned_to in FORBIDDEN:
-            if module.startswith(banned_from) and (
-                name == banned_to or name.startswith(banned_to + ".")
-            ):
-                findings.append("%s imports %s" % (module, name))
+  findings = []
+  for path in files:
+      module = ".".join(path.relative_to(ROOT).with_suffix("").parts)
+      tree = ast.parse(path.read_text(encoding="utf-8"))
+      for name in imported(tree):
+          for banned_from, banned_to in FORBIDDEN:
+              if module.startswith(banned_from) and (
+                  name == banned_to or name.startswith(banned_to + ".")
+              ):
+                  findings.append("%s imports %s" % (module, name))
 
-print("layering violations: %d" % len(findings))
-for finding in findings:
-    print("  %s" % finding)
-raise SystemExit(1 if findings else 0)
-  EOF
+  print("layering violations: %d" % len(findings))
+  for finding in findings:
+      print("  %s" % finding)
+  raise SystemExit(1 if findings else 0)
+    EOF
   ```
 
   Pass condition: the inspected count names how many modules were
@@ -228,56 +228,56 @@ raise SystemExit(1 if findings else 0)
   by hand is what keeps the three member kinds distinguishable
 
   ```bash
-  py - <<'EOF'
-import inspect
+    py - <<'EOF'
+  import inspect
 
-# The hierarchy under contract. Empty until a project names its own.
-BASE = None
-HIERARCHY = ()
+  # The hierarchy under contract. Empty until a project names its own.
+  BASE = None
+  HIERARCHY = ()
 
-def unwrap(cls, name):
-    found = inspect.getattr_static(cls, name)
-    if isinstance(found, (staticmethod, classmethod)):
-        found = found.__func__
-    return found
+  def unwrap(cls, name):
+      found = inspect.getattr_static(cls, name)
+      if isinstance(found, (staticmethod, classmethod)):
+          found = found.__func__
+      return found
 
-if BASE is None or not HIERARCHY:
-    print("no hierarchy named -- nothing to check")
-    raise SystemExit(0)
+  if BASE is None or not HIERARCHY:
+      print("no hierarchy named -- nothing to check")
+      raise SystemExit(0)
 
-ops = [name for name, value in vars(BASE).items()
-      if inspect.isfunction(value)
-      or isinstance(value, (staticmethod, classmethod))]
-print("abstract operations inspected: %d" % len(ops))
+  ops = [name for name, value in vars(BASE).items()
+        if inspect.isfunction(value)
+        or isinstance(value, (staticmethod, classmethod))]
+  print("abstract operations inspected: %d" % len(ops))
 
-findings = []
-for name in ops:
-    base_kind = type(inspect.getattr_static(BASE, name))
-    base_params = list(
-        inspect.signature(unwrap(BASE, name)).parameters.values())
+  findings = []
+  for name in ops:
+      base_kind = type(inspect.getattr_static(BASE, name))
+      base_params = list(
+          inspect.signature(unwrap(BASE, name)).parameters.values())
 
-    for cls in HIERARCHY:
-        sub_kind = type(inspect.getattr_static(cls, name))
-        params = list(
-            inspect.signature(unwrap(cls, name)).parameters.values())
+      for cls in HIERARCHY:
+          sub_kind = type(inspect.getattr_static(cls, name))
+          params = list(
+              inspect.signature(unwrap(cls, name)).parameters.values())
 
-        if base_kind is not sub_kind:
-            findings.append("%s.%s changes member kind" % (cls.__name__, name))
-        if not params or params[0].name != base_params[0].name:
-            findings.append("%s.%s drops the first parameter" % (cls.__name__, name))
-        prefix = [p.name for p in params[:len(base_params)]]
-        if prefix != [p.name for p in base_params]:
-            findings.append("%s.%s narrows or reorders the base signature"
-                            % (cls.__name__, name))
-        if any(p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD) for p in params):
-            findings.append("%s.%s declares a variadic" % (cls.__name__, name))
+          if base_kind is not sub_kind:
+              findings.append("%s.%s changes member kind" % (cls.__name__, name))
+          if not params or params[0].name != base_params[0].name:
+              findings.append("%s.%s drops the first parameter" % (cls.__name__, name))
+          prefix = [p.name for p in params[:len(base_params)]]
+          if prefix != [p.name for p in base_params]:
+              findings.append("%s.%s narrows or reorders the base signature"
+                              % (cls.__name__, name))
+          if any(p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD) for p in params):
+              findings.append("%s.%s declares a variadic" % (cls.__name__, name))
 
-print("overrides checked: %d" % (len(ops) * len(HIERARCHY)))
-print("findings: %d" % len(findings))
-for finding in findings:
-    print("  %s" % finding)
-raise SystemExit(1 if findings else 0)
-  EOF
+  print("overrides checked: %d" % (len(ops) * len(HIERARCHY)))
+  print("findings: %d" % len(findings))
+  for finding in findings:
+      print("  %s" % finding)
+  raise SystemExit(1 if findings else 0)
+    EOF
   ```
 
   Pass condition: the command reports how many abstract operations it
@@ -1000,7 +1000,7 @@ verdict unreached.
   for. A moment that has not arrived and a baseline that failed to resolve
   are different states with different remedies, and one of them is a bug
 - The absence reaches the output before it reaches the verdict. A line
-  interpolating the baseline prints `records covering , released ` and
+  interpolating the baseline prints `records covering , released` and
   reads as a formatting slip to anyone scanning for a number. Print the
   baseline the check resolved on its own line, so the value the comparison
   used is visible whichever verdict follows
@@ -1091,36 +1091,36 @@ verdict unreached.
   it read and what it found:
 
   ```bash
-  py - <<'EOF'
-import io, subprocess, token, tokenize
+    py - <<'EOF'
+  import io, subprocess, token, tokenize
 
-# Identifiers only. Comments, docstrings and string content are
-# documentation and carry no charset restriction.
-tracked = subprocess.run(["git", "ls-files", "*.py"], capture_output=True,
-                         text=True).stdout.split()
-findings = []
-for name in tracked:
-    with io.open(name, "rb") as handle:
-        for item in tokenize.tokenize(handle.readline):
-            if item.type != token.NAME:
-                continue
-            bad = sorted({ord(c) for c in item.string if ord(c) > 127})
-            if bad:
-                codes = " ".join("U+%04X" % c for c in bad)
-                findings.append("%s:%d %s %s"
-                                % (name, item.start[0], item.string, codes))
+  # Identifiers only. Comments, docstrings and string content are
+  # documentation and carry no charset restriction.
+  tracked = subprocess.run(["git", "ls-files", "*.py"], capture_output=True,
+                           text=True).stdout.split()
+  findings = []
+  for name in tracked:
+      with io.open(name, "rb") as handle:
+          for item in tokenize.tokenize(handle.readline):
+              if item.type != token.NAME:
+                  continue
+              bad = sorted({ord(c) for c in item.string if ord(c) > 127})
+              if bad:
+                  codes = " ".join("U+%04X" % c for c in bad)
+                  findings.append("%s:%d %s %s"
+                                  % (name, item.start[0], item.string, codes))
 
-# A check printing only its findings cannot say whether it read anything:
-# an empty corpus and a clean tree produce the same silence.
-print("python files inspected: %d" % len(tracked))
-print("non-ASCII identifiers: %d" % len(findings))
-for finding in findings:
-    print("  " + finding)
+  # A check printing only its findings cannot say whether it read anything:
+  # an empty corpus and a clean tree produce the same silence.
+  print("python files inspected: %d" % len(tracked))
+  print("non-ASCII identifiers: %d" % len(findings))
+  for finding in findings:
+      print("  " + finding)
 
-# The status carries the verdict too. A check that names what it found and
-# exits zero is green wherever the caller reads the code, not the output.
-raise SystemExit(1 if findings else 0)
-  EOF
+  # The status carries the verdict too. A check that names what it found and
+  # exits zero is green wherever the caller reads the code, not the output.
+  raise SystemExit(1 if findings else 0)
+    EOF
   ```
 
   Pass condition: the inspected count is above zero and the identifier
@@ -1283,51 +1283,51 @@ rg -n "#<number>\b"
   of zero fails it — the enumeration reached nothing:
 
   ```bash
-  py - <<'EOF'
-import io, pathlib, subprocess, tokenize
-DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
-SKIP = (".venv", "venv", "build", "dist", ".git", ".tox")
-OPENERS = (":", "(", "[", "{")
+    py - <<'EOF'
+  import io, pathlib, subprocess, tokenize
+  DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
+  SKIP = (".venv", "venv", "build", "dist", ".git", ".tox")
+  OPENERS = (":", "(", "[", "{")
 
-# A walk cannot read .gitignore and reads a vendored or generated tree as
-# the project's own source. Tracked files plus the untracked ones a commit
-# could still add, and nothing that is ignored.
-listed = subprocess.run(
-    ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
-     "*.py"], capture_output=True).stdout.decode("utf-8").split("\0")
-paths = [pathlib.Path(name) for name in listed if name
-         and not any(part in SKIP for part in pathlib.Path(name).parts)]
-print("Python files checked: %d" % len(paths))
+  # A walk cannot read .gitignore and reads a vendored or generated tree as
+  # the project's own source. Tracked files plus the untracked ones a commit
+  # could still add, and nothing that is ignored.
+  listed = subprocess.run(
+      ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
+       "*.py"], capture_output=True).stdout.decode("utf-8").split("\0")
+  paths = [pathlib.Path(name) for name in listed if name
+           and not any(part in SKIP for part in pathlib.Path(name).parts)]
+  print("Python files checked: %d" % len(paths))
 
-# Zero files and a clean tree print the same thing otherwise.
-findings = []
-if not paths:
-    findings.append("no Python file was listed; the enumeration is broken, "
-                    "not the tree clean")
+  # Zero files and a clean tree print the same thing otherwise.
+  findings = []
+  if not paths:
+      findings.append("no Python file was listed; the enumeration is broken, "
+                      "not the tree clean")
 
-for path in paths:
-    src = path.read_text(encoding="utf-8").splitlines()
-    with io.open(str(path), "rb") as fh:
-        for tok in tokenize.tokenize(fh.readline):
-            if tok.type != tokenize.COMMENT:
-                continue
-            row, col = tok.start
-            if src[row - 1][:col].strip():
-                if not tok.string.lstrip("#").strip().startswith(DIRECTIVES):
-                    findings.append("%s:%d: aside to the right of code"
-                                    % (path.as_posix(), row))
-            elif row > 1 and src[row - 2].strip():
-                above = src[row - 2].split("#")[0].rstrip()
-                if not src[row - 2].strip().startswith("#") and not (
-                        above.endswith(OPENERS)):
-                    findings.append("%s:%d: comment block with code directly "
-                                    "above it" % (path.as_posix(), row))
+  for path in paths:
+      src = path.read_text(encoding="utf-8").splitlines()
+      with io.open(str(path), "rb") as fh:
+          for tok in tokenize.tokenize(fh.readline):
+              if tok.type != tokenize.COMMENT:
+                  continue
+              row, col = tok.start
+              if src[row - 1][:col].strip():
+                  if not tok.string.lstrip("#").strip().startswith(DIRECTIVES):
+                      findings.append("%s:%d: aside to the right of code"
+                                      % (path.as_posix(), row))
+              elif row > 1 and src[row - 2].strip():
+                  above = src[row - 2].split("#")[0].rstrip()
+                  if not src[row - 2].strip().startswith("#") and not (
+                          above.endswith(OPENERS)):
+                      findings.append("%s:%d: comment block with code directly "
+                                      "above it" % (path.as_posix(), row))
 
-for finding in findings:
-    print(finding)
+  for finding in findings:
+      print(finding)
 
-raise SystemExit(1 if findings else 0)
-  EOF
+  raise SystemExit(1 if findings else 0)
+    EOF
   ```
 
 ## Debug code

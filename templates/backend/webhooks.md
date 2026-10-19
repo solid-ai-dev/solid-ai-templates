@@ -1,6 +1,7 @@
 # Backend — Inbound Webhook Handling
 [ID: backend-webhooks]
-[DEPENDS ON: templates/backend/http.md, templates/backend/messaging.md, templates/security/security.md, templates/backend/observability.md]
+[DEPENDS ON: templates/backend/http.md, templates/backend/messaging.md]
+[DEPENDS ON: templates/security/security.md, templates/backend/observability.md]
 
 Rules for receiving inbound webhooks (provider callbacks, integration
 events) under bursty load. Compose this template on demand for a service

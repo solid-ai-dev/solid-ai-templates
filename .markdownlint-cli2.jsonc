@@ -2,59 +2,7 @@
 // which the templates' own checks read too.
 {
   // Every Markdown file .gitignore does not exclude, so a test report is not
-  // linted and a new document is.
+  // linted and a new document is. No file is exempt.
   "globs": ["**/*.md"],
-  "gitignore": true,
-
-  // The files that carried findings when CI first ran markdownlint, recorded
-  // so the gate could start without a mass edit of the corpus. Every other
-  // file is held to the rules in full. Fix a file and remove its line; never
-  // add one.
-  "ignores": [
-    "CHANGELOG.md",
-    "docs/audits/2026-05-04-360.md",
-    "docs/audits/2026-09-01-360.md",
-    "docs/audits/2026-09-03-360.md",
-    "docs/audits/2026-09-06-360.md",
-    "docs/audits/2026-09-07-360.md",
-    "docs/audits/2026-09-17-efficacy.md",
-    "docs/audits/2026-09-18-efficacy.md",
-    "docs/audits/2026-09-27-efficacy.md",
-    "docs/audits/2026-10-17-efficacy-thin.md",
-    "docs/audits/2026-10-17-efficacy-weaker.md",
-    "docs/audits/2026-10-18-360.md",
-    "docs/design/agent-context-tradeoffs.md",
-    "docs/design/testing-ai-assets.md",
-    "docs/dev-journal.md",
-    "docs/wiki/backend.md",
-    "templates/backend/auth.md",
-    "templates/backend/caching.md",
-    "templates/backend/concurrency.md",
-    "templates/backend/database.md",
-    "templates/backend/errors.md",
-    "templates/backend/features.md",
-    "templates/backend/http.md",
-    "templates/backend/jobs.md",
-    "templates/backend/messaging.md",
-    "templates/backend/microservices.md",
-    "templates/backend/monitoring.md",
-    "templates/backend/observability.md",
-    "templates/backend/quality.md",
-    "templates/backend/webhooks.md",
-    "templates/core/docs.md",
-    "templates/core/quality-gates.md",
-    "templates/core/quality.md",
-    "templates/core/testing.md",
-    "templates/frontend/static-site.md",
-    "templates/infra/containers.md",
-    "templates/infra/deployment.md",
-    "templates/security/security.md",
-    "tests/specs/SAIT-INT-MNF-01-001A.md",
-    "tests/specs/SAIT-INT-TPL-03-001A.md",
-    "tests/specs/SAIT-INT-TPL-05-001A.md",
-    "tests/specs/SAIT-SMK-SYS-01-001A.md",
-    "tests/specs/SAIT-SMK-SYS-04-001A.md",
-    "tests/specs/SAIT-SMK-SYS-10-001A.md",
-    "tests/specs/SAIT-SMK-TPL-04-001A.md"
-  ]
+  "gitignore": true
 }

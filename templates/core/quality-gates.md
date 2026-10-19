@@ -1,7 +1,8 @@
 # Base — Quality Gates
 
 [ID: base-quality-gates]
-[DEPENDS ON: templates/core/quality.md, templates/core/git.md, templates/core/testing.md, templates/core/config.md]
+[DEPENDS ON: templates/core/quality.md, templates/core/git.md]
+[DEPENDS ON: templates/core/testing.md, templates/core/config.md]
 
 How a check is built: retrofitting a gate without narrowing it, pairing a
 constraint with its check, and running the check in the form it ships.

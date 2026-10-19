@@ -37,6 +37,7 @@
   deprecated by RFC 6648; use a vendor or application-specific prefix instead
 
 ## HTTP methods
+
 | Method | Use for | Idempotent |
 |--------|---------|-----------|
 | GET | Retrieve a resource or collection — no side effects | Yes |
