@@ -25,22 +25,32 @@ between the fork and the context file.
 ## 6.2 Lifecycle of a project
 
 ```text
-1. SETUP (once)          interview -> context file with a declaration block
-2. STARTUP (per session) context file -> fork's manifest -> resolved chain
-3. DEVELOPMENT           agent applies the resolved rules
-4. UPDATE                fork merges upstream; project moves its pin;
-                         the next session resolves the new chain
+1. SETUP (once)     interview -> context file, inline or hybrid
+2. DEVELOPMENT      agent reads the context file; a hybrid file names
+                    templates the agent opens when they apply
+3. UPDATE           fork merges upstream; project moves its pin
 ```
 
-A newer version does not adopt itself: a project assesses what changed and
-adopts it deliberately ("Adopting shared rules" in `templates/core/docs.md`).
+Moving the pin changes nothing in an existing context file. An inline file
+keeps its rules until the project regenerates it or adopts a change by
+hand, and a newer version never adopts itself: the project assesses what
+changed and adopts it deliberately ("Adopting shared rules" in
+`templates/core/docs.md`).
 
-## 6.3 Declaration block (target)
+## 6.3 Declaration block and startup resolution (target)
 
-The generated file carries a machine-readable header instead of a
-hand-curated file list. It is a target: no interview writes it and no tool
-reads it yet, so it is outside the 3.x frozen surface and a minor may
-change its fields (ADR-053).
+Proposed, not implemented: no interview writes the block and no tool reads
+it, so it is outside the 3.x frozen surface and a minor may change its
+fields (ADR-053). The generated file would carry a machine-readable header
+instead of a hand-curated file list, and each session would resolve the
+chain from it:
+
+```text
+SETUP (once)          interview -> context file with a declaration block
+STARTUP (per session) context file -> fork's manifest -> resolved chain
+UPDATE                after the pin moves, the next session resolves
+                      the new chain
+```
 
 ```markdown
 Stack: stack-astro
@@ -59,8 +69,9 @@ ones a checkout carries.
 
 ## 6.4 Resolution
 
-Input: a root, or a declaration block, and the manifest. Output: the ordered
-list of files to load.
+Input: a root and the manifest. Output: the ordered list of files to load.
+Today `tools/resolve.py` resolves one root, steps 1 to 3 and 6. Steps 4 and
+5 belong to the declaration block of section 6.3 and are proposed.
 
 ```text
 1. Seed the core tier: core:, then fork_core:
