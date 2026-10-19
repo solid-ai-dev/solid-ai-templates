@@ -9102,3 +9102,54 @@ and #49, #50 (moved), #29, #30, #31, #35, #41, #48, #51, #54.
   what CI fails
 - A self-test that compares finding counts passes on the wrong finding;
   compare the text
+
+## 2026-10-19 — Clearing the backlog for v3.0.0, and a scorer for templates
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Round 4's report now opens with a one-page summary: what the test does,
+  what each arm varies, results per arm (#2003)
+- ADR-049 and ADR-050 list their post-implementation edits (#2004); the
+  README states what the benchmark shows instead of "Tax paid" (#2005)
+- `base-git`: a pull request with no registered check has not passed CI,
+  with a check (#2007). `base-agents` gates a consumer's chain list (#2008).
+  `base-testing` states the tier layout's import prerequisite (#2009)
+- A duplicate manifest ID fails MNF-01 and the resolver; SPEC states the
+  fork namespace (#2010). Gate floors, a skip budget, pyflakes and
+  markdownlint in CI (#2013)
+- Contributor docs corrected and given one question each (#2011, #2012);
+  issue forms, dispositions and a triage procedure (#2021)
+- ADR-053 takes the declaration block out of the 3.x frozen surface
+  (#2014); ADR-054 records the new `frontend-content` layer (#2016); the
+  authoring rules accept plain imperatives and require IDs only where
+  referenced (#2017); README presents upstream as the shared engine (#2015)
+- `tools/template_quality.py` scores templates on ten criteria calibrated
+  on the corpus, with a CI ratchet; the review scores all 39 and finds five
+  `core/` files under 50 (#2020). The design notes carry the measurable
+  quality model (#2022)
+- The changelog was cut twice for 3.0.0 (#2006, #2018); the tag waits
+
+**Pull requests merged:** #2003 to #2018, #2020 to #2023.
+
+**Issues closed:** #492, #1050, #1486, #1511, #1512, #1899, #1987, #1994 to
+#2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
+
+**Issues created:** #2019, #2024; fork #55, #56, #57.
+
+**ADRs:** ADR-053 and ADR-054 written; revision notes on ADR-049 and ADR-050.
+
+**Gaps flagged:**
+- v3.0.0 is not tagged: Release gates passed at 400ac73, and must be re-run
+  at main's head before tagging (#1927)
+- The fork's next upstream merge owes a skip budget, a quality baseline,
+  linter fixes and the namespace decision (fork #55)
+- The core rewrites are filed for 3.x (#2024); #1992 follows the tag
+
+**Lessons:**
+- A merged squash under a stacked branch conflicts with it; merge main in
+  and keep the stacked side
+- A scorer's planted cases are only as good as the reviews that probe them:
+  four defects and a regression of a fix were found by reading, not by CI
+- Git Bash heredocs swallow backslashes: write continuation lines with the
+  editor, and check the bytes, not a grep run in the same shell
