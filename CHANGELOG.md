@@ -26,6 +26,9 @@ alters no template carries no entry.
 - `base-git` treats a pull request with no registered check as not having
   passed CI, and ships a check that waits for one, watches every check and
   exits non-zero on zero checks or any failing one.
+- `base-agents` gates a hybrid consumer's chain list: a check resolves the
+  selected roots from the vendored manifest and lists each file the context
+  file omits or names beyond the chain, for the consumer's test suite.
 
 ## [3.0.0] - 2026-10-18
 
