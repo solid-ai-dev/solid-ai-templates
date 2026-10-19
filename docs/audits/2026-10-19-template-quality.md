@@ -31,19 +31,19 @@ section size).
 
 | Template | Score | Prose words | Median words / rule | Longest rule | Weakest criteria | Severe |
 |---|---|---|---|---|---|---|
-| `core/quality-gates.md` | 18.8 | 8,697 | 45 | 160 | rule 0, long 0 | rule over 150 words |
+| `core/quality-gates.md` | 19.2 | 8,697 | 45 | 160 | rule 0, long 0 | rule over 150 words |
 | `core/quality.md` | 23.8 | 10,895 | 36 | 170 | rule 0, long 0 | rule over 150 words |
-| `core/git.md` | 27.0 | 2,777 | 30 | 133 | long 0, maxP 0 |  |
-| `core/testing.md` | 30.5 | 8,399 | 30 | 130 | long 0, sent 0 |  |
+| `core/git.md` | 27.1 | 2,777 | 30 | 133 | long 0, maxP 0 |  |
+| `core/testing.md` | 30.6 | 8,399 | 30 | 130 | long 0, sent 0 |  |
 | `core/docs.md` | 40.9 | 3,112 | 28 | 199 | maxP 0, long 14 | rule over 150 words |
-| `core/review.md` | 54.2 | 3,070 | 22 | 70 | para 0, maxP 0 |  |
+| `core/review.md` | 54.7 | 3,070 | 22 | 70 | para 0, maxP 0 |  |
 | `core/config.md` | 60.0 | 1,099 | 13 | 162 | dir 53 | rule over 150 words |
-| `core/agents.md` | 69.0 | 1,920 | 15 | 81 | para 0, dir 21 |  |
+| `core/agents.md` | 69.1 | 1,920 | 15 | 81 | para 0, dir 21 |  |
 | `security/devsecops.md` | 79.7 | 1,252 | 16 | 89 | long 36, sent 59 |  |
-| `data/data-quality.md` | 83.0 | 1,185 | 14 | 51 | maxP 26, para 50 |  |
 | `core/oop.md` | 83.2 | 599 | 18 | 53 | sent 47, dir 52 |  |
+| `data/data-quality.md` | 83.3 | 1,185 | 14 | 51 | maxP 26, para 50 |  |
 | `frontend/static-site.md` | 84.0 | 328 | 11 | 26 | dir 0, hedge 0 |  |
-| `frontend/content.md` | 85.6 | 532 | 19.5 | 34 | narr 0 |  |
+| `frontend/content.md` | 85.8 | 532 | 19.5 | 34 | narr 0 |  |
 | `infra/cicd.md` | 86.8 | 666 | 10 | 82 | hedge 50, dir 56 |  |
 | `backend/webhooks.md` | 86.9 | 263 | 19 | 27 | sent 46, para 53 |  |
 | `infra/containers.md` | 86.9 | 820 | 14.5 | 93 | sent 48 |  |
@@ -75,12 +75,12 @@ section size).
 
 | Template | Score | What the reading found | Example |
 |---|---|---|---|
-| `core/quality-gates.md` | 18.8 | Each rule carries its derivation: why a control can mislead, what the failure looks like, which artifact it reads. The rule is the first clause of a 100-word bullet | Line 984: "The step that plants a break MUST itself be verified", then 150 words on why |
+| `core/quality-gates.md` | 19.2 | Each rule carries its derivation: why a control can mislead, what the failure looks like, which artifact it reads. The rule is the first clause of a 100-word bullet | Line 984: "The step that plants a break MUST itself be verified", then 150 words on why |
 | `core/quality.md` | 23.8 | Check specifications are written as prose bullets: scope, exemptions, implementation hints and edge cases in one run-on item | Line 1269: the comment-layout check, 170 words in one bullet |
-| `core/git.md` | 27.0 | Pull-request rules argue from CI internals and past incidents; one section ("Off-limits paths") is 685 words of prose around one check | Line 23: "A check reading the change under review is confirmed where it ships", 133 words |
-| `core/testing.md` | 30.5 | Sections named for a lesson ("A remedy naming another check is a claim about that check") hold an essay on it; 34 sections, many single-rule | Line 215: the host-state rule, 130 words with "This is a distinct class… and more severe" |
+| `core/git.md` | 27.1 | Pull-request rules argue from CI internals and past incidents; one section ("Off-limits paths") is 685 words of prose around one check | Line 23: "A check reading the change under review is confirmed where it ships", 133 words |
+| `core/testing.md` | 30.6 | Sections named for a lesson ("A remedy naming another check is a claim about that check") hold an essay on it; 34 sections, many single-rule | Line 215: the host-state rule, 130 words with "This is a distinct class… and more severe" |
 | `core/docs.md` | 40.9 | The writing-style and generated-files rules restate the rule with the counter-examples a detector needs | Line 283: the generated-figures rule, 199 words |
-| `core/review.md` | 54.2 | Checklists are sound; the issue-verification section is three paragraphs of narrative before any rule | Line 125: "An issue is written against the tree as it stood on the filing date…" |
+| `core/review.md` | 54.7 | Checklists are sound; the issue-verification section is three paragraphs of narrative before any rule | Line 125: "An issue is written against the tree as it stood on the filing date…" |
 
 The scores agree with the reading in every case: the files score low for
 the reasons a reader finds them hard. None of the six is wrong; each is

@@ -162,13 +162,12 @@ class Doc:
                 self.sections.append((section, prose_lines))
                 section, prose_lines = stripped[3:], 0
                 continue
-            if stripped:
-                prose_lines += 1
             if (not stripped or line.startswith("#") or stripped.startswith("|")
                     or DIRECTIVE_LINE.match(stripped) or stripped == "---"):
                 close_item()
                 close_para()
                 continue
+            prose_lines += 1
             bullet = BULLET.match(line)
             if bullet:
                 close_item()
@@ -205,7 +204,11 @@ def _without_code(text):
 def _without_quotes(text):
     """Text with quoted passages removed. A rule quoting the form it forbids
     ("not 'see #123'") is not an instance of it."""
-    return re.sub(r"\"[^\"]*\"|“[^”]*”|'[^'\s][^']*'", " ", text)
+
+    # Only double quotes and an opening curly single quote mark a quotation.
+    # A straight single quote is also an apostrophe, so pairing them would
+    # swallow the text between "team's" and "cache's" and hide what it holds.
+    return re.sub(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’", " ", text)
 
 
 def _sentences(unit):
@@ -266,9 +269,19 @@ CAPS = (
     ("longest_rule", 150, 60),
 )
 
-# Directories upstream holds (SPEC, "Forks"). Their scores go in the
-# upstream baseline; every other template is a fork's.
-UPSTREAM_DIRS = ("core", "security", "infra", "data", "backend", "frontend")
+# The manifest keys a fork never edits (SPEC, "Forks"). A template filed
+# under one is upstream's and its score goes in the upstream baseline; every
+# other template is a fork's, whatever directory it sits in.
+UPSTREAM_KEYS = ("base", "backend", "frontend")
+
+
+def upstream_files(manifest_text):
+    """The template paths the manifest files under an upstream key."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import resolve
+    manifest = resolve.parse_manifest(manifest_text)
+    return {entry["file"] for key in UPSTREAM_KEYS
+            for entry in manifest.get(key) or [] if "file" in entry}
 
 
 def criterion_score(name, value):
@@ -297,7 +310,15 @@ def score(doc):
 def sections(text):
     """(title, first line, Doc) for each H2 section of a template."""
     lines = text.splitlines()
-    starts = [i for i, line in enumerate(lines) if line.startswith("## ")]
+
+    # A heading inside a fenced example is part of the example, not a
+    # section boundary.
+    starts, fence = [], False
+    for i, line in enumerate(lines):
+        if FENCE.match(line):
+            fence = not fence
+        elif not fence and line.startswith("## "):
+            starts.append(i)
     out = []
     for n, start in enumerate(starts):
         end = starts[n + 1] if n + 1 < len(starts) else len(lines)
@@ -316,9 +337,11 @@ def rel(path):
     return path.relative_to(ROOT).as_posix()
 
 
-def is_upstream(relpath):
-    parts = relpath.split("/")
-    return len(parts) > 2 and parts[1] in UPSTREAM_DIRS
+def split_by_owner(scores, owned):
+    """(upstream rows, fork rows) of a score table, by manifest ownership."""
+    upstream = {n: v for n, v in scores.items() if n in owned}
+    fork = {n: v for n, v in scores.items() if n not in owned}
+    return upstream, fork
 
 
 def read_baseline(path):
@@ -413,6 +436,30 @@ def self_test():
                        + "```\n"))[0]
     cases.append(("fenced code does not move the score", fenced == good,
                   fenced))
+    apostrophes = score(Doc(GOOD + "- Follow the team's ADR-123 for the "
+                            "cache's keys\n"))
+    cases.append(("apostrophes do not hide a citation",
+                  apostrophes[0] <= 50 and apostrophes[3], apostrophes[0]))
+    table = "\n| Key | Meaning |\n|---|---|\n" + "| a | b |\n" * 40
+    tabled = score(Doc(GOOD + table))[0]
+    cases.append(("a table does not move the score", tabled == good, tabled))
+    fenced_heading = ("# P\n\n## Rules\n\n- Use X\n\n```markdown\n## Example\n"
+                      "- not a rule\n```\n\n- Never do Y\n")
+    split = sections(fenced_heading)
+    rules = [i.text for i in split[0][2].items] if split else []
+    cases.append(("a heading inside a fence is not a section boundary",
+                  len(split) == 1 and rules == ["Use X", "Never do Y"],
+                  [(t, len(d.items)) for t, _, d in split]))
+    manifest = ("core: [base-git]\nbase:\n  - id: base-git\n"
+                "    file: templates/core/git.md\n"
+                "imbra:\n  - id: imbra-cli\n    file: templates/core/cli.md\n")
+    upstream, fork = split_by_owner(
+        {"templates/core/git.md": 90.0, "templates/core/cli.md": 50.0},
+        upstream_files(manifest))
+    cases.append(("ownership follows the manifest key, not the directory",
+                  list(upstream) == ["templates/core/git.md"]
+                  and list(fork) == ["templates/core/cli.md"],
+                  (sorted(upstream), sorted(fork))))
     findings = check({"a": 79.0, "b": 80.05, "c": 60.0},
                      {"a": 80.0, "b": 80.1, "gone": 75.0}, {})
     expect = {"a", "c", "gone"}
@@ -516,8 +563,8 @@ def main(args):
     results = score_all()
     scores = {name: r[0] for name, r in results.items()}
     if "--update" in args:
-        upstream = {n: v for n, v in scores.items() if is_upstream(n)}
-        fork = {n: v for n, v in scores.items() if not is_upstream(n)}
+        manifest = (TEMPLATES / "manifest.yaml").read_text(encoding="utf-8")
+        upstream, fork = split_by_owner(scores, upstream_files(manifest))
         write_baseline(BASELINE, upstream, BASELINE_HEADER)
         if fork:
             write_baseline(FORK_BASELINE, fork, BASELINE_HEADER)
