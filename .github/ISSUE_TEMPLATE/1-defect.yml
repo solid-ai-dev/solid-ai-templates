@@ -1,0 +1,59 @@
+name: Defect
+description: A shared rule, check or tool that does the wrong thing.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Leave out secrets, private code and anything
+        you would not post on a forum. A vulnerability goes to the private
+        route in SECURITY.md instead.
+
+        Search open **and closed** issues first. If one matches, add your
+        version and evidence there rather than filing a new one.
+        CONTRIBUTING.md, "Issues", says what happens to a report.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release tag or commit you resolved from.
+      placeholder: v3.0.0
+    validations:
+      required: true
+  - type: input
+    id: affected
+    attributes:
+      label: Affected stack, template and section
+      description: The root you resolved, and the template file and section.
+      placeholder: "backend-http; templates/backend/http.md, URI design"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or reproduction
+      description: >-
+        The commands you ran and their output, or the rule text and what it
+        made an agent do. Paste output as text, not screenshots.
+      render: text
+    validations:
+      required: true
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Search
+      options:
+        - label: I searched open and closed issues and found no match.
+          required: true

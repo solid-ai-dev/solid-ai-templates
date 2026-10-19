@@ -105,6 +105,11 @@ Every issue MUST have exactly one type label and one priority label,
 applied at creation — never create a ticket unlabeled. Triage labels
 are terminal — applied when closing without action.
 
+A report filed through an issue form carries only the form's type
+label, and the missing priority marks it untriaged. Triage adds the
+priority when it accepts the report; a report closed without being
+accepted needs none (PLAYBOOK, "Triage a report").
+
 #### Type labels (pick one)
 
 | Label | Color | When to use |

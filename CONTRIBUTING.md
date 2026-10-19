@@ -99,14 +99,60 @@ gives the steps in order.
 
 ## Issues
 
-Issue titles are in [`CLAUDE.md` section 2.1](CLAUDE.md#21-git), and the
-type and priority labels every issue carries are in
-[section 2.2](CLAUDE.md#22-issue-labels).
+Open an issue through a form on the
+[new issue page](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose):
 
-If you are reporting a problem with a rule, say which template file and
-section, and what the rule made you do that was wrong. A rule that produced
-a bad outcome in a real project is the most useful report this project
-receives.
+| Route | For |
+|-------|-----|
+| Defect | A shared rule, check or tool that does the wrong thing |
+| Proposal | Changing, removing or adding a shared rule |
+| Question or idea | Something the docs do not answer, or an idea not yet a proposal |
+| Private advisory | A vulnerability — see [Reporting a vulnerability](#reporting-a-vulnerability) |
+
+Stacks, platforms, workflow rules and the interview go to the fork that
+carries them, as "What belongs upstream" says.
+
+The forms ask only for what triage needs: the version, the affected stack
+and template, expected and actual behaviour, and evidence. A rule that
+produced a bad outcome in a real project is the most useful report this
+project receives. Issue titles follow
+[`CLAUDE.md` section 2.1](CLAUDE.md#21-git); the form applies the type
+label, and triage adds the priority ([section 2.2](CLAUDE.md#22-issue-labels)).
+
+### Search before filing
+
+Search open and closed issues, titles and bodies, with two or three plain
+keywords. A hyphenated or quoted phrase misses reports worded differently:
+
+```bash
+gh search issues --repo solid-ai-dev/solid-ai-templates --match title,body <word> <word>
+```
+
+- An open issue matches: comment there with your version and evidence
+- A closed issue matches, and your version was released after it closed:
+  that is a regression, so file a defect naming the closed issue
+- Nothing matches: file a new issue
+
+### What happens to a report
+
+Triage gives every report one disposition:
+
+| Disposition | Meaning | Marked by |
+|-------------|---------|-----------|
+| Accept | Valid, in scope and worth its cost | Type and priority label; a milestone only once scheduled |
+| Bounded investigation | Plausible, but needs a time-boxed look before a decision | `spike` and a priority, with the time box in a comment |
+| Needs information | Cannot be acted on as filed | A comment naming what is missing; no priority yet |
+| Duplicate | Already tracked by a canonical issue | `duplicate`, closed, linked to the canonical issue |
+| Decline | Out of scope, a local preference, or not worth its cost | `wontdo`, closed with the reason |
+
+Accepting a report is not a promise to deliver it. Accepted work waits in
+the backlog, with no milestone, until a release selects it; only a
+milestone means scheduled. A report still waiting for information 30 days
+after the request is closed, and reopened when the information arrives.
+
+A proposal can be accepted as no change, with the reason stated. A
+preference that suits one project belongs in that project's own context
+file or in a fork, not in the shared rules.
 
 ## Reporting a vulnerability
 
@@ -115,6 +161,9 @@ disclosure route.
 
 ## Maintainership
 
-This project has a single maintainer, so review latency varies. A pull
+This project has a single maintainer, so review latency varies. Reports
+are triaged in batches rather than on arrival, and no response time is
+promised for an issue or a pull request; the only time bound is the
+security acknowledgement in [SECURITY.md](SECURITY.md). A report or pull
 request that sits is not a rejection. `docs/ONBOARDING.md` records what
 happens to the project if the maintainer becomes unavailable.

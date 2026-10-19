@@ -1,0 +1,24 @@
+name: Question or idea
+description: A question the docs do not answer, or an idea not yet a proposal.
+labels: [spike]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Leave out secrets and private code.
+
+        Check docs/ONBOARDING.md and docs/SPEC.md first. A question is
+        answered in a comment and closed; an idea that should change a rule
+        continues as a proposal. Neither is a promise of work.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release tag or commit, if the question is about one.
+      placeholder: v3.0.0
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or idea
+    validations:
+      required: true

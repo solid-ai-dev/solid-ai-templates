@@ -1,0 +1,60 @@
+name: Proposal
+description: Change, remove or add a shared rule, backed by an outcome.
+labels: [task]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Leave out secrets and private code.
+
+        Prefer correcting or removing a confusing rule, or fixing the
+        mechanism behind it, over adding an exception. A preference that
+        suits one project belongs in that project's own context file or in
+        a fork; "no change" with a reason is a valid outcome.
+
+        Search open **and closed** issues first. If one matches, add your
+        evidence there rather than filing a new one.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release tag or commit you resolved from.
+      placeholder: v3.0.0
+    validations:
+      required: true
+  - type: input
+    id: affected
+    attributes:
+      label: Affected stack, template and section
+      description: Where the rule lives now, or where a new one would go.
+      placeholder: "backend-http; templates/backend/http.md, URI design"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What the rule makes happen now
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen instead
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >-
+        The outcome in a real project that this rule caused or would have
+        prevented, and whether it recurs beyond one project.
+    validations:
+      required: true
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Search
+      options:
+        - label: I searched open and closed issues and found no match.
+          required: true
