@@ -18,7 +18,7 @@ tags: [structure, depends-on, manifest, drift]
 
 > **Given** the repository is cloned and all template files are present
 > **When** every template's `[DEPENDS ON: ...]` header is compared
->   to its manifest `depends_on` list
+> to its manifest `depends_on` list
 > **Then** both sources list the same set of dependencies
 
 ## Results

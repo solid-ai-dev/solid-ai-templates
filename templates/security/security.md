@@ -10,7 +10,6 @@ vulnerable components, identification and authentication failures,
 software and data integrity failures, logging and monitoring failures,
 and server-side request forgery.
 
-
 ---
 
 ## Input validation

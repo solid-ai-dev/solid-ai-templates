@@ -99,6 +99,11 @@ alters no template carries no entry.
 
 ### Fixed
 
+- The Python checks in `core/docs.md` and `core/quality.md` render as code:
+  their bodies are indented under the list item, so `#` comments no longer
+  become headings.
+- Over-long `[DEPENDS ON]` lines are split into several directives under
+  the 88-character width.
 - A `fork_core` entry depending on an ID outside the core tier is refused,
   naming both, rather than resolving with that dependency missing from
   every chain.

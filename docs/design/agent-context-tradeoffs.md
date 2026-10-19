@@ -13,8 +13,8 @@ intuition, not a benchmark.
 
 ## TL;DR
 
-- **Cold-start cost** = full prompt processed from scratch (templates
-  + CLAUDE.md + memory). This is where bloat hurts.
+- **Cold-start cost** = full prompt processed from scratch (templates +
+  CLAUDE.md + memory). This is where bloat hurts.
 - **Within-session cost** ≈ 0 once cached (Anthropic prompt cache TTL
   is ~5 minutes).
 - **Bigger context dilutes attention**; smaller context increases the

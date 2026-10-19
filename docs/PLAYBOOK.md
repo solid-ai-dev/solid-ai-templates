@@ -341,13 +341,13 @@ py tests/run_conformance.py        # the templates' own checks, run here
 py tests/run_conformance.py --list # dispositions only, run nothing
 py tests/run_fork_sync.py         # a fork that only appends merges HEAD
 py -m pyflakes tools tests        # the tooling's own lint
-npx markdownlint-cli2              # Markdown, outside the recorded files
+npx markdownlint-cli2              # every tracked Markdown file
+pre-commit run --all-files         # whitespace, final newline, YAML
 ```
 
-CI pins both linters' versions in `.github/workflows/smoke.yml`.
-`.markdownlint-cli2.jsonc` lists the files that carried findings when the
-Markdown lint first ran. Every other file is held to the rules in full; fix
-a listed file and remove its line, never add one.
+CI pins the linters' versions in `.github/workflows/smoke.yml`. No
+Markdown file is exempt from the lint; never add an `ignores` entry to
+`.markdownlint-cli2.jsonc`.
 
 A change that removes what forks carry, such as the split, carries the
 commit trailer `Fork-merge: ours`. Fork sync then merges it the way a fork

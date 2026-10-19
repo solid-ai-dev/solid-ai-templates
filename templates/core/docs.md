@@ -168,96 +168,96 @@ wrong before changing either.
 
   ```bash
   py - <<'EOF'
-import json, pathlib, re, subprocess
+  import json, pathlib, re, subprocess
 
-# The width and its exemptions come from project configuration, never
-# from this check. A project that declares no width fails here, because
-# an unstated width is the defect, not a default to fill in.
-width, source = None, None
-skip_fenced, skip_tables, skip_headings = True, True, False
-cfg = pathlib.Path(".markdownlint.json")
-if cfg.exists():
-    rule = json.loads(cfg.read_text(encoding="utf-8")).get("MD013")
-    if isinstance(rule, dict):
-        width = rule.get("line_length")
-        skip_fenced = not rule.get("code_blocks", True)
-        skip_tables = not rule.get("tables", True)
-        skip_headings = not rule.get("headings", True)
-        source = str(cfg)
-if width is None:
-    ec = pathlib.Path(".editorconfig")
-    if ec.exists():
-        section = None
-        for line in ec.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line.startswith("[") and line.endswith("]"):
-                section = line[1:-1]
-            elif section and "md" in section and line.startswith("max_line_length"):
-                width = int(line.split("=")[1].strip())
-                source = str(ec)
-# An unstated width is the defect this reports, not a gap to fill with a
-# default, so it leaves on a failing status rather than a message.
-if width is None:
-    print("no Markdown line width is configured; declare one")
-    raise SystemExit(1)
+  # The width and its exemptions come from project configuration, never
+  # from this check. A project that declares no width fails here, because
+  # an unstated width is the defect, not a default to fill in.
+  width, source = None, None
+  skip_fenced, skip_tables, skip_headings = True, True, False
+  cfg = pathlib.Path(".markdownlint.json")
+  if cfg.exists():
+      rule = json.loads(cfg.read_text(encoding="utf-8")).get("MD013")
+      if isinstance(rule, dict):
+          width = rule.get("line_length")
+          skip_fenced = not rule.get("code_blocks", True)
+          skip_tables = not rule.get("tables", True)
+          skip_headings = not rule.get("headings", True)
+          source = str(cfg)
+  if width is None:
+      ec = pathlib.Path(".editorconfig")
+      if ec.exists():
+          section = None
+          for line in ec.read_text(encoding="utf-8").splitlines():
+              line = line.strip()
+              if line.startswith("[") and line.endswith("]"):
+                  section = line[1:-1]
+              elif section and "md" in section and line.startswith("max_line_length"):
+                  width = int(line.split("=")[1].strip())
+                  source = str(ec)
+  # An unstated width is the defect this reports, not a gap to fill with a
+  # default, so it leaves on a failing status rather than a message.
+  if width is None:
+      print("no Markdown line width is configured; declare one")
+      raise SystemExit(1)
 
-def is_directive(text):
-    """A single-line directive a parser reads whole, such as [ID: x]."""
-    text = text.strip()
-    return (text.startswith("[") and text.endswith("]")
-            and ":" in text.split("]")[0])
+  def is_directive(text):
+      """A single-line directive a parser reads whole, such as [ID: x]."""
+      text = text.strip()
+      return (text.startswith("[") and text.endswith("]")
+              and ":" in text.split("]")[0])
 
-# The two tokens no wrapping shortens: a Markdown link, which an author
-# does not break across lines, and a bare URL.
-UNBREAKABLE = re.compile(r"!?\[[^\]]*\]\([^)\s]+\)|<?https?://[^\s>)]+>?")
+  # The two tokens no wrapping shortens: a Markdown link, which an author
+  # does not break across lines, and a bare URL.
+  UNBREAKABLE = re.compile(r"!?\[[^\]]*\]\([^)\s]+\)|<?https?://[^\s>)]+>?")
 
-def is_unwrappable(text, limit):
-    """True where no wrapping brings the line under the limit.
+  def is_unwrappable(text, limit):
+      """True where no wrapping brings the line under the limit.
 
-    Measure the longest unbreakable token against the width, not the line
-    with its tokens removed. The second test excuses any long line that
-    merely contains a link, because deleting the link makes the rest fit;
-    the first excuses only a line whose overflow survives every wrap.
-    """
-    indent = len(text) - len(text.lstrip())
-    longest = max((len(m.group()) for m in UNBREAKABLE.finditer(text)),
-                  default=0)
-    return indent + longest > limit
+      Measure the longest unbreakable token against the width, not the line
+      with its tokens removed. The second test excuses any long line that
+      merely contains a link, because deleting the link makes the rest fit;
+      the first excuses only a line whose overflow survives every wrap.
+      """
+      indent = len(text) - len(text.lstrip())
+      longest = max((len(m.group()) for m in UNBREAKABLE.finditer(text)),
+                    default=0)
+      return indent + longest > limit
 
-tracked = subprocess.run(["git", "ls-files", "*.md"], capture_output=True,
-                         text=True).stdout.split()
-# git ls-files reads the index, so a document not yet staged is invisible
-# here and the assertion passes having never seen it.
-print("markdown files inspected: %d" % len(tracked))
+  tracked = subprocess.run(["git", "ls-files", "*.md"], capture_output=True,
+                           text=True).stdout.split()
+  # git ls-files reads the index, so a document not yet staged is invisible
+  # here and the assertion passes having never seen it.
+  print("markdown files inspected: %d" % len(tracked))
 
-findings = []
-if not tracked:
-    findings.append("no tracked Markdown found; the enumeration is broken, "
-                    "not the tree clean")
+  findings = []
+  if not tracked:
+      findings.append("no tracked Markdown found; the enumeration is broken, "
+                      "not the tree clean")
 
-for name in tracked:
-    fenced = False
-    for number, line in enumerate(
-            pathlib.Path(name).read_text(encoding="utf-8").splitlines(), 1):
-        if line.lstrip().startswith("```"):
-            fenced = not fenced
-            continue
-        if fenced and skip_fenced:
-            continue
-        if skip_tables and line.lstrip().startswith("|"):
-            continue
-        if skip_headings and line.lstrip().startswith("#"):
-            continue
-        if is_directive(line):
-            continue
-        if len(line) > width and not is_unwrappable(line, width):
-            findings.append("%s:%d %d > %d (%s)"
-                            % (name, number, len(line), width, source))
+  for name in tracked:
+      fenced = False
+      for number, line in enumerate(
+              pathlib.Path(name).read_text(encoding="utf-8").splitlines(), 1):
+          if line.lstrip().startswith("```"):
+              fenced = not fenced
+              continue
+          if fenced and skip_fenced:
+              continue
+          if skip_tables and line.lstrip().startswith("|"):
+              continue
+          if skip_headings and line.lstrip().startswith("#"):
+              continue
+          if is_directive(line):
+              continue
+          if len(line) > width and not is_unwrappable(line, width):
+              findings.append("%s:%d %d > %d (%s)"
+                              % (name, number, len(line), width, source))
 
-for finding in findings:
-    print(finding)
+  for finding in findings:
+      print(finding)
 
-raise SystemExit(1 if findings else 0)
+  raise SystemExit(1 if findings else 0)
   EOF
   ```
 
@@ -312,89 +312,89 @@ raise SystemExit(1 if findings else 0)
 
   ```bash
   py - <<'EOF'
-import pathlib, re, subprocess
-NOUNS = ("file", "files", "template", "templates", "stack", "stacks",
-         "chain", "chains", "check", "checks", "test", "tests", "root",
-         "roots", "directory", "directories", "document", "documents",
-         "section", "sections", "example", "examples")
+  import pathlib, re, subprocess
+  NOUNS = ("file", "files", "template", "templates", "stack", "stacks",
+           "chain", "chains", "check", "checks", "test", "tests", "root",
+           "roots", "directory", "directories", "document", "documents",
+           "section", "sections", "example", "examples")
 
-# Prose style favours a spelled numeral under ten, which is where most
-# counts fall. Below five it is an ordinary quantifier -- "two templates",
-# "four sections" -- and states no measurement, so the list starts at five.
-WORDS = ("five", "six", "seven", "eight", "nine", "ten", "eleven",
-         "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
-         "seventeen", "eighteen", "nineteen", "twenty", "dozen")
+  # Prose style favours a spelled numeral under ten, which is where most
+  # counts fall. Below five it is an ordinary quantifier -- "two templates",
+  # "four sections" -- and states no measurement, so the list starts at five.
+  WORDS = ("five", "six", "seven", "eight", "nine", "ten", "eleven",
+           "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+           "seventeen", "eighteen", "nineteen", "twenty", "dozen")
 
-# A modifier may sit between the numeral and its noun: "14
-# manifest-reading checks", "75 Markdown template files". A function word
-# or a unit may not -- "a 15 KB document" measures a size, not a
-# population, and "5 means tests" is two clauses.
-STOP = ("of|in|on|at|to|for|from|and|or|the|a|an|is|are|was|were|be"
-        "|means|per|than|as|by|with|that|which|into|out|up|down|over"
-        "|under|kb|mb|gb|kib|mib|byte|bytes|character|characters|word"
-        "|words|line|lines|minute|minutes|second|seconds|token|tokens"
-        "|page|pages")
-GAP = r"(?:\s+(?!(?:%s)\b)[\w-]+){0,2}" % STOP
-FIGURE = re.compile(r"(?<![\w.\-])(\d{1,6}|%s)%s\s+(%s)\b"
-                    % ("|".join(WORDS), GAP, "|".join(NOUNS)), re.I)
-GENERATED = re.compile(r"<!--\s*/?generated:")
+  # A modifier may sit between the numeral and its noun: "14
+  # manifest-reading checks", "75 Markdown template files". A function word
+  # or a unit may not -- "a 15 KB document" measures a size, not a
+  # population, and "5 means tests" is two clauses.
+  STOP = ("of|in|on|at|to|for|from|and|or|the|a|an|is|are|was|were|be"
+          "|means|per|than|as|by|with|that|which|into|out|up|down|over"
+          "|under|kb|mb|gb|kib|mib|byte|bytes|character|characters|word"
+          "|words|line|lines|minute|minutes|second|seconds|token|tokens"
+          "|page|pages")
+  GAP = r"(?:\s+(?!(?:%s)\b)[\w-]+){0,2}" % STOP
+  FIGURE = re.compile(r"(?<![\w.\-])(\d{1,6}|%s)%s\s+(%s)\b"
+                      % ("|".join(WORDS), GAP, "|".join(NOUNS)), re.I)
+  GENERATED = re.compile(r"<!--\s*/?generated:")
 
-# A passage stating the date it was measured on: a record of a tree, not
-# a claim about this one.
-MEASURED = re.compile(r"<!--\s*measured:\s*\d{4}-\d{2}-\d{2}")
-MEASURED_END = re.compile(r"<!--\s*/measured\s*-->")
-FENCE = re.compile(r"^\s*```")
-# A dated record states what was true on its date.
-HISTORY = ("CHANGELOG.md", "docs/dev-journal.md", "docs/decisions/",
-           "docs/audits/")
+  # A passage stating the date it was measured on: a record of a tree, not
+  # a claim about this one.
+  MEASURED = re.compile(r"<!--\s*measured:\s*\d{4}-\d{2}-\d{2}")
+  MEASURED_END = re.compile(r"<!--\s*/measured\s*-->")
+  FENCE = re.compile(r"^\s*```")
+  # A dated record states what was true on its date.
+  HISTORY = ("CHANGELOG.md", "docs/dev-journal.md", "docs/decisions/",
+             "docs/audits/")
 
-# Roots whose numerals are the project's own subject matter. Set per
-# project; leave empty where all Markdown is documentation.
-SOURCES = ("templates/", "generated/", "examples/")
+  # Roots whose numerals are the project's own subject matter. Set per
+  # project; leave empty where all Markdown is documentation.
+  SOURCES = ("templates/", "generated/", "examples/")
 
-out = subprocess.check_output(["git", "ls-files", "-z", "*.md"])
-paths = [p for p in out.decode("utf-8").split(chr(0))
-         if p.endswith(".md") and not p.startswith(HISTORY)
-         and not p.startswith(SOURCES)]
+  out = subprocess.check_output(["git", "ls-files", "-z", "*.md"])
+  paths = [p for p in out.decode("utf-8").split(chr(0))
+           if p.endswith(".md") and not p.startswith(HISTORY)
+           and not p.startswith(SOURCES)]
 
-# A corpus the command did not produce is not a corpus. An empty list here
-# means the pathspec reached nothing, which reports zero findings from a
-# scan that never ran.
-if not paths:
-    raise SystemExit("no tracked Markdown reached; the pathspec drifted")
-findings = []
-for rel in sorted(paths):
-    generated = fenced = measured = False
-    lines = pathlib.Path(rel).read_text(encoding="utf-8").splitlines()
-    for number, line in enumerate(lines, 1):
-        if FENCE.match(line):
-            fenced = not fenced
-            continue
-        if GENERATED.search(line):
-            generated = not generated
-            continue
+  # A corpus the command did not produce is not a corpus. An empty list here
+  # means the pathspec reached nothing, which reports zero findings from a
+  # scan that never ran.
+  if not paths:
+      raise SystemExit("no tracked Markdown reached; the pathspec drifted")
+  findings = []
+  for rel in sorted(paths):
+      generated = fenced = measured = False
+      lines = pathlib.Path(rel).read_text(encoding="utf-8").splitlines()
+      for number, line in enumerate(lines, 1):
+          if FENCE.match(line):
+              fenced = not fenced
+              continue
+          if GENERATED.search(line):
+              generated = not generated
+              continue
 
-        # Matched separately: a toggle cannot tell which end it met, so
-        # an unterminated record would exempt the rest of the file.
-        if MEASURED.search(line):
-            measured = True
-            continue
-        if MEASURED_END.search(line):
-            measured = False
-            continue
-        if fenced or generated or measured or line.lstrip().startswith("|"):
-            continue
-        for hit in FIGURE.finditer(line):
-            findings.append("%s:%d states '%s %s' outside a generated block"
-                            % (rel, number, hit.group(1), hit.group(2)))
-print("documents scanned: %d" % len(paths))
-print("ungated figures: %d" % len(findings))
-for finding in findings:
-    print(finding)
+          # Matched separately: a toggle cannot tell which end it met, so
+          # an unterminated record would exempt the rest of the file.
+          if MEASURED.search(line):
+              measured = True
+              continue
+          if MEASURED_END.search(line):
+              measured = False
+              continue
+          if fenced or generated or measured or line.lstrip().startswith("|"):
+              continue
+          for hit in FIGURE.finditer(line):
+              findings.append("%s:%d states '%s %s' outside a generated block"
+                              % (rel, number, hit.group(1), hit.group(2)))
+  print("documents scanned: %d" % len(paths))
+  print("ungated figures: %d" % len(findings))
+  for finding in findings:
+      print(finding)
 
-# The counts are the reading; the status is the verdict.
-raise SystemExit(1 if findings else 0)
-EOF
+  # The counts are the reading; the status is the verdict.
+  raise SystemExit(1 if findings else 0)
+  EOF
   ```
 
 ## Writing for a reader who lacks the context

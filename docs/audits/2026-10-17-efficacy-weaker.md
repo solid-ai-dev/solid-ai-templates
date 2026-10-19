@@ -407,4 +407,3 @@ The whole vector, which the summary's scores digest and never replace.
 | Change task, files touched | no improvement shown | no improvement shown | no improvement shown | better | worse | worse | no improvement shown | no improvement shown |
 | Change task, lines changed | better | no improvement shown | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Change task, cost, USD | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown | better | no improvement shown | no improvement shown |
-

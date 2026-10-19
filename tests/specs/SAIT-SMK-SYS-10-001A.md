@@ -64,4 +64,4 @@ tags: [parser, depends-on, composition]
 - `SAIT-SMK-SYS-04-001A` — compares the same extraction against the
   manifest
 - Measured basis: every DEPENDS ON declaration in the tree sits on line
-  2, 3 or 4, before the first `## ` heading, across all template files
+  2, 3 or 4, before the first `##` heading, across all template files

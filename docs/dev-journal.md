@@ -76,8 +76,8 @@
 
 **PRs merged:** #80, #81, #91, #92, #93, #94, #95, #96, #97, #98, #99
 
-**Issues closed:** #79, #78, #55, #15, #16, #82, #83, #84, #85,
-#86, #87, #88, #89, #69, #72, #10
+**Issues closed:** #79, #78, #55, #15, #16, #82, #83, #84,
+ #85, #86, #87, #88, #89, #69, #72, #10
 
 **Issues created:** #82–#90, #100
 
@@ -123,8 +123,8 @@
 
 **PRs:** #120, #121, #122, #123, #124
 
-**Issues closed:** #105, #106, #107, #108, #109, #110, #111, #112,
-#113, #114, #115, #116, #118, #119
+**Issues closed:** #105, #106, #107, #108, #109, #110, #111,
+ #112, #113, #114, #115, #116, #118, #119
 
 **Key changes:**
 - Session protocol: mandatory startup block, startup hygiene (branch/
@@ -199,8 +199,8 @@ recorded in ADR-004.
 
 **PRs:** #141, #142, #143, #144, #145, #148
 
-**Issues closed:** #117, #104, #131, #135, #136, #137, #132, #130,
-#133, #140, #139, #138
+**Issues closed:** #117, #104, #131, #135, #136, #137, #132,
+ #130, #133, #140, #139, #138
 
 **Issues created:** #146, #147, #149, #150, #151
 
@@ -313,12 +313,12 @@ recorded in ADR-004.
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
 
-**PRs merged:** #194, #195, #196, #197, #201, #202, #204, #205,
-#207, #209, #212, #214, #216, #223, #225, #226, #227, #228, #229
+**PRs merged:** #194, #195, #196, #197, #201, #202, #204,
+ #205, #207, #209, #212, #214, #216, #223, #225, #226, #227, #228, #229
 
-**Issues closed:** #188, #189, #190, #187, #183, #200, #178, #198,
-#199, #206, #208, #211, #213, #215, #217, #218, #219, #220, #221,
-#222
+**Issues closed:** #188, #189, #190, #187, #183, #200, #178,
+ #198, #199, #206, #208, #211, #213, #215, #217, #218, #219, #220,
+ #221, #222
 
 **Issues created:** #193–#224
 
@@ -512,8 +512,8 @@ recorded in ADR-004.
 - Moved 5 new-content issues to Backlog
 
 **PRs merged:** #282, #286, #287, #288, #289, #290, #291, #292, #293
-**Issues closed:** #104, #131, #203, #224, #233, #255, #264, #272, #275, #276, #283,
-#284, #285
+**Issues closed:** #104, #131, #203, #224, #233, #255, #264, #272, #275, #276,
+ #283, #284, #285
 **Smoke checks:** 11 → 13 (TPL-06, TPL-07)
 
 ---
@@ -574,7 +574,7 @@ recorded in ADR-004.
 
 **Issue grooming:**
 - Triaged 13 open issues: every open issue now has type + priority
-  + milestone (#332, #333, #334, #335, #337, #344, #345, #348,
+  - milestone (#332, #333, #334, #335, #337, #344, #345, #348,
   #351, #354, #355, #356, #357)
 - New convention-rule issues parked in v2.5; restructure-scope
   issues in v3.0
@@ -692,7 +692,7 @@ was the right move when content actually accumulated.
   / docs (#360, PR #385)
 - Added Generated files section to `base/core/docs.md` between
   Docs-as-code and Output file by agent — banner + `--check` flag
-  + formatter-ignore SHOULDs (#380, PR #386)
+  - formatter-ignore SHOULDs (#380, PR #386)
 - Added Verify working directory before concluding on a negative
   rule to `base/workflow/ai-workflow.md` with
   `[ID: ai-workflow-pwd-on-negative]` — pwd check as first
@@ -724,7 +724,7 @@ was the right move when content actually accumulated.
 - 5 unmilestoned backlog issues moved to Backlog (#358, #360,
   #380, #381, #382) — none fit v3.0 restructure scope
 - Created v2.6 milestone with 8 issues (Mixed: agent discipline
-  + ADR governance + smoke bug)
+  - ADR governance + smoke bug)
 
 **Follow-up issues created from session work:**
 - #387 — Apply generated-file banner + --check to this repo's
@@ -781,7 +781,7 @@ was the right move when content actually accumulated.
 - Calibration discipline triad (PR #410, closes #344 / #346 / #381):
   ground truth from raw artifacts, thresholds move not the
   measurement, reference data provenance (`source: agent|user|external`
-  + `verified: true|false` + coverage caveat in metrics).
+  - `verified: true|false` + coverage caveat in metrics).
   #381 redrafted from prohibition to provenance approach after
   discussion — preserves agent-eye-read speed while keeping user
   as judge
@@ -886,7 +886,8 @@ as #424 follow-up
 
 **Issues closed:** #418
 
-**Release:** v2.9.0 (https://github.com/braboj/solid-ai-templates/releases/tag/v2.9.0)
+**Release:** v2.9.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.9.0>)
 
 ---
 
@@ -933,7 +934,8 @@ applied to #431's suggested `ai-workflow.md` home.
 
 **Milestone:** v2.10 — Data-quality finish (8/8 closed)
 
-**Release:** v2.10.0 (https://github.com/braboj/solid-ai-templates/releases/tag/v2.10.0)
+**Release:** v2.10.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.10.0>)
 
 ---
 
@@ -978,7 +980,8 @@ the #500 schema it documents.
 
 **Milestone:** v2.11 — Docs & ADR conventions (8/8 closed)
 
-**Release:** v2.11.0 (https://github.com/braboj/solid-ai-templates/releases/tag/v2.11.0)
+**Release:** v2.11.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.11.0>)
 
 **Next:** planned v2.12 — Probe-first workflow lessons (#18, 9 issues) —
 ai-workflow probe/verify-before-acting sweep I; #482 closed as a
@@ -1026,7 +1029,8 @@ stated self-contained instead.
 
 **Milestone:** v2.12 — Probe-first workflow lessons (9/9 closed)
 
-**Release:** v2.12.0 (https://github.com/braboj/solid-ai-templates/releases/tag/v2.12.0)
+**Release:** v2.12.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.12.0>)
 
 **Next:** v3.0 — Restructure (13 issues) — inline-to-reference eval,
 slim stacks.
@@ -1131,8 +1135,8 @@ ai-workflow.md would have mis-placed them. One concern can span files
 
 **PRs merged:** #556, #557, #558
 
-**Issues closed:** #485, #484, #486, #526, #494, #501, #527, #516, #430, #460, #480,
-#525, #502
+**Issues closed:** #485, #484, #486, #526, #494, #501, #527, #516, #430, #460,
+ #480, #525, #502
 
 ## 2026-06-25 — v2.15 Backend & resilience + repo hygiene
 
@@ -1294,9 +1298,9 @@ side-patterns were preserved as #600/#601 rather than lost on close.
 
 **PRs merged:** #593, #594, #595, #596, #597, #598, #599, #602
 
-**Issues closed:** #454, #448, #483, #427, #488, #504, #487, #495, #520, #453, #576,
-#463, #449, #575, #461, #517, #462, #325, #467. Also: #503 closed as already-covered;
-#493 moved to v2.19; #600/#601 filed.
+**Issues closed:** #454, #448, #483, #427, #488, #504, #487, #495, #520, #453,
+ #576, #463, #449, #575, #461, #517, #462, #325, #467. Also: #503 closed as
+already-covered; #493 moved to v2.19; #600/#601 filed.
 
 ## 2026-06-25 — v2.19 Quality, testing & maintainability lessons
 
@@ -1344,9 +1348,9 @@ the capstone closes the loop the v2.17 PLAYBOOK convention opened.
 
 **PRs merged:** #605, #606, #607, #608, #609, #610, #611, #612, #613
 
-**Issues closed:** #469, #464, #428, #451, #436, #345, #332, #452, #476, #475, #455,
-#523, #592, #519, #337, #491, #493, #473, #432, #440, #591. Filed #600, #601, #604
-(Backlog).
+**Issues closed:** #469, #464, #428, #451, #436, #345, #332, #452, #476, #475,
+ #455, #523, #592, #519, #337, #491, #493, #473, #432, #440, #591. Filed #600,
+ #601, #604 (Backlog).
 
 ## 2026-06-25 — v2.20 Concrete Python & frontend
 
@@ -2272,8 +2276,8 @@ Two milestones planned and drained in one session, plus a tracker decision.
 **Groom.** The 39 untriaged downstream issues were clustered into ten groups
 by target file, the eight carrying no priority label were labelled, and the
 overlaps recorded: #846 and #849 were largely overtaken by #880, which shipped
-the day before; #816 and #824 are one convention in two files; #863 blocks on
-#859.
+the day before; #816 and #824 are one convention in two files; #863 blocks
+on #859.
 
 **v2.36 — Branch & session hygiene** (#888-#899). The startup branch cleanup
 (#865) was broken in this repo's own CLAUDE.md: `git branch --merged main`
@@ -2329,8 +2333,8 @@ downstream evidence — reusable upstream content, which is what this repo is.
 
 **PRs merged:** #887-#906
 
-**Issues closed:** #816, #820, #822, #824, #825, #835, #836, #845, #856,
-#858, #859, #861, #863, #864, #865, #881, #882. Opened #900; reopened #883.
+**Issues closed:** #816, #820, #822, #824, #825, #835, #836, #845,
+ #856, #858, #859, #861, #863, #864, #865, #881, #882. Opened #900; reopened #883.
 Journal PR carries no milestone.
 
 ---
@@ -2405,8 +2409,8 @@ had shipped earlier the same day but were left open.
 
 **PRs merged:** #915, #918, #920, #921, #922, #924, #925, #926
 
-**Issues closed:** #914, #818, #827, #828, #829, #830, #833, #843, #846,
-#847, #849, #860, #912. Milestones `Backlog` and `Expedite` deleted;
+**Issues closed:** #914, #818, #827, #828, #829, #830, #833, #843,
+ #846, #847, #849, #860, #912. Milestones `Backlog` and `Expedite` deleted;
 v2.40-v2.42 created. Journal PR carries no milestone.
 
 ## 2026-08-02 — v2.40 Tooling, containers & CI
@@ -2418,8 +2422,8 @@ A tracker placement pass, then the milestone drained end to end.
 **Placement.** Five issues left unmilestoned by the previous session were
 placed: the two `platform/github.md` bugs (#916, #917) into v2.40 alongside
 the lychee item already there, the submodule read-discipline rule (#927) into
-v2.42 with the tracker work, and the two `git.md` merge-mechanics rules (#919,
-#923) into a new v2.43 — no existing theme fit them, and folding them into
+v2.42 with the tracker work, and the two `git.md` merge-mechanics rules
+(#919, #923) into a new v2.43 — no existing theme fit them, and folding them into
 v2.42 would have made its title stop describing its contents. #831 and #832
 stay unmilestoned, which is now correct rather than an oversight: ADR-023
 deleted the milestone lanes, so `P4` alone carries deferral.
@@ -2471,7 +2475,6 @@ configures this repo's own editor tooling and travels nowhere.
 
 **Issues closed:** #916, #917, #900, #848, #834, #826, #817, #821. Journal PR
 carries no milestone.
-
 
 ---
 
@@ -2569,8 +2572,8 @@ predicate is positive: at least one check present, and every state in
 mean "not done" fails open on any state not enumerated; enumerating the
 states that mean "done" fails closed.
 
-**Template feedback:** all six are reusable upstream content. #883, #952,
-#913 and #927 came from applying this chain to `braboj/page-fetcher` and to
+**Template feedback:** all six are reusable upstream content. #883,
+ #952, #913 and #927 came from applying this chain to `braboj/page-fetcher` and to
 this repository itself; #907 and #839 from `page-fetcher` and `corrosim`.
 
 **Releases:** v2.42.0. Milestone v2.42 closed.
@@ -2745,8 +2748,8 @@ so it is unreleased on main and belongs to the next cut.
 
 **Tool:** Claude Code (Opus 5 [1M]).
 
-**Both halves of a bump were unspecified in the same direction** (#970,
-#971). `base-agents` already settled which revision a consumer *reads* —
+**Both halves of a bump were unspecified in the same direction**
+(#970, #971). `base-agents` already settled which revision a consumer *reads* —
 the issue list at HEAD, the rules at the pin — and that read-side rule
 had made the write side look settled too. It was not. A downstream bump
 procedure ran `checkout origin/main`, the exact read the section forbids,
@@ -3025,11 +3028,11 @@ and the ADR schema finally matches what the project practises.
 **Releases:** v2.46.0 -- Unenforced rules, 11 issues, all three open P1
 bugs cleared.
 
-**PRs merged:** #1061, #1063, #1065, #1068, #1070, #1071, #1073, #1074,
-#1075, #1078, #1079
+**PRs merged:** #1061, #1063, #1065, #1068, #1070, #1071, #1073,
+ #1074, #1075, #1078, #1079
 
-**Issues closed:** #983, #999, #1015, #1029, #1045, #1055, #1056, #1064,
-#1067, #1069, #1072
+**Issues closed:** #983, #999, #1015, #1029, #1045, #1055, #1056,
+ #1064, #1067, #1069, #1072
 
 **Issues opened:** #1062, #1064, #1067, #1069, #1072, #1080
 
@@ -3186,11 +3189,11 @@ four commits that had been sitting on main unmilestoned), v2.48.0
 continued -- 2 issues, 2 PRs, milestone created before the work rather
 than at tag time).
 
-**PRs merged:** #1088, #1089, #1090, #1091, #1092, #1093, #1094,
-#1095, #1099, #1100
+**PRs merged:** #1088, #1089, #1090, #1091, #1092, #1093,
+ #1094, #1095, #1099, #1100
 
-**Issues closed:** #832, #1005, #1014, #1024, #1026, #1028, #1031,
-#1037, #1044, #1046, #1086, #1087, #1097, #1098
+**Issues closed:** #832, #1005, #1014, #1024, #1026, #1028,
+ #1031, #1037, #1044, #1046, #1086, #1087, #1097, #1098
 
 **Issues opened:** #1087 -- filed mid-session after the third
 consecutive milestone-at-tag-time scramble, and closed in the same cut,
@@ -3362,8 +3365,8 @@ said nothing had happened, the other named the state. Reading the first
 as a workflow that never fired would have sent someone hunting a broken
 trigger.
 
-**The same issue was implemented twice, in parallel, by two people.**
-#1049 was picked up here and in a separate session, landing as two
+**The same issue was implemented twice, in parallel, by two
+people.** #1049 was picked up here and in a separate session, landing as two
 complete pull requests within minutes of each other. One merged, one was
 closed as superseded. Nothing looks at the open pull request list before
 starting a ticket, the same way nothing greps the tracker before filing
@@ -3392,8 +3395,8 @@ issues. Tagged at commit `be4fe92` rather than at `main`, the first
 release to use the rule added in the previous cut: naming the commit is
 what keeps the journal entry outside the release it describes.
 
-**PRs merged:** #1115, #1116, #1118, #1119, #1120, #1122 (and #1111,
-#1112, #1114 from the previous session's close-out, which fall inside
+**PRs merged:** #1115, #1116, #1118, #1119, #1120, #1122 (and
+ #1111, #1112, #1114 from the previous session's close-out, which fall inside
 this tag's range)
 
 **Issues closed:** #1008, #1021, #1025, #1030, #1032, #1042, #1049, #1117
@@ -3471,11 +3474,11 @@ seventeen pre-resolved chains stale -- the precise failure, reproduced on
 the pull request that fixes it, with `sync.py --check` reporting `STALE 17`
 before the prescribed regeneration and `All files in sync` after.
 
-**The last rule written was the one the other four had been following.**
-#1102 asks that a filed issue be re-verified against the tree before it
+**The last rule written was the one the other four had been
+following.** #1102 asks that a filed issue be re-verified against the tree before it
 is implemented. It was implemented last, after four issues in the same
-cut had been groomed, and all three shapes it names had already occurred:
-#1107 narrower than filed, #1103 wider than filed, #1110 wrong as filed.
+cut had been groomed, and all three shapes it names had already
+occurred: #1107 narrower than filed, #1103 wider than filed, #1110 wrong as filed.
 `review.md` already required verifying a finding before REPORTING it and
 said nothing about verifying a ticket before ACTING on it, which is the
 same problem on the input side, so it landed as the sibling section.
@@ -3642,8 +3645,8 @@ release it describes.
 
 **PRs merged:** #1139, #1141, #1142, #1143, #1144, #1145, #1146
 
-**Issues closed:** #993, #995, #997, #998, #1001, #1002, #1003, #1017,
-#1018, #1023, #1057, #1104
+**Issues closed:** #993, #995, #997, #998, #1001, #1002, #1003,
+ #1017, #1018, #1023, #1057, #1104
 
 **Issues opened:** #1147, for the two community health files this
 repository now owes itself.
@@ -3720,8 +3723,8 @@ outside the release it describes.
 
 **PRs merged:** #1151, #1152, #1153, #1154, #1155, #1156, #1157
 
-**Issues closed:** #1009, #1010, #1011, #1013, #1019, #1027, #1047,
-#1076
+**Issues closed:** #1009, #1010, #1011, #1013, #1019, #1027,
+ #1047, #1076
 
 **Issues opened:** none.
 
@@ -3747,8 +3750,8 @@ one was stale, because the rewritten check does still name each offender
 and its counts. #1051's example passed a bare `./**/*.md`, which the
 external-links note three paragraphs below already forbids -- and
 `--exclude-path` turned out to take regular expressions rather than
-paths, so a bare `docs` excludes every path containing that substring.
-#724 asked for the security template and flagged the placement as open;
+paths, so a bare `docs` excludes every path containing that
+substring. #724 asked for the security template and flagged the placement as open;
 measurement moved it.
 
 **A rule's home is decided by reach, and the topically obvious file was
@@ -3851,8 +3854,8 @@ directly -- so declaring `base-python` once reached 6/17. `stack-go-lib`
 has the same shape and reached 4/17. Measuring the graph before choosing
 the wiring turned what looked like six edits into one.
 
-**The abstract layer's worst offender was not the file the issue named.**
-#750 pointed at `quality-gates.md`. `base/core/quality.md` carried the
+**The abstract layer's worst offender was not the file the issue
+named.** #750 pointed at `quality-gates.md`. `base/core/quality.md` carried the
 same inversion at core tier -- a nine-row table of TypeScript-only lint
 rules that all seventeen chains resolved, including C and Go. Fixed in
 the same pass, because leaving it would have contradicted ADR-027 the
@@ -3990,8 +3993,8 @@ explicitly rather than letting the file's general rule be read onto it.
 
 **PRs merged:** #1185, #1186, #1187, #1188, #1189, #1190, #1191, #1193
 
-**Issues closed:** #1022, #1039, #1043, #1140, #1159, #1160, #1161, #1168,
-#1181, #1183
+**Issues closed:** #1022, #1039, #1043, #1140, #1159, #1160, #1161,
+ #1168, #1181, #1183
 
 **Issues opened:** #1192, for `sync.py --check` writing the files it is
 checking.
@@ -4063,18 +4066,18 @@ cannot lose one. That last character class earned itself immediately:
 without it, a search for issue 104 matches a body closing 1041.
 
 **Both new checks were extracted from the committed file and run against
-controls.** The pull-request query matched #1198 on a body closing
-#1041, reported the 20 pull requests it had inspected, and did not match
-#104. The decision-record query listed ADR-004, ADR-026 and ADR-027 as
+controls.** The pull-request query matched #1198 on a body
+closing #1041, reported the 20 pull requests it had inspected, and did not
+match #104. The decision-record query listed ADR-004, ADR-026 and ADR-027 as
 touched since 2026-08-20; a future date and a mistyped directory printed
 the same nothing, which is why its pass condition asks for one run
 without `--since` to prove the path resolves.
 
-**PRs merged:** #1198, #1199, #1200, #1201, #1202, #1203, #1205, #1206,
-#1207
+**PRs merged:** #1198, #1199, #1200, #1201, #1202, #1203, #1205,
+ #1206, #1207
 
-**Issues closed:** #725, #748, #985, #994, #1000, #1036, #1038, #1041,
-#1052, #1133, #1137, #1195, #1196
+**Issues closed:** #725, #748, #985, #994, #1000, #1036, #1038,
+ #1041, #1052, #1133, #1137, #1195, #1196
 
 **Issues opened:** #1208, for the pre-release checklist in `git.md`,
 which has not had the enforcement audit this cut's own rule requires and
@@ -4162,8 +4165,8 @@ disagreeing with the template they came from.
 
 **PRs merged:** #1214, #1216, #1217, #1218, #1219, #1221, #1222, #1223
 
-**Issues closed:** #979, #980, #1192, #1197, #1204, #1208, #1211, #1212,
-#1213
+**Issues closed:** #979, #980, #1192, #1197, #1204, #1208, #1211,
+ #1212, #1213
 
 **Issues opened:** #1213, filed and shipped in the same cut since the
 rule it asks for is what the other two checks needed; #1220, for the
@@ -4314,8 +4317,8 @@ the audit filed issues the merged entry could not name. Last session that
 forced an in-place amendment. Step 7 now records that the entry is owed
 and names the audit item that writes it, and states that a release without
 a wrap-up still owes one. This entry is the first written under the
-corrected ordering by rule rather than by hand, which is why it can name
-#1248 and #1249 -- both filed at audit item 12, after the release was
+corrected ordering by rule rather than by hand, which is why it can
+name #1248 and #1249 -- both filed at audit item 12, after the release was
 published.
 
 **Two documents numbered the same procedure differently, and one file
@@ -4383,8 +4386,8 @@ written down.
 **Issues closed:** #1226, #1228, #1237, #1241, #1242
 
 **Issues opened:** #1248, the groom procedure and the merged-commit sweep
-being reusable and having landed only in this repository's PLAYBOOK, which
-#1242's own text asked for and this cut did not do; and #1249, a branch
+being reusable and having landed only in this repository's PLAYBOOK,
+which #1242's own text asked for and this cut did not do; and #1249, a branch
 that goes BEHIND carrying stale regenerated artifacts while Git reports it
 MERGEABLE -- `base-git` already has the recovery mechanism and not the
 reason it matters. Both from audit item 12.
@@ -4392,9 +4395,9 @@ reason it matters. Both from audit item 12.
 **Also this session:** the backlog was groomed first, 44 unmilestoned
 issues re-measured against the tree, and two clusters fell out. The one
 not taken -- two templates resolving into one chain and wanting opposite
-things from the same file -- stays intact for the next cut: #1238, #1239,
-#1240, #1230, #1231. Three groom measurements corrected a filed claim:
-#1233 counts 25 trailing comments rather than 31, #1226's dangling set is
+things from the same file -- stays intact for the next cut: #1238,
+ #1239, #1240, #1230, #1231. Three groom measurements corrected a filed
+claim: #1233 counts 25 trailing comments rather than 31, #1226's dangling set is
 3 of 15 rather than the 5 of 33 recorded earlier, and #1242's cited
 `resolve.py --check` does not exist. ADR-028 was written after the tag,
 so v2.62.0 carries the rule and not its record.
@@ -4488,8 +4491,8 @@ tree, and the composition suite does not attempt to.
 
 **Issues opened:** #1257, the changelog requirement being unsatisfied here
 and ambiguous about hosted release notes; and #1258, nothing running the
-templates' own checks against this repository, which is the pattern behind
-#1147, #1233 and #1257 alike. Both from audit item 12.
+templates' own checks against this repository, which is the pattern
+behind #1147, #1233 and #1257 alike. Both from audit item 12.
 
 **Also this session:** the second pull request went BEHIND, which is the
 case documented in the PLAYBOOK earlier the same day -- `gh pr
@@ -4536,8 +4539,8 @@ searches for. Filed as #1260, with the quieter variant named too -- a
 self-match that produces a passing result verifies nothing and looks like a
 clean tree.
 
-**The ordering rule fixed this morning assumes the audit runs once.**
-#1228 moved the journal out of the release procedure and into the audit,
+**The ordering rule fixed this morning assumes the audit runs
+once.** #1228 moved the journal out of the release procedure and into the audit,
 because the audit produces work the entry must name. It does not say what
 to do when a session runs the audit more than once, which is what happened
 here: a release wrap-up followed by an explicit end-of-session one. Filed
@@ -4585,10 +4588,10 @@ which needs the owner's word on a disclosure route, an acknowledgement
 window and whether to carry a code of conduct, and #1270, stacked on it so
 the conformance runner lands green.
 
-**Issues closed:** #1245, #1233, #1260, #1257, #1254. **Issues created:**
-#1273 and #1274, both from the audit. **Decisions:** ADR-029 on the
-changelog, merged; ADR-030 on running the shipped checks here, waiting on
-#1270.
+**Issues closed:** #1245, #1233, #1260, #1257, #1254. **Issues
+created:** #1273 and #1274, both from the audit. **Decisions:** ADR-029 on the
+changelog, merged; ADR-030 on running the shipped checks here, waiting
+on #1270.
 
 **The groom is what made the cut coherent, and one measurement changed the
 plan.** #1233 was filed as 31 comment-layout violations. Re-measured, 31
@@ -4640,8 +4643,8 @@ was built to end.** `base-quality` requires a `.gitattributes` and this
 repository has none, which is why a wrap-up edit to `CLAUDE.md` could
 convert the whole file to CRLF -- 451 lines rewritten for a 7-line change,
 plus a stray doubled CR -- and pass review, CI, smoke, sync and the
-redundancy audit. It was the only text blob in the repository with CRLF.
-#1272 repaired the file; #1273 tracks the missing `.gitattributes`.
+redundancy audit. It was the only text blob in the repository with
+CRLF. #1272 repaired the file; #1273 tracks the missing `.gitattributes`.
 
 **The reason the runner missed it is the more interesting half.** It
 extracts fenced blocks, and `base-quality` states the line-ending check
@@ -4752,8 +4755,8 @@ milestone it names.
 **The session groomed the backlog, scoped v2.65 from the cluster the groom
 found, shipped it, and cut the release.** Going in, `v2.65` existed as a
 milestone holding one closed issue and one open one, themed from those two
-rather than from a groom. The groom changed the theme. Three issues -- #1274,
-#1279 and #1273 -- turned out to be the same finding from three directions,
+rather than from a groom. The groom changed the theme. Three issues --
+ #1274, #1279 and #1273 -- turned out to be the same finding from three directions,
 and two of them said so in their own bodies: #1279 recorded that it "belongs
 with #1274 rather than being fixed alone". The milestone was retitled to what
 the groom actually produced, `A rule is worth what its check can establish`,
@@ -4903,8 +4906,8 @@ the whole content of the rule.
 
 **What is left.** #1290 arrived from the parallel session unlabelled and
 was labelled `task` + `P2` on the way past; #1293 arrived from the same
-place already labelled, and needed nothing. It makes five issues -- #1267,
-#1285, #1287, #1288, #1290 -- all saying that a check reports something
+place already labelled, and needed nothing. It makes five issues --
+ #1267, #1285, #1287, #1288, #1290 -- all saying that a check reports something
 other than what it establishes, which is a stronger cut theme than anything
 else in the backlog and still unscoped. #1295 records that the PLAYBOOK has
 no procedure for measuring downstream reach before a required document
@@ -4924,8 +4927,8 @@ scoped it, and the groom added two more issues before the first line of
 code was written.
 
 **Verifying the claims before grooming changed one of them.** #1287 was
-filed as two halves; measuring found the first half already shipped in
-#1274, so only the upstream rule remained. The placement question its
+filed as two halves; measuring found the first half already shipped
+in #1274, so only the upstream rule remained. The placement question its
 acceptance criteria demanded was answered by measurement rather than by
 adjacency: `quality-gates.md` reaches 12 of 17 chains and `quality.md`
 reaches 17, and naming the sibling rules from the wider file would dangle
@@ -5001,8 +5004,8 @@ convention wants.
 **Reading the twelve judgement checks is now part of the wrap-up, and it
 filed four issues.** #1309 is the sharpest: a check in
 `quality-gates.md` reports a bare `0`, stating neither its corpus nor its
-finding -- the rule this very release shipped, violated one file over.
-#1310 has the register-identifier check calling an unadopted convention a
+finding -- the rule this very release shipped, violated one file
+over. #1310 has the register-identifier check calling an unadopted convention a
 drifted one. #1311 has the continuation-safety check flagging valid shell
 inside a documented YAML workflow. #1312 asks what a release-time or
 migration-time check should print when run at neither moment, since both
@@ -5092,15 +5095,15 @@ session's entry describes the same failure with four entries, so this is
 the second occurrence and the first where a fix was available: the check
 declares a limit and counts against it, which is an automatic verdict
 being reported as a judgement. #1322 asks which side each threshold check
-belongs on, and notes the trade-off that kept three of them manual in
-#1309 — the runner carries output only for a manual disposition, so
+belongs on, and notes the trade-off that kept three of them manual
+in #1309 — the runner carries output only for a manual disposition, so
 reaching a verdict currently costs the reading.
 
 **The rule shipped and two of its own siblings still violate it.** Both
 were read during the work, in files being edited for the rule, and
 neither was noticed: the changelog-completeness check prints two zeros
-after a release, and the test-visibility check prints three on `main`.
-#1321 carries them, and asks for the sweep rather than the two instances
+after a release, and the test-visibility check prints three on
+`main`. #1321 carries them, and asks for the sweep rather than the two instances
 — a new rule applied to the cases that prompted it, rather than to its
 own reach, is the same containment failure one level up.
 
@@ -5122,8 +5125,8 @@ so the substance is stated inline.
 **Issues opened:** #1321, #1322
 
 **What is left.** #1321 and #1322 are unmilestoned and both are about
-this release's own work. The strongest content cluster remains #1267,
-#1293 and #1033 — a rule recommending a shape that is wrong for the case
+this release's own work. The strongest content cluster remains
+ #1267, #1293 and #1033 — a rule recommending a shape that is wrong for the case
 the caller has — and all three were verified against the tree during this
 groom, so the next cut is scoped one release ahead as v2.63 showed to be
 worth doing. #1291's rename decision still gates #1292 and #1295.
@@ -5274,8 +5277,8 @@ None` rather than an empty string cost a first attempt.
 request.** The label-conformance check went red because two issues had
 arrived unlabelled from a parallel session between the release and the
 audit. That is the gate working: nothing else surfaces an unlabelled issue,
-and it surfaced this one against an unrelated branch within minutes.
-#1331 and #1332 are labelled `task` / `P2`, each with the precedent
+and it surfaced this one against an unrelated branch within
+minutes. #1331 and #1332 are labelled `task` / `P2`, each with the precedent
 recorded on the issue, and they are a pair — same provenance, and #1332's
 worked example is the loosening #1331 argues for, so implementing either
 alone leaves the other half-told.
@@ -5463,8 +5466,8 @@ tag-guard green
 
 **What is left.** `v2.70 — The gate that was loosened on purpose` is scoped
 and assigned at two open issues, #1331 and #1332, to land as one pull
-request because #1332's worked example is the loosening #1331 argues for.
-#1342 and the two filed here are unmilestoned. The backlog closed at 58
+request because #1332's worked example is the loosening #1331 argues
+for. #1342 and the two filed here are unmilestoned. The backlog closed at 58
 open with 42 unmilestoned, label conformance empty, smoke 26 of 26, sync
 clean, conformance 14 passed with six not applicable and two read: the
 continuation scan finds no check split across a line, and the release
@@ -5555,8 +5558,8 @@ commit's two workflow runs report no failure now that the flake is cleared.
 obvious cluster.** A status reading found `v2.70.0` shipped and the tree
 clean, with six issues that memory already grouped as one theme. Grooming
 all forty-four unmilestoned issues first per the PLAYBOOK procedure changed
-two things about that group. Reading each claim against the tree showed
-#1346 was worse than filed — the *manifest* release variant already used a
+two things about that group. Reading each claim against the tree
+showed #1346 was worse than filed — the *manifest* release variant already used a
 bare version in both artifacts, so the template shipped two variants
 disagreeing with each other. And measuring reach put #1351 in the opposite
 file from the one it nominated: `quality-gates.md` reaches twelve chains
@@ -5569,8 +5572,8 @@ changelog-completeness check take its moment as a declared value instead of
 detecting it from the tag, and removed the clause contradicting the
 sentence two lines above it. #1355 gave the release theme to the annotated
 tag message and the bare version to the title. #1356 narrowed the
-pre-release periodic review to minor and major releases, with ADR-033.
-#1357 stopped the runbook preamble denying the pull request its own step 4
+pre-release periodic review to minor and major releases, with
+ADR-033. #1357 stopped the runbook preamble denying the pull request its own step 4
 requires. #1358 paired #1342 and #1351 in the file the measurement chose.
 
 **The gate shipped in this release blocked its own cut.** ADR-033 says a
@@ -5594,8 +5597,8 @@ landed in #1359. Inserting a step would have renumbered nine and staled
 ADR-029's reference, so the runbook defers to `base-git`'s pre-release
 sequence instead — the opposite of the duplication that produced the drift.
 
-**A green check was mistaken for evidence, and the audit caught that too.**
-#1358's description claimed SYS-11 confirmed its cross-file reference safe
+**A green check was mistaken for evidence, and the audit caught that
+too.** #1358's description claimed SYS-11 confirmed its cross-file reference safe
 in every chain. SYS-11 matches identifiers prefixed with a layer name, so
 it can see 124 of the 366 declared section IDs and not one `quality-*`
 among them — the pass was vacuous. The reference is safe, by containment,
@@ -5699,8 +5702,8 @@ precedent of #1367 and #1381, with the precedent commented on the issue.
 **ADRs:** ADR-034, the runner rejects a pass reporting no input.
 **State at close:** smoke 26/26, sync clean, redundancy 0, conformance 14
 passed and 0 failed with all three readings read, 0 open pull requests, no
-stale branches, label conformance `[]`, 72 open issues. Milestone #78 holds
-#1360, #1366 and #1381 — no tag; the cut is half shipped.
+stale branches, label conformance `[]`, 72 open issues. Milestone #78
+holds #1360, #1366 and #1381 — no tag; the cut is half shipped.
 
 ## 2026-09-01 — The wrap-up shipped work after the entry that records it
 
@@ -5741,7 +5744,7 @@ places the next rule
 **Key changes:** v2.72's second half and the cut. Three issues, three
 pull requests, then the changelog cut, the tag and the release.
 
-#1366 — twenty manifest entries are reachable only through the extras and
+Issue #1366 — twenty manifest entries are reachable only through the extras and
 platform steps of the resolution algorithm, and every reachability check
 resolved the seventeen stacks and stopped. Those files were scanned
 against zero chains, so they passed by arithmetic: nothing can be missing
@@ -5753,7 +5756,7 @@ resolution decision record says resolve each one's dependency tree, and
 `resolve.py` already did. The specification was the odd one out and the
 checks had followed it.
 
-#1381 — a check that resolves its comparison baseline by running a command
+Issue #1381 — a check that resolves its comparison baseline by running a command
 inherits a failure no rule covered: the command yields nothing, every
 comparison against the empty value succeeds, and the check reports a clean
 result from a comparison that never ran. Stated in `base-quality` after
@@ -5761,7 +5764,7 @@ measuring reach — that file and `base-git` both resolve into all
 thirty-seven roots, and the rule is about check construction rather than
 about git.
 
-#1360 — the model-limitations table an adopter reads to pick a model was
+Issue #1360 — the model-limitations table an adopter reads to pick a model was
 estimated once and never re-measured. The smallest chain in the repository
 is 270K characters, roughly 77K tokens; the table claimed 12K and a 32K
 minimum. It is now rendered by `sync.py` from the resolved chains, and
@@ -5775,7 +5778,7 @@ never opened held the defects it exists to find.
 
 **The rule found two live instances in the file next to it.** `base-git`
 shipped two checks with the defect #1381 names. The milestone-coverage
-check printed `previous tag: ` and zero references at exit 0. The
+check printed `previous tag:` and zero references at exit 0. The
 off-limits-path check took its base from `git rev-parse`, which echoes an
 argument it cannot resolve — so a wrong base looked resolved, the diff
 failed, and no changed files read as nothing off limits. A rule shipped in
@@ -5948,8 +5951,8 @@ the entry naming #1407 alone.
 defect is already filed as #1391: the journal sits at item 14 of sixteen,
 its own text says it is last because it records the others, and items 15 and
 16 follow it. The three earlier recurrences came from the audit running
-twice in a session. This one came from the ordering itself, which is what
-#1391 predicts and what its first option — move the journal after item 15,
+twice in a session. This one came from the ordering itself, which is
+what #1391 predicts and what its first option — move the journal after item 15,
 leaving only the summary behind it — would have prevented. The cost is
 exactly as described there: an entry's account is fixed once written, so the
 correction is a second entry rather than an edit.
@@ -5990,8 +5993,8 @@ Verifying #1401's claim about the generator, a marker-deletion plant reported
 working tree is CRLF under `core.autocrlf` and the pattern ended in a bare
 newline, so marker occurrences went from two to two. The corrected control
 asserted the plant landed first and reported `exit=1` — the generator already
-carried the destination check, fixed while implementing #1360. This is
-#1425's rule, merged forty minutes earlier in the same session, and
+carried the destination check, fixed while implementing #1360. This
+is #1425's rule, merged forty minutes earlier in the same session, and
 `CLAUDE.md` had carried the general form including the line-endings cause
 since before the session began. Having the rule loaded on every turn did not
 prevent the failure.
@@ -6021,12 +6024,12 @@ Removing them raised v3.0's spike ratio from 54% to 63%, which is what it
 actually is. `v2.75` was scoped from the remaining clusters and shipped the
 same day.
 
-**Pull requests merged:** #1418, #1419, #1421, #1423, #1426, #1427, #1428,
-#1429, #1430, #1431, #1432, #1433, #1434, #1437.
-**Issues closed:** #1125, #1363, #1364, #1365, #1369, #1370, #1371, #1372,
-#1373, #1378, #1384, #1388, #1401, #1410, #1415, #1416, #1425.
-**Issues opened:** #1417, #1420, #1422 and #1436 from this session; #1424,
-#1425 and #1435 arrived from a parallel session and were labelled on the way
+**Pull requests merged:** #1418, #1419, #1421, #1423, #1426, #1427,
+ #1428, #1429, #1430, #1431, #1432, #1433, #1434, #1437.
+**Issues closed:** #1125, #1363, #1364, #1365, #1369, #1370, #1371,
+ #1372, #1373, #1378, #1384, #1388, #1401, #1410, #1415, #1416, #1425.
+**Issues opened:** #1417, #1420, #1422 and #1436 from this session;
+ #1424, #1425 and #1435 arrived from a parallel session and were labelled on the way
 past.
 **Upstream:** #1436 is the one reusable pattern filed — a gate finding is
 cleared by changing the condition, never the input the gate reads.
@@ -6142,8 +6145,8 @@ roots now at exactly zero headroom, and SYS-12 reports only the minimum
 headroom — so padding one ceiling leaves the output byte-identical to an honest
 tree. The file's own text says the numbers are frozen at what the tree
 measured, not padded with a band; nothing enforces that and nothing can reveal
-its breach. I leaned on that mechanism five times during this release. Filed as
-#1462 with the honest qualifier that the ratchet is not fake: controls confirm
+its breach. I leaned on that mechanism five times during this release. Filed
+as #1462 with the honest qualifier that the ratchet is not fake: controls confirm
 it fires when a ceiling is lowered or removed.
 
 **Two issues I filed carried measurements my own merged pull requests had
@@ -6204,11 +6207,11 @@ printed `exit=$?` beside it. #1456 was assigned and the check re-run before the
 tag. The operator half landed in `docs/PLAYBOOK.md` (#1477); the generalisable
 half, how a shipped check signals a finding at all, is #1478.
 
-**Pull requests merged:** #1447, #1448, #1449, #1450, #1451, #1452, #1457,
-#1475, #1476, #1477.
+**Pull requests merged:** #1447, #1448, #1449, #1450, #1451, #1452,
+ #1457, #1475, #1476, #1477.
 **Issues closed:** #1402, #1404, #1405, #1424, #1435, #1445, #1456.
-**Issues opened:** #1446, #1453, #1454, #1455, #1456, #1458 through #1474,
-#1478 — 23 in total, 17 of them from the audit.
+**Issues opened:** #1446, #1453, #1454, #1455, #1456, #1458 through
+ #1474, #1478 — 23 in total, 17 of them from the audit.
 **Upstream:** six of the seven patterns landed in `templates/` in the pull
 requests that introduced them. The seventh split: the operator guidance is
 project-specific and went to the PLAYBOOK, the reusable half is #1478 against
@@ -6393,8 +6396,8 @@ ratchet has been raised 313 times and lowered none, per #1462; this is one
 piece of evidence that a raise is sometimes a failure of drafting rather than a
 real cost. Recorded in the PLAYBOOK as the step to try before paying.
 
-**The cut was the first release proposal written under the rule it shipped.**
-#1492's body names all eight pre-release steps and each result, including the
+**The cut was the first release proposal written under the rule it
+shipped.** #1492's body names all eight pre-release steps and each result, including the
 ones this repository's PLAYBOOK deliberately leaves unnumbered. Two steps
 needed more than an exit code. Step 2 reports 425 unreachable commits, and the
 count answers nothing on its own: categorising by subject against `main`
@@ -6424,8 +6427,8 @@ CONTRIBUTING should match. ONBOARDING says, one line above naming PyYAML, "No
 build step, no dependencies to install." The corrected file was corrected
 against a file carrying the same contradiction.
 
-**Three rules this repository applies and ships to nobody.** #1493, #1494 and
-#1495 — the control rule above, refusing a run when the suite's own
+**Three rules this repository applies and ships to nobody.** #1493, #1494
+and #1495 — the control rule above, refusing a run when the suite's own
 precondition is missing rather than reporting 14 findings about a clean tree,
 and the rule that a stated measurement belongs to the tree it was taken on.
 That last one was load-bearing again today: #1460 claimed 65 misses over 20
@@ -6433,8 +6436,8 @@ files and the tree gave 38 over 3, the defect real and the magnitude stale.
 This is v2.78's theme one level up — not a document contradicting the tooling,
 but a practice the templates never learned.
 
-**Pull requests merged:** #1485, #1487, #1488, #1489, #1491, #1492 (the cut),
-#1496 (the wrap-up).
+**Pull requests merged:** #1485, #1487, #1488, #1489, #1491, #1492 (the
+cut), #1496 (the wrap-up).
 **Issues closed:** #1455, #1458, #1459, #1460, #1461.
 **Issues opened:** #1490, #1493, #1494, #1495. Labelled for the parallel
 session: #1486, #1497.
@@ -6444,8 +6447,8 @@ already. The three reusable rules are #1493 and #1494 against
 files rather than picking one, since ADR-028 wants both files' chain reach
 measured first. Project-specific: the fold-before-raising technique, since the
 chain budget is this repository's own mechanism.
-**Milestones:** #84 closed at 11/11. 78 open issues, 2 open P1s — #1480 and
-#712, which are the next real question and are a v3.0 groom rather than a cut.
+**Milestones:** #84 closed at 11/11. 78 open issues, 2 open P1s — #1480
+and #712, which are the next real question and are a v3.0 groom rather than a cut.
 **Owed and not repaired:** `v2.77.0`'s publication is not journalled. The entry
 above it records that release's issues and the audit that blocked its tag;
 nothing records the tag and release being cut, that happened in a previous
@@ -6530,15 +6533,15 @@ phrasings.
 **Groom.** 80 to 70. Every mechanically checkable claim in the backlog was
 re-measured against the tree with a control on each probe, and **nothing had
 been silently fixed** — closure came only from subsumption. #350's four axes
-had been split into `audit_redundancy.py`, #1471, #368 and #1184; #369 was
-#368 with one extra variable; #1490 and #1470 were subsets whose unique
+had been split into `audit_redundancy.py`, #1471, #368 and #1184; #369
+was #368 with one extra variable; #1490 and #1470 were subsets whose unique
 content was ported before closing. Seven issues now carry an explicit trigger
 condition rather than an implicit deferral.
 
-**Pull requests merged:** #1499, #1500, #1501, #1502, #1503 (the cut), #1507,
-#1508 (the parallel session's), #1510, #1513 (the wrap-up).
-**Issues closed:** #1374, #1375, #1377, #1472, #1473, #1474 in `v2.79.0`;
-#1464 and #1466 in `v2.80`; #350, #369, #1470, #1490 as duplicates.
+**Pull requests merged:** #1499, #1500, #1501, #1502, #1503 (the cut),
+ #1507, #1508 (the parallel session's), #1510, #1513 (the wrap-up).
+**Issues closed:** #1374, #1375, #1377, #1472, #1473, #1474 in
+`v2.79.0`; #1464 and #1466 in `v2.80`; #350, #369, #1470, #1490 as duplicates.
 **Issues opened:** none. Four findings were surfaced and deliberately left
 unfiled, listed under Owed below.
 **Upstream:** two reusable patterns, neither filed. A CLI validating every
@@ -6698,8 +6701,8 @@ cut), and the wrap-up's own.
 **Issues closed:** #1515, #1465, #1520, #1471, #1353, #1506 in `v2.80.0`,
 joining #1464 and #1466 already closed. #1353 and #1506 were found unmilestoned
 by the milestone-coverage gate and assigned during the cut.
-**Issues opened:** #1525 (P1, three enumerators still walk the disk), #1526,
-#1527 and #1528 from the audit; #1530 as template feedback. #1518 was the
+**Issues opened:** #1525 (P1, three enumerators still walk the disk),
+ #1526, #1527 and #1528 from the audit; #1530 as template feedback. #1518 was the
 parallel session's and was labelled in passing.
 **Upstream:** one pattern filed as #1530 — a figure a document states about the
 tree is not gated unless a generator writes it. Both instances this session met
@@ -6781,8 +6784,8 @@ supersedes ADR-036; `README.md`'s model-limits table, already gated by
 widening pushed the three library stacks from the 128K context tier to
 200K — the chain had been sitting under that boundary by roughly 800
 characters, so an ordinary core-tier rule crosses it. Nothing gates the
-crossing; it appears only as a changed cell in a generated table. Filed as
-#1551, which is the size question the ceiling's removal leaves open.
+crossing; it appears only as a changed cell in a generated table. Filed
+as #1551, which is the size question the ceiling's removal leaves open.
 
 **This release's own theme arrived during its cut.** `platform-github`'s
 changelog entry landed with its change and was deleted two pull requests
@@ -6793,10 +6796,10 @@ entries against fourteen carried commits is a legitimate reading, because a
 commit touching no template earns no entry, and nothing separates that from
 an entry someone removed. Restored in the cut, filed as #1560.
 
-**PRs merged:** #1545, #1546, #1547, #1549, #1550, #1552, #1553, #1554,
-#1555, #1557, #1558, #1559.
-**Issues closed:** #1478, #1376, #1453, #1467, #1542, #1535, #1454, #1463,
-#1446, #1062, #1397, #1398, #1462.
+**PRs merged:** #1545, #1546, #1547, #1549, #1550, #1552, #1553,
+ #1554, #1555, #1557, #1558, #1559.
+**Issues closed:** #1478, #1376, #1453, #1467, #1542, #1535, #1454,
+ #1463, #1446, #1062, #1397, #1398, #1462.
 **Issues opened:** #1548 (no gate asserts a stack serving HTTP resolves the
 security tier), #1551 (a context-tier crossing is visible only in a README
 diff), #1560 (a changelog gate cannot tell a commit owing no entry from one
@@ -6810,8 +6813,8 @@ the instruments that report it rather than the rules they check.
 ADR-041 (chain size is reported, not capped), ADR-036 superseded.
 **Owed and not repaired:** ADR-039 is absent from the `v2.81.0` tree and
 present in `v2.82.0` while #1526 carries v2.81's milestone — a record
-landing on the far side of its own tag, which is the mirror of the defect
-#1398 fixes in this release. Recorded in #1559 and left as it stands: the
+landing on the far side of its own tag, which is the mirror of the
+defect #1398 fixes in this release. Recorded in #1559 and left as it stands: the
 milestone records what was planned and the tag records the tree, and
 rewriting the first to tidy the second would misstate it.
 **State at close:** smoke 29/29 — one fewer check, by construction — sync
@@ -6917,8 +6920,8 @@ cluster in 41 unmilestoned issues: six tickets, all against
 `quality-gates-retrofit-ratchet`, all measured on the same downstream
 migration, saying the same thing from six angles — the section says how to
 build a per-file freeze and nothing about how to retire one. Two of the six
-were the same rule filed twice on the same day from different snapshots, so
-#1556 closed into #1572 with its measurement carried across.
+were the same rule filed twice on the same day from different snapshots,
+so #1556 closed into #1572 with its measurement carried across.
 
 The rest of the backlog is gated on #1480. Nine issues reference it, five are
 hard trigger-blocked, and the reason applies to any new rule in `base/core` or
@@ -6970,12 +6973,12 @@ contradict, and lists `review` in two tiers at once (#1587).
 
 **Issues closed:** #1518, #1572, #1563, #1406, #1571, #1556 (duplicate)
 
-**Issues created:** #1578 (length-bound exemptions, split out of #1518),
-#1582 (untagged fences leave the conformance corpus), #1584 (the ADR-031
-detector reads one line), #1585 (a SILENT disposition certifies no input),
-#1586 (a skip reason is ungated and one is stale), #1587 (SPEC's core-tier
-absolute), #1588 (nothing states which stacks carry a rule family),
-#1591 (the documentation-figure check misses both shipped forms)
+**Issues created:** #1578 (length-bound exemptions, split out of
+ #1518), #1582 (untagged fences leave the conformance corpus), #1584 (the ADR-031
+detector reads one line), #1585 (a SILENT disposition certifies no
+input), #1586 (a skip reason is ungated and one is stale), #1587 (SPEC's core-tier
+absolute), #1588 (nothing states which stacks carry a rule
+family), #1591 (the documentation-figure check misses both shipped forms)
 
 **Decisions:**
 - No ADR. The five rules are content inside an existing section with no
@@ -7092,8 +7095,8 @@ the project's own style rules produce)
 - Regenerated all seven `examples/*/CLAUDE.md` audit sections against the
   current chain, per ADR-016
 
-**PRs merged:** #1607 (the rule), #1608 (PLAYBOOK), #1609 (`base-scope`),
-#1610 (the seven examples)
+**PRs merged:** #1607 (the rule), #1608 (PLAYBOOK), #1609
+(`base-scope`), #1610 (the seven examples)
 
 **Issues closed:** #1606, #1220
 
@@ -7171,8 +7174,8 @@ precondition), #1615 (split oracle), #1616 (superseded citation), #1617
 (closing keyword), #1618 (length bound), #1619 (spec references), #1620
 (report names the tree), #1621 (tier membership), #1622 (SPEC)
 
-**Issues closed:** #1574, #1493, #1604, #1494, #986, #1602, #1215, #1601,
-#1578, #1565, #1417, #1588
+**Issues closed:** #1574, #1493, #1604, #1494, #986, #1602, #1215,
+ #1601, #1578, #1565, #1417, #1588
 
 **Issues created:** #1623 (a single-commit pull request loses the issue
 number the convention puts in its subject)
@@ -7300,12 +7303,12 @@ closed at 15/15, release-gates green on the tag push.
 **Released:** v2.87.0 — tag `ba8ff59` on the changelog cut, milestone #93
 closed 5/5.
 
-**Pull requests merged:** #1630 (#1628), #1631 (#1408), #1632 (#1249),
-#1633 (#1623), #1635 (#1634), #1637 (the v2.87.0 changelog cut), #1639
+**Pull requests merged:** #1630 (#1628), #1631 (#1408), #1632
+(#1249), #1633 (#1623), #1635 (#1634), #1637 (the v2.87.0 changelog cut), #1639
 (the CLAUDE.md carve-out).
 
-**Issues closed:** #1628, #1408, #1249, #1623, #1634. **Issues filed:**
-#1634, #1638.
+**Issues closed:** #1628, #1408, #1249, #1623, #1634. **Issues
+filed:** #1634, #1638.
 
 **Decisions:**
 - No ADR. Four rules were added to templates and none of them changes what
@@ -7369,8 +7372,8 @@ closed 5/5.
 **Released:** v2.88.0 — tag `c4933ef` on the changelog cut, milestone #94
 closed 7/7. The first cut to run the merged-work sweep, which found none.
 
-**Pull requests merged:** #1641 (#1638), #1642 (#1248), #1644 (#1643),
-#1645 (#1301), #1647 (#1646), #1649 (#1082), #1650 (#1295), #1651 (the
+**Pull requests merged:** #1641 (#1638), #1642 (#1248), #1644
+(#1643), #1645 (#1301), #1647 (#1646), #1649 (#1082), #1650 (#1295), #1651 (the
 PLAYBOOK gate-status correction), #1652 (the v2.88.0 changelog cut), #1653
 (the CLAUDE.md conformance rule).
 
@@ -7458,8 +7461,8 @@ closed 6/6. The first cut to run the patch-rule check, which read a minor
 with four entries outside a fix heading, and the first to record a live
 canary, which failed.
 
-**Pull requests merged:** #1657 (#1654), #1658 (#1469), #1662 (#1659),
-#1664 (#1660), #1666, #1671, #1672 and #1673 (parts of #1648), #1670 (the
+**Pull requests merged:** #1657 (#1654), #1658 (#1469), #1662
+(#1659), #1664 (#1660), #1666, #1671, #1672 and #1673 (parts of #1648), #1670 (the
 e2e runner, part of #1368), #1674 (#1368), #1675 (#1648), #1677 (the
 v2.89.0 changelog cut), #1678 (the `CLAUDE.md` subject rule), #1679 (the
 ONBOARDING e2e prerequisite).
@@ -7540,8 +7543,8 @@ ONBOARDING e2e prerequisite).
 **Released:** none. Milestone #96 "v2.90 — Check input scope and
 coverage" closed 6/6; no tag cut in this pass.
 
-**Pull requests merged:** #1681 (#1668), #1682 (#1667), #1683 (#1665),
-#1684 (#1669), #1685 (#1661), #1686 (#1676).
+**Pull requests merged:** #1681 (#1668), #1682 (#1667), #1683
+(#1665), #1684 (#1669), #1685 (#1661), #1686 (#1676).
 
 **Issues closed:** #1668, #1667, #1665, #1669, #1661, #1676.
 **Issues filed:** none — all six were groomed from the existing
@@ -7581,13 +7584,13 @@ unmilestoned backlog, not newly filed this session.
 
 **Released:** none.
 
-**Pull requests merged:** #1689 (#1663), #1690 (#1656), #1691 (#976),
-#1692 (#1524), #1693 (#1012), #1694 (#1007), #1696 (#727), #1697
+**Pull requests merged:** #1689 (#1663), #1690 (#1656), #1691
+(#976), #1692 (#1524), #1693 (#1012), #1694 (#1007), #1696 (#727), #1697
 (#1174), #1699 (#1695), #1700 (#1698).
 
-**Issues closed:** #1663, #1656, #976, #1524, #1012, #1007, #727,
-#1174, #1695, #1698 delivered; #711 and #179 closed duplicate; #308 and
-#349 closed `wontdo`. #1184's stale blocker corrected and the issue
+**Issues closed:** #1663, #1656, #976, #1524, #1012, #1007,
+ #727, #1174, #1695, #1698 delivered; #711 and #179 closed duplicate; #308
+and #349 closed `wontdo`. #1184's stale blocker corrected and the issue
 restored to v3.0 rather than closed — the external spike it named had
 already concluded on 2026-08-28.
 
@@ -7737,8 +7740,8 @@ owner's choice.
 - A review of the design found six live defects, fixed in #1717, and named
   a seventh already fixed
 
-**Pull requests merged:** 16 — #1705, #1706, the cut #1708, #1709, #1710,
-#1711 through #1721.
+**Pull requests merged:** 16 — #1705, #1706, the cut #1708, #1709,
+ #1710, #1711 through #1721.
 
 **Issues closed:** none. Every merged subject named a pull request; #1184
 stays open because no trial has run, and carries a progress comment.
@@ -8400,14 +8403,14 @@ trials where round 1's scored 3, so hand − none, which read better in round
   whole tree two minutes after the result line or at the timeout, keeps
   what was printed, and records how the CLI ended (#1815)
 
-**Pull requests merged:** 12 — #1802, #1804, #1806, #1808, #1810, #1812,
-#1814, #1816, #1818, #1819, #1821 and #1822.
+**Pull requests merged:** 12 — #1802, #1804, #1806, #1808, #1810,
+ #1812, #1814, #1816, #1818, #1819, #1821 and #1822.
 
-**Issues closed:** #1795 and its seven tasks #1801, #1803, #1805, #1807,
-#1809, #1811 and #1820, plus the three defects #1813, #1815 and #1817.
+**Issues closed:** #1795 and its seven tasks #1801, #1803, #1805,
+ #1807, #1809, #1811 and #1820, plus the three defects #1813, #1815 and #1817.
 
-**Issues filed:** #1801, #1803, #1805, #1807, #1809, #1811, #1813, #1815,
-#1817 and #1820.
+**Issues filed:** #1801, #1803, #1805, #1807, #1809, #1811, #1813,
+ #1815, #1817 and #1820.
 
 **ADRs:** none owed. Every change was the benchmark's own tooling, its two
 generated arm files, or the design's own pre-registration; none moved the
@@ -8680,8 +8683,8 @@ inputs and design document.
   owner's decision (#1857)
 - The PLAYBOOK's account of the control now describes two applications
 
-**Pull requests merged:** #1850, #1851, #1852, #1853, #1854, #1855,
-#1857, #1858.
+**Pull requests merged:** #1850, #1851, #1852, #1853, #1854,
+ #1855, #1857, #1858.
 
 **Pull requests closed unmerged:** #1856, replaced by #1857 because its
 first commit carried a value gitleaks reads as a secret.
@@ -8791,8 +8794,8 @@ decisions table.
 - The efficacy README names `--arms` for the change task, the disk a round
   needs, and that the checkout's HEAD stays put during a run (#1889)
 
-**Pull requests merged:** #1864, #1865, #1867, #1869, #1871, #1881, #1883,
-#1885, #1887, #1888, #1889.
+**Pull requests merged:** #1864, #1865, #1867, #1869, #1871, #1881,
+ #1883, #1885, #1887, #1888, #1889.
 
 **Issues closed:** #1291, #1866, #1868, #1880, #1882, #1884, #1886.
 
@@ -8901,14 +8904,14 @@ design's decisions table.
   as before, and a planted ID rename showed the comparison catches a change
 - The plan's groom was applied, and its phase-0 and phase-1 steps are filed
 
-**Pull requests merged:** #1929, #1931, #1933, #1934, #1935, #1936, #1937,
-#1938, #1939, #1940, #1941, #1942.
+**Pull requests merged:** #1929, #1931, #1933, #1934, #1935, #1936,
+ #1937, #1938, #1939, #1940, #1941, #1942.
 
-**Issues closed:** #305, #1480, #1504, #1901, #1902, #1918, #1919, #1921,
-#1928.
+**Issues closed:** #305, #1480, #1504, #1901, #1902, #1918, #1919,
+ #1921, #1928.
 
-**Issues created:** #1918, #1919, #1920, #1921, #1922, #1923, #1924, #1925,
-#1926, #1927, #1928, #1930, #1943, #1944, #1945, #1946.
+**Issues created:** #1918, #1919, #1920, #1921, #1922, #1923, #1924,
+ #1925, #1926, #1927, #1928, #1930, #1943, #1944, #1945, #1946.
 
 **ADRs:** ADR-049, ADR-050 and ADR-051; ADR-005 and ADR-009 superseded.
 
@@ -8960,11 +8963,11 @@ design's decisions table.
   fork edits an upstream manifest key against the revision it last merged,
   set by `SAIT_UPSTREAM_REF` (#1923)
 
-**Pull requests merged:** #1948, #1951, #1952, #1954, #1955, #1956, #1958,
-#1959, #1960.
+**Pull requests merged:** #1948, #1951, #1952, #1954, #1955, #1956,
+ #1958, #1959, #1960.
 
-**Issues closed:** #712, #1875, #1876, #1920, #1922, #1923, #1925, #1949,
-#1950.
+**Issues closed:** #712, #1875, #1876, #1920, #1922, #1923, #1925,
+ #1949, #1950.
 
 **Issues created:** #1949, #1950, #1957.
 
@@ -9011,11 +9014,11 @@ design's decisions table.
 - The fork took the split: parent merged normally, the split with
   `-s ours`, its templates moved to `imbra:` and `fork_core:` (fork PR #8)
 
-**Pull requests merged:** #1962, #1963, #1964, #1965, #1966, #1967,
-#1968, #1969, #1970, #1971, #1972, #1973, #1974; fork #8.
+**Pull requests merged:** #1962, #1963, #1964, #1965, #1966,
+ #1967, #1968, #1969, #1970, #1971, #1972, #1973, #1974; fork #8.
 
-**Issues closed:** #1924, #1926, #1943, #1944, #1945; moved to the fork:
-#414, #709, #715, #977, #1495, #1497, #1688.
+**Issues closed:** #1924, #1926, #1943, #1944, #1945; moved to the
+fork: #414, #709, #715, #977, #1495, #1497, #1688.
 
 **Issues created:** #1975; fork #1 to #7 (moved), fork #9.
 
@@ -9070,14 +9073,14 @@ rewritten in place.
 - The hypermedia category moved to the 200K tier and lost its gate-model
   exemption (fork #38); the fixture canary STK-24 passed live
 
-**Pull requests merged:** #1978, #1980, #1981, #1982, #1983, #1984, #1985,
-#1986, #1988, #1989, #1990, #1991; fork #27, #28, #32, #33, #34, #36, #37,
-#38, #39, #40, #42, #43, #44, #45, #46, #47, #52, #53.
+**Pull requests merged:** #1978, #1980, #1981, #1982, #1983, #1984,
+ #1985, #1986, #1988, #1989, #1990, #1991; fork #27, #28, #32, #33, #34, #36,
+ #37, #38, #39, #40, #42, #43, #44, #45, #46, #47, #52, #53.
 
 **Issues closed:** #1292, #1946, #1975, #1977, #1979; not planned #1892;
-moved to the fork: #1184, #1707, #1872, #1870, #1873, #1874, #1877, #1878,
-#1879, #1897, #1898, #1903, #1905, #1906, #1908, #1909, #1910, #1930,
-#1957. Fork: #9, #29, #30, #31, #35, #41.
+moved to the fork: #1184, #1707, #1872, #1870, #1873, #1874, #1877,
+ #1878, #1879, #1897, #1898, #1903, #1905, #1906, #1908, #1909, #1910,
+ #1930, #1957. Fork: #9, #29, #30, #31, #35, #41.
 
 **Issues created:** #1977, #1979, #1987, #1992 to #2001; fork #10 to #26
 and #49, #50 (moved), #29, #30, #31, #35, #41, #48, #51, #54.
@@ -9132,8 +9135,8 @@ and #49, #50 (moved), #29, #30, #31, #35, #41, #48, #51, #54.
 
 **Pull requests merged:** #2003 to #2018, #2020 to #2023.
 
-**Issues closed:** #492, #1050, #1486, #1511, #1512, #1899, #1987, #1994 to
-#2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
+**Issues closed:** #492, #1050, #1486, #1511, #1512, #1899, #1987, #1994
+to #2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
 
 **Issues created:** #2019, #2024; fork #55, #56, #57.
 

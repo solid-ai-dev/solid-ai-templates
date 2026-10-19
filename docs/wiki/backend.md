@@ -154,8 +154,8 @@ See `backend/edge.md`.
 
 ### Scalability & performance — handle more load
 
-Scale stateless tiers horizontally; cache hot reads (cache-aside + TTL
-+ stampede control); offload slow work to jobs and queues; **coalesce**
+Scale stateless tiers horizontally; cache hot reads (cache-aside + TTL +
+stampede control); offload slow work to jobs and queues; **coalesce**
 repeated changes to one resource into a single job (debounce);
 **schedule fairly** with per-tenant queues so one tenant cannot starve
 the rest; add read replicas; pick async I/O or worker processes per

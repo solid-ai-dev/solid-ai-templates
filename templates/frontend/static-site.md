@@ -1,6 +1,8 @@
 # Frontend — Static Site
 [ID: frontend-static-site]
-[DEPENDS ON: templates/core/git.md, templates/security/security.md, templates/frontend/content.md, templates/frontend/ux.md, templates/frontend/quality.md]
+[DEPENDS ON: templates/core/git.md, templates/security/security.md]
+[DEPENDS ON: templates/frontend/content.md, templates/frontend/ux.md]
+[DEPENDS ON: templates/frontend/quality.md]
 
 Abstract rules for any static site generated at build time and served as
 plain HTML, CSS, and minimal JavaScript. Never used directly — always
@@ -114,4 +116,3 @@ Edit here                    Deployed here
   are configurable)
 - SHOULD add a CI check that scans built HTML output for internal hrefs
   violating the convention
-
