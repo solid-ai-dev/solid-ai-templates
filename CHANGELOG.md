@@ -17,7 +17,8 @@ on the releases page. The tag holds the tree; the notes are not written.
 
 The entries describe changes to the templates, which are what a consuming
 project receives. A change to this repository's own tooling or tests that
-alters no template carries no entry.
+alters no template carries no entry. Each entry is one line and links the
+pull request that holds the detail.
 
 ## [Unreleased]
 
@@ -25,107 +26,90 @@ alters no template carries no entry.
 
 ### Breaking changes
 
-- Stacks, platforms, `workflow/`, `language/`, the interview, `examples/`,
-  `generated/`, `core/readme.md`, `cli.md`, `skills.md`, `examples.md`,
-  `backend/templating.md` and the process sections of `git.md`, `docs.md`
-  and `quality-gates.md` move to forks. Pin `v2.90.0` or a fork.
-- The core tier requires `README.md`, `AGENTS.md` and `CLAUDE.md` only, both
-  agent files on every project, and prescribes no layout for them;
-  `core/agents.md` offers one as a default.
-- `templates/base/<concern>/` is now `templates/<concern>/` for core,
-  security, infra and data, and `templates/base/workflow/quality-gates.md`
-  is `templates/core/quality-gates.md`. IDs are unchanged; update any path a
-  hybrid file or vendored copy names.
-- `frontend-quality` drops its SEO rules to the new `frontend-content`,
-  which `frontend-static-site` depends on. A chain taking
-  `frontend-quality` without `frontend-static-site` adds
-  `frontend-content` to keep them.
+- Stacks, platforms, process templates and the interview move to forks;
+  pin `v2.90.0` or a fork ([#1972])
+- The core tier requires only `README.md`, `AGENTS.md` and `CLAUDE.md`
+  ([#1964])
+- `templates/base/<concern>/` is `templates/<concern>/`, and
+  `quality-gates.md` is in `core/`; IDs are unchanged ([#1941], [#1966])
+- SEO rules move from `frontend-quality` to the new `frontend-content`;
+  add it where a chain lacks `frontend-static-site` ([#2016])
 
 ### Added
 
-- A fork keeps its templates under a top-level manifest key of its own and
-  adds to every chain's core tier under `fork_core:`. The resolver reads
-  every top-level list of entries as a section.
-- A manifest entry may carry `deprecated: <replacement-id>`; from 3.0 a
-  template is deprecated, not removed, inside a major. SYS-22 fails a field
-  naming a missing or deprecated replacement.
-- `docs/migrating-to-v3.md` moves a 2.x project or a pre-v3.0 fork to v3.0:
-  re-pinning to a fork, the split merge, restoring the templates it modified,
-  and the settings a new fork needs.
-- `base-quality` states three language idioms as rules: a library writes
-  nothing to the host's streams (`quality-library-output`), an optional
-  dependency sits behind one module, and a test walks every raise.
-  `base-oop` adds tagged unions for closed type families.
-- Smoke check SYS-20 fails when a fork edits an upstream manifest key, naming
-  the key and entry. CI runs it against upstream when the repository
-  variable `UPSTREAM_REPO` names the fork's upstream.
-- `tools/resolve.py` exits 1 naming a `depends_on` ID with no manifest
-  entry and the entry naming it, or a dependency cycle as a path, where it
-  used to resolve a shorter chain or crash.
-- `templates/fixture/` holds `stack-fixture` and `platform-fixture`, test
-  input marked `fixture: true`, so the checks resolve a stack and a platform
-  now that both live in forks. Listings leave them out.
-- `base-git` treats a pull request with no registered check as not having
-  passed CI, and ships a check that waits for one, watches every check and
-  exits non-zero on zero checks or any failing one.
-- `base-agents` gates a hybrid consumer's chain list: a check resolves the
-  selected roots from the vendored manifest and lists each file the context
-  file omits or names beyond the chain, for the consumer's test suite.
-- `base-testing`'s tier-by-directory rule states its import prerequisite:
-  pytest's two import modes forbid opposite things, a package test root
-  satisfies both, and a probe checks the layout before any file moves.
-- `frontend-content` holds the build-agnostic content, asset, SEO and
-  structured-data rules, one copy of each, for a project that authors
-  content without building a site.
+- A fork keeps its templates under its own manifest key and `fork_core:`
+  ([#1970])
+- `deprecated: <id>` marks a replaced template; SYS-22 checks it ([#1984])
+- `docs/migrating-to-v3.md` moves a 2.x project or fork to 3.0 ([#1983])
+- `base-quality` and `base-oop` state language idioms as rules ([#1963])
+- SYS-20 fails when a fork edits an upstream manifest key ([#1960])
+- `resolve.py` names a missing dependency or a cycle and exits 1
+  ([#1955])
+- A fixture stack and platform feed the per-stack checks upstream
+  ([#1948])
+- `base-git`: a pull request with no registered check has not passed CI
+  ([#2007])
+- `base-agents` checks a hybrid consumer's chain list against its pin
+  ([#2008])
+- `base-testing` states the import prerequisite for tests by tier
+  ([#2009])
+- `frontend-content` holds the content, asset, SEO and structured-data
+  rules ([#2016])
 
 ### Changed
 
-- `docs/PLAYBOOK.md` is `docs/playbook.md`, `TEMPLATE.md` is `template.md`,
-  `docs/ONBOARDING.md` joins `CONTRIBUTING.md`, and `docs/SPEC.md` becomes
-  `docs/spec.md`, indexing arc42 chapters in `docs/architecture/`. Forks take
-  these by merge.
-- `docs/wiki/`, six pattern pages no template referenced, is removed; the
-  templates hold the rules.
-- `AGENTS.md` holds this repository's agent rules and `CLAUDE.md` imports
-  it. A fork owns `AGENTS.md` like `CLAUDE.md`: replace upstream's on the
-  first merge that brings it.
-- The repository moved to the `solid-ai-dev` organisation. Generated files
-  and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
-  `braboj/` URL redirects, so existing submodules keep working until updated.
-- From 3.0.0, template paths, template and section IDs, the manifest
-  schema, core-tier membership and check exit codes are frozen until 4.0.0
-  (ADR-051). The declaration block is not, until a tool writes and reads it
-  (ADR-053).
-- `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
-  read as MUST or MUST NOT, where it required an RFC 2119 key word in
-  every rule. Key words mark strength where it matters.
+- Docs reorganised: an arc42 spec, `docs/playbook.md`, and onboarding in
+  `CONTRIBUTING.md`; forks take it by merge ([#2036], [#2037])
+- `docs/wiki/` is removed ([#2039])
+- `AGENTS.md` holds the agent rules, and forks own it like `CLAUDE.md`
+  ([#2041])
+- The repository moved to `solid-ai-dev`; old URLs redirect ([#1841])
+- Paths, IDs, manifest schema, core tier and exit codes are frozen until
+  4.0.0 ([#1940], [#2014])
+- `base-docs` reads a plain imperative as MUST ([#2017])
 
 ### Deprecated
 
-- The reference model. `core/agents.md` offers inline or hybrid only, and a
-  rule whose breaking is silent and that no tool enforces is inlined. A
-  reference-model file keeps working; regenerate it as hybrid.
+- The reference model: generate inline or hybrid ([#1959])
 
 ### Fixed
 
-- The Python checks in `core/docs.md` and `core/quality.md` render as code:
-  their bodies are indented under the list item, so `#` comments no longer
-  become headings.
-- Over-long `[DEPENDS ON]` lines are split into several directives under
-  the 88-character width.
-- A `fork_core` entry depending on an ID outside the core tier is refused,
-  naming both, rather than resolving with that dependency missing from
-  every chain.
-- `base-quality-gates` fences its own example check, and its prose-check
-  detector also finds a command followed by its verdict ("output must be
-  empty"). `base-git` and `base-quality` fence the two such checks it
-  found.
-- `base-agents` states the README-map rule's substance in place of this
-  repository's record number.
-- A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
-  naming both files, where the later entry silently replaced the earlier.
-  SPEC names the IDs and directories upstream holds, which a fork leaves
-  clear.
+- The Python checks in `core/docs.md` and `core/quality.md` render as code
+  ([#2034])
+- Over-long `[DEPENDS ON]` lines are split to fit 88 characters ([#2034])
+- A `fork_core` entry depending outside the core tier is refused ([#1990])
+- `base-quality-gates` fences its example check and finds more prose
+  checks ([#2017])
+- `base-agents` states the README-map rule, not a record number ([#2017])
+- A duplicate manifest ID fails MNF-01 and stops the resolver ([#2010])
+
+[#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
+[#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
+[#1941]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1941
+[#1948]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1948
+[#1955]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1955
+[#1959]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1959
+[#1960]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1960
+[#1963]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1963
+[#1964]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1964
+[#1966]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1966
+[#1970]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1970
+[#1972]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1972
+[#1983]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1983
+[#1984]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1984
+[#1990]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1990
+[#2007]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2007
+[#2008]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2008
+[#2009]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2009
+[#2010]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2010
+[#2014]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2014
+[#2016]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2016
+[#2017]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2017
+[#2034]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2034
+[#2036]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2036
+[#2037]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2037
+[#2039]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2039
+[#2041]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2041
 
 ## [2.90.0] - 2026-09-12
 
