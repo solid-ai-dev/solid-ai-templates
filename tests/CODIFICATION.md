@@ -1,8 +1,13 @@
 # Test Codification Scheme
 
 Defines the procedure ID scheme for solid-ai-templates test specifications.
-Follows the Imbra Procedure Specification Standard
-(`imbra-knowledge/standards/PROCEDURE-SPECIFICATION.md`).
+Follows the Imbra Procedure Specification Standard, which Imbra keeps
+outside this repository.
+
+Upstream and its forks share this registry, so a number a fork uses is
+reserved here too. Entries marked *fork* name specs a fork carries, such
+as [Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates);
+upstream carries none of them.
 
 ---
 
@@ -37,7 +42,7 @@ Follows the Imbra Procedure Specification Standard
 |------|------|-------------|
 | `SMK` | Smoke test | Quick structural health check — files exist, IDs unique, paths resolve |
 | `INT` | Integration test | Verify two or more templates work together correctly |
-| `E2E` | End-to-end test | Verify a complete interview → output generation flow |
+| `E2E` | End-to-end test | *fork* — Verify a complete interview → output generation flow |
 
 ---
 
@@ -47,11 +52,11 @@ Follows the Imbra Procedure Specification Standard
 |------|------|-------------|
 | `SYS` | System | Cross-cutting structural checks spanning multiple concerns |
 | `TPL` | Template | Template composition — DEPENDS ON chain, EXTEND, OVERRIDE directives |
-| `STK` | Stack | Full interview → correct CLAUDE.md content per stack |
+| `STK` | Stack | *fork* — Full interview → correct CLAUDE.md content per stack |
 | `MNF` | Manifest | manifest.yaml consistency — IDs, file paths, dependency references |
-| `FMT` | Format | Output format rendering — AGENTS.md, Cursor .mdc, Copilot, generic |
-| `ITV` | Interview | Interview flow — required questions, defaults, answer precedence |
-| `DPL` | Deployment | Deployment target scenarios — cloud, hybrid, offline |
+| `FMT` | Format | *fork* — Output format rendering — AGENTS.md, Cursor .mdc, Copilot, generic |
+| `ITV` | Interview | *fork* — Interview flow — required questions, defaults, answer precedence |
+| `DPL` | Deployment | *fork* — Deployment target scenarios — cloud, hybrid, offline |
 | `ADR` | ADR governance | ADR file conventions — frontmatter schema, supersession links, status discipline |
 
 ---
@@ -69,10 +74,24 @@ reused for a different component within the same area.
 | `02` | ID uniqueness — section IDs across all templates |
 | `03` | Manifest coverage — every template file has a manifest entry |
 | `04` | Header–manifest sync — DEPENDS ON headers match manifest depends_on |
-| `05` | Generation fidelity — end-of-session audit inlined verbatim or hard-delegated, never paraphrased |
+| `05` | *fork* — Generation fidelity — end-of-session audit inlined verbatim or hard-delegated, never paraphrased |
 | `06` | Stack structure — every usable stack's resolved chain carries the ADR-017 MUST sections |
 | `07` | Audit storage — 360 audit reports live only under docs/audits/ with dated names |
-| `08` | Example coverage — every showcased stack keeps its example CLAUDE.md |
+| `08` | *fork* — Example coverage — every showcased stack keeps its example CLAUDE.md |
+| `09` | Sync check — `sync.py --check` inspects without writing |
+| `10` | Quoted directive — a DEPENDS ON quoted in prose is not a declaration |
+| `11` | Prose ID references — resolve in every chain carrying the file |
+| `12` | — retired (frozen chain ceiling removed) |
+| `13` | Manual walk — the instructed walk reaches what the resolver carries |
+| `14` | Resolver arguments — resolve.py accounts for every argument it is given |
+| `15` | Security tier — a stack outside the exempt layers resolves it |
+| `16` | Context tier — a stack category's tier moves only on purpose |
+| `17` | Spec registration — every registered check names a spec that exists |
+| `18` | Gate tier — a stack outside the constrained categories resolves it |
+| `19` | Resolver errors — a missing dependency and a cycle are each named |
+| `20` | Upstream keys — a fork leaves them as it last merged them |
+| `21` | Fork keys — a fork's own key and its core-tier additions resolve |
+| `22` | Deprecation — a deprecated entry names a live replacement |
 
 ### TPL - Template
 
@@ -87,6 +106,7 @@ reused for a different component within the same area.
 | `07` | Duplication — EXTEND sections do not restate parent rules |
 | `08` | ID presence — base templates have at least one [ID:] tag |
 | `09` | Section content — [ID:] sections are not empty |
+| `10` | Override multiplicity — at most one OVERRIDE of an ID per resolved chain |
 
 ### MNF - Manifest
 
@@ -99,7 +119,7 @@ reused for a different component within the same area.
 | `05` | Parser parity — resolve.py resolution matches the PyYAML resolution |
 | `06` | Fork sync — a simulated fork merges an upstream change cleanly |
 
-### STK - Stack
+### STK - Stack (*fork*)
 
 | Number | Component |
 |--------|-----------|
@@ -127,7 +147,7 @@ reused for a different component within the same area.
 | `22` | C embedded — c-embedded stack interview flow |
 | `23` | Tutorial site — static-site-tutorial stack interview flow |
 
-### FMT - Output Format
+### FMT - Output Format (*fork*)
 
 | Number | Component |
 |--------|-----------|
@@ -136,7 +156,7 @@ reused for a different component within the same area.
 | `03` | Copilot — .github/copilot-instructions.md format |
 | `04` | Generic — AI_CONTEXT.md fallback format |
 
-### ITV - Interview
+### ITV - Interview (*fork*)
 
 | Number | Component |
 |--------|-----------|
@@ -144,7 +164,7 @@ reused for a different component within the same area.
 | `02` | Default sections — DEFAULTED sections pre-filled from templates |
 | `03` | Precedence — interview answers override stack and base rules |
 
-### DPL - Deployment Guidelines
+### DPL - Deployment Guidelines (*fork*)
 
 | Number | Component |
 |--------|-----------|
@@ -174,6 +194,9 @@ corrected prerequisites where test intent is unchanged.
 ---
 
 ## Full ID examples
+
+The `E2E` type and the `STK`, `FMT`, `ITV` and `DPL` areas below name
+specs a fork carries.
 
 | ID | Meaning |
 |----|---------|

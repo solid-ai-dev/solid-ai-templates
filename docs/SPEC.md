@@ -305,8 +305,8 @@ this contract.
 
 The wiki (`docs/wiki/`) gathers human reference documentation
 for *projects that use the templates*. It is NOT part of the
-dependency graph or agent context. Parent rules files reference
-the relevant wiki pages as one-line conventions.
+dependency graph or agent context, and no template references
+it.
 
 Current wiki pages: `backend.md`, `cicd.md`, `devsecops.md`,
 `frontend.md`, `security.md`, `testing.md`.
@@ -604,16 +604,19 @@ The generated CLAUDE.md contains a machine-readable header instead of
 a hand-curated file list:
 
 ```markdown
-Stack: static-site-astro
-Extras: data-quality, 360, issues, scope, review, readme
-Platform: github
+Stack: stack-astro
+Extras: base-data-quality, base-360, base-issues, base-scope, base-readme
+Platform: platform-github
 ```
+
+The IDs are the Imbra fork's; `py tools/resolve.py --roots` lists the
+ones a checkout carries.
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | `Stack` | MUST | Stack ID from the fork's `manifest.yaml` |
 | `Extras` | MAY | Comma-separated base template IDs not in the stack's dependency chain |
-| `Platform` | MAY | Platform ID from the fork (`github`, `gitlab` in Imbra's) |
+| `Platform` | MAY | Platform ID from the fork (`platform-github`, `platform-gitlab` in Imbra's) |
 
 ### Resolution algorithm
 

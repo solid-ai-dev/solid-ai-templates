@@ -45,7 +45,8 @@ jobs:
         env:
           UPSTREAM_REPO: ${{ vars.UPSTREAM_REPO }}
         run: |
-          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git"             "+refs/heads/main:refs/remotes/upstream/main"
+          git fetch --no-tags "https://github.com/${UPSTREAM_REPO}.git" \
+            "+refs/heads/main:refs/remotes/upstream/main"
           echo "SAIT_UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
           echo "UPSTREAM_REF=upstream/main" >> "$GITHUB_ENV"
           git log -1 --format='upstream/main: %h %s' upstream/main

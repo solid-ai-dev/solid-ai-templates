@@ -104,7 +104,10 @@ A fork follows the rules in
 - Merge an upstream commit carrying the `Fork-merge: ours` trailer in two
   steps: its parent normally, then the commit with `git merge -s ours`.
   Then move your own templates out of upstream's keys into your own key
-  and `fork_core:`
+  and `fork_core:`, and restore each template the commit modified. The
+  playbook's
+  [Sync with upstream as a fork](docs/PLAYBOOK.md#sync-with-upstream-as-a-fork)
+  gives every step's command
 
 ### Take an update
 

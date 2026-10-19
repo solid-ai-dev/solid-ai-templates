@@ -2,7 +2,8 @@
 
 Operational reference for common tasks. Each section is a self-contained
 procedure. See `CLAUDE.md` for authoring rules and `SPEC.md` for the
-composition model.
+composition model. Commands use `py`, the Windows launcher; on macOS and
+Linux run `python3` instead.
 
 ---
 
@@ -13,18 +14,22 @@ Stacks, platforms, workflow and language templates live in forks
 and layer templates only.
 
 1. Create the file in the correct layer directory:
-   - `<concern>/<name>.md` — cross-cutting, applies to all projects; the
-     concern is one of `core`, `security`, `infra`, `data`
-   - `backend/<name>.md` — backend services only
-   - `frontend/<name>.md` — frontend/UI projects only
+   - `templates/<concern>/<name>.md` — cross-cutting, applies to all
+     projects; the concern is one of `core`, `security`, `infra`, `data`
+   - `templates/backend/<name>.md` — backend services only
+   - `templates/frontend/<name>.md` — frontend/UI projects only
 2. Tag the file root with `[ID: <layer>-<name>]`
 3. Tag every section with a unique `[ID: <layer>-<name>-<section>]`
-4. Register in `manifest.yaml` under the correct layer key:
+4. Register in `templates/manifest.yaml` under the correct layer key —
+   `base:` for a concern, `backend:` or `frontend:` — with a description:
    ```yaml
    - id: <layer>-<name>
-     file: <layer>/<name>.md
+     file: templates/<dir>/<name>.md
+     description: <what the file covers>
    ```
-5. Update `docs/SPEC.md` — add to the directory listing for the relevant layer
+5. Run `py tools/sync.py` after the last template edit. It regenerates the
+   directory listings in `docs/SPEC.md` and the tables in `README.md`; do
+   not edit those by hand
 6. Upstream carries no stack to reference the new file. A fork's stacks
    name it in their `[DEPENDS ON: ...]` headers once the fork merges it
 
@@ -98,8 +103,8 @@ genericity before it becomes template content:
 1. `git mv <old-path> <new-path>`
 2. Update every `[DEPENDS ON: ...]` header that references the old path
 3. Update `manifest.yaml` — change the `file:` field for the entry
-4. Update `SPEC.md` and `README.md` — search for the old filename and
-   replace
+4. Run `py tools/sync.py` for the generated sections, then search
+   `SPEC.md` and `README.md` for the old filename and replace the rest
 5. Verify with `git status` that no old references remain
 
 ---
@@ -122,7 +127,9 @@ what a consuming project observes without reading this repository — the
 composition model. Prose style, tool choice, release procedure, naming and
 file layout need no ADR, however consequential they are. One coherent
 architectural decision may cover related work across several issues or PRs.
-ADRs live in `docs/decisions/`; ADR-010 records the frontmatter schema.
+ADRs live in `docs/decisions/`. ADR-010 introduced the frontmatter
+schema; smoke check ADR-01 enforces the current one, which adds
+`Rejected` and `Withdrawn` to ADR-010's three statuses.
 
 1. Copy the template:
    ```bash
@@ -283,11 +290,12 @@ against the single-source principle, then either trim the restatement
 (prefer the parent/owner template) or accept it with a reason.
 
 `--check` runs in CI as a ratchet: it fails on any exact duplicate not
-in the tool's `BASELINE` allowlist, so new redundancy is blocked while
-the known duplicates clear through their owning issues (currently the
-frontend pair, #624). When you resolve a baselined duplicate, remove
-its `BASELINE` entry in `tools/audit_redundancy.py` — `--check` reports
-any entry that no longer applies.
+in the tool's `BASELINE` allowlist, so new redundancy is blocked. The
+allowlist is empty, so `--check` enforces a true zero. A duplicate
+accepted for a reason takes a `BASELINE` entry in
+`tools/audit_redundancy.py` naming it; remove the entry once the
+duplicate is resolved — `--check` reports any entry that no longer
+applies.
 
 ---
 

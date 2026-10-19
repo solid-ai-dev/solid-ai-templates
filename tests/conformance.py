@@ -7,8 +7,8 @@ a block with no entry, which is what stops a check added to a template from
 arriving unexamined.
 
 A block is located by a string only its body contains, never by position:
-`core/git.md` alone holds ten of them, and selecting by index has
-already found the wrong one.
+one template can hold several, and selecting by index has already found
+the wrong one.
 """
 
 # Disposition values.
@@ -59,10 +59,12 @@ CHECKS = [
 
     # -- core/docs.md ------------------------------------------------
 
-    # The efficacy benchmark's arm files are a generator's verbatim output,
-    # which its design forbids editing; `short`'s is held to its own budget
-    # and the others to none. They are source material the benchmark
-    # measures, not documentation, so both checks leave them out.
+    # A fork carrying the efficacy benchmark keeps its arm files under
+    # `tests/efficacy/arms/`, which upstream does not have. They are a
+    # generator's verbatim output, which the benchmark's design forbids
+    # editing; `short`'s is held to its own budget and the others to none.
+    # They are source material the benchmark measures, not documentation,
+    # so both checks leave them out wherever they exist.
     {"file": "core/docs.md", "find": "width, source = None, None",
      "title": "Documentation line width matches the declared one",
      "do": RUN, "expect": ["nonzero"],
@@ -232,7 +234,7 @@ CHECKS = [
     {"file": "core/testing.md", "find": "pkg.__all__",
      "title": "Everything in __all__ is importable", "do": SKIP,
      "reason": "This repository ships no importable package. It applies to "
-               "a library stack, where `stack/python-lib.md` carries it."},
+               "a library stack, which a fork carries."},
 
     {"file": "core/testing.md", "find": "def fingerprint(path)",
      "title": "A mechanical move leaves the fingerprint unchanged",
