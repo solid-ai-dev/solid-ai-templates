@@ -55,8 +55,8 @@ tags: [tests, references, registry, index]
 
 1. List the `.md` documents under `tests/specs/` by stem
 2. Read `tests/INDEX.md`
-3. For every entry in `run_smoke.py`'s `CHECKS` registry, resolve its
-   `spec` field against both
+3. For every entry in the smoke `CHECKS` registry
+   (`tests/smoke/registry.py`), resolve its `spec` field against both
 4. For every document on disk, look for its row in the index and for a
    citation: a registered check, the text of another runner in `tests/`,
    or `automatable: manual` in its frontmatter
