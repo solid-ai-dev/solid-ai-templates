@@ -28,7 +28,7 @@ tags: [manifest, fork, composition, merge]
 |--------|-----------|
 | PASSED | Both planted merges yield exactly their owed conflicts, and the upstream change merges and passes smoke |
 | FAILED | A planted merge yields conflicts other than those it owes |
-| FAILED | The upstream change conflicts outside `README.md`, `CLAUDE.md` and `CHANGELOG.md` |
+| FAILED | The upstream change conflicts outside `README.md`, `AGENTS.md`, `CLAUDE.md` and `CHANGELOG.md` |
 | FAILED | The merged tree loses the fork's stack, or its smoke run fails or prints no verdict |
 | FAILED | The base ref does not resolve, or shares no history with HEAD |
 | SKIPPED | — |
@@ -98,5 +98,5 @@ tags: [manifest, fork, composition, merge]
 ## Related
 
 - ADR-049 — a fork syncs by `git merge upstream/main`, appends and never
-  edits upstream keys, and owns its README, CLAUDE.md and CHANGELOG
+  edits upstream keys, and owns its README, AGENTS.md, CLAUDE.md and CHANGELOG
 - SAIT-SMK-SYS-20-001A — the manifest ownership check this run nests

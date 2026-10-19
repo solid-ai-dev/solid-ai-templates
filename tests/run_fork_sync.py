@@ -34,7 +34,7 @@ DEFAULT_BASE = "origin/main"
 
 # A fork owns these and resolves them in its own favour on every merge, so a
 # conflict in one is expected rather than a finding (ADR-049, rule 7).
-FORK_OWNED = ("README.md", "CLAUDE.md", "CHANGELOG.md")
+FORK_OWNED = ("README.md", "AGENTS.md", "CLAUDE.md", "CHANGELOG.md")
 
 MANIFEST = "templates/manifest.yaml"
 FIXTURE = "templates/fixture/stack.md"
@@ -131,9 +131,13 @@ def fork_edits(repo):
         manifest += "\n"
     write(repo, MANIFEST, manifest + FORK_ENTRY)
 
-    for rel in FORK_OWNED:
+    # A fork owns whichever of these it carries; one that upstream adds after
+    # the fork's base arrives with the merge instead.
+    owned = [rel for rel in FORK_OWNED
+             if os.path.exists(os.path.join(repo, rel))]
+    for rel in owned:
         write(repo, rel, insert_after_title(read(repo, rel), FORK_NOTE))
-    return [FORK_STACK, MANIFEST, *FORK_OWNED]
+    return [FORK_STACK, MANIFEST, *owned]
 
 
 def upstream_base_edit(repo):
