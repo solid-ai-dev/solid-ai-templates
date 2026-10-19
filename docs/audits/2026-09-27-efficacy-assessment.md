@@ -4,7 +4,7 @@ An assessment of the evidence the efficacy benchmark has produced so far, read
 against what this library says it does. It argues from three rounds, dated
 2026-09-17, 2026-09-18 and 2026-09-27, whose reports sit under `docs/audits/`.
 The experiment itself — its rules, metrics and controls, all fixed before the
-first trial — is `efficacy-benchmark.md` in this directory.
+first trial — is `docs/design/efficacy-benchmark.md`.
 
 ## 1. The answer in brief
 
