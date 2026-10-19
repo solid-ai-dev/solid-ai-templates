@@ -599,8 +599,8 @@ steps below apply them in order.
 
 1. Ensure you are on a feature branch named per section 2.1
 2. Run the validation steps above for every changed template
-3. Update all affected documents (`docs/architecture/`, `README.md`, `manifest.yaml`) before
-   committing
+3. Update all affected documents (`docs/architecture/`, `README.md`,
+   `manifest.yaml`) before committing
 4. Commit with a subject in section 2.1's form
 5. Push and open a PR titled in the same form
 6. Merge with the default squash subject — `gh pr merge <number>
