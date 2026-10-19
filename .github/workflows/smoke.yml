@@ -56,6 +56,10 @@ jobs:
         run: python tools/resolve.py --check
       - name: Check for new redundant rules
         run: python tools/audit_redundancy.py --check
+      # A template may get better, never worse: each file's score is held to
+      # its row in tests/template-quality-baseline.txt.
+      - name: Check no template's quality score fell
+        run: python tools/template_quality.py --check
       # The tooling is the gate, so an unused import or an undefined name in
       # it is a defect nothing else reports. Versions are pinned so a release
       # of either linter cannot turn a green tree red.
