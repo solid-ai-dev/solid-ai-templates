@@ -73,5 +73,5 @@ No credentials, secrets or attack surface are involved.
 
 ## Related
 
-- ADR-004 - the earlier split of a layer whose consumers needed only part
-  of it.
+- ADR-004 - the earlier change that kept a chain from inheriting rules its
+  project cannot use.
