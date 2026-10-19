@@ -32,7 +32,10 @@ tags: [tests, references, registry, index]
 | FAILED | A registered spec names no document on disk |
 | FAILED | A registered spec has no row in `tests/INDEX.md` |
 | FAILED | A registry entry carries no spec field at all |
-| FAILED | The check read no registry entries or no documents |
+| FAILED | A document on disk has no row in `tests/INDEX.md` |
+| FAILED | A document no registered check cites and no runner in `tests/` names, which does not declare `automatable: manual` |
+| FAILED | `tests/INDEX.md` names a spec with no document on disk |
+| FAILED | The check read no registry entries, no documents or no index rows |
 | SKIPPED | — |
 | BLOCKED | — |
 | ERROR | — |
@@ -54,15 +57,22 @@ tags: [tests, references, registry, index]
 2. Read `tests/INDEX.md`
 3. For every entry in `run_smoke.py`'s `CHECKS` registry, resolve its
    `spec` field against both
-4. Report how many checks were registered and how many documents were
-   read
+4. For every document on disk, look for its row in the index and for a
+   citation: a registered check, the text of another runner in `tests/`,
+   or `automatable: manual` in its frontmatter
+5. For every spec ID the index names, look for its document on disk
+6. Report how many checks were registered, how many documents were read
+   and how many specs the index names
 
 ### Assertions
 
 1. Assert every registered spec resolves to a document on disk
 2. Assert every registered spec appears in the index, so a check cannot
    be registered and stay invisible to a reader
-3. Assert both counts are non-zero, per ADR-034
+3. Assert every document on disk has an index row and a citation, so a
+   repointed registry entry cannot leave its old document behind unread
+4. Assert every spec the index names has a document on disk
+5. Assert every count is non-zero, per ADR-034
 
 ### Negative controls
 
@@ -81,6 +91,11 @@ have landed before its result was read.
    `tests/INDEX.md` MUST fail on the index half while the disk half
    passes, which is what separates the two assertions. Observed
    2026-09-07
+4. **An orphan.** A document on disk that nothing cites passed, which the
+   2026-10-18 360 review found. A copy of a spec under an unused ID, given
+   an index row, MUST fail as cited by nothing
+5. **An index row with no document.** A row naming an ID with no file
+   MUST fail on that row
 
 ## Related
 

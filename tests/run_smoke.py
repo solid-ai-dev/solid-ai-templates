@@ -2013,15 +2013,43 @@ def check_sys_16():
 # catch it was already in the registry, beside the function the runner does
 # resolve.
 
+#
+# The reverse direction holds too. A document no check cites and no runner
+# names is a procedure nothing runs, and an index row naming no document
+# sends a reader to nothing; either survived a repointed registry entry with
+# every gate green. A spec declaring `automatable: manual` has no runner by
+# design and is exempt from the first.
+
+SPEC_ID = re.compile(r"SAIT-[A-Z0-9]+-[A-Z0-9]+-\d+-\d+[A-Z]")
+MANUAL_SPEC = re.compile(r"^automatable:\s*manual\s*$", re.M)
+
+
+def _runner_text():
+    """The text of every runner in tests/ other than this one.
+
+    This file's registry is read as data; its prose names specs it does not
+    run, so it is not searched as text.
+    """
+    tests = os.path.join(ROOT, "tests")
+    texts = []
+    for name in sorted(os.listdir(tests)):
+        if name.endswith(".py") and name != os.path.basename(__file__):
+            with io.open(os.path.join(tests, name), encoding="utf-8") as f:
+                texts.append(f.read())
+    return "\n".join(texts)
+
+
 def check_sys_17():
     failures = []
     seen = Inspected()
 
     spec_dir = os.path.join(ROOT, "tests", "specs")
-    on_disk = set()
+    on_disk = {}
     for name in os.listdir(spec_dir):
         if name.endswith(".md"):
-            on_disk.add(os.path.splitext(name)[0])
+            with io.open(os.path.join(spec_dir, name),
+                         encoding="utf-8") as handle:
+                on_disk[os.path.splitext(name)[0]] = handle.read()
 
     with io.open(os.path.join(ROOT, "tests", "INDEX.md"),
                  encoding="utf-8") as handle:
@@ -2029,6 +2057,27 @@ def check_sys_17():
 
     seen.count("checks registered", CHECKS)
     seen.count("spec documents on disk", on_disk)
+    indexed = set(SPEC_ID.findall(index))
+    seen.count("specs the index names", indexed)
+
+    cited = {check.get("spec") for check in CHECKS}
+    runners = _runner_text()
+    for spec in sorted(on_disk):
+        if spec not in index:
+            failures.append(f"  {spec}: on disk with no row in "
+                            f"tests/INDEX.md")
+        if spec in cited or spec in runners:
+            continue
+        if MANUAL_SPEC.search(on_disk[spec]):
+            continue
+        failures.append(
+            f"  {spec}: no registered check cites it, no runner in tests/ "
+            f"names it, and it does not declare automatable: manual -- a "
+            f"procedure nothing runs"
+        )
+    for spec in sorted(indexed - set(on_disk)):
+        failures.append(f"  {spec}: named in tests/INDEX.md with no "
+                        f"document under tests/specs/")
 
     for check in CHECKS:
         spec = check.get("spec")
