@@ -150,8 +150,9 @@ labels are terminal, applied when closing without action: `duplicate`
   - `docs/playbook.md` — if a procedure changes
   - `CONTRIBUTING.md` — if prerequisites or first steps change
   - `CHANGELOG.md` — an `Unreleased` entry for any change a consuming
-    project would notice, in the same PR, within forty words. A change
-    needing no entry says so in the PR body
+    project would notice, in the same PR: one line of about fifteen plain
+    words saying what changed, with no code formatting, ending with a link
+    to the PR, which holds the why. A change needing no entry says so in the PR body
 - Do not duplicate content across documents — cross-reference instead
 - Write in present tense — past or future tense indicates out-of-sync
   documentation
