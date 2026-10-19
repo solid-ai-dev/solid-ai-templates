@@ -9156,3 +9156,46 @@ to #2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
   four defects and a regression of a fix were found by reading, not by CI
 - Git Bash heredocs swallow backslashes: write continuation lines with the
   editor, and check the bytes, not a grep run in the same shell
+
+## 2026-10-19 — Pre-tag cleanup: docs on arc42, a short README, AGENTS.md
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Every Markdown file is held to the lint with no exemptions; two shipped
+  checks render as code again, and CI runs the pre-commit hooks (#2034).
+  The social cards were deleted as unreferenced and restored: GitHub uses
+  them (#2035)
+- Docs are kebab-case, onboarding is part of CONTRIBUTING, and the spec is
+  an arc42 index of ten chapters; the design handoff and the efficacy
+  assessment moved to audits (#2036, #2037, #2038)
+- `docs/wiki/` moved to the maintainer's llm-wiki (#2039)
+- The README is a short front page with a one-prompt setup; `sync.py`
+  fills only the README sections whose marker pair is present (#2040)
+- `AGENTS.md` holds the agent rules and `CLAUDE.md` imports it; an agent
+  never merges a PR (#2041)
+- Changelog entries are one plain line with a PR link (#2042)
+- The Imbra fork is private; public docs name it without a link (#2040)
+
+**Pull requests merged:** #2034 to #2042.
+
+**Issues closed:** #2026 to #2030.
+
+**Issues created:** #2026 to #2033, #2043.
+
+**ADRs:** none.
+
+**Gaps flagged:**
+- #2031, #2032 and #2033 remain before the tag (#1927)
+- The repo breaks its own rule that README holds the project structure
+  (#2043)
+- The new working rules (commit only, push and merge on approval) are in
+  the agent's memory; `AGENTS.md` carries only the merge rule
+
+**Lessons:**
+- Unreferenced in the tree is not unused: the social cards serve GitHub's
+  repository settings
+- A section selected by its opening marker alone lets a stale table pass
+  once that marker is deleted; require the pair
+- A presence check on a bare token passes against any document carrying
+  it; check for the instruction's own phrase
