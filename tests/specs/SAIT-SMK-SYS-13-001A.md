@@ -85,10 +85,11 @@ tags: [composition, adoption, readme, resolver-parity]
 Each control was observed failing, and each mutation was asserted to
 have landed before its result was read.
 
-1. **README stops naming the core tier.** Removing the `core:` clause
-   from the quick-start prompt MUST fail. Observed 2026-09-03:
-   occurrences of `core:` went 1 → 0 and the check failed naming the
-   document
+1. **The runtime chapter stops naming the core tier.** Replacing every
+   `` `core:` list `` in `docs/architecture/06-runtime-view.md` MUST fail.
+   Observed 2026-10-19: occurrences went 2 → 0 and the check failed naming
+   the chapter. The instruction lived in README until then; the same
+   control was observed there on 2026-09-03
 2. **The resolver carries a file the walk cannot reach.** Adding
    `base-agents` to `stack-htmx`'s manifest `depends_on` without the
    matching directive in `htmx.md` MUST fail. Observed 2026-09-03: the
