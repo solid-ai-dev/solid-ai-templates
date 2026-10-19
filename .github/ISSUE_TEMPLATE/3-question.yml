@@ -7,7 +7,7 @@ body:
       value: |
         This issue is public. Leave out secrets and private code.
 
-        Check docs/ONBOARDING.md and docs/SPEC.md first. A question is
+        Check CONTRIBUTING.md and docs/SPEC.md first. A question is
         answered in a comment and closed; an idea that should change a rule
         continues as a proposal. Neither is a promise of work.
   - type: input

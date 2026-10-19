@@ -56,7 +56,7 @@ fork.
    the file was generated against
 4. Review the diff. Adopt a new rule for a named need or a material risk;
    existing adopted rules stay effective, and declining one needs no ADR
-   (`docs/PLAYBOOK.md`, "Adopt a template policy update")
+   (`docs/playbook.md`, "Adopt a template policy update")
 
 No guide document is renamed upstream — see
 [Guide documents](#guide-documents).
@@ -69,7 +69,7 @@ No guide document is renamed upstream — see
 
 The split is one upstream commit carrying the trailer `Fork-merge: ours`.
 An ordinary merge of it deletes every file the fork kept and upstream
-removed, so the fork takes it in steps. `docs/PLAYBOOK.md`, "Sync with
+removed, so the fork takes it in steps. `docs/playbook.md`, "Sync with
 upstream as a fork", gives each command; in outline:
 
 1. Merge the split's parent normally
@@ -86,7 +86,9 @@ upstream as a fork", gives each command; in outline:
 Step 4 applies to documents as much as to templates. A fork's
 `docs/PLAYBOOK.md`, `docs/SPEC.md` and `docs/ONBOARDING.md` keep their
 pre-split text after `-s ours`; the Imbra fork moved its own procedures to
-`docs/imbra-*.md` and took upstream's text for the three.
+`docs/imbra-*.md` and took upstream's text for the three. v3.0 then renames
+`docs/PLAYBOOK.md` to `docs/playbook.md` and merges `docs/ONBOARDING.md`
+into `CONTRIBUTING.md`; a fork takes both with the merge.
 
 ### Traps
 

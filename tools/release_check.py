@@ -1,6 +1,6 @@
 """Check that the tree being tagged carries the changelog cut for a release.
 
-Enforces the changelog-cut step of PLAYBOOK, "Release a new version": the
+Enforces the changelog-cut step of the playbook, "Release a new version": the
 `Unreleased` section is cut into `## [A.B.C] - YYYY-MM-DD`, and the version
 is the one SemVer names for that section against the previous tag. A patch
 holds only `### Fixed` or `### Security`, a major holds

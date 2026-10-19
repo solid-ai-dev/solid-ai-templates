@@ -1,13 +1,9 @@
 # Contributing
 
-Contributions are welcome. This document covers what a change has to satisfy
-before it can be merged. It does not repeat the orientation material —
-[docs/ONBOARDING.md](docs/ONBOARDING.md) explains what the project is and how
-the templates compose, and [docs/PLAYBOOK.md](docs/PLAYBOOK.md) carries the
-step-by-step procedure for each kind of change.
-
-Start there if you have not worked in this repository before. Come back here
-for the rules your pull request is checked against.
+Contributions are welcome. This document gets you set up and lists what a
+change has to satisfy before it can be merged.
+[docs/playbook.md](docs/playbook.md) carries the step-by-step procedure for
+each kind of change.
 
 ## What belongs upstream
 
@@ -15,37 +11,64 @@ This repository carries the composition engine and the policy every team
 shares. Stacks, platforms, workflow and process rules, and the interview live
 in forks, so a change to one of those goes to the fork that carries it, such
 as [Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
-ADR-050 in `docs/decisions/` sets the boundary.
+ADR-049 and ADR-050 in `docs/decisions/` set the boundary.
 
-## Before you open a pull request
+## Set up
 
-Set up first: Python, PyYAML and the `py` versus `python3` launcher are in
-[docs/ONBOARDING.md, "Prerequisites"](docs/ONBOARDING.md#prerequisites).
-Then run the structural checks, which take about ten seconds:
+You need:
+
+- Git
+- Python 3 with PyYAML (`pip install pyyaml`) for the checks. The docs write
+  `py`, the Windows launcher; on macOS and Linux run `python3`, and CI runs
+  `python`
+- GitHub CLI (`gh`), authenticated, for the issue, pull-request and release
+  steps in the playbook
+- Optional, to run CI's linters before pushing: `pip install pyflakes==4.0.2`,
+  Node.js for `npx --yes markdownlint-cli2@0.23.3`, and
+  `pip install pre-commit` then `pre-commit install`
+
+There is no build step: the templates are plain Markdown. Clone the
+repository and run the structural checks once; a `VERDICT: PASS` line
+confirms Python, PyYAML and the checkout:
 
 ```bash
+git clone https://github.com/solid-ai-dev/solid-ai-templates.git
+cd solid-ai-templates
 py tests/run_smoke.py
 ```
 
-Run fork sync too, which merges your change into a simulated fork and runs
-smoke on the result. If you edited a template's prose, also run the
-templates' own checks against this repository. CI runs both:
+## Find your way around
+
+| Read | To understand |
+|------|---------------|
+| `docs/SPEC.md` | The composition model: inheritance, `EXTEND`, `OVERRIDE`, IDs |
+| `templates/manifest.yaml` | The dependency graph every tool reads |
+| `docs/decisions/` | Why the model is the way it is |
+| `docs/playbook.md` | How to make each kind of change |
+| `CLAUDE.md` | The rules an agent applies in this repository |
+
+`py tools/resolve.py --roots` lists every root, and
+`py tools/resolve.py <id>` prints the chain a root resolves to.
+
+## Before you open a pull request
+
+Run the structural checks, fork sync, and, if you edited a template's
+prose, the templates' own checks against this repository. CI runs all
+three:
 
 ```bash
+py tests/run_smoke.py
 py tests/run_fork_sync.py
 py tests/run_conformance.py
 ```
 
-If you edited anything under `templates/`, regenerate the derived files as
-well, and commit the result with your change:
+If you edited anything under `templates/`, regenerate the derived files and
+commit the result with your change. `py tools/sync.py --check` reports a
+mismatch without writing anything, and CI fails on one:
 
 ```bash
 py tools/sync.py
 ```
-
-A pull request whose generated sections in `README.md` and `docs/SPEC.md` do
-not match its templates fails CI. `py tools/sync.py --check` reports the
-mismatch without writing anything.
 
 ## What a change has to carry
 
@@ -66,7 +89,7 @@ mismatch without writing anything.
   observes without reading this repository — the composition model, such as
   a new layer or a change to the override model. Naming, prose style,
   tooling and file layout need none (`CLAUDE.md`, "Decision logs"). See
-  `docs/decisions/` and copy `docs/decisions/TEMPLATE.md`
+  `docs/decisions/` and copy `docs/decisions/template.md`
 - **What it costs every chain carrying it.** A rule added to a widely
   resolved file is read by every project on those chains, on every turn.
   Nothing refuses the size, but crossing to a larger context window is
@@ -99,7 +122,7 @@ Branch names, the commit and pull-request title form, one concern per pull
 request and the no-force-push rule are in
 [`CLAUDE.md` section 2.1](CLAUDE.md#21-git). Agents apply them on every
 turn, and human contributors follow the same ones.
-[docs/PLAYBOOK.md, "Submit a pull request"](docs/PLAYBOOK.md#submit-a-pull-request)
+[docs/playbook.md, "Submit a pull request"](docs/playbook.md#submit-a-pull-request)
 gives the steps in order.
 
 ## Issues
@@ -115,7 +138,7 @@ Open an issue through a form on the
 | Private advisory | A vulnerability — see [Reporting a vulnerability](#reporting-a-vulnerability) |
 
 Stacks, platforms, workflow rules and the interview go to the fork that
-carries them, as "What belongs upstream" says.
+carries them, as "What belongs upstream" says. Discussions are not enabled.
 
 The forms ask only for what triage needs: the version, the affected stack
 and template, expected and actual behaviour, and evidence. A rule that
@@ -166,9 +189,13 @@ disclosure route.
 
 ## Maintainership
 
-This project has a single maintainer, so review latency varies. Reports
-are triaged in batches rather than on arrival, and no response time is
-promised for an issue or a pull request; the only time bound is the
-security acknowledgement in [SECURITY.md](SECURITY.md). A report or pull
-request that sits is not a rejection. `docs/ONBOARDING.md` records what
-happens to the project if the maintainer becomes unavailable.
+This project has a single maintainer, Branimir Georgiev, so review latency
+varies. Reports are triaged in batches rather than on arrival, and no
+response time is promised for an issue or a pull request; the only time
+bound is the security acknowledgement in [SECURITY.md](SECURITY.md). A
+report or pull request that sits is not a rejection.
+
+Everything needed to understand, maintain and extend the project is in the
+repository: the spec, the playbook, the decision records and `CLAUDE.md`.
+If the maintainer becomes unavailable, the project can be forked and
+continued from the repository alone.

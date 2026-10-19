@@ -60,7 +60,7 @@ For every file in `docs/decisions/` matching the pattern `NNN-*.md`
 8. **Status-link consistency** — if `superseded_by` is non-empty,
    `status` MUST be `Superseded`
 
-`docs/decisions/TEMPLATE.md` and any non-numbered files are skipped.
+`docs/decisions/template.md` and any non-numbered files are skipped.
 
 ## Steps
 
@@ -97,12 +97,12 @@ and ADR-010 stands as history (`CLAUDE.md`, "Decision logs").
 
 The `id: "NNN"` quoting requirement is not in ADR-010's prose body
 (which is immutable per the rule it defines) but is documented in
-`docs/decisions/TEMPLATE.md` and enforced by this check. Future ADR
-authors who copy TEMPLATE.md get the quoting right by default.
+`docs/decisions/template.md` and enforced by this check. Future ADR
+authors who copy template.md get the quoting right by default.
 
 ## Related
 
 - Origin of the schema: `docs/decisions/010-adr-governance.md`
-- Canonical example: `docs/decisions/TEMPLATE.md`
+- Canonical example: `docs/decisions/template.md`
 - Related procedures: `SAIT-SMK-SYS-02-001A` (similar schema-enforcement
   pattern for `[ID: ...]` declarations)

@@ -442,7 +442,7 @@ The rest of the backbone:
     discoverable tests.
 - **Cost:** tokens, turns, wall time, API-equivalent dollars.
 - **Scope:** files and lines, and artifacts nobody asked for (ADR, journal,
-  CHANGELOG, PLAYBOOK).
+  CHANGELOG, playbook).
 - **Consistency:** the spread of every metric across an arm's trials.
 
 Adherence runs on every arm. It is a quality checklist, not a template

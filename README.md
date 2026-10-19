@@ -123,7 +123,7 @@ A fork follows the rules in
   Then move your own templates out of upstream's keys into your own key
   and `fork_core:`, and restore each template the commit modified. The
   playbook's
-  [Sync with upstream as a fork](docs/PLAYBOOK.md#sync-with-upstream-as-a-fork)
+  [Sync with upstream as a fork](docs/playbook.md#sync-with-upstream-as-a-fork)
   gives every step's command
 
 ### Take an update
@@ -131,7 +131,7 @@ A fork follows the rules in
 Template updates are selective: adopt new conventions for a project need or
 material risk, not merely because a tag exists. Existing adopted rules remain
 effective; declining a new rule needs no ADR or ticket. See the
-[consumer migration guidance](docs/PLAYBOOK.md#adopt-a-template-policy-update).
+[consumer migration guidance](docs/playbook.md#adopt-a-template-policy-update).
 
 ## What a project picks
 
@@ -246,9 +246,9 @@ See `templates/core/agents.md` for structure, models, and formatting rules.
 
 ## Contributing
 
-To change this repository itself, start at [CONTRIBUTING.md](CONTRIBUTING.md).
-It links the onboarding guide, which covers setup, and the playbook, which
-gives each procedure step by step.
+To change this repository itself, start at [CONTRIBUTING.md](CONTRIBUTING.md),
+which covers setup and what a change must carry. The
+[playbook](docs/playbook.md) gives each procedure step by step.
 
 ## License
 
