@@ -1,8 +1,5 @@
 # Changelog
 
-What changed in each release, newest first. Each entry is one line and
-links the pull request with the details.
-
 Releases follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 and this file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Releases up to 2.63.0 are listed in
