@@ -1,7 +1,8 @@
 # SOLID-AI Templates
 
 Ready-made coding rules that help your AI agents make the same choices
-your team would.
+your team would. Hand routine coding and review to the agents, and keep
+your team on design and testing.
 
 ## Features
 
@@ -33,10 +34,10 @@ your team would.
 
 | Read | For |
 |------|-----|
+| [Migrating from 2.x](docs/migrating-to-v3.md) | Moving a 2.x project or fork to 3.0 |
 | [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
 | [Adapt the rules](docs/playbook.md#sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
 | [Changelog](CHANGELOG.md) | What changed in each release |
-| [Migrating from 2.x](docs/migrating-to-v3.md) | Moving a 2.x project or fork to 3.0 |
 | [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
 | [Playbook](docs/playbook.md) | Step-by-step procedures |
 | [Decisions](docs/decisions/) | Why the design is what it is |
@@ -51,3 +52,6 @@ including commercial use, with attribution.
 ## Author
 
 [Branimir Georgiev](https://github.com/braboj) — [Imbra.io](https://imbra.io)
+
+Extended templates from Imbra:
+[imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
