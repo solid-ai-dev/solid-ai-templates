@@ -1,0 +1,14 @@
+# Every public report goes through a form, so it arrives with the fields
+# triage needs. Issues filed through the API, as the maintainer's are, do not
+# pass through this chooser.
+blank_issues_enabled: false
+contact_links:
+  - name: Report a vulnerability privately
+    url: https://github.com/solid-ai-dev/solid-ai-templates/security/advisories/new
+    about: Never in a public issue. SECURITY.md gives the scope and what to send.
+  - name: Stacks, platforms, workflow rules or the interview
+    url: https://github.com/Imbra-Ltd/imbra-ai-templates/issues
+    about: These live in forks. Report them to the fork that carries them.
+  - name: How the templates compose and how to use them
+    url: https://github.com/solid-ai-dev/solid-ai-templates/blob/main/docs/ONBOARDING.md
+    about: Read this before asking a question; most are answered here.

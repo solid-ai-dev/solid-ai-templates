@@ -128,4 +128,5 @@ continued from the repository alone.
 ## Getting help
 
 - `docs/SPEC.md` — answers most "how does X work" questions
-- Open an issue if something is unclear — Discussions are not enabled
+- Open a "Question or idea" issue if something is still unclear —
+  Discussions are not enabled. `CONTRIBUTING.md`, "Issues", lists the routes
