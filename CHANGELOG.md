@@ -21,6 +21,12 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
+### Added
+
+- `base-git` treats a pull request with no registered check as not having
+  passed CI, and ships a check that waits for one, watches every check and
+  exits non-zero on zero checks or any failing one.
+
 ## [3.0.0] - 2026-10-18
 
 ### Breaking changes

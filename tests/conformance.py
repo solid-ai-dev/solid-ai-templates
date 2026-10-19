@@ -91,6 +91,12 @@ CHECKS = [
      "reason": "Needs the paths of two generated bundles to compare. This "
                "repository commits no binary artifact."},
 
+    {"file": "core/git.md", "find": "checks not passing",
+     "title": "A pull request with no registered check has not passed CI",
+     "do": SKIP,
+     "reason": "Takes the pull request about to merge as `<N>`. Run per "
+               "merge, before `gh pr merge`, not against a tree."},
+
     {"file": "core/git.md", "find": "PATHS = [\"<file>\"]",
      "title": "Numbered headings stay consistent across concurrent edits",
      "do": SKIP,

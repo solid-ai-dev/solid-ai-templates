@@ -55,6 +55,37 @@
   `templates/core/review.md` priority order: security → correctness →
   clarity →
   conventions. Check CI passes. Only merge after the review passes.
+- **A pull request with no registered check has not passed CI.** Run
+  straight after a push, before the host has registered the workflow run,
+  `gh pr checks <N> --watch` prints `no checks reported` and exits at
+  once, so a merge chained after it goes through with no check run and
+  the output reads as a quiet pass. Wait until at least one check is
+  registered, then watch every check to completion:
+
+```bash
+PR=<N>
+count=0
+# The host registers a run some seconds after the push; poll for it
+# rather than reading its absence as a verdict.
+for _ in $(seq 1 60); do
+  count=$(gh pr checks "$PR" --json name --jq 'length' 2>/dev/null)
+  [ "${count:-0}" -gt 0 ] && break
+  sleep 5
+done
+echo "checks registered: ${count:-0}"
+[ "${count:-0}" -gt 0 ] || exit 1
+gh pr checks "$PR" --watch > /dev/null
+watched=$?
+failing=$(gh pr checks "$PR" --json bucket \
+  --jq '[.[] | select(.bucket != "pass" and .bucket != "skipping")] | length')
+echo "checks not passing: $failing"
+[ "$watched" -eq 0 ] && [ "$failing" -eq 0 ]
+```
+
+  Pass condition: `checks registered` is above zero, `checks not passing`
+  is zero, and the block exits zero. Zero registered checks after five
+  minutes, or any failing or cancelled check, exits non-zero, and the
+  pull request does not merge
 - **Re-run the verification a pull request body claims, rather than
   reading it, whenever the base has advanced since the body was
   written.** A well-written body carries evidence — a grep that found no
