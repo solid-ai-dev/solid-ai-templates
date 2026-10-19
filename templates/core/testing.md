@@ -1165,6 +1165,37 @@ every test file drifts from where the test actually lives.
   `tests/*` → unit, `tests/integration/` → integration, `tests/e2e/` →
   e2e. The tier follows from location, so a marker cannot drift from
   where the test sits
+- **Settle how test modules import before moving any.** The tier layout
+  puts modules one level down and, with one test module per source module
+  in each tier, the same basename in two directories. pytest's default
+  `--import-mode=prepend` fails a bare helper import (`from helper import
+  X`) one level down and stops collection on a repeated basename;
+  `--import-mode=importlib` permits the basename and breaks every bare
+  import. Making the test root and each tier a package, with helpers
+  imported by dotted path, satisfies both modes. The choice is cheap
+  before the first file moves and a rewrite of every helper import after
+  it, so probe the intended layout on the project's runner first:
+
+```bash
+# The project's configured --import-mode; pytest's default is prepend.
+MODE=prepend
+probe=$(mktemp -d)
+mkdir -p "$probe/tests/unit" "$probe/tests/integration"
+touch "$probe/tests/__init__.py" "$probe/tests/unit/__init__.py" \
+  "$probe/tests/integration/__init__.py"
+echo 'X = 1' > "$probe/tests/helper.py"
+printf 'from tests.helper import X\n\n\ndef test_a():\n    assert X\n' \
+  > "$probe/tests/unit/test_same.py"
+printf 'def test_b():\n    assert True\n' \
+  > "$probe/tests/integration/test_same.py"
+cd "$probe" && python -m pytest -q -p no:cacheprovider \
+  --import-mode="$MODE" tests
+```
+
+  Pass condition: `2 passed`, on a zero exit — the runner collects a
+  repeated basename across tiers and a helper reached by dotted path from
+  one level down. A collection error means the layout does not hold under
+  that mode, and the import decision comes before any file moves
 - **Make the default run the fast tier** (unit + integration) and gate
   the heavy tier (container, browser) behind an opt-in marker PLUS an
   optional-dependency extra, so the common path stays fast and the

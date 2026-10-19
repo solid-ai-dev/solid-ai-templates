@@ -191,6 +191,13 @@ CHECKS = [
 
     # -- core/testing.md ---------------------------------------------
 
+    {"file": "core/testing.md", "find": "tests.helper import X",
+     "title": "The tier layout's imports hold on the project's runner",
+     "do": SKIP,
+     "reason": "Probes the runner a project adopts the tier layout on. "
+               "This repository's tests are standalone scripts run with "
+               "`py`, with no pytest suite and no tier directories."},
+
     {"file": "core/testing.md", "find": "module-under-change",
      "title": "A remedy naming another check is re-read before narrowing it",
      "do": SKIP,
