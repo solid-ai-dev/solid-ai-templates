@@ -886,7 +886,8 @@ as #424 follow-up
 
 **Issues closed:** #418
 
-**Release:** v2.9.0 (<https://github.com/braboj/solid-ai-templates/releases/tag/v2.9.0>)
+**Release:** v2.9.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.9.0>)
 
 ---
 
@@ -933,7 +934,8 @@ applied to #431's suggested `ai-workflow.md` home.
 
 **Milestone:** v2.10 — Data-quality finish (8/8 closed)
 
-**Release:** v2.10.0 (<https://github.com/braboj/solid-ai-templates/releases/tag/v2.10.0>)
+**Release:** v2.10.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.10.0>)
 
 ---
 
@@ -978,7 +980,8 @@ the #500 schema it documents.
 
 **Milestone:** v2.11 — Docs & ADR conventions (8/8 closed)
 
-**Release:** v2.11.0 (<https://github.com/braboj/solid-ai-templates/releases/tag/v2.11.0>)
+**Release:** v2.11.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.11.0>)
 
 **Next:** planned v2.12 — Probe-first workflow lessons (#18, 9 issues) —
 ai-workflow probe/verify-before-acting sweep I; #482 closed as a
@@ -1346,8 +1349,8 @@ the capstone closes the loop the v2.17 PLAYBOOK convention opened.
 **PRs merged:** #605, #606, #607, #608, #609, #610, #611, #612, #613
 
 **Issues closed:** #469, #464, #428, #451, #436, #345, #332, #452, #476, #475,
- #455, #523, #592, #519, #337, #491, #493, #473, #432, #440, #591. Filed #600, #601, #604
-(Backlog).
+ #455, #523, #592, #519, #337, #491, #493, #473, #432, #440, #591. Filed #600,
+ #601, #604 (Backlog).
 
 ## 2026-06-25 — v2.20 Concrete Python & frontend
 
