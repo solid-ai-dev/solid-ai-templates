@@ -35,6 +35,10 @@ alters no template carries no entry.
 
 ### Changed
 
+- From 3.0.0, template paths, template and section IDs, the manifest
+  schema, core-tier membership and check exit codes are frozen until 4.0.0
+  (ADR-051). The declaration block is not, until a tool writes and reads it
+  (ADR-053).
 - `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
   read as MUST or MUST NOT, where it required an RFC 2119 key word in
   every rule. Key words mark strength where it matters.
@@ -47,7 +51,6 @@ alters no template carries no entry.
   found.
 - `base-agents` states the README-map rule's substance in place of this
   repository's record number.
-
 - A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
   naming both files, where the later entry silently replaced the earlier.
   SPEC names the IDs and directories upstream holds, which a fork leaves

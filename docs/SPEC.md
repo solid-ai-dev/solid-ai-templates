@@ -231,8 +231,8 @@ every root, in both directions.
 
 Some templates are project-level choices, not stack-level dependencies.
 They are not referenced in any stack's `depends_on` chain — users
-opt in via the `Extras` field in the declaration block or during a
-fork's interview.
+opt in during a fork's interview, which resolves each as a root of its
+own (the declaration block's `Extras` field is the target form).
 
 Upstream's orthogonal templates include the advanced data templates
 (data-governance, data-migration), opt-in extras no stack pulls
@@ -602,7 +602,9 @@ a declarative header that the agent resolves at startup.
 ### Declaration block
 
 The generated CLAUDE.md contains a machine-readable header instead of
-a hand-curated file list:
+a hand-curated file list. The block is a target: no interview writes it
+and no tool reads it yet, so it is not part of the 3.x frozen surface
+(ADR-053), and a minor may change its fields until a release ships both.
 
 ```markdown
 Stack: stack-astro
