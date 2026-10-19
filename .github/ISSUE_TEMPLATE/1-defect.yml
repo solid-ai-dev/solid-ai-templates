@@ -9,8 +9,10 @@ body:
         you would not post on a forum. A vulnerability goes to the private
         route in SECURITY.md instead.
 
-        Search open **and closed** issues first. If one matches, add your
-        version and evidence there rather than filing a new one.
+        Search open **and closed** issues first. If an open one matches, add
+        your version and evidence there rather than filing a new one. If a
+        closed one matches and your version was released after it closed,
+        that is a regression: file it here and name the closed issue below.
         CONTRIBUTING.md, "Issues", says what happens to a report.
   - type: input
     id: version
@@ -40,6 +42,14 @@ body:
       label: Actual behaviour
     validations:
       required: true
+  - type: input
+    id: regression
+    attributes:
+      label: Regression of
+      description: >-
+        The closed issue this repeats, when your version was released after
+        it closed. Leave empty otherwise.
+      placeholder: "#1234"
   - type: textarea
     id: evidence
     attributes:
@@ -55,5 +65,7 @@ body:
     attributes:
       label: Search
       options:
-        - label: I searched open and closed issues and found no match.
+        - label: >-
+            I searched open and closed issues: none matches, or this is a
+            regression of the closed issue named above.
           required: true
