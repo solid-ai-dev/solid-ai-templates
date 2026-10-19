@@ -306,6 +306,33 @@ applies.
 
 ---
 
+## Score template quality
+
+`tools/template_quality.py` scores each template's form against the
+criteria in `docs/design/template-content-quality.md`, "Measured criteria":
+rule length, prose share, sentence length, instructions, hedges, history and
+section size, from 0 to 100.
+
+```bash
+py tools/template_quality.py              # every template, lowest first
+py tools/template_quality.py templates/core/testing.md   # one file in detail
+py tools/template_quality.py --sections   # the lowest-scoring sections
+py tools/template_quality.py --check      # the CI ratchet
+py tools/template_quality.py --update     # re-record the baseline
+```
+
+Pass condition for `--check`: `findings: 0` and exit zero. It runs the
+planted cases first and refuses a run that scored no template.
+
+1. Before opening a template PR, score the files it changes. A drop below
+   the baseline fails CI; shorten the rule or move its reason to prose docs
+   rather than re-recording a lower row
+2. After improving a template, run `--update` and commit the raised rows
+   with the change. Never lower a row by hand
+3. A new template scores 70 or above, or CI fails it until it is rewritten
+
+---
+
 ## Run the test suite
 
 ```bash
