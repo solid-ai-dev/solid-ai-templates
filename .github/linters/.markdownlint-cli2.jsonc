@@ -1,0 +1,29 @@
+// markdownlint-cli2 configuration, passed with --config:
+//   npx markdownlint-cli2 --config .github/linters/.markdownlint-cli2.jsonc
+// The width is also declared in .editorconfig, where the templates' own
+// line-width check reads it.
+{
+  "config": {
+    "default": true,
+    "MD013": {
+      "line_length": 88,
+      "code_blocks": false,
+      "tables": false,
+      "headings": false
+    },
+    "MD022": false,
+    "MD024": {
+      "siblings_only": true
+    },
+    "MD029": false,
+    "MD031": false,
+    "MD032": false,
+    "MD040": false,
+    "MD060": false
+  },
+
+  // Every Markdown file .gitignore does not exclude, so a test report is not
+  // linted and a new document is. No file is exempt.
+  "globs": ["**/*.md"],
+  "gitignore": true
+}

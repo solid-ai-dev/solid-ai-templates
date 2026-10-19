@@ -48,6 +48,8 @@ Releases up to 2.63.0 are listed in
   section ([#2046])
 - The templates and tools are licensed under MIT instead of CC BY 4.0
   ([#2048])
+- The Markdown lint config moves to .github/linters; a fork keeps its own
+  .markdownlint.json ([#2049])
 - The repository moved to the solid-ai-dev organisation; old links
   redirect ([#1841])
 - Paths, IDs, the manifest and the core rules stay stable until 4.0
@@ -99,6 +101,7 @@ Releases up to 2.63.0 are listed in
 [#2045]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2045
 [#2046]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2046
 [#2048]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2048
+[#2049]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2049
 
 ## [2.90.0] - 2026-09-12
 

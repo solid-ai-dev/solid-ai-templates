@@ -23,7 +23,8 @@ You need:
 - GitHub CLI (`gh`), authenticated, for the issue, pull-request and release
   steps in the playbook
 - Optional, to run CI's linters before pushing: `pip install pyflakes==4.0.2`,
-  Node.js for `npx --yes markdownlint-cli2@0.23.3`, and
+  Node.js for markdownlint (the command is in the playbook, "Run the test
+  suite"), and
   `pip install pre-commit` then `pre-commit install`
 
 There is no build step: the templates are plain Markdown. Clone the
