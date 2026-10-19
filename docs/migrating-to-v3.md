@@ -111,7 +111,7 @@ Fork the repository on GitHub, then set it up once:
 | Repository variable `UPSTREAM_REPO` = `solid-ai-dev/solid-ai-templates` | CI fetches upstream, so SYS-20 compares the manifest with what the fork last merged and the merged-work sweep skips upstream's commits |
 | Push upstream's tags to the fork | The release and changelog checks need a tag to bound their range |
 | Turn on delete-branch-on-merge | The merged-head-branch check requires it |
-| Register `release-gates.yml` and `tag-guard.yml` | GitHub lists a workflow only once an event touches it, and these fire on tags alone. Touch both in one pull request and revert the line in the next |
+| Register `release-gates.yml` | GitHub lists a workflow only once an event touches it, and this one fires on tags and dispatch alone. Touch it in one pull request and revert the line in the next |
 | `gh repo set-default <owner>/<fork>` in each clone | A clone with an `upstream` remote can default to upstream, and every check reading issues then reads the wrong tracker |
 
 Then add the fork's own content:

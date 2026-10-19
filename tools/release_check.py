@@ -14,9 +14,15 @@ release commit and on the tag.
 Exits 0 when the cut is complete and the version agrees, 1 on any finding,
 and 2 when no release is named or no previous tag exists to compare with.
 
+The release workflow also asks it two questions about a release: which
+milestone names it, and what the release's notes are. Each prints its
+answer and exits 1 when it cannot give one.
+
 Usage:
-    py tools/release_check.py v3.0.0      # the release being cut
-    py tools/release_check.py --self-test # the planted cases below
+    py tools/release_check.py v3.0.0              # the release being cut
+    py tools/release_check.py --milestone v3.0.0  # the milestone naming it
+    py tools/release_check.py --notes v3.0.0      # its changelog section
+    py tools/release_check.py --self-test         # the planted cases below
 """
 
 import os
@@ -141,6 +147,72 @@ def check(release_name):
     return 1 if found else 0
 
 
+def named(version, titles):
+    """The titles naming `version` alone or before " — " and a theme."""
+    return [title for title in titles
+            if title == version or title.startswith(version + " — ")]
+
+
+def milestone(release_name, titles):
+    """Return the one title naming the release, or None if none does.
+
+    Raises ValueError when more than one title names it.
+    """
+
+    # A minor's milestone names the minor line and a patch's the full
+    # version, so the full version wins and the minor line is the fallback.
+    # Matching the separator rather than a bare prefix stops v2.8 claiming
+    # every v2.8x title.
+    found = named(release_name, titles)
+    if not found:
+        found = named(".".join(release_name.split(".")[:2]), titles)
+    if len(found) > 1:
+        raise ValueError("more than one milestone names %s: %s"
+                         % (release_name, "; ".join(found)))
+    return found[0] if found else None
+
+
+def print_milestone(release_name):
+    repo = os.environ.get("GITHUB_REPOSITORY") or "{owner}/{repo}"
+    proc = subprocess.run(
+        ["gh", "api", "repos/%s/milestones?state=all" % repo, "--paginate",
+         "--jq", ".[].title"], **RUN)
+
+    # A failed listing is not an empty one: reading it as no milestone
+    # would report a release scoped to one as scoped to none.
+    if proc.returncode != 0:
+        print("the milestones could not be listed: %s" % proc.stderr.strip(),
+              file=sys.stderr)
+        return 1
+    try:
+        title = milestone(release_name, proc.stdout.splitlines())
+    except ValueError as error:
+        print(error, file=sys.stderr)
+        return 1
+    print(title or "")
+    return 0
+
+
+def notes(text, version):
+    """Return the body of the one `## [version]` section, or None."""
+    cut = sections(text).get(version, [])
+    if len(cut) != 1:
+        return None
+    return "\n".join(cut[0][1]).strip("\n")
+
+
+def print_notes(release_name):
+    match = VERSION.match(release_name or "")
+    shown = subprocess.run(["git", "show", "HEAD:" + RECORD], **RUN)
+    body = notes(shown.stdout, release_name[1:]) if match else None
+    if shown.returncode != 0 or not body:
+        print("HEAD:%s holds no single section for %r"
+              % (RECORD, release_name), file=sys.stderr)
+        return 1
+    print(body)
+    return 0
+
+
 CUT = """## [Unreleased]
 
 ## [3.0.0] - 2026-10-20
@@ -176,25 +248,72 @@ CASES = [
 ]
 
 
+TITLES = ["v2.8 — Old line", "v2.80 — Later line", "v2.90.1 — A patch",
+          "v2.90 — Benchmark", "v3.0 — The split"]
+
+# Each case is (name, titles, release, the title owed, or None for no
+# milestone, or ValueError when the titles are ambiguous).
+MILESTONE_CASES = [
+    ("a minor resolves to its line", TITLES, "v3.0.0", "v3.0 — The split"),
+    ("a patch's own milestone wins", TITLES, "v2.90.1", "v2.90.1 — A patch"),
+    ("a patch without one falls back to its line", TITLES, "v2.90.2",
+     "v2.90 — Benchmark"),
+    ("v2.8 does not claim v2.80's title", TITLES, "v2.8.0",
+     "v2.8 — Old line"),
+    ("a bare title names its release", ["v3.1"], "v3.1.0", "v3.1"),
+    ("no milestone names the release", TITLES, "v4.0.0", None),
+    ("two titles name the release", TITLES + ["v3.0 — Again"], "v3.0.0",
+     ValueError),
+]
+
+# Each case is (name, changelog, version, the notes owed, or None).
+NOTES_CASES = [
+    ("the section's body, trimmed", CUT, "3.0.0",
+     "### Breaking changes\n\n- Stacks move to forks."),
+    ("no section for the version", CUT, "3.1.0", None),
+    ("two sections for the version", CUT + CUT[16:], "3.0.0", None),
+]
+
+
 def self_test():
     failed = 0
+
+    def report(ok, name, got):
+        print("  %s  %s: %s" % ("ok  " if ok else "FAIL", name, got))
+        return not ok
+
     for name, text, release, previous, owed in CASES:
         got = findings(text, release, previous)
         if owed is None:
             ok = not got
         else:
             ok = len(got) == 1 and owed in got[0]
-        failed += not ok
-        print("  %s  %s: %s" % ("ok  " if ok else "FAIL", name,
-                                 "; ".join(got) or "clean"))
+        failed += report(ok, name, "; ".join(got) or "clean")
+    for name, titles, release, owed in MILESTONE_CASES:
+        try:
+            got = milestone(release, titles)
+        except ValueError as error:
+            got = error
+        ok = (isinstance(got, ValueError) if owed is ValueError
+              else got == owed)
+        failed += report(ok, name, got)
+    for name, text, version, owed in NOTES_CASES:
+        got = notes(text, version)
+        failed += report(got == owed, name, repr(got))
+    total = len(CASES) + len(MILESTONE_CASES) + len(NOTES_CASES)
     print("VERDICT: %s - %d case(s), %d failed"
-          % ("PASS" if not failed else "FAIL", len(CASES), failed))
+          % ("PASS" if not failed else "FAIL", total, failed))
     return 1 if failed else 0
+
+
+ACTIONS = {"--milestone": print_milestone, "--notes": print_notes}
 
 
 if __name__ == "__main__":
     args = sys.argv[1:]
     if args == ["--self-test"]:
         raise SystemExit(self_test())
+    if len(args) == 2 and args[0] in ACTIONS:
+        raise SystemExit(ACTIONS[args[0]](args[1]))
     name = args[0] if args else os.environ.get("RELEASE")
     raise SystemExit(check(name))

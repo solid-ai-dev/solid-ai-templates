@@ -44,6 +44,8 @@ Releases up to 2.63.0 are listed in
 - The agent rules live in AGENTS.md, which forks own ([#2041])
 - CI runs each gate as its own parallel job, so one failure no longer
   hides the rest ([#2045])
+- A release tag publishes its GitHub Release with the version's changelog
+  section ([#2046])
 - The repository moved to the solid-ai-dev organisation; old links
   redirect ([#1841])
 - Paths, IDs, the manifest and the core rules stay stable until 4.0
@@ -93,6 +95,7 @@ Releases up to 2.63.0 are listed in
 [#2039]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2039
 [#2041]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2041
 [#2045]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2045
+[#2046]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2046
 
 ## [2.90.0] - 2026-09-12
 
