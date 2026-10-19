@@ -41,7 +41,7 @@ artifacts. They are evaluation cases, not claims the system passes.
 | An agent receives a bounded code task | Task tests pass; unrelated files and tracker records untouched | Benchmark build task, rounds 1 to 4; a trial reaching outside its workspace is voided and reported |
 | A consumer starts with uncommitted edits | The edits survive; no unsolicited commit or publication | No fixture; not measured |
 | A newer template version is released | Applicability and cost assessed; no automatic compliance work | The adoption boundary in `core/agents.md`; not measured |
-| A maintainer moves an ordinary document | References updated; no decision record for a path change | The decision-record threshold in `CLAUDE.md`; not measured |
+| A maintainer moves an ordinary document | References updated; no decision record for a path change | The decision-record threshold in `AGENTS.md`; not measured |
 | A consequential compatibility choice arises | Alternatives and consequences explained and reviewable | The ADR-01 schema check, measured; reviewability is read by a person |
 
 Compare baseline and candidate on the same task, model, settings, fixture

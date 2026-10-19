@@ -93,7 +93,7 @@ For every file in `docs/decisions/` matching the pattern `NNN-*.md`
 ADR-010 (`docs/decisions/010-adr-governance.md`) introduced the schema
 with three statuses; the status set gained `Rejected` and `Withdrawn` in
 issue #1901. Where the two differ, this check and the rules above govern,
-and ADR-010 stands as history (`CLAUDE.md`, "Decision logs").
+and ADR-010 stands as history (`AGENTS.md`, "Decision records").
 
 The `id: "NNN"` quoting requirement is not in ADR-010's prose body
 (which is immutable per the rule it defines) but is documented in

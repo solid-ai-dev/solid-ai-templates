@@ -103,7 +103,7 @@ CHECKS = [
      "do": SKIP,
      "reason": "Applies to a hybrid consumer that vendors this repository "
                "and lists its chain in its context file. This repository "
-               "vendors nothing, and its CLAUDE.md is inline, so it holds "
+               "vendors nothing, and its AGENTS.md is inline, so it holds "
                "no chain list to compare."},
 
     # -- core/git.md -------------------------------------------------
@@ -148,7 +148,7 @@ CHECKS = [
      "do": RUN, "expect": ["line"] * 12,
      "substitute": {'PATHS = ["<file>"]':
                     'PATHS = ['
-                    '"CLAUDE.md", '
+                    '"AGENTS.md", '
                     '"docs/playbook.md", '
                     '"docs/architecture/01-introduction-and-goals.md", '
                     '"docs/architecture/02-constraints.md", '

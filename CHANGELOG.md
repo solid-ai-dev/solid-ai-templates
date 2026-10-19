@@ -86,6 +86,9 @@ alters no template carries no entry.
   these by merge.
 - `docs/wiki/`, six pattern pages no template referenced, is removed; the
   templates hold the rules.
+- `AGENTS.md` holds this repository's agent rules and `CLAUDE.md` imports
+  it. A fork owns `AGENTS.md` like `CLAUDE.md`: replace upstream's on the
+  first merge that brings it.
 - The repository moved to the `solid-ai-dev` organisation. Generated files
   and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
   `braboj/` URL redirects, so existing submodules keep working until updated.

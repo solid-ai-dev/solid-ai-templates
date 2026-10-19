@@ -44,7 +44,7 @@ py tests/run_smoke.py
 | `templates/manifest.yaml` | The dependency graph every tool reads |
 | `docs/decisions/` | Why the model is the way it is |
 | `docs/playbook.md` | How to make each kind of change |
-| `CLAUDE.md` | The rules an agent applies in this repository |
+| `AGENTS.md` | The rules an agent applies in this repository |
 
 `py tools/resolve.py --roots` lists every root, and
 `py tools/resolve.py <id>` prints the chain a root resolves to.
@@ -83,11 +83,11 @@ py tools/sync.py
   resolved chain
 - **Updated documents.** If your change moves the composition model, update
   `docs/architecture/`; if it changes how a project sets up, update
-  `README.md`. `CLAUDE.md` section 2.9 lists which document owns what
+  `README.md`. `AGENTS.md` section 2.5 lists which document owns what
 - **A decision record** when the change moves what a consuming project
   observes without reading this repository — the composition model, such as
   a new layer or a change to the override model. Naming, prose style,
-  tooling and file layout need none (`CLAUDE.md`, "Decision logs"). See
+  tooling and file layout need none (`AGENTS.md`, "Decision records"). See
   `docs/decisions/` and copy `docs/decisions/template.md`
 - **What it costs every chain carrying it.** A rule added to a widely
   resolved file is read by every project on those chains, on every turn.
@@ -100,7 +100,7 @@ py tools/sync.py
 ## Writing rules
 
 Template content is rules, not prose. The full authoring conventions are in
-`CLAUDE.md` section 2.7; the ones contributors most often miss:
+`AGENTS.md` section 2.4; the ones contributors most often miss:
 
 - Write imperatively: "Use X", "Never Y". An RFC 2119 keyword — MUST,
   SHOULD, MAY — marks a rule's strength where it matters
@@ -119,7 +119,7 @@ Template content is rules, not prose. The full authoring conventions are in
 
 Branch names, the commit and pull-request title form, one concern per pull
 request and the no-force-push rule are in
-[`CLAUDE.md` section 2.1](CLAUDE.md#21-git). Agents apply them on every
+[`AGENTS.md` section 2.1](AGENTS.md#21-git). Agents apply them on every
 turn, and human contributors follow the same ones.
 [docs/playbook.md, "Submit a pull request"](docs/playbook.md#submit-a-pull-request)
 gives the steps in order.
@@ -143,8 +143,8 @@ The forms ask only for what triage needs: the version, the affected stack
 and template, expected and actual behaviour, and evidence. A rule that
 produced a bad outcome in a real project is the most useful report this
 project receives. Issue titles follow
-[`CLAUDE.md` section 2.1](CLAUDE.md#21-git); the form applies the type
-label, and triage adds the priority ([section 2.2](CLAUDE.md#22-issue-labels)).
+[`AGENTS.md` section 2.1](AGENTS.md#21-git); the form applies the type
+label, and triage adds the priority ([section 2.2](AGENTS.md#22-issue-labels)).
 
 ### Search before filing
 
@@ -195,6 +195,6 @@ bound is the security acknowledgement in [SECURITY.md](SECURITY.md). A
 report or pull request that sits is not a rejection.
 
 Everything needed to understand, maintain and extend the project is in the
-repository: the spec, the playbook, the decision records and `CLAUDE.md`.
+repository: the spec, the playbook, the decision records and `AGENTS.md`.
 If the maintainer becomes unavailable, the project can be forked and
 continued from the repository alone.

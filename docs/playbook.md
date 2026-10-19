@@ -1,7 +1,7 @@
 # Playbook
 
 Operational reference for common tasks. Each section is a self-contained
-procedure. See `CLAUDE.md` for authoring rules and `docs/spec.md` for the
+procedure. See `AGENTS.md` for authoring rules and `docs/spec.md` for the
 composition model. Commands use `py`; `CONTRIBUTING.md`, "Set up",
 gives the launcher on macOS and Linux.
 
@@ -123,7 +123,7 @@ genericity before it becomes template content:
 ## Author a new ADR
 
 Use this workflow only after applying the decision threshold in
-`CLAUDE.md` "Decision logs": a record is owed when the decision changes
+`AGENTS.md` "Decision records": a record is owed when the decision changes
 what a consuming project observes without reading this repository — the
 composition model. Prose style, tool choice, release procedure, naming and
 file layout need no ADR, however consequential they are. One coherent
@@ -163,7 +163,7 @@ schema; smoke check ADR-01 enforces the current one, which adds
    frontmatter in the same PR — set its `status: Superseded`,
    refresh `date`, and add this ADR's id to its `superseded_by`
    list. Preserve historical claims; format-only changes are also allowed
-   under the decision-log rules in `CLAUDE.md`.
+   under the decision-record rules in `AGENTS.md`.
 6. Run `py tests/run_smoke.py ADR-01` to validate the frontmatter
    schema before opening the PR.
 7. If the ADR **removes** a concept, sweep for prose that still
@@ -479,7 +479,7 @@ adds to every chain's core tier under `fork_core:`, and never edits
    git checkout <commit> -- <path>
    ```
 5. Merge the rest: `git merge upstream/main`. Resolve `README.md`,
-   `CLAUDE.md` and `CHANGELOG.md` in the fork's favour; they are
+   `AGENTS.md`, `CLAUDE.md` and `CHANGELOG.md` in the fork's favour; they are
    fork-owned files. Then confirm no upstream template differs from
    upstream's; the command lists `templates/manifest.yaml` alone:
    ```bash
@@ -570,6 +570,28 @@ for a corpus that cannot be edited, the boundary the rule binds forward
 from. `quality-constraint-corpus-sweep` in `templates/core/quality.md`
 is the rule.
 
+A control proves something only when each of these holds:
+
+- **Commit first.** The revert step is `git checkout -- <path>`, which
+  restores from the index and discards unstaged work without saying so —
+  an uncommitted edit to the file under test is what the control destroys
+- **Plant where the check reads.** A check that reads committed state —
+  `git show HEAD:`, `git ls-files`, a tag's tree — is untouched by an edit
+  that is not staged or committed, and the run comes back byte-identical
+  to the clean one
+- **Plant a form the check inspects.** A prose section proves nothing
+  against a detector that fingerprints bullet lines
+- **Assert the mutation landed.** Name the entity mutated and compare its
+  value before and after. A pattern with the wrong line endings edits
+  nothing, and an assertion that finds the planted value anywhere passes
+  when a sibling already carried it
+- **Force the path under test to run.** A tool that writes nothing to a
+  file already in its target state reports clean because it never ran
+- **Doubt a uniform positive.** When every case passes or every repository
+  carries the file, run a control that MUST fail before believing it:
+  `gh api` prints a 404 body to stdout, so `--jq '.name'` reads as a hit
+  for every input
+
 ---
 
 ## Run a 360-degree audit
@@ -587,14 +609,14 @@ when a stakeholder needs the whole picture.
   `docs/360-audit.md` history. All audit history lives in the folder.
 - Each report carries a scores table, the issues created, the current
   bottleneck, and per-dimension findings tables with a grade rationale.
-- File a labelled issue for every actionable finding (CLAUDE.md §2.2)
+- File a labelled issue for every actionable finding (`AGENTS.md` §2.2)
   and reference it from the report.
 
 ---
 
 ## Submit a pull request
 
-The branch, commit and title forms are in `CLAUDE.md` section 2.1; the
+The branch, commit and title forms are in `AGENTS.md` section 2.1; the
 steps below apply them in order.
 
 1. Ensure you are on a feature branch named per section 2.1
@@ -603,12 +625,13 @@ steps below apply them in order.
    `manifest.yaml`) before committing
 4. Commit with a subject in section 2.1's form
 5. Push and open a PR titled in the same form
-6. Merge with the default squash subject — `gh pr merge <number>
-   --squash`, with no `--subject`. GitHub composes that subject from
-   the title and appends the pull request number; supplying one
-   replaces both. A release's milestone-coverage check, which a fork
-   carries in a template of its own, reads those numbers back out of the log, so a
-   hand-typed subject removes the reference it resolves
+6. Once the maintainer approves the merge, merge with the default squash
+   subject — `gh pr merge <number> --squash`, with no `--subject`. GitHub
+   composes that subject from the title and appends the pull request
+   number; supplying one replaces both. A release's milestone-coverage
+   check, which a fork carries in a template of its own, reads those
+   numbers back out of the log, so a hand-typed subject removes the
+   reference it resolves
 7. After merge: delete the branch and pull `main`
 
 Where a cut carries more than one pull request, every branch after the
@@ -809,6 +832,53 @@ no gate here can see.
 5. Record the result in the issue proposing the change, with the date it was
    taken, before the decision is made. A survey quoted later without its date
    asserts about today's tree what was true on the day it ran
+
+---
+
+## Wrap up a session
+
+Run when the user ends a session ("wrap up", "close out" and the like).
+Print the whole checklist, then execute each item in order, marking it done
+with its result before the next. Run it in full every time, including a
+second wrap-up in one session.
+
+1. **Commits and push** — every change committed and pushed, through a PR
+2. **Close issues** — close completed issues and verify auto-close worked
+3. **Epic checklists** — update them if relevant
+4. **ADRs** — record any decision a consumer can observe in
+   `docs/decisions/` (`AGENTS.md`, "Decision records")
+5. **Smoke tests** — run `py tests/run_smoke.py` and confirm it passes
+6. **AGENTS.md** — place each new rule by checking, in order: code, ADR,
+   README, playbook, `AGENTS.md`, the agent's own memory. `AGENTS.md` is
+   the home only for a rule the agent applies on every turn; it holds
+   rules, not changelogs, architecture or session logs
+7. **README.md** — is each change to the features or quick setup
+   reflected? Name the section
+8. **docs/architecture/** — is each change to the composition model or ID
+   system reflected? Name the section
+9. **templates/manifest.yaml** — is each template added, removed or
+   re-depended registered? Name the entry
+10. **CONTRIBUTING.md** — is each new tool, prerequisite or setup step
+    documented? Name the section
+11. **docs/playbook.md** — is each new command, script or procedure
+    documented? Name the section
+12. **Template feedback** — weigh any demonstrated shared defect or
+    recurring need, reconcile existing issues, and act within the agreed
+    scope. A reusable-looking preference alone needs no ticket or ADR
+13. **Branch cleanup** — delete local branches whose PRs merged, verified
+    against the PR record: `gh pr view <N> --json state,headRefOid` must
+    report `MERGED`, then `git branch -D`. `git branch --merged` cannot
+    see a squash merge; a `headRefOid` that differs from the local tip
+    usually means `gh pr update-branch` rewrote the remote head, so
+    inspect it rather than assume unpushed work
+14. **Flag gaps** — flag to the user anything above that cannot be
+    completed
+15. **Dev journal** — add a session entry to `docs/dev-journal.md`: date,
+    tool, key changes, PRs merged, issues closed and created. It comes
+    after item 14 because it records the others, and a flagged gap often
+    turns into a fix. Where the checklist runs twice in a session, only
+    the last pass writes the entry
+16. **Summary** — what was done and what is next
 
 ---
 
