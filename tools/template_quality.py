@@ -205,10 +205,13 @@ def _without_quotes(text):
     """Text with quoted passages removed. A rule quoting the form it forbids
     ("not 'see #123'") is not an instance of it."""
 
-    # Only double quotes and an opening curly single quote mark a quotation.
-    # A straight single quote is also an apostrophe, so pairing them would
-    # swallow the text between "team's" and "cache's" and hide what it holds.
-    return re.sub(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’", " ", text)
+    # A straight single quote is also an apostrophe. It opens a quotation
+    # only where no letter precedes it and closes one only where no letter
+    # follows it, and an apostrophe inside a word ("don't") stays inside the
+    # span. So "team's" and "cache's" pair with nothing, and the text between
+    # them is still scanned.
+    single = r"(?<!\w)'(?=\S)(?:[^']|'(?=\w))*?(?<=\S)'(?!\w)"
+    return re.sub(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|" + single, " ", text)
 
 
 def _sentences(unit):
@@ -440,6 +443,11 @@ def self_test():
                             "cache's keys\n"))
     cases.append(("apostrophes do not hide a citation",
                   apostrophes[0] <= 50 and apostrophes[3], apostrophes[0]))
+    for quoted_form in ("- Never write 'see #123' in a rule\n",
+                        "- Never write 'don't cite #123' in a rule\n"):
+        single = score(Doc(GOOD + quoted_form))
+        cases.append((f"a single-quoted citation does not cap: "
+                      f"{quoted_form.strip()}", not single[3], single[0]))
     table = "\n| Key | Meaning |\n|---|---|\n" + "| a | b |\n" * 40
     tabled = score(Doc(GOOD + table))[0]
     cases.append(("a table does not move the score", tabled == good, tabled))
