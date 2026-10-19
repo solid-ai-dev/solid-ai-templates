@@ -33,6 +33,13 @@ alters no template carries no entry.
   pytest's two import modes forbid opposite things, a package test root
   satisfies both, and a probe checks the layout before any file moves.
 
+### Changed
+
+- From 3.0.0, template paths, template and section IDs, the manifest
+  schema, core-tier membership and check exit codes are frozen until 4.0.0
+  (ADR-051). The declaration block is not, until a tool writes and reads it
+  (ADR-053).
+
 ### Fixed
 
 - A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
