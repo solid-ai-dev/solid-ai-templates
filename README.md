@@ -153,7 +153,7 @@ upstream these are the shared templates below; a fork adds its stacks and
 platforms.
 
 <!-- generated:readme-root-counts -->
-Measured: 0 stacks and 38 orthogonal templates, 38 roots in all. An extra
+Measured: 0 stacks and 39 orthogonal templates, 39 roots in all. An extra
 resolves to the 6 core-tier files plus 0 to 5 of its own.
 <!-- /generated:readme-root-counts -->
 
@@ -209,8 +209,9 @@ Picked independently of the stack, each resolving as its own root.
 | `templates/core/review.md` | core | Peer review priority, MUST/SHOULD checklists, deviation rules |
 | `templates/security/security.md` | security | Application security rules — input, output, injection, auth, sessions, TLS, headers |
 | `templates/core/testing.md` | core | Test pyramid, coverage thresholds, naming conventions |
-| `templates/frontend/quality.md` | frontend | CSS conventions, performance, SEO & analytics |
-| `templates/frontend/static-site.md` | frontend | Abstract SSG rules — content, assets, SEO |
+| `templates/frontend/content.md` | frontend | Build-agnostic content rules — content, assets, SEO, structured data |
+| `templates/frontend/quality.md` | frontend | CSS conventions, performance, analytics |
+| `templates/frontend/static-site.md` | frontend | Abstract SSG rules — build, serving, CSS, typography, theme, performance |
 | `templates/frontend/ux.md` | frontend | UX principles, WCAG 2.1 AA, responsive breakpoints |
 <!-- /generated:readme-extras -->
 

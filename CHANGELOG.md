@@ -39,6 +39,10 @@ alters no template carries no entry.
   schema, core-tier membership and check exit codes are frozen until 4.0.0
   (ADR-051). The declaration block is not, until a tool writes and reads it
   (ADR-053).
+- `frontend-content` holds the build-agnostic content, asset, SEO and
+  structured-data rules, with one SEO copy; `frontend-static-site` depends
+  on it, and `frontend-quality` drops its SEO rules — a chain taking
+  `frontend-quality` alone adds `frontend-content`.
 
 ### Fixed
 

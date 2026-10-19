@@ -1,6 +1,6 @@
 # Frontend — Static Site
 [ID: frontend-static-site]
-[DEPENDS ON: templates/core/git.md, templates/core/docs.md, templates/core/quality.md, templates/security/security.md, templates/frontend/ux.md, templates/frontend/quality.md]
+[DEPENDS ON: templates/core/git.md, templates/security/security.md, templates/frontend/content.md, templates/frontend/ux.md, templates/frontend/quality.md]
 
 Abstract rules for any static site generated at build time and served as
 plain HTML, CSS, and minimal JavaScript. Never used directly — always
@@ -30,30 +30,6 @@ Edit here                    Deployed here
 - Default to static components; only reach for an interactive framework when
   client-side state is genuinely required
 - One stylesheet — no inline styles except dynamic/computed values
-
----
-
-## Content structure
-[ID: static-site-content]
-[EXTEND: base-docs]
-
-All editable content lives in a data directory as structured files (JSON,
-YAML, or Markdown). Never hardcode content that a non-developer might want
-to change.
-
-| File | Controls |
-|------|----------|
-| `[data path]/site.[ext]` | Nav links, hero text, contact links, footer |
-| `[data path]/[section].[ext]` | [what it controls] |
-
----
-
-## Assets
-[ID: static-site-assets]
-
-- Images: `public/images/` — reference as `/images/filename.ext`
-- Documents: `public/docs/` — reference as `/docs/filename.ext`
-- No assets outside `public/` — only files in `public/` are served statically
 
 ---
 
@@ -139,36 +115,3 @@ to change.
 - SHOULD add a CI check that scans built HTML output for internal hrefs
   violating the convention
 
----
-
-## SEO
-[ID: static-site-seo]
-[EXTEND: frontend-quality]
-
-- `robots.txt` required
-- Open Graph and Twitter Card meta tags required
-- Canonical URLs required
-- Sitemap MUST be generated at build time and referenced in `robots.txt`
-- Every content page MUST have a unique `description` in frontmatter — used
-  for `<meta name="description">`, OG description, and Twitter Card
-- Meta descriptions MUST read as a pitch, not a summary — answer "why
-  should I click this?"
-- JSON-LD structured data SHOULD be present on content pages (Article,
-  Course, or appropriate schema type)
-- `robots.txt` MUST allow answer-engine crawlers (OAI-SearchBot,
-  ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot)
-- Behind Cloudflare, AI-crawler access MUST be verified in AI Crawl
-  Control — new domains block AI bots by default (since 2025-07-01),
-  which overrides `robots.txt`
-
-### SEO strategy (structure audit)
-
-- **Title-intent alignment** — page titles SHOULD match the queries users
-  actually type (check GSC or keyword research); include the primary
-  keyword, not just abbreviations or internal jargon; 50–60 characters
-- **Internal linking** — related pages SHOULD link to each other (topical
-  clusters); no orphan pages (every page reachable within 3 clicks from
-  the homepage); content pages SHOULD average 3+ internal links
-- **Content depth** — pages intended for indexing SHOULD exceed ~150 words;
-  pages below threshold are either enriched or noindexed; no
-  duplicate/near-duplicate thin pages
