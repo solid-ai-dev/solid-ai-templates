@@ -348,8 +348,10 @@ py tests/run_fork_sync.py         # a fork that only appends merges HEAD
 - Spec files live in `tests/specs/` — see `tests/CODIFICATION.md`
   for the ID scheme and `tests/INDEX.md` for the full list
 - CI runs smoke, conformance, fork sync, `sync.py --check`,
-  `resolve.py --check`, the redundancy audit and gitleaks on PRs and on
-  push to main
+  `resolve.py --check`, the redundancy audit, pyflakes over `tools/` and
+  `tests/`, markdownlint and gitleaks on PRs and on push to main
+- markdownlint skips the files `.markdownlint-cli2.jsonc` records as
+  predating it; fix a file and remove its line, never add one
 - The e2e suite and the efficacy benchmark exercise stacks and the
   interview, so they live in the Imbra fork
 - To validate a new template: run `py tests/run_smoke.py` and

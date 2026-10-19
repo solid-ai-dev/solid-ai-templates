@@ -54,6 +54,17 @@ jobs:
         run: python tools/resolve.py --check
       - name: Check for new redundant rules
         run: python tools/audit_redundancy.py --check
+      # The tooling is the gate, so an unused import or an undefined name in
+      # it is a defect nothing else reports. Versions are pinned so a release
+      # of either linter cannot turn a green tree red.
+      - name: Lint the Python tooling
+        run: |
+          pip install pyflakes==4.0.2
+          python -m pyflakes tools tests
+      # Reads .markdownlint.json for the rules and .markdownlint-cli2.jsonc
+      # for the files, which records the ones that predate this step.
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli2@0.23.3
       - name: Install gitleaks
         run: |
           curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz

@@ -34,7 +34,7 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from conformance import CHECKS, RUN, SKIP, MANUAL, READ
+from conformance import CHECKS, SKIP, MANUAL, READ
 from lib import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
                  print_verdict, template_documents)
 
