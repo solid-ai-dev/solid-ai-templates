@@ -167,7 +167,7 @@ wrong before changing either.
   over-long line of prose beside it does not:
 
   ```bash
-    py - <<'EOF'
+  py - <<'EOF'
   import json, pathlib, re, subprocess
 
   # The width and its exemptions come from project configuration, never
@@ -258,7 +258,7 @@ wrong before changing either.
       print(finding)
 
   raise SystemExit(1 if findings else 0)
-    EOF
+  EOF
   ```
 
 - Write in present tense — past or future tense indicates out-of-sync
@@ -311,7 +311,7 @@ wrong before changing either.
   empty:
 
   ```bash
-    py - <<'EOF'
+  py - <<'EOF'
   import pathlib, re, subprocess
   NOUNS = ("file", "files", "template", "templates", "stack", "stacks",
            "chain", "chains", "check", "checks", "test", "tests", "root",

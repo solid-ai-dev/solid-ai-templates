@@ -1026,7 +1026,8 @@ stated self-contained instead.
 
 **Milestone:** v2.12 — Probe-first workflow lessons (9/9 closed)
 
-**Release:** v2.12.0 (<https://github.com/braboj/solid-ai-templates/releases/tag/v2.12.0>)
+**Release:** v2.12.0
+(<https://github.com/braboj/solid-ai-templates/releases/tag/v2.12.0>)
 
 **Next:** v3.0 — Restructure (13 issues) — inline-to-reference eval,
 slim stacks.

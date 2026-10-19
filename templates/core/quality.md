@@ -145,7 +145,7 @@ that has since lifted reads exactly like a live one.
   itself
 
   ```bash
-    py - <<'EOF'
+  py - <<'EOF'
   import ast, pathlib
 
   # A project's own boundary: (forbidden importer prefix, forbidden
@@ -180,7 +180,7 @@ that has since lifted reads exactly like a live one.
   for finding in findings:
       print("  %s" % finding)
   raise SystemExit(1 if findings else 0)
-    EOF
+  EOF
   ```
 
   Pass condition: the inspected count names how many modules were
@@ -228,7 +228,7 @@ that has since lifted reads exactly like a live one.
   by hand is what keeps the three member kinds distinguishable
 
   ```bash
-    py - <<'EOF'
+  py - <<'EOF'
   import inspect
 
   # The hierarchy under contract. Empty until a project names its own.
@@ -277,7 +277,7 @@ that has since lifted reads exactly like a live one.
   for finding in findings:
       print("  %s" % finding)
   raise SystemExit(1 if findings else 0)
-    EOF
+  EOF
   ```
 
   Pass condition: the command reports how many abstract operations it
@@ -1091,7 +1091,7 @@ verdict unreached.
   it read and what it found:
 
   ```bash
-    py - <<'EOF'
+  py - <<'EOF'
   import io, subprocess, token, tokenize
 
   # Identifiers only. Comments, docstrings and string content are
@@ -1120,7 +1120,7 @@ verdict unreached.
   # The status carries the verdict too. A check that names what it found and
   # exits zero is green wherever the caller reads the code, not the output.
   raise SystemExit(1 if findings else 0)
-    EOF
+  EOF
   ```
 
   Pass condition: the inspected count is above zero and the identifier
@@ -1283,7 +1283,7 @@ rg -n "#<number>\b"
   of zero fails it — the enumeration reached nothing:
 
   ```bash
-    py - <<'EOF'
+  py - <<'EOF'
   import io, pathlib, subprocess, tokenize
   DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
   SKIP = (".venv", "venv", "build", "dist", ".git", ".tox")
@@ -1327,7 +1327,7 @@ rg -n "#<number>\b"
       print(finding)
 
   raise SystemExit(1 if findings else 0)
-    EOF
+  EOF
   ```
 
 ## Debug code
