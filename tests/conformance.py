@@ -182,7 +182,7 @@ CHECKS = [
               "contract test", "do": SKIP,
      "reason": "BASE and HIERARCHY are empty by design -- this "
                "repository's own Python (tools/, tests/) declares one "
-               "plain class (run_smoke.py's Inspected) with no "
+               "plain class (tests/smoke/common.py's Inspected) with no "
                "subtype and no overridable operation. Applies to a "
                "consuming project's own abstract hierarchy."},
 
