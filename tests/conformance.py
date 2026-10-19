@@ -62,7 +62,7 @@ SKIP = "skip"
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 20
+SKIP_BUDGET = 22
 
 MANUAL = "manual"
 READ = "read"
@@ -120,6 +120,14 @@ CHECKS = [
                     PYTHON + " tools/sync.py > /dev/null || exit 1",
                     "<artifact-path>": "."}},
 
+    {"file": "core/git.md", "find": "--ignore-all-space <file>",
+     "title": "A whitespace-only regeneration diff is dropped before staging",
+     "do": SKIP,
+     "reason": "Classifies one file's pending change, between regenerating "
+               "and staging it. It is run per change on the file just "
+               "regenerated; a committed tree holds no pending change to "
+               "classify."},
+
     {"file": "core/git.md", "find": "mask() {",
      "title": "Volatile parts of a binary artifact are masked before diffing",
      "do": SKIP,
@@ -166,6 +174,13 @@ CHECKS = [
                "plain class (run_smoke.py's Inspected) with no "
                "subtype and no overridable operation. Applies to a "
                "consuming project's own abstract hierarchy."},
+
+    {"file": "core/quality.md", "find": "rg -n \"#<number>",
+     "title": "Closing a cited item audits the citations to it",
+     "do": SKIP,
+     "reason": "Takes the item being closed or superseded as `<number>`. "
+               "It is run per closure, in the change that closes the item, "
+               "not as a property of the tree."},
 
     {"file": "core/quality.md", "find": "documents naming ${module}",
      "title": "A document naming a check is re-read when its exemptions change",
@@ -279,6 +294,15 @@ CHECKS = [
                "to describe."},
 
     # -- core/quality-gates.md -----------------------------------
+
+    # The example's limit stands for the project's own. Here that is the
+    # 88 .editorconfig declares for Python, and the Python is all this
+    # repository holds that carries no exempt line: its Markdown keeps
+    # table rows over the width, which core/docs.md's check exempts.
+    {"file": "core/quality-gates.md", "find": "awk 'length > 80' FILE",
+     "title": "An output constraint is paired with its check", "do": RUN,
+     "expect": [],
+     "substitute": {"80": "88", "FILE": "tools/*.py tests/*.py"}},
 
     {"file": "core/quality-gates.md",
      "find": "family: $FAMILY",

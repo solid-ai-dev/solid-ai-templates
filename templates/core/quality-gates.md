@@ -715,10 +715,14 @@ this risk furthest — the project inherits the rule with no protocol to
 self-check it.
 
 - An output constraint that is mechanically checkable MUST name its
-  agent-runnable check — the command to run and the pass condition.
-  Examples: "line length < 80" -> `awk 'length > 80' FILE`, output MUST
-  be empty; "no raw HTML" -> `grep -nE '<[a-z]+>' FILE`, output MUST be
-  empty
+  agent-runnable check — the command to run and the pass condition. A
+  line-length limit of 80, for example, pairs with:
+
+```bash
+awk 'length > 80' FILE
+```
+
+  Pass condition: no output. Any line printed is longer than the limit
 - State the check next to the rule it verifies — not in a separate
   tooling file the generated project never receives. The rule and its
   check MUST travel together, so every artifact generated from the
@@ -751,9 +755,10 @@ self-check it.
   `quality-cross-validation` — it applies to every check a project
   carries, not only to the ones a gate runs
 
-The unrunnable form is mechanically findable. A verification phrase and a
-backticked command in the same sentence of running prose, with no fence
-beside it to hold the runnable form, is a check no tool can extract. Match
+The unrunnable form is mechanically findable. A backticked command in a
+sentence of running prose, introduced by a verification phrase or followed
+by its verdict ("output must be empty"), with no fence beside it to hold
+the runnable form, is a check no tool can extract. Match
 over the paragraph and not over the line: prose wraps, so a check written
 inline is split across two lines by the project's own line-width rule, and
 a line-scoped detector reads each half as innocent. Two rules that are
@@ -780,10 +785,18 @@ PHRASE = re.compile(
     re.IGNORECASE)
 COMMAND = re.compile(r"[`][^`]+[`]")
 
+# The other order: the command comes first and its pass condition after
+# it, with no announcing phrase at all.
+VERDICT = re.compile(
+    r"output\s+must\s+be\s+empty"
+    r"|\bno\s+output\s+means"
+    r"|\bis\s+done\s+when",
+    re.IGNORECASE)
+
 # A sentence boundary between the phrase and the command means the
 # paragraph talks ABOUT a check and names a command somewhere else.
-# Requiring the phrase to introduce the command is what separates a check
-# stated in prose from prose that mentions one.
+# Requiring the two to share a sentence is what separates a check stated
+# in prose from prose that mentions one.
 BREAK = re.compile(r"[.]\s")
 WINDOW = 5
 
@@ -804,15 +817,15 @@ def examine(path, para, numbers, marks):
     if near <= WINDOW:
         return 1
     joined = " ".join(line.strip() for line in para)
-    for phrase in PHRASE.finditer(joined):
-        command = COMMAND.search(joined, phrase.end())
-        if not command:
-            continue
-        if BREAK.search(joined[phrase.end():command.start()]):
-            continue
-        findings.append("%s:%d %s" % (
-            path, numbers[0], joined[phrase.start():command.end()]))
-        break
+    pairs = [(p, COMMAND.search(joined, p.end()))
+             for p in PHRASE.finditer(joined)]
+    pairs += [(c, VERDICT.search(joined, c.end()))
+              for c in COMMAND.finditer(joined)]
+    for first, second in pairs:
+        if second and not BREAK.search(joined[first.end():second.start()]):
+            findings.append("%s:%d %s" % (
+                path, numbers[0], joined[first.start():second.end()]))
+            break
     return 1
 
 for root in ROOTS:
@@ -854,11 +867,12 @@ Pass condition: the inspected count is above zero and the finding count is
 zero. An inspected count of zero means `ROOTS` named nothing that exists,
 which is the check reaching no input rather than a clean tree.
 
-`PHRASE` is a vocabulary, not a pattern. Add a literal when a check in the
-project is found announcing itself with wording the list does not carry,
-and add it together with the instance that motivated it; a phrase nobody
-writes widens the false positives and finds nothing. Any edit to it MUST
-be controlled in both directions: a check announced in prose is reported,
+`PHRASE` and `VERDICT` are vocabularies, not patterns. Add a literal when a
+check in the project is found announcing itself, or stating its verdict,
+with wording the lists do not carry, and add it together with the instance
+that motivated it; a phrase nobody writes widens the false positives and
+finds nothing. Any edit to either MUST be controlled in both directions: a
+check stated in prose is reported,
 and that same check moved inside a fence is not.
 
 A rule states intent; its paired check is what makes the intent hold.

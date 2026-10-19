@@ -109,8 +109,8 @@ stack chain are the input an agent generates a context file from.
 
 ## Conventions to know before you write
 
-- Rules use RFC 2119 keywords: MUST, MUST NOT, SHOULD, MAY
-- Every section that another template might reference needs `[ID: ...]`
+- How a rule is worded, and which sections carry an `[ID: ...]`:
+  [CONTRIBUTING.md, "Writing rules"](../CONTRIBUTING.md#writing-rules)
 - `templates/manifest.yaml` must be updated whenever a file is added, removed, or
   renamed
 

@@ -1233,9 +1233,14 @@ git ls-files --eol | awk -F'\t' '
   when the annotated code still works — a future reader tracing the stale
   number lands on a dead thread and misses the live follow-up. Fix it in a
   small change. When closing or superseding an item that comments may cite,
-  audit the references in the same change — `rg "#<number>"` (or the tracker
-  URL) over the repo lists them, and the audit is done when none point at the
-  stale item
+  audit the references in the same change. This lists them; search for the
+  tracker URL the same way:
+
+```bash
+rg -n "#<number>\b"
+```
+
+  Pass condition: no line it prints still points at the stale item
 - In code comments, docstrings and commented configuration, go further:
   never cite a ticket, PR, or ADR *number* at all — code outlives the
   tracker, so state the substance instead (name the descriptor, source,

@@ -39,6 +39,9 @@ alters no template carries no entry.
   schema, core-tier membership and check exit codes are frozen until 4.0.0
   (ADR-051). The declaration block is not, until a tool writes and reads it
   (ADR-053).
+- `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
+  read as MUST or MUST NOT, where it required an RFC 2119 key word in
+  every rule. Key words mark strength where it matters.
 - `frontend-content` holds the build-agnostic content, asset, SEO and
   structured-data rules, with one SEO copy; `frontend-static-site` depends
   on it, and `frontend-quality` drops its SEO rules — a chain taking
@@ -46,6 +49,12 @@ alters no template carries no entry.
 
 ### Fixed
 
+- `base-quality-gates` fences its own example check, and its prose-check
+  detector also finds a command followed by its verdict ("output must be
+  empty"). `base-git` and `base-quality` fence the two such checks it
+  found.
+- `base-agents` states the README-map rule's substance in place of this
+  repository's record number.
 - A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
   naming both files, where the later entry silently replaced the earlier.
   SPEC names the IDs and directories upstream holds, which a fork leaves

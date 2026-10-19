@@ -178,7 +178,8 @@ stack and platform are test input only.
    - `templates/backend/` — backend services
    - `templates/frontend/` — frontend/UI projects
 2. Tag the file with `[ID: <layer>-<name>]`
-3. Tag every section with a unique `[ID: ...]`
+3. Tag with a unique `[ID: ...]` each section something references
+   (see 2.7)
 4. Register in `templates/manifest.yaml` under the correct layer
    key with a `description` field
 5. Run `py tools/sync.py` — updates SPEC.md directory listings
@@ -187,10 +188,14 @@ stack and platform are test input only.
 ### 2.7 Template authoring rules
 
 - Sections use imperative, direct language: "Use X", "Never Y",
-  "Always Z"
-- No explanatory prose in rule lists — rules only
-- Use `[ID: ...]` on every section that another template might
-  EXTEND or OVERRIDE
+  "Always Z". A plain imperative is a rule; an RFC 2119 keyword marks
+  its strength where that matters (see "Rule language")
+- A rule MAY carry a short reason in the same bullet. Never put an
+  explanatory paragraph between two items of one rule list — context
+  goes in a lead-in paragraph above the list
+- Give a section an `[ID: ...]` when something references it: another
+  template EXTENDs or OVERRIDEs it, or a rule names it. Never remove or
+  rename an existing ID — shipped IDs are frozen surface (ADR-051)
 - Optional sections are marked `(if applicable)` in the heading
 - Keep line length under 88 characters, the width declared in
   `.markdownlint.json` for Markdown and `.editorconfig` for Python —
@@ -313,7 +318,10 @@ stack and platform are test input only.
 
 #### Rule language
 
-All rules in templates use RFC 2119 keywords:
+A rule in a template is a plain imperative ("Use X", "Never Y"), read as
+MUST / MUST NOT, or carries an RFC 2119 keyword. Use a keyword where
+strength matters — SHOULD or MAY for anything weaker
+(`templates/core/docs.md`, "Rule language", states it for consumers):
 
 | Word | Meaning |
 |------|---------|

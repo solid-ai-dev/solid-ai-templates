@@ -148,11 +148,15 @@ git diff --exit-code --stat -- <artifact-path>
 After regenerating derived artifacts and before staging them, verify
 the diff is real and the output is correct.
 
-- Filter line-ending and whitespace noise first: `git diff
-  --ignore-all-space <file>` with no output means the change is
-  CRLF/whitespace-only — `git checkout -- <file>` to drop it so the
-  PR stays scoped to genuine content (and the noise does not reappear
-  as a fake regression on another OS)
+- Filter line-ending and whitespace noise first, file by file:
+
+```bash
+git diff --ignore-all-space <file>
+```
+
+  An empty diff marks the change as CRLF/whitespace-only. Drop it with
+  `git checkout -- <file>` so the PR stays scoped to genuine content
+  (and the noise does not reappear as a fake regression on another OS)
 - Binary artifacts (images, diagrams, screenshots, plots) diff as
   "Binary files differ" — opaque to git and often uncovered by the
   test suite. Open each in a viewer (or an image-read tool for agent
