@@ -3,6 +3,12 @@
 *Forged in real work, not theorized — every rule here came from a real
 AI-assisted project.*
 
+> **3.0 is the shared engine only.** Stacks, platforms, the process layer
+> and the interview moved to forks, so a project generates its files from
+> a fork such as
+> [imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
+> Coming from 2.x: [Migrating to v3](docs/migrating-to-v3.md).
+
 You've shipped the same CLAUDE.md three times this quarter. Each copy is
 slightly different, none of them are right, and the agent still doesn't
 know your team's conventions.
@@ -54,6 +60,17 @@ and a blind judge score each build. Round 4 (2026-10-17) found:
 The summary and every figure are in
 [the round-4 report](docs/audits/2026-10-17-round-4.md). The benchmark
 runs in the Imbra fork, and its raw runs are archived privately.
+
+## Compared with the alternatives
+
+| Approach | Where the rules live | Across projects | Evidence so far |
+|---|---|---|---|
+| A hand-written file per project | In each project | Copies drift apart | Round 4's best file was a 39-line hand-written one |
+| A copied template or snippet list | In each project, from one start | Drift after the copy | None measured |
+| This repository and a fork | Upstream policy, the fork's stacks, one generated file per project | One source; a pin bump updates every project | Mixed; see above |
+
+For what a generated file looks like, see the Imbra fork's
+[examples](https://github.com/Imbra-Ltd/imbra-ai-templates/tree/main/examples).
 
 ## How to use
 
