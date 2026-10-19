@@ -1,0 +1,43 @@
+# Template quality scores, recorded by `py tools/template_quality.py --update`.
+# `--check` fails a template scoring below its row here, a template with no
+# row scoring below the new-file floor, and a row naming no template. Raise
+# a row by improving the template and re-recording; never lower one by hand.
+templates/backend/api.md 94.9
+templates/backend/auth.md 98.4
+templates/backend/caching.md 100.0
+templates/backend/concurrency.md 91.7
+templates/backend/database.md 92.0
+templates/backend/edge.md 89.7
+templates/backend/errors.md 91.7
+templates/backend/features.md 90.9
+templates/backend/grpc.md 96.1
+templates/backend/http.md 96.0
+templates/backend/jobs.md 97.2
+templates/backend/messaging.md 97.5
+templates/backend/microservices.md 93.5
+templates/backend/monitoring.md 98.5
+templates/backend/observability.md 97.7
+templates/backend/quality.md 98.3
+templates/backend/webhooks.md 86.9
+templates/core/agents.md 69.1
+templates/core/config.md 60.0
+templates/core/docs.md 40.9
+templates/core/git.md 27.1
+templates/core/oop.md 83.2
+templates/core/quality-gates.md 19.2
+templates/core/quality.md 23.8
+templates/core/review.md 54.7
+templates/core/testing.md 30.6
+templates/data/data-governance.md 100.0
+templates/data/data-migration.md 99.8
+templates/data/data-modeling.md 100.0
+templates/data/data-quality.md 83.3
+templates/frontend/content.md 85.8
+templates/frontend/quality.md 88.0
+templates/frontend/static-site.md 84.0
+templates/frontend/ux.md 93.5
+templates/infra/cicd.md 86.8
+templates/infra/containers.md 86.9
+templates/infra/deployment.md 95.4
+templates/security/devsecops.md 79.7
+templates/security/security.md 96.2
