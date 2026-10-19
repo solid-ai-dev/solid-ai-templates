@@ -1,7 +1,7 @@
 # SOLID-AI Templates
 
-Ready-made coding rules your AI agent turns into your project's
-`AGENTS.md` and `CLAUDE.md`.
+Ready-made coding rules that help your AI agents make the same choices
+your team would.
 
 ## Features
 
@@ -14,20 +14,20 @@ Ready-made coding rules your AI agent turns into your project's
 
 ## Quick setup
 
-1. Fork this repository on GitHub and clone your fork.
+1. Open your project in your agent and paste:
 
-2. List the templates, then build the one your project needs into a single
-   file (Python 3 and PyYAML):
-
-   ```bash
-   pip install pyyaml
-   python3 tools/resolve.py --roots                 # lists the templates
-   python3 tools/resolve.py backend-api --concat > chain.md
+   ```text
+   Clone https://github.com/solid-ai-dev/solid-ai-templates next to this
+   project. Read its templates/manifest.yaml, propose the templates that
+   fit this project, and wait for my answer. Then load every file in the
+   core: list, the chosen templates and every file their [DEPENDS ON]
+   lines name. Following templates/core/agents.md, write AGENTS.md and
+   CLAUDE.md for this project.
    ```
 
-3. Give your agent `chain.md` and `templates/core/agents.md`, and ask it to
-   write `AGENTS.md` and `CLAUDE.md` for your project. Review the result
-   before you commit it.
+   To adapt the rules, fork this repository first and use your fork's URL.
+
+2. Review the result before you commit it.
 
 ## Documentation
 
