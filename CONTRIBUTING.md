@@ -9,8 +9,7 @@ each kind of change.
 
 This repository carries the composition engine and the policy every team
 shares. Stacks, platforms, workflow and process rules, and the interview live
-in forks, so a change to one of those goes to the fork that carries it, such
-as [Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
+in forks, so a change to one of those goes to the fork that carries it.
 ADR-049 and ADR-050 in `docs/decisions/` set the boundary.
 
 ## Set up

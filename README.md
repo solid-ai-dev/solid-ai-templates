@@ -51,7 +51,6 @@ including commercial use, with attribution.
 
 ## Author
 
-[Branimir Georgiev](https://github.com/braboj) — [Imbra.io](https://imbra.io)
-
-Extended templates from Imbra:
-[imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
+Written by [Branimir Georgiev](https://github.com/braboj) at
+[Imbra](https://imbra.io). Imbra also offers an extended set of templates,
+with stacks, platforms and process rules, on request.

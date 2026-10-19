@@ -39,7 +39,7 @@ A project pins the templates it was generated from, usually as a
 submodule. Upstream at v3.0 ships no stack, so a project re-pins to a
 fork.
 
-1. Choose the fork: [imbra-ai-templates] for Imbra's stacks, or your own
+1. Choose the fork: Imbra's, on request, or your own
    (see [Starting a fork](#starting-a-fork))
 2. Point the submodule at the fork and pin a released tag of the fork,
    never a branch. The fork's own v2.x tags are upstream's, so pin one the
@@ -58,10 +58,8 @@ fork.
    existing adopted rules stay effective, and declining one needs no ADR
    (`docs/playbook.md`, "Adopt a template policy update")
 
-No guide document is renamed upstream — see
+No guide document a project carries is renamed — see
 [Guide documents](#guide-documents).
-
-[imbra-ai-templates]: https://github.com/Imbra-Ltd/imbra-ai-templates
 
 ---
 
@@ -133,7 +131,7 @@ Then add the fork's own content:
 
 ## Guide documents
 
-v3.0 renames, merges or retires no guide document upstream. The core
+v3.0 renames, merges or retires no guide document a project carries. The core
 tier requires `README.md`, `AGENTS.md` and `CLAUDE.md` and prescribes no
 layout for them, so a project's `docs/` keeps the files it has.
 

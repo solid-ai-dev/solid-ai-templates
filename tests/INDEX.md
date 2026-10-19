@@ -8,8 +8,7 @@ and component group registry.
 
 Upstream carries the smoke and integration specs only. The end-to-end and
 interview specs test stacks and the interview, so they live in the forks that
-carry those, such as
-[Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates).
+carry those, such as Imbra's.
 
 ## What every smoke check reports
 

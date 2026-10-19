@@ -6,8 +6,7 @@ outside this repository.
 
 Upstream and its forks share this registry, so a number a fork uses is
 reserved here too. Entries marked *fork* name specs a fork carries, such
-as [Imbra-Ltd/imbra-ai-templates](https://github.com/Imbra-Ltd/imbra-ai-templates);
-upstream carries none of them.
+as Imbra's; upstream carries none of them.
 
 ---
 

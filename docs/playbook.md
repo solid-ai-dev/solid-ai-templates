@@ -209,8 +209,8 @@ For consumers adopting the selective-adoption and ADR-threshold update:
 
 Upstream ships no stacks, no interview and no pre-resolved chains
 (ADR-049). A project generates its context file from a fork: the Imbra
-fork, [`Imbra-Ltd/imbra-ai-templates`](https://github.com/Imbra-Ltd/imbra-ai-templates),
-for Imbra's stacks, or a fork of its own kept current per "Sync with
+fork,
+private, for Imbra's stacks, or a fork of its own kept current per "Sync with
 upstream as a fork".
 
 1. Open your agent
