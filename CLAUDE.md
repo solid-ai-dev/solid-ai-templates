@@ -95,6 +95,8 @@ a resolved chain, handed to an agent (README, "How to use").
   checks pass; no approving review is required, and none is enforced
 - After a PR is merged, delete branch and pull main before starting
   new work
+- Never force-push, including with `--force-with-lease`. To bring a
+  branch up to date, merge `main` into it or run `gh pr update-branch`
 - Do not commit `.idea/`, editor config, or any generated output
 
 ### 2.2 Issue labels
@@ -241,12 +243,12 @@ stack and platform are test input only.
 | `CLAUDE.md` | AI agent context and project rules (this file) |
 | `docs/SPEC.md` | System design, composition rules, inheritance model, precedence |
 | `templates/manifest.yaml` | Machine-readable dependency graph for all templates (single source of truth for descriptions, labels, layers) |
-| `docs/ONBOARDING.md` | Onboarding guide for new contributors |
+| `docs/ONBOARDING.md` | New contributors' setup — prerequisites, first steps, a setup check — and orientation |
 | `docs/PLAYBOOK.md` | Operational reference — how to add templates, validate a change, release |
 | `docs/migrating-to-v3.md` | Moving a 2.x project or fork to v3.0 |
 | `CHANGELOG.md` | Released versions and what changed in each; versions up to v2.63.0 are in the GitHub Releases (ADR-029) |
 | `SECURITY.md` | Private disclosure route, supported versions, scope, acknowledgement window |
-| `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules, branch and commit form |
+| `CONTRIBUTING.md` | What a change is checked against — gates, manifest duty, authoring rules; links §2.1 for branch and commit form |
 | `docs/design/` | Design documents about the library itself — the design record, agent-context tradeoffs, template-content quality (see SPEC "Design documents") |
 
 #### Documentation rules

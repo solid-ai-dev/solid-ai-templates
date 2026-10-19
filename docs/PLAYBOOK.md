@@ -2,8 +2,8 @@
 
 Operational reference for common tasks. Each section is a self-contained
 procedure. See `CLAUDE.md` for authoring rules and `SPEC.md` for the
-composition model. Commands use `py`, the Windows launcher; on macOS and
-Linux run `python3` instead.
+composition model. Commands use `py`; `docs/ONBOARDING.md`,
+"Prerequisites", gives the launcher on macOS and Linux.
 
 ---
 
@@ -318,8 +318,10 @@ so they live in the forks with the stacks and the interview (ADR-049).
 Smoke and conformance read the templates themselves.
 
 See `tests/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
-full list of specs. Requires `py -m pip install pyyaml` for the manifest
-check.
+full list of specs. Setup, PyYAML included, is in `docs/ONBOARDING.md`.
+
+The runners end with a `VERDICT:` line, printed after the report path so
+that reading the last line alone cannot report success over a failed run.
 
 In a fork, set `SAIT_UPSTREAM_REF` before running smoke; "Sync with
 upstream as a fork" gives the command.
@@ -545,16 +547,15 @@ when a stakeholder needs the whole picture.
 
 ## Submit a pull request
 
-1. Ensure you are on a feature branch — never commit to `main` directly
+The branch, commit and title forms are in `CLAUDE.md` section 2.1; the
+steps below apply them in order.
+
+1. Ensure you are on a feature branch named per section 2.1
 2. Run the validation steps above for every changed template
 3. Update all affected documents (`SPEC.md`, `README.md`, `manifest.yaml`) before
    committing
-4. Commit with a conventional message:
-   ```
-   feat(security): add supply-chain template
-   docs(spec): update backend layer listing
-   ```
-5. Push and open a PR — one concern per PR
+4. Commit with a subject in section 2.1's form
+5. Push and open a PR titled in the same form
 6. Merge with the default squash subject — `gh pr merge <number>
    --squash`, with no `--subject`. GitHub composes that subject from
    the title and appends the pull request number; supplying one
