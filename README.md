@@ -242,7 +242,7 @@ See `templates/core/agents.md` for structure, models, and formatting rules.
 - [Imbra's fork, with stacks and examples](https://github.com/Imbra-Ltd/imbra-ai-templates)
 - [Architecture decision records](docs/decisions/)
 - [Security policy](SECURITY.md)
-- [Report an issue](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose)
+- [Open an issue](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose)
 
 ## Contributing
 
