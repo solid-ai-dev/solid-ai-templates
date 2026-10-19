@@ -3,3 +3,8 @@
 # checkout LF too, so a tool that reads a working copy and writes it back
 # cannot reintroduce CRLF on a platform whose default is otherwise.
 * text=auto eol=lf
+
+# GitHub's language bar leaves prose out by default, so this repository read
+# as Python, its tooling, though templates are its content and outweigh the
+# tooling about nine to one. Counting Markdown names it for what it ships.
+*.md linguist-detectable
