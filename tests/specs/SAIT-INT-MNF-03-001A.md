@@ -56,4 +56,4 @@ tags: [manifest, resolution, core-tier]
 ## Related
 
 - Related procedures: `SAIT-INT-MNF-02-001A`, `SAIT-INT-MNF-04-001A`
-- Implements: SPEC.md §Core tier
+- Implements: docs/architecture/05-building-block-view.md §5.3

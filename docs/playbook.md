@@ -1,7 +1,7 @@
 # Playbook
 
 Operational reference for common tasks. Each section is a self-contained
-procedure. See `CLAUDE.md` for authoring rules and `SPEC.md` for the
+procedure. See `CLAUDE.md` for authoring rules and `docs/spec.md` for the
 composition model. Commands use `py`; `CONTRIBUTING.md`, "Set up",
 gives the launcher on macOS and Linux.
 
@@ -29,7 +29,7 @@ and layer templates only.
      description: <what the file covers>
    ```
 5. Run `py tools/sync.py` after the last template edit. It regenerates the
-   directory listings in `docs/SPEC.md` and the tables in `README.md`; do
+   generated sections in `docs/architecture/` and `README.md`; do
    not edit those by hand
 6. Upstream carries no stack to reference the new file. A fork's stacks
    name it in their `[DEPENDS ON: ...]` headers once the fork merges it
@@ -105,7 +105,7 @@ genericity before it becomes template content:
 2. Update every `[DEPENDS ON: ...]` header that references the old path
 3. Update `manifest.yaml` — change the `file:` field for the entry
 4. Run `py tools/sync.py` for the generated sections, then search
-   `SPEC.md` and `README.md` for the old filename and replace the rest
+   `docs/` and `README.md` for the old filename and replace the rest
 5. Verify with `git status` that no old references remain
 
 ---
@@ -599,7 +599,7 @@ steps below apply them in order.
 
 1. Ensure you are on a feature branch named per section 2.1
 2. Run the validation steps above for every changed template
-3. Update all affected documents (`SPEC.md`, `README.md`, `manifest.yaml`) before
+3. Update all affected documents (`docs/architecture/`, `README.md`, `manifest.yaml`) before
    committing
 4. Commit with a subject in section 2.1's form
 5. Push and open a PR titled in the same form
@@ -613,7 +613,7 @@ steps below apply them in order.
 
 Where a cut carries more than one pull request, every branch after the
 first goes `BEHIND`. A merge that changes the manifest changes what
-`tools/sync.py` generates into `README.md` and `docs/SPEC.md`, so the
+`tools/sync.py` generates into `README.md` and `docs/architecture/`, so the
 second branch carries generated sections built from a tree that lacks the
 first one's change. Git reports the branch `MERGEABLE` — the edits fall
 in different regions of the same files — so nothing warns that the
@@ -861,7 +861,7 @@ release was named or no previous tag was found, so nothing was compared.
    every step here and the result it produced, and the quality evidence
    that moved since the previous release — a benchmark round, the
    template-quality scores — or says that none was taken. The qualities
-   and their instruments are in `docs/design/design-notes.md`, section 22.1
+   and their instruments are in `docs/architecture/10-quality-requirements.md`
 3. Tag and push. The tag is annotated and names a commit, and that commit
    is step 2's changelog cut, not `main`. The theme in the tag message is
    the milestone's, which is where this repository keeps it:

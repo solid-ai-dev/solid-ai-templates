@@ -41,7 +41,7 @@ py tests/run_smoke.py
 
 | Read | To understand |
 |------|---------------|
-| `docs/SPEC.md` | The composition model: inheritance, `EXTEND`, `OVERRIDE`, IDs |
+| `docs/spec.md` | The architecture, arc42: the composition model is chapter 8 |
 | `templates/manifest.yaml` | The dependency graph every tool reads |
 | `docs/decisions/` | Why the model is the way it is |
 | `docs/playbook.md` | How to make each kind of change |
@@ -74,7 +74,7 @@ py tools/sync.py
 
 - **What it improves.** Name the quality the change serves — correctness,
   effectiveness, relevance, efficiency, predictability or maintainability,
-  defined in `docs/design/design-notes.md`, section 22.1 — and the evidence
+  defined in `docs/architecture/10-quality-requirements.md` — and the evidence
   that it does, or the defect it corrects. A measured result beats a
   plausible one, and a rule one team prefers is not evidence for every team
 - **A manifest entry.** Every file under `templates/` has one in
@@ -83,7 +83,7 @@ py tools/sync.py
   `[OVERRIDE: ...]` must name things that exist and are reachable in the
   resolved chain
 - **Updated documents.** If your change moves the composition model, update
-  `docs/SPEC.md`; if it changes a command or the project structure, update
+  `docs/architecture/`; if it changes a command or the project structure, update
   `README.md`. `CLAUDE.md` section 2.9 lists which document owns what
 - **A decision record** when the change moves what a consuming project
   observes without reading this repository — the composition model, such as

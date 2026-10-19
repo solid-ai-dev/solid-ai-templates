@@ -60,4 +60,4 @@ tags: [manifest, resolution, dependency-graph]
 ## Related
 
 - Related procedures: `SAIT-INT-MNF-01-001A`, `SAIT-INT-MNF-03-001A`
-- Implements: SPEC.md §Inheritance model, manifest.yaml
+- Implements: docs/architecture/08-crosscutting-concepts.md §8.1, manifest.yaml

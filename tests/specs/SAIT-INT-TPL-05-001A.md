@@ -88,11 +88,11 @@ tags: [composition, override, conflict]
 
 ## Notes
 
-This tests the conflict resolution rule defined in SPEC.md:
+This tests the conflict resolution rule defined in the spec, chapter 8.3:
 "Two templates both OVERRIDE the same ID → Error — the agent MUST surface
 this conflict to the user and ask which override to apply."
 
 ## Related
 
 - Related procedures: `SAIT-INT-TPL-03-001A`
-- Implements: SPEC.md §Conflict resolution
+- Implements: docs/architecture/08-crosscutting-concepts.md §8.3

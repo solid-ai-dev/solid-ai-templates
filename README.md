@@ -235,7 +235,7 @@ See `templates/core/agents.md` for structure, models, and formatting rules.
 
 ## Links
 
-- [System design and composition rules](docs/SPEC.md)
+- [Specification (arc42)](docs/spec.md)
 - [Changelog](CHANGELOG.md)
 - [Migrating to v3.0](docs/migrating-to-v3.md)
 - [Project status and roadmap](https://github.com/solid-ai-dev/solid-ai-templates/milestones)

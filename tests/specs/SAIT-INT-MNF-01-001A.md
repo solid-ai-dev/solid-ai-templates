@@ -110,4 +110,4 @@ and added to CI as a pre-merge check.
 ## Related
 
 - Related procedures: `SAIT-SMK-SYS-01-001A`, `SAIT-SMK-SYS-02-001A`
-- Implements: SPEC.md §Inheritance model, manifest.yaml
+- Implements: docs/architecture/08-crosscutting-concepts.md §8.1, manifest.yaml

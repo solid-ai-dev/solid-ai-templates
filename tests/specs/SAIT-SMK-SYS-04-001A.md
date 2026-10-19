@@ -61,7 +61,7 @@ tags: [structure, depends-on, manifest, drift]
 
 ## Notes
 
-SPEC.md file header policy: `[DEPENDS ON: ...]` headers MUST list
+The spec's file header policy (chapter 8.1): `[DEPENDS ON: ...]` headers MUST list
 direct dependencies only — matching the manifest's `depends_on`.
 
 ## Related

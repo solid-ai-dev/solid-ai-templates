@@ -145,10 +145,21 @@ CHECKS = [
     # branch merged last.
     {"file": "core/git.md", "find": "PATHS = [\"<file>\"]",
      "title": "Numbered headings stay consistent across concurrent edits",
-     "do": RUN, "expect": ["line", "line", "line"],
+     "do": RUN, "expect": ["line"] * 12,
      "substitute": {'PATHS = ["<file>"]':
-                    'PATHS = ["CLAUDE.md", "docs/SPEC.md", '
-                    '"docs/playbook.md"]'}},
+                    'PATHS = ['
+                    '"CLAUDE.md", '
+                    '"docs/playbook.md", '
+                    '"docs/architecture/01-introduction-and-goals.md", '
+                    '"docs/architecture/02-constraints.md", '
+                    '"docs/architecture/03-context-and-scope.md", '
+                    '"docs/architecture/04-solution-strategy.md", '
+                    '"docs/architecture/05-building-block-view.md", '
+                    '"docs/architecture/06-runtime-view.md", '
+                    '"docs/architecture/08-crosscutting-concepts.md", '
+                    '"docs/architecture/10-quality-requirements.md", '
+                    '"docs/architecture/11-risks-and-technical-debt.md", '
+                    '"docs/architecture/12-glossary.md"]'}},
 
     {"file": "core/git.md", "find": "BASE = \"origin/main\"",
      "title": "A diff touching an off-limits path says so", "do": RUN,

@@ -1,6 +1,6 @@
 # Template System Manifest
 # Machine-readable dependency graph for the solid-ai-templates
-# composition engine. See SPEC.md for the full specification.
+# composition engine. See docs/spec.md for the full specification.
 #
 # Fields:
 #   id          — unique identifier across all layers

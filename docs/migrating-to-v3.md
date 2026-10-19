@@ -87,8 +87,9 @@ Step 4 applies to documents as much as to templates. A fork's
 `docs/PLAYBOOK.md`, `docs/SPEC.md` and `docs/ONBOARDING.md` keep their
 pre-split text after `-s ours`; the Imbra fork moved its own procedures to
 `docs/imbra-*.md` and took upstream's text for the three. v3.0 then renames
-`docs/PLAYBOOK.md` to `docs/playbook.md` and merges `docs/ONBOARDING.md`
-into `CONTRIBUTING.md`; a fork takes both with the merge.
+`docs/PLAYBOOK.md` to `docs/playbook.md`, merges `docs/ONBOARDING.md`
+into `CONTRIBUTING.md`, and replaces `docs/SPEC.md` with `docs/spec.md` and
+`docs/architecture/`; a fork takes all three with the merge.
 
 ### Traps
 
@@ -118,7 +119,7 @@ Fork the repository on GitHub, then set it up once:
 Then add the fork's own content:
 
 - Templates under a manifest key of the fork's own, with core-tier
-  additions under `fork_core:` (SPEC, "Forks")
+  additions under `fork_core:` (spec, chapter 8.6)
 - Rules that refine an upstream file in a fork-owned file beside it, never
   as edits to the upstream file
 - Smoke checks in `tests/fork_checks.py`, dispositions in
