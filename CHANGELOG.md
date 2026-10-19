@@ -21,46 +21,7 @@ alters no template carries no entry.
 
 ## [Unreleased]
 
-### Added
-
-- `base-git` treats a pull request with no registered check as not having
-  passed CI, and ships a check that waits for one, watches every check and
-  exits non-zero on zero checks or any failing one.
-- `base-agents` gates a hybrid consumer's chain list: a check resolves the
-  selected roots from the vendored manifest and lists each file the context
-  file omits or names beyond the chain, for the consumer's test suite.
-- `base-testing`'s tier-by-directory rule states its import prerequisite:
-  pytest's two import modes forbid opposite things, a package test root
-  satisfies both, and a probe checks the layout before any file moves.
-
-### Changed
-
-- From 3.0.0, template paths, template and section IDs, the manifest
-  schema, core-tier membership and check exit codes are frozen until 4.0.0
-  (ADR-051). The declaration block is not, until a tool writes and reads it
-  (ADR-053).
-- `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
-  read as MUST or MUST NOT, where it required an RFC 2119 key word in
-  every rule. Key words mark strength where it matters.
-- `frontend-content` holds the build-agnostic content, asset, SEO and
-  structured-data rules, with one SEO copy; `frontend-static-site` depends
-  on it, and `frontend-quality` drops its SEO rules — a chain taking
-  `frontend-quality` alone adds `frontend-content`.
-
-### Fixed
-
-- `base-quality-gates` fences its own example check, and its prose-check
-  detector also finds a command followed by its verdict ("output must be
-  empty"). `base-git` and `base-quality` fence the two such checks it
-  found.
-- `base-agents` states the README-map rule's substance in place of this
-  repository's record number.
-- A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
-  naming both files, where the later entry silently replaced the earlier.
-  SPEC names the IDs and directories upstream holds, which a fork leaves
-  clear.
-
-## [3.0.0] - 2026-10-18
+## [3.0.0] - 2026-10-19
 
 ### Breaking changes
 
@@ -75,6 +36,10 @@ alters no template carries no entry.
   security, infra and data, and `templates/base/workflow/quality-gates.md`
   is `templates/core/quality-gates.md`. IDs are unchanged; update any path a
   hybrid file or vendored copy names.
+- `frontend-quality` drops its SEO rules to the new `frontend-content`,
+  which `frontend-static-site` depends on. A chain taking
+  `frontend-quality` without `frontend-static-site` adds
+  `frontend-content` to keep them.
 
 ### Added
 
@@ -100,24 +65,53 @@ alters no template carries no entry.
 - `templates/fixture/` holds `stack-fixture` and `platform-fixture`, test
   input marked `fixture: true`, so the checks resolve a stack and a platform
   now that both live in forks. Listings leave them out.
+- `base-git` treats a pull request with no registered check as not having
+  passed CI, and ships a check that waits for one, watches every check and
+  exits non-zero on zero checks or any failing one.
+- `base-agents` gates a hybrid consumer's chain list: a check resolves the
+  selected roots from the vendored manifest and lists each file the context
+  file omits or names beyond the chain, for the consumer's test suite.
+- `base-testing`'s tier-by-directory rule states its import prerequisite:
+  pytest's two import modes forbid opposite things, a package test root
+  satisfies both, and a probe checks the layout before any file moves.
+- `frontend-content` holds the build-agnostic content, asset, SEO and
+  structured-data rules, one copy of each, for a project that authors
+  content without building a site.
 
 ### Changed
 
 - The repository moved to the `solid-ai-dev` organisation. Generated files
   and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
   `braboj/` URL redirects, so existing submodules keep working until updated.
-
-### Fixed
-
-- A `fork_core` entry depending on an ID outside the core tier is refused,
-  naming both, rather than resolving with that dependency missing from
-  every chain.
+- From 3.0.0, template paths, template and section IDs, the manifest
+  schema, core-tier membership and check exit codes are frozen until 4.0.0
+  (ADR-051). The declaration block is not, until a tool writes and reads it
+  (ADR-053).
+- `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
+  read as MUST or MUST NOT, where it required an RFC 2119 key word in
+  every rule. Key words mark strength where it matters.
 
 ### Deprecated
 
 - The reference model. `core/agents.md` offers inline or hybrid only, and a
   rule whose breaking is silent and that no tool enforces is inlined. A
   reference-model file keeps working; regenerate it as hybrid.
+
+### Fixed
+
+- A `fork_core` entry depending on an ID outside the core tier is refused,
+  naming both, rather than resolving with that dependency missing from
+  every chain.
+- `base-quality-gates` fences its own example check, and its prose-check
+  detector also finds a command followed by its verdict ("output must be
+  empty"). `base-git` and `base-quality` fence the two such checks it
+  found.
+- `base-agents` states the README-map rule's substance in place of this
+  repository's record number.
+- A manifest ID declared twice fails MNF-01 and stops `tools/resolve.py`,
+  naming both files, where the later entry silently replaced the earlier.
+  SPEC names the IDs and directories upstream holds, which a fork leaves
+  clear.
 
 ## [2.90.0] - 2026-09-12
 
