@@ -84,6 +84,8 @@ alters no template carries no entry.
   `docs/ONBOARDING.md` joins `CONTRIBUTING.md`, and `docs/SPEC.md` becomes
   `docs/spec.md`, indexing arc42 chapters in `docs/architecture/`. Forks take
   these by merge.
+- `docs/wiki/`, six pattern pages no template referenced, is removed; the
+  templates hold the rules.
 - The repository moved to the `solid-ai-dev` organisation. Generated files
   and submodule commands now name `solid-ai-dev/solid-ai-templates`; the old
   `braboj/` URL redirects, so existing submodules keep working until updated.
