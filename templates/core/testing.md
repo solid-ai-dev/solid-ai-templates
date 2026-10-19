@@ -509,8 +509,9 @@ State, in the docstring or assertion message:
 Flag in review a single-number assertion whose failure message names
 only the observed value ("Expected ≥ 0.85, got 0.81") — make it
 actionable ("Expected ≥ 0.85 polyline-on-skeleton precision, a
-self-consistency check calibrated post-#953; got 0.81 — verify the
-skeleton is still the dense per-curve trace the threshold assumed").
+self-consistency check calibrated after the skeleton rewrite; got 0.81
+— verify the skeleton is still the dense per-curve trace the threshold
+assumed").
 This applies to threshold-asserting tests specifically, not every test.
 
 ---

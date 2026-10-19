@@ -42,6 +42,10 @@ alters no template carries no entry.
 - `base-docs` accepts a plain imperative ("Use X", "Never Y") as a rule,
   read as MUST or MUST NOT, where it required an RFC 2119 key word in
   every rule. Key words mark strength where it matters.
+- `frontend-content` holds the build-agnostic content, asset, SEO and
+  structured-data rules, with one SEO copy; `frontend-static-site` depends
+  on it, and `frontend-quality` drops its SEO rules — a chain taking
+  `frontend-quality` alone adds `frontend-content`.
 
 ### Fixed
 

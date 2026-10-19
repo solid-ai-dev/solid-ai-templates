@@ -100,8 +100,9 @@ data/
 ```
 frontend/
 ├── ux.md           # UX principles, WCAG 2.1 AA, responsive breakpoints
-├── quality.md      # CSS conventions, performance, SEO & analytics
-└── static-site.md  # Abstract SSG rules — content, assets, SEO
+├── quality.md      # CSS conventions, performance, analytics
+├── content.md      # Build-agnostic content rules — content, assets, SEO, structured data
+└── static-site.md  # Abstract SSG rules — build, serving, CSS, typography, theme, performance
 ```
 
 ```
@@ -165,7 +166,8 @@ templates/core/git.md ───────────────────�
 templates/core/docs.md ─────────────────────────────┤
 templates/core/quality.md ──────────────────────────┤
                                                      ▼
-frontend/ux.md ──────────────────────────► frontend/static-site.md
+frontend/content.md ─────────────────────► frontend/static-site.md
+frontend/ux.md ──────────────────────────►          │
 frontend/quality.md ─────────────────────►          │
                                                      ▼
                                           templates/stack/static-site-astro.md
@@ -210,8 +212,8 @@ resolution — stacks do not need to list them in `depends_on`:
 - `templates/core/review.md`
 - `templates/core/oop.md`
 
-Measured: 10 `[DEPENDS ON]` tokens across 5 templates name one of these
-files, and 5 manifest entries name a core id in `depends_on`. Declaring one
+Measured: 10 `[DEPENDS ON]` tokens across 6 templates name one of these
+files, and 6 manifest entries name a core id in `depends_on`. Declaring one
 is redundant rather than forbidden — the seeding reaches the file either
 way, and the directive documents a dependency a reader would otherwise
 infer. Reached by the seeding alone: `base-review`. A chain assembled by
@@ -515,7 +517,7 @@ states no winner. The overriding section declares an `[ID:]` of its own,
 and the next level overrides that. In Imbra's fork:
 
 ```
-frontend/static-site.md   [ID: static-site-content]
+frontend/content.md       [ID: static-site-content]
 stack/static-site-astro.md    [ID: astro-content]    [OVERRIDE: static-site-content]
 stack/static-site-tutorial.md [ID: tutorial-content] [OVERRIDE: astro-content]
 ```
