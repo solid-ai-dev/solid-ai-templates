@@ -1,463 +1,198 @@
-# Output Format
+# Base — Agent Context Files
+
 [ID: base-agents]
 
-Structure, models, and formatting rules for generating project
-context files.
-
----
+How a project's agent context files are structured and written.
 
 ## Output files
 
 | File | Role |
-|------|------|
+| --- | --- |
 | `AGENTS.md` | The cross-agent file, read by any agent without a native file |
 | `CLAUDE.md` | The file Claude Code reads |
 
-Every project MUST carry both, whichever agent it uses:
-
-- Generate both files with the same rules
-- `CLAUDE.md` MAY instead import `AGENTS.md` (`@AGENTS.md`) and add only
-  Claude-specific rules, so the rules are written once
-- Never let the two disagree: a change to one is a change to both
-
-An agent with a native context file of another name also takes that file,
-beside the two required ones. Exactly one table states which file each
-agent takes --
-the output-file-by-agent table in the documentation rules. Every other
-copy MUST be generated from it rather than written out, and a project
-that renders one into a README MUST gate the copy with the same
-regeneration check it uses for any other generated block. A mapping
-typed into two files drifts in one of them without either being wrong
-at the time it was written.
-
----
+- Carry both files in every project, whichever agent it uses (MUST)
+- Generate both with the same rules, or let `CLAUDE.md` import `AGENTS.md`
+  (`@AGENTS.md`) and add only Claude-specific rules
+- Never let the two disagree; a change to one is a change to both
+- Add an agent's native context file of another name beside the two
+- Generate every copy of the agent-to-file mapping from the one table in
+  the documentation rules, and gate the copy like any generated block
 
 ## Choosing a model
 
 | | Inline | Hybrid |
-|---|---|---|
-| **Runtime** | Rules always in context | Silent, unenforced rules in context; the agent reads the rest only when it opens them |
-| **Reliability** | Highest — nothing to skip | High — every rule a missed read would break silently stays in context |
-| **Maintenance** | Rules drift from templates | Project-specific rules drift; referenced rules stay in sync |
-| **Best for** | A project that does not vendor the templates | A project that vendors them as a submodule |
+| --- | --- | --- |
+| Runtime | Every rule in context | Silent, unenforced rules in context; the rest read on demand |
+| Reliability | Highest | High; every rule a missed read would break stays in context |
+| Maintenance | Rules drift from the templates | Project rules drift; referenced rules stay in sync |
+| Best for | A project that does not vendor the templates | A project that vendors them as a submodule |
 
-- Generate inline or hybrid. MUST NOT generate a file that delivers its
-  rules by reference alone: nothing loads a referenced template, so the
-  agent reads it only if it decides to open it.
-- Default to hybrid when the project vendors the templates; use inline
-  otherwise.
-- A file generated under the deprecated reference model keeps working.
-  Regenerate it as hybrid.
+- Generate inline or hybrid; never a file that delivers its rules by
+  reference alone, which nothing loads (MUST NOT)
+- Default to hybrid when the project vendors the templates, inline
+  otherwise
+- Regenerate a file made under the deprecated reference model as hybrid
 
-### Placing a rule
+## Placing a rule
 
 | Breaking the rule... | A test, linter or CI step enforces it | Nothing enforces it |
-|---|---|---|
+| --- | --- | --- |
 | shows an error | MAY reference | MAY reference |
 | is silent | MAY reference | MUST inline |
 
-- MUST inline a rule whose breaking is silent, showing no error to the
-  agent or the user, and that no test, linter or CI step enforces.
-- MAY reference any other rule, naming the template that holds it.
-
----
+- Inline a rule whose breaking is silent and that no test, linter or CI
+  step enforces (MUST)
+- Reference any other rule by naming the template that holds it (MAY)
 
 ## Quality bar
 
-What separates a context file that works from one that dilutes itself.
-These apply to both models; the review process checks them.
-
-### Principles
-
-- **Signal density over length.** Every line is a rule the agent
-  applies on the next turn — no changelogs, architecture notes, or
-  progress logs. Keep the qualifier or scope a rule needs to be
-  followed; never compress away a load-bearing clause. Optimize for
-  clarity, not bytes (see `docs/design/agent-context-tradeoffs.md`).
-- **Concise rules.** Keep necessary scope and qualifiers, and place
-  explanations in the documents they belong to, not in the context file.
-- **Single source of truth.** Never restate a rule that is
-  authoritative in a skill, ADR, README, or template — point to it.
-  Duplicated rules drift, and the agent gets no signal which copy
-  wins (see `templates/core/docs.md`).
-- **State precedence when authorities compete.** When a project has
-  more than one rule source (ADRs, skills, vendored templates), state
-  the override order near the top: who wins when they differ.
-- **Inline the silent, unenforced rules; reference the rest.** A rule
-  whose breaking is silent and that no tool enforces MUST be inlined;
-  the full framework is referenced (see "Placing a rule", above).
-- **Pair a checkable rule with its check.** A mechanically checkable
-  constraint names its agent-runnable check — the command in a fenced
-  block, the pass condition in prose beside it; subjective rules stay
-  declarative.
+- Make every line a rule the agent applies on the next turn; no changelog,
+  architecture notes or progress log
+- Keep every qualifier a rule needs; never compress away a load-bearing
+  clause
+- Put explanations in the documents they belong to, not the context file
+- Point to a rule that is authoritative in a skill, ADR, README or template;
+  never restate it
+- State the override order near the top when more than one rule source
+  governs the project
+- Name the check beside each mechanically checkable rule: the command in a
+  fenced block, the pass condition in prose
 
 ### Self-check
 
-Run against a drafted file before delivering it. Every item must
-hold; a failing item is a fix, not a note:
+Run against a drafted file before delivering it; a failing item is a fix,
+not a note.
 
-- Every line states a rule the agent applies next turn — no changelog,
-  architecture, or progress narrative.
-- Rule length does not create an ADR obligation; required qualifiers survive.
-- No prose restates a rule that is authoritative elsewhere (skill,
-  ADR, README, template).
-- If more than one authority governs the project, the precedence order
-  is stated.
-- Every mechanically checkable constraint names its check.
-- The Project structure section points to the README map, not a
-  duplicated directory tree — the README holds the only directory map.
+- [ ] Every line states a rule the agent applies next turn
+- [ ] Every qualifier a rule needs survives
+- [ ] No prose restates a rule authoritative elsewhere
+- [ ] The precedence order is stated where several authorities govern
+- [ ] Every mechanically checkable constraint names its check
+- [ ] The project-structure section points to the README map, with no
+      second directory tree
 
----
+## Required parts
+
+[ID: agents-project-questions]
+
+- Carry each part, in any order, numbering or naming (MUST): the project's
+  identity, structure and commands; the rules it adopts; how a change is
+  reviewed; and its answers to the questions below
+- State a part that does not apply as not applicable; never drop it
+- Answer each of these questions, or name it as open for the project to
+  decide (MUST):
+  - Who approves a change?
+  - How is work tracked?
+  - What is a release?
+- Render an end-of-session checklist verbatim, or delegate it with an
+  order to read it and execute each item in sequence; never paraphrase it
+  into a shorter list (MUST NOT)
 
 ## Inline model
 
-All rules are inlined — the output file is self-contained. Numbered
-headings for groups and subsections let other documents cross-reference a
-rule (e.g. "see CLAUDE.md section 2.3").
+- Inline every rule, so the file is self-contained
+- Add `Model: inline` to the overview
+- Number the headings so other documents can cite a rule, such as "see
+  section 2.3"
 
-Add `Model: inline` to section 1.1 so agents know the file is
-self-contained and no external templates need to be read.
-
-Separate project rules (1–4) from agent instructions (5). Project rules
-describe *what the rules are*. The review process describes *how to check
-them*.
-
-```
+```markdown
 # [Project Name]
 
-[One-sentence description from interview]
-[IDENTITY answers: owner, repo URL, live URL if applicable]
+[One-sentence description]
+[Owner, repo URL, live URL if applicable]
 - Model: inline
 
 ## 1. Project
 ### 1.1 Overview
-[Stack template — Stack section]
 ### 1.2 Project structure
-[Pointer to README "Project structure" + agent-specific placement
-rules — never a second directory tree (see docs.md, single source
-of truth)]
+[Pointer to the README map, plus agent-specific placement rules]
 ### 1.3 Commands
-[Stack template — Commands section]
 
 ## 2. Code conventions
 ### 2.1 Git
-[templates/core/git.md + any stack EXTEND/OVERRIDE]
 ### 2.2 [Language]
-[Language-specific conventions from stack template]
-### 2.3 [Additional code sections as needed]
-[Components, styling, data rules — project-specific]
 
 ## 3. Quality
 ### 3.1 Testing
-[Stack template — Testing section]
-### 3.2 [Additional quality sections as needed]
-[SEO, performance, accessibility — project-specific]
 
 ## 4. Identity
-### 4.1 Design
-[Interview DESIGN answers, if applicable]
-### 4.2 Brand voice
-[Interview BRAND answers, if applicable]
+[Design and brand voice, if applicable]
 
 ## 5. Review process
-### 5.1 Code review
-[templates/core/review.md priority order + checklists to apply]
-### 5.2 Structure audit
-[Which templates to verify, when to run]
+[Priority order and checklists from templates/core/review.md]
 
 ## 6. Session protocol
-[The project's own: how a session starts, proceeds and ends. Where the
-project keeps an end-of-session checklist, render it ONE of two ways:
-inline it VERBATIM, or hard-delegate with an imperative to read it and
-execute each item sequentially, without summarizing or skipping. NEVER
-paraphrase the checklist into a short bullet list: that silently drops
-steps and the "execute sequentially" enforcement.]
+[How a session starts, proceeds and ends]
 ```
-
-The layout above is a default, not a contract. A project MAY order,
-number and name its sections its own way. Whatever the layout, the file
-MUST carry each part the default names:
-
-- the project's identity, structure and commands
-- the rules it adopts
-- how a change is reviewed
-- its answers to the questions every project answers
-
-A part that does not apply is stated as not applicable, never dropped
-silently. This applies to both models.
-
----
 
 ## Hybrid model
 
-Inline every rule "Placing a rule" marks MUST inline, and reference the
-templates for the rest of the quality framework. The agent file is
-shorter than inline.
+- Inline every rule "Placing a rule" marks MUST inline, and reference the
+  templates for the rest
+- Add `Model: hybrid` to the overview, so agents read the referenced
+  templates before starting
+- Inline these, which most often break silently: git conventions, file
+  placement rules, language safety rules, content and style rules, and the
+  session protocol
+- Reference only rules whose breaking shows an error or that a tool
+  enforces, from quality, review, testing, documentation, accessibility,
+  SEO and delivery; never reference one of these areas whole
+- Inline the adoption boundary: adopted rules stay in force, and reading a
+  new upstream rule or moving the pin adopts nothing (MUST)
+- Exclude the vendored submodule from every tool that walks the tree
+  (linters, formatters, secret scanners, spell and link checkers) before
+  the first commit (MUST)
 
-### What to inline
-
-These are the rules that most often break silently with nothing to
-catch them:
-
-- **Git conventions** — wrong branch names or commit formats pollute
-  history and are hard to fix retroactively
-- **Project structure placement rules** — wrong file placement breaks
-  builds and confuses navigation; the directory map itself stays in
-  README (see docs.md, single source of truth)
-- **Language-specific safety rules** — e.g. no `set:html`, no `any`,
-  no raw SQL — violations introduce security or correctness bugs
-- **Content rules** — formatting, writing style, and structure that
-  define the project's voice (if applicable)
-- **Session protocol / end-of-session audit** — a procedural checklist
-  is skipped silently when condensed; it belongs in the active tier,
-  not "reference the rest" (see §6.3)
-
-### What to reference
-
-Reference a rule only where "Placing a rule" allows it: its breaking shows
-an error, or a test, linter or CI step enforces it. The areas below are
-where most such rules live, and none is referenced whole. Inline any rule
-in them that breaks silently with nothing to catch it — for example, a
-test that must derive its expected value independently of the code under
-test fails nothing when it does not.
-
-- Quality framework (architecture, readability, maintainability)
-- Review process and priority order
-- Testing conventions and coverage thresholds
-- Documentation standards and ADR format
-- Accessibility and SEO rules
-- Deployment, CI/CD, and release process
-
-### Identity field
-
-Add `Model: hybrid` to section 1.1 so agents know to read the
-referenced templates before starting work.
-
-### Structure
-
-```
+```markdown
 # [Project Name]
 
-[One-sentence description from interview]
+[One-sentence description]
 
-Quality conventions defined in `docs/solid-ai-templates/` (submodule).
+Quality conventions are defined in `docs/solid-ai-templates/` (submodule).
 Key references:
-- [List ALL base, layer, and stack templates in the dependency chain]
-
-Project-specific overrides and additions follow below.
+- [Every template in the resolved chain]
 
 ## 1. Project
 ### 1.1 Identity
 - Model: hybrid
-[IDENTITY answers: owner, repo URL, stack, hosting]
+[Owner, repo URL, stack, hosting]
 ### 1.2 Project structure
-[Pointer to README "Project structure" + agent-specific placement
-rules — never a second directory tree (see docs.md, single source
-of truth)]
+[Pointer to the README map, plus agent-specific placement rules]
 ### 1.3 Commands
-[Stack template — Commands section]
 
 ## 2. Code conventions
-### 2.1 Git
-[INLINED — templates/core/git.md + project-specific overrides]
-### 2.2 [Language]
-[INLINED — safety rules, naming, strictness]
-### 2.3 [Additional project-specific sections]
-[INLINED — content rules, data rules, component conventions]
+[Inlined: git, language safety, content and data rules]
 
 ## 3. Quality
-[INLINED — every testing, SEO, accessibility and performance rule
-"Placing a rule" marks MUST inline, and project-specific targets or
-deviations. Reference the templates for the rest.]
+[Inlined: every rule "Placing a rule" marks MUST inline]
 
 ## 4. Identity
-### 4.1 Design
-[Interview DESIGN answers, if applicable]
-### 4.2 Brand voice
-[Interview BRAND answers, if applicable]
+[Design and brand voice, if applicable]
 
 ## 5. Review process
-[INLINED — every review rule "Placing a rule" marks MUST inline.]
-Follow templates/core/review.md priority order, apply templates/core/quality.md and
-language-specific templates as the standard.
+[Inlined: every review rule marked MUST inline; reference the rest]
 
 ## 6. Session protocol
-[The project's own: how a session starts, proceeds and ends. Where the
-project keeps an end-of-session checklist, render it ONE of two ways:
-inline it VERBATIM, or hard-delegate with an imperative to read it and
-execute each item sequentially, without summarizing or skipping. NEVER
-paraphrase the checklist into a short bullet list: that silently drops
-steps and the "execute sequentially" enforcement.]
+[How a session starts, proceeds and ends]
 ```
 
----
+## Monorepos (if applicable)
 
-## Vendoring the templates
+- Add a package-level context file for package-specific rules, for agents
+  that read every file from the root to the working directory
+- Keep only rules that differ from or extend the root in a package file
+  (SHOULD)
 
-Inline the project's adoption boundary in hybrid output:
-existing adopted rules remain effective, but reading a new upstream rule or
-bumping the pin does not adopt it. Select new conventions for a named local
-need or material risk; declining one needs no ADR or ticket. See
-`templates/core/docs.md` (Adopting shared rules). This boundary takes
-precedence over inherited instructions to apply every newly discovered rule.
+## Formatting
 
-The hybrid model vendors this repository as a submodule. That puts files
-on disk which the consuming repository does not track, and any tool that
-walks the tree rather than the VCS index will scan them — linters,
-formatters, secret scanners, spell checkers, link checkers.
+- Put every command and code sample in a fenced block with a language tag
+- Write rules as bullet lists; no prose paragraphs inside rule sections
+- Wrap at the width the project declares in its own configuration
+- Use Markdown only; no HTML
 
-- MUST exclude the submodule path in each such tool's config before the
-  first commit. Tools scoped by an explicit file list need no change
-- CI may not reveal the problem: checkout actions commonly skip
-  submodules by default, so the CI job sees an empty directory while the
-  local command contributors are told to run before pushing fails. A
-  green dashboard is not evidence here
+## Tone
 
-A consuming repository asks two different questions of the upstream
-templates, and they need different revisions. The two coincide only
-when the pin equals HEAD.
-
-- "Has this already been raised?" MUST be answered against the upstream
-  issue list at HEAD. Reading the pinned file answers "does this rule
-  exist in the revision we pin", which is a different question, and
-  produces duplicate issues against rules already fixed upstream —
-  inside the commits the pin is behind
-- "What do our rules require?" MUST be answered at the pinned revision:
-  `git -C <submodule> show HEAD:templates/<file>`. This is the more
-  damaging direction to get wrong, because it yields a citation rather
-  than a duplicate: a rule read from HEAD and quoted as governing does
-  not govern until the pin moves, and it makes a local document look
-  conformant when it is not
-- Never read from `origin/main`, and never from the working tree after
-  a bare `fetch`. Fetching makes `origin/main` live while the pin stays
-  put, so anything read there describes a future state of the consuming
-  repository, not its current one
-
-The same distinction governs the write side — which revision a bump
-moves the pin to.
-
-- A bump MUST pin a released tag, never the upstream default branch.
-  `origin/main` is a mid-flight revision: pinning it imports rules that
-  are in no cut yet, so the consumer starts enforcing conventions
-  upstream has not released
-- Pinning a tag is also what makes the bump citable. `v2.41.0 →
-  v2.42.0` names a range any reader can resolve; "whatever `main` was
-  that afternoon" does not, and the commit message becomes the only
-  record of what moved
-- The two agree whenever the newest tag is upstream HEAD, which is most
-  of the time. A `checkout origin/main` bump procedure therefore looks
-  correct until upstream keeps working past a release, then silently
-  attributes rules to a range that does not contain them
-
-The pinned revision settles the source version; the dependency graph settles
-which files to read. Resolve each template's `DEPENDS ON` transitively, then
-apply the project's adoption boundary to the candidate rules they contain.
-
-- Resolve each changed file against the graph when reconciling a bump,
-  never against a cached list. A reachable file belongs in the reading set;
-  that membership does not automatically adopt new rules inside it
-- Any chain list a consumer writes into its own context file is a cache
-  of that resolution, not the definition. It can go stale, and a stale
-  one changes the reading set without any edit to the rule it drops
-- Both errors pass for ordinary reconciliation work. The missed file
-  surfaces as a local document maintaining a convention upstream
-  already owns; the over-included one as a repository enforcing rules
-  it never adopted
-- MUST gate that cache, not merely acknowledge it. The drift starts
-  upstream, so it never appears in the consumer's diff and no review
-  of that diff catches it. Resolve the roots the project selects from
-  the vendored manifest, add what the project's own decision record
-  adds deliberately, and compare the result with the files the context
-  file names. Put the check in the consumer's test suite, where a bump
-  runs it, rather than in a bump recipe a reader may skip:
-
-```python
-import pathlib
-import re
-import subprocess
-import sys
-
-SUBMODULE = pathlib.Path("<submodule>")
-ROOTS = ["<stack-id>"]
-CONTEXT = pathlib.Path("CLAUDE.md")
-# Files the project's own decision record adds beyond the chain.
-ADDED = set()
-
-resolved = set(ADDED)
-for root in ROOTS:
-    out = subprocess.run(
-        [sys.executable, "tools/resolve_chain.py", root],
-        cwd=SUBMODULE, capture_output=True, text=True, check=True,
-    ).stdout
-    resolved |= {ln.strip() for ln in out.splitlines() if ln.strip()}
-listed = set(re.findall(r"templates/[\w./-]+\.md", CONTEXT.read_text()))
-lost = sorted(resolved - listed)
-extra = sorted(listed - resolved)
-print(f"files the chain resolves: {len(resolved)}")
-print(f"files the context file names: {len(listed)}")
-print(f"resolved but not named, scope silently lost: {len(lost)}")
-for name in lost:
-    print(f"  {name}")
-print(f"named but not resolved, scope never adopted: {len(extra)}")
-for name in extra:
-    print(f"  {name}")
-sys.exit(1 if lost or extra else 0)
-```
-
-  Pass condition: both counts of files are above zero, both difference
-  counts are zero, and the block exits zero. Each difference is listed
-  under its side because the two need opposite corrections: a lost file
-  is added to the list, and a file never adopted is removed from it or
-  recorded as a deliberate addition
-
----
-
-## Monorepo support (optional)
-
-Some agents walk the directory tree from the project root to the
-current working directory, reading context files at each level.
-For monorepos, add package-level files with package-specific rules:
-
-```
-AGENTS.md              # root — shared conventions
-packages/
-  api/
-    AGENTS.md          # API-specific rules (extends root)
-  web/
-    AGENTS.md          # frontend-specific rules (extends root)
-```
-
-Package-level files SHOULD only contain rules that differ from or
-extend the root.
-
----
-
-## Questions every project answers
-[ID: agents-project-questions]
-
-The templates answer none of these, because each answer is one team's way
-of working. A generated context file MUST state the project's answer to
-each, or name it as open for the project to decide:
-
-- Who approves a change?
-- How is work tracked?
-- What is a release?
-
----
-
-## Shared formatting rules
-
-- Use fenced code blocks with a language tag for all commands and code samples
-- Use bullet lists for rules; avoid prose paragraphs inside rule sections
-- Wrap lines at the width the project declares in its own
-  configuration — this file inherits that width rather than
-  carrying a number of its own
-- No HTML — Markdown only
-
----
-
-## Shared tone
-
-- Imperative and direct: "Use X", "Never do Y", "Always Z"
-- No explanatory prose unless a rule needs context to be followed correctly
-- Rules are instructions to the agent, not documentation for humans
+- Write imperatives: "Use X", "Never do Y", "Always Z"
+- Add explanatory prose only where a rule needs context to be followed
+- Address the agent, not a human reader

@@ -41,6 +41,7 @@ receives nothing (ADR-051).
 | Numerical-gate and score-component review items | `base-review` | removed |
 | Port binding | `base-config` | `backend-http` |
 | The in-process config model and the interlocked-dependency updater rule | `base-config` | removed |
+| Reading and bumping a vendored pin, and the chain-list gate | `base-agents` | this repository's playbook, "Vendor the templates in a project" |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
