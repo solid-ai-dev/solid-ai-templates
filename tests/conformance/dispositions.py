@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 9
+SKIP_BUDGET = 8
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -76,16 +76,6 @@ CHECKS = [
      "do": RUN, "expect": ["nonzero", "nonzero"],
      "substitute": {"CONFIG=<markdownlint-config>":
                     "CONFIG=.github/linters/.markdownlint-cli2.jsonc"}},
-
-    # -- core/agents.md ----------------------------------------------
-
-    {"file": "core/agents.md", "find": "scope silently lost",
-     "title": "A consumer's chain list matches what its pin resolves",
-     "do": SKIP,
-     "reason": "Applies to a hybrid consumer that vendors this repository "
-               "and lists its chain in its context file. This repository "
-               "vendors nothing, and its AGENTS.md is inline, so it holds "
-               "no chain list to compare."},
 
     # -- core/git.md -------------------------------------------------
 

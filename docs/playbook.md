@@ -599,6 +599,74 @@ this way on every upstream pull request.
 
 ---
 
+## Vendor the templates in a project
+
+A hybrid project vendors this repository as a submodule. It asks two
+questions of upstream, and they need different revisions, which coincide
+only when the pin equals HEAD.
+
+- Answer "has this already been raised?" against the upstream issue list
+  at HEAD. The pinned file answers whether a rule exists in the revision
+  pinned, and raises duplicates of rules already fixed upstream
+- Answer "what do our rules require?" at the pinned revision, with
+  `git -C <submodule> show HEAD:templates/<file>`. A rule read from HEAD
+  and quoted as governing does not govern until the pin moves
+- Never read from `origin/main`, or from the working tree after a bare
+  fetch; both describe a future state of the project
+- Bump the pin to a released tag, never the default branch. A tag range
+  such as `v3.0.0 → v3.1.0` is citable; a mid-flight revision imports rules
+  no cut has released
+
+The pin settles the version; the dependency graph settles which files to
+read. Resolve each changed file against the graph when reconciling a bump,
+never against a cached list. A chain list the project writes into its
+context file is such a cache: the drift starts upstream, so no review of
+the project's own diff sees it. Gate it in the project's test suite, where
+a bump runs it:
+
+```python
+import pathlib
+import re
+import subprocess
+import sys
+
+SUBMODULE = pathlib.Path("<submodule>")
+ROOTS = ["<stack-id>"]
+CONTEXT = pathlib.Path("CLAUDE.md")
+# Files the project's own decision record adds beyond the chain.
+ADDED = set()
+
+resolved = set(ADDED)
+for root in ROOTS:
+    out = subprocess.run(
+        [sys.executable, "tools/resolve_chain.py", root],
+        cwd=SUBMODULE, capture_output=True, text=True, check=True,
+    ).stdout
+    resolved |= {ln.strip() for ln in out.splitlines() if ln.strip()}
+listed = set(re.findall(r"templates/[\w./-]+\.md", CONTEXT.read_text()))
+lost = sorted(resolved - listed)
+extra = sorted(listed - resolved)
+print(f"files the chain resolves: {len(resolved)}")
+print(f"files the context file names: {len(listed)}")
+print(f"resolved but not named, scope silently lost: {len(lost)}")
+for name in lost:
+    print(f"  {name}")
+print(f"named but not resolved, scope never adopted: {len(extra)}")
+for name in extra:
+    print(f"  {name}")
+sys.exit(1 if lost or extra else 0)
+```
+
+Pass condition: both file counts are above zero, both difference counts are
+zero, and the block exits zero. A lost file is added to the list; a file
+never adopted is removed or recorded as a deliberate addition.
+
+CI may not show a missing submodule exclusion: checkout actions commonly
+skip submodules, so CI sees an empty directory while the local command
+fails.
+
+---
+
 ## Control-test a check you are changing
 
 A check that stopped reporting a finding and a check that can no longer

@@ -32,6 +32,8 @@ Releases up to 2.63.0 are listed in
   numerical-gate items ([#2072])
 - The config template drops the in-process config model and the dependency
   updater rule ([#2073])
+- The agents template drops its vendored-pin procedures and chain-list
+  gate ([#2074])
 
 ### Added
 
@@ -89,6 +91,8 @@ Releases up to 2.63.0 are listed in
   moves to frontend-quality ([#2072])
 - The config rules are short, topic-headed lists; port binding moves to
   backend-http ([#2073])
+- The agents rules are short, topic-headed lists, with neutral skeleton
+  placeholders ([#2074])
 
 ### Deprecated
 
@@ -148,6 +152,7 @@ Releases up to 2.63.0 are listed in
 [#2071]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2071
 [#2072]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2072
 [#2073]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2073
+[#2074]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2074
 
 ## [2.90.0] - 2026-09-12
 
