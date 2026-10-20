@@ -950,6 +950,23 @@ no gate here can see.
 
 ---
 
+## Retire a document
+
+Retiring a document does not retire what it says.
+
+- Scope the removal by searching the tree for the content (the incident,
+  the identifier, the material), never by deleting the file named for it
+- Search the dev journal first: it is append-only, ordered by date rather
+  than topic, and its entries often restate an incident in more detail than
+  the report that triggered it
+- Where a surviving copy is sensitive, tell the owner rather than widening
+  the deletion; what the repository publishes is the owner's decision
+- The concept-retirement sweep in `templates/core/quality.md` does not
+  cover this: it chases instructions to apply a retired concept and settles
+  for historical records, which are exactly what carry the content here
+
+---
+
 ## Wrap up a session
 
 Run when the user ends a session ("wrap up", "close out" and the like).

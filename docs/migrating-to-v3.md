@@ -33,6 +33,9 @@ receives nothing (ADR-051).
 | Python and pytest test mechanics: tier import modes, `__all__`, worked fixtures | `base-testing` | a fork's stack |
 | The cohort check after a bulk migration, `base-testing-data-validation` | `base-testing` | `base-data-migration` |
 | Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed |
+| The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
+| Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
+| Mermaid parser quirks, bulk-emit and round-trip generator rules | `base-docs` | removed |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

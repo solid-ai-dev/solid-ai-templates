@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 12
+SKIP_BUDGET = 13
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -71,25 +71,12 @@ CHECKS = [
 
     # -- core/docs.md ------------------------------------------------
 
-    # A fork carrying the efficacy benchmark keeps its arm files under
-    # `tests/efficacy/arms/`, which upstream does not have. They are a
-    # generator's verbatim output, which the benchmark's design forbids
-    # editing; `short`'s is held to its own budget and the others to none.
-    # They are source material the benchmark measures, not documentation,
-    # so both checks leave them out wherever they exist.
-    {"file": "core/docs.md", "find": "width, source = None, None",
-     "title": "Documentation line width matches the declared one",
-     "do": RUN, "expect": ["nonzero"],
-     "substitute": {'["git", "ls-files", "*.md"]':
-                    '["git", "ls-files", "*.md", '
-                    '":(exclude)tests/efficacy/arms/"]'}},
-
-    {"file": "core/docs.md", "find": "ungated figures",
-     "title": "A documentation figure comes from a generator",
-     "do": RUN, "expect": ["nonzero", "zero"],
-     "substitute": {'SOURCES = ("templates/", "generated/", "examples/")':
-                    'SOURCES = ("templates/", "generated/", "examples/", '
-                    '"tests/efficacy/arms/")'}},
+    {"file": "core/docs.md", "find": "npx markdownlint-cli2",
+     "title": "Markdown holds to the declared line width",
+     "do": SKIP,
+     "reason": "Needs Node, which this runner does not install. CI's "
+               "markdownlint job runs it over every tracked Markdown file "
+               "with this repository's configuration."},
 
     # -- core/agents.md ----------------------------------------------
 
@@ -255,7 +242,7 @@ CHECKS = [
     # The example's limit stands for the project's own. Here that is the
     # 88 .editorconfig declares for Python, and the Python is all this
     # repository holds that carries no exempt line: its Markdown keeps
-    # table rows over the width, which core/docs.md's check exempts.
+    # table rows over the width, which its linter configuration exempts.
     {"file": "core/quality-gates.md", "find": "awk 'length > 80' FILE",
      "title": "An output constraint is paired with its check", "do": RUN,
      "expect": [],

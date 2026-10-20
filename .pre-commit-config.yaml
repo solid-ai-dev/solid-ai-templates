@@ -12,3 +12,14 @@ repos:
     rev: v8.21.2
     hooks:
       - id: gitleaks
+
+  # This repository's own documentation rule, not a hook it ships: a figure
+  # about the tree comes from a generator or is not stated.
+  - repo: local
+    hooks:
+      - id: check-doc-figures
+        name: check-doc-figures
+        entry: python tools/check_doc_figures.py
+        language: python
+        pass_filenames: false
+        always_run: true

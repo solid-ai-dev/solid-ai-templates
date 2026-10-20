@@ -26,7 +26,7 @@ base:
     description: Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore
   - id: base-docs
     file: templates/core/docs.md
-    description: Rule language, standard documents, writing style, diagrams, docs-as-code, agent output files
+    description: Rule language, standard documents, upkeep, line width, writing style, diagrams, generated files, agent output files
   - id: base-quality
     file: templates/core/quality.md
     description: Architecture, code style, calibration, tool trust, testing
