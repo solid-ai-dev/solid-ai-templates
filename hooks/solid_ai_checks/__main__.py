@@ -7,8 +7,10 @@ fails a hook on any nonzero exit.
 
 import sys
 
-from . import (compile_embedded_checks, find_bare_suppressions,
-               find_line_continuations, find_unfenced_checks,
+from . import (check_ascii_identifiers, check_comment_layout,
+               compile_embedded_checks, find_bare_suppressions,
+               find_import_bans, find_line_continuations,
+               find_unfenced_checks, find_unreferenced_scripts,
                report_test_edits)
 from .files import NotARepository
 from .report import Report
@@ -20,6 +22,10 @@ HOOKS = {
     "find-line-continuations": find_line_continuations,
     "find-bare-suppressions": find_bare_suppressions,
     "report-test-edits": report_test_edits,
+    "check-ascii-identifiers": check_ascii_identifiers,
+    "check-comment-layout": check_comment_layout,
+    "find-import-bans": find_import_bans,
+    "find-unreferenced-scripts": find_unreferenced_scripts,
 }
 
 

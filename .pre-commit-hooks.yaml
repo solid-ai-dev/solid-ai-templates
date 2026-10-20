@@ -48,3 +48,35 @@
   # It reads committed history, so it runs after a commit, on request,
   # not as the commit is being made.
   stages: [manual]
+
+- id: check-ascii-identifiers
+  name: Check Python identifiers are ASCII
+  entry: solid-ai-checks check-ascii-identifiers --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: check-comment-layout
+  name: Check Python comments sit above what they document
+  entry: solid-ai-checks check-comment-layout --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: find-import-bans
+  name: Find imports that cross a declared boundary
+  entry: solid-ai-checks find-import-bans --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: find-unreferenced-scripts
+  name: Find maintained scripts nothing refers to
+  entry: solid-ai-checks find-unreferenced-scripts --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true

@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 22
+SKIP_BUDGET = 19
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -165,21 +165,13 @@ CHECKS = [
 
     # -- core/quality.md ------------------------------------------
 
-    {"file": "core/quality.md", "find": "FORBIDDEN = ()",
-     "title": "A directional layering ban names its check", "do": SKIP,
-     "reason": "FORBIDDEN is empty by design -- this repository's own "
-               "Python (tools/, tests/) is a flat test/tooling layer "
-               "with no domain/adapter split to bound. Re-examine if "
-               "one is ever adopted."},
-
-    {"file": "core/quality.md", "find": "def unwrap(cls, name)",
-     "title": "A frozen override checker is backed by a hierarchy "
-              "contract test", "do": SKIP,
-     "reason": "BASE and HIERARCHY are empty by design -- this "
-               "repository's own Python (tools/, tests/) declares one "
-               "plain class (tests/smoke/common.py's Inspected) with no "
-               "subtype and no overridable operation. Applies to a "
-               "consuming project's own abstract hierarchy."},
+    # The shipped hooks are this repository's one real boundary: they run
+    # in consumers' CI and must not reach the maintainer-side tools or the
+    # tests.
+    {"file": "core/quality.md", "find": "find-import-bans",
+     "title": "A directional layering ban names its check", "do": RUN,
+     "args": ["--forbid", "hooks:tools", "--forbid", "hooks:tests"],
+     "expect": ["nonzero", "nonzero", "zero"]},
 
     {"file": "core/quality.md", "find": "rg -n \"#<number>",
      "title": "Closing a cited item audits the citations to it",
@@ -196,18 +188,18 @@ CHECKS = [
                "exemption is added or removed, not as a property of the "
                "tree."},
 
-    {"file": "core/quality.md", "find": "Identifiers only",
+    {"file": "core/quality.md", "find": "check-ascii-identifiers",
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    {"file": "core/quality.md", "find": "aside to the right of code",
-     "title": "Comment layout", "do": RUN, "expect": ["nonzero"]},
+    {"file": "core/quality.md", "find": "check-comment-layout",
+     "title": "Comment layout", "do": RUN, "expect": ["nonzero", "zero"]},
 
-    {"file": "core/quality.md", "find": "SCRIPTS = pathlib.Path",
-     "title": "The scripts directory carries the rules it owes", "do": SKIP,
-     "reason": "This repository has no `scripts/` directory. Its permanent "
-               "tooling lives in `tools/`, which the rule's own text scopes "
-               "out. Re-examine if `scripts/` is ever added."},
+    # This repository has no scripts/; its maintained, unshipped tooling is
+    # tools/, which is the directory the rule is about.
+    {"file": "core/quality.md", "find": "find-unreferenced-scripts",
+     "title": "The scripts directory carries the rules it owes", "do": RUN,
+     "args": ["--dir", "tools"], "expect": ["nonzero", "nonzero", "zero"]},
 
     {"file": "core/quality.md",
      "find": "ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts",

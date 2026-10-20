@@ -2,524 +2,318 @@
 
 [ID: base-quality]
 
-## Core principles
+How code is designed, kept clean, swept and checked.
 
-- **DRY — Don't Repeat Yourself**: every piece of knowledge must have
-  a single, authoritative representation; the third copy is a bug
-- **KISS — Keep It Simple**: prefer the simplest solution that works;
-  complexity must be justified by a requirement, not by elegance
-- **YAGNI — You Aren't Gonna Need It**: do not build for hypothetical
-  future requirements; build what is needed now, refactor when the
-  need is real. When YAGNI defers a dependency, abstraction, or
-  feature, record the concrete *revisit trigger* alongside the
-  deferral (e.g. "when this grows to N config values," "when this
-  is extracted to its own repo," "when a second call site appears").
-  A deferral without a trigger gets re-argued every time it comes up
-  or quietly forgotten; a deferral with a trigger is a decision.
-- **Delete dead-code paths discovered during implementation**: when a
-  probe against real data invalidates a path you wrote earlier in the
-  same session, delete it in the same commit. "In case it's useful
-  later" is sunk-cost reasoning — what you already wrote feels valuable,
-  but code with no real test case to anchor it rots fast and confuses
-  the next maintainer about which path actually fires. If a future case
-  needs it, git history has it. Distinct from YAGNI: YAGNI says do not
-  build speculative code; this says retract what probing made speculative.
+## Principles
+
+- Keep one authoritative representation of each piece of knowledge (DRY);
+  the third copy is a bug
+- Choose the simplest solution a stated requirement justifies (KISS)
+- Build what is needed now, never for a hypothetical requirement (YAGNI)
+- Record beside every deferral the concrete condition that reopens it
+- Delete a path in the same commit when probing real data shows it never
+  fires; git history keeps it
 
 ## Revisit triggers
 
 [ID: quality-revisit-trigger]
 
-A revisit trigger names the condition that reopens a deferral. Nothing
-polls it, and the record holding it is not re-read on a schedule, so by
-default it fires into an empty room: a record describing a constraint
-that has since lifted reads exactly like a live one.
-
-- The obligation attaches to the action, not to the record. An actor
-  who takes a step that fires a recorded trigger MUST reopen the
-  decision in the same change — as a superseding record, or as a ticket
-  carrying the evidence that the trigger fired
-- Before changing a piece of project state, search the records for
-  triggers naming it. The actor usually does not know that a record
-  names their action, and the search is the only thing that connects
-  them. Write triggers in a consistent, greppable form for exactly that
-  reason — a trigger nobody can find is a trigger nobody watches
-- State what would detect the trigger: a scheduled check, a gate that
-  fails, or the surface a reader would notice it on. Where nothing
-  would, record that detection is a person looking, so the cost is
-  visible rather than assumed away. A trigger that fires outside this
-  repository has no automatic watcher at all
-- A trigger is a claim about the world and decays like any other.
-  Re-verify it against the system rather than by re-reading the record,
-  and state that check beside the condition, so re-verifying costs one
-  command rather than a re-derivation
+- Reopen a deferral in the change whose step fires its trigger, as a
+  superseding record or a ticket carrying the evidence (MUST)
+- Search the records for triggers naming a piece of state before changing
+  it
+- Write triggers in one consistent, greppable form
+- State what would detect each trigger: a scheduled check, a failing gate,
+  or a person looking
+- Re-verify a trigger against the system, not by re-reading its record,
+  and state that check beside the condition
 
 ## Architecture
 
-- All editable content in a data directory — never hardcoded in source modules
-- Never hardcode derived counts or statistics — compute them from the data
-  source; a hardcoded number is a stale number
-- Default to the simplest abstraction; only reach for heavier patterns
-  when genuinely needed
-- No dead code — remove unused modules, assets, and data files promptly
-- No over-engineering — build the minimum needed for the current requirement
+- Keep editable content in a data directory, never in source modules
+- Compute derived counts and statistics from the data; never hardcode them
+- Remove unused modules, assets and data files promptly
 
-## Readability
+## Naming
 
-- **Names are the primary documentation** — a name that requires a comment to
-  explain is a name that needs to be changed
-- Functions and methods: verb or verb phrase (`calculateTotal`, `fetchUser`)
-- Classes and modules: noun or noun phrase (`OrderRepository`, `AuthService`)
-- Booleans: prefix with `is`, `has`, or `can` (`isActive`, `hasPermission`)
-- No single-letter names except loop counters (`i`, `j`) and well-established
-  conventions (`err` in Go, `e` in except clauses)
-- No abbreviations unless universally understood in the domain (`url`, `id`,
-  `http` are fine; `mgr`, `proc`, `obj` are not)
-- A function's name must make reading its body unnecessary — if you need to
-  read the implementation to understand what a call site does, the function
-  needs a better name or needs to be split
-- Cognitive complexity ≤ 15 per function — enforced by static analysis;
-  each nesting level and decision point increases the score. The tool is
-  bound per ecosystem in `base-<language>-tooling`, not here
+- Name a function with a verb, a class or module with a noun, and a boolean
+  with `is`, `has` or `can`
+- Rename a name that needs a comment to explain it
+- Name a function so a call site reads without its body
+- Use a single-letter name only for a loop counter or an ecosystem
+  convention such as `err` or `e`
+- Abbreviate only what the domain abbreviates universally (`url`, `id`)
+- Use the same name for the same concept in every module
+- Name a public enum member, CLI flag or result discriminator for the
+  capability it offers, never the library behind it: `Transport.HEADED`,
+  not `Transport.PLAYWRIGHT` (MUST). A private symbol MAY name its library
 
-- Maximum nesting depth of three levels — use early returns and guard clauses
-  to reduce indentation rather than adding else branches
-- No boolean flag parameters — they force the caller to read the implementation
-  to understand what `true` means; use an enum or two named functions instead.
-  That replacement fits a flag selecting what the code DOES; a flag selecting
-  how many RULES to apply takes the shape below instead
-- Where a flag selects how many rules to apply, replace it with an operation
-  returning the findings, each naming the rule it came from. An enum answers
-  "how strict"; the caller usually asks "which rule did this break", and a
-  setting carries no name to answer with. The names are what the caller
-  needed, and an enum is where they go to be lost
-- Pair that operation with a guard that raises when the findings are not
-  empty, so a caller who only wants to be stopped is not made to handle a
-  list to get it. The guard is one line over the first and takes the verb
-  any existing guards already use, rather than a new one — an exception
-  carries a message rather than data, and it stops at the first problem, so
-  a caller asserting which rule broke needs the findings and not the raise
-- The tell is a proposed enum member that can only be described by what it
-  permits rather than by what it does. A member documented as "allows
-  unusual values" names no set, so nothing can be asserted against it. With
-  findings instead, the strict and permissive callers both fall out — one
-  refuses a non-empty list, the other filters it by rule name — without
-  either being a mode, and the member permitting everything stops existing,
-  because nothing was checking in the first place
-- Name a pluggable tier for what it requires of the caller, not for the
-  library behind it — a public enum member, CLI flag, or result
-  discriminator MUST be named for the capability or requirement it
-  represents; a private symbol MAY name the library it drives. Prefer
-  `Transport.HTTP` / `JS` / `HEADED` over `Transport.PLAYWRIGHT` /
-  `NODRIVER`: the first says when to pick each, the second makes the
-  caller learn what each library is
-- Corollary: if swapping the implementation would force a caller to
-  change code, the name has leaked. Which library sits behind a tier
-  changes without notice and is not the caller's problem
-- A tier whose dependency is heavy, native, or unavailable on some target
-  platform MUST be reached through one module that owns its import, which
-  re-raises with a message naming the extra and the command that installs
-  it. The package MUST import without the extra, checked in a CI leg that
-  does not install it
-- Avoid negative conditions in `if` statements where possible —
-  `if isEnabled` reads better than `if !isDisabled`
+## Complexity
 
-## Maintainability
+- Keep cognitive complexity at or under 15 per function, enforced by the
+  analyser `base-<language>-tooling` binds
+- Nest at most three levels; use guard clauses and early returns
+- Prefer a positive condition (`if is_enabled`) to a negated one
+- Replace a boolean flag that selects behaviour with an enum or two named
+  functions
+- Replace a flag that selects how many rules apply with an operation
+  returning findings, each naming its rule, plus a guard that raises when
+  the findings are not empty
+- Name every magic number and magic string as a constant
+- Size a numeric threshold from the measured distribution of its quantity
+  (p95, p99, maximum legitimate), and name the data source in the
+  constant's docstring
 
-- No circular dependencies between modules or packages — dependency graphs
-  must be acyclic; restructure or introduce an interface to break cycles
-- When an import cycle would block sharing logic between two modules, move
-  the shared logic to a third module — never code a divergent local copy
-  in one caller; a silent copy drifts from the canonical version (e.g.
-  skipping an upstream filter step) and breaks later, invisibly
-- Keep the dependency graph shallow — if changing module A requires reading
-  modules B, C, and D to understand the impact, the coupling is too high
-- Changes to one module's internals must not require changes in unrelated
-  modules — if they do, the abstraction boundary is wrong
-- A project MAY declare that one part of its tree must not import
-  another — a directional ban, distinct from the acyclic rule above.
-  Two tiers that never cycle can still cross a boundary the project
-  declared closed, e.g. a domain layer reaching into an adapter it is
-  meant to be unaware of. Name the check: walk each module's import
-  nodes and match against the declared forbidden pairs, catching a
-  dotted submodule of a forbidden target as readily as the target
-  itself
+## Dependencies
 
-  ```bash
-  py - <<'EOF'
-  import ast, pathlib
+- Keep the module graph acyclic; break a cycle with a third module or an
+  interface, never with a divergent local copy
+- Keep coupling shallow: a change inside one module MUST NOT require
+  changes in unrelated modules
+- Talk only to direct dependencies, and keep together what changes together
+- Reach a heavy, native or platform-limited dependency through one module
+  that owns its import and names the install command when it is missing
+- Import the package without that extra in one CI leg (MUST)
+- Declare a directional import ban where one part of the tree must not
+  import another, and check it
 
-  # A project's own boundary: (forbidden importer prefix, forbidden
-  # imported prefix). Empty until a project declares one.
-  FORBIDDEN = ()
-  ROOT = pathlib.Path(".")
+```bash
+pre-commit run find-import-bans --all-files --verbose
+```
 
-  def imported(tree):
-      names = []
-      for node in ast.walk(tree):
-          if isinstance(node, ast.Import):
-              names.extend(alias.name for alias in node.names)
-          elif isinstance(node, ast.ImportFrom) and node.module:
-              names.append(node.module)
-      return names
+Pass condition: the bans-declared and modules-inspected counts are above
+zero and `import-ban violations` is zero. Each ban is a
+`--forbid IMPORTER:IMPORTED` argument; `not applicable` means none is
+declared.
 
-  files = sorted(ROOT.rglob("*.py"))
-  print("modules inspected: %d" % len(files))
+## Hierarchies
 
-  findings = []
-  for path in files:
-      module = ".".join(path.relative_to(ROOT).with_suffix("").parts)
-      tree = ast.parse(path.read_text(encoding="utf-8"))
-      for name in imported(tree):
-          for banned_from, banned_to in FORBIDDEN:
-              if module.startswith(banned_from) and (
-                  name == banned_to or name.startswith(banned_to + ".")
-              ):
-                  findings.append("%s imports %s" % (module, name))
+- Never declare a variadic parameter (`*args`, `**kwargs`) on an abstract
+  or overridable operation
+- Give a capability its own name where a class part-way down a hierarchy
+  offers what its own subtypes must not; never widen the shared operation
+- Check overrides with a strict type checker's override rule, bound in
+  `base-<language>-tooling`, and shrink its variadic findings first
+- Where that checker is frozen, keep a contract test walking every
+  concrete class: each override keeps its member kind and first parameter,
+  only appends parameters, and declares no variadic
+- Read each override through `inspect.getattr_static`, unwrapping
+  `staticmethod` and `classmethod` by hand
 
-  print("layering violations: %d" % len(findings))
-  for finding in findings:
-      print("  %s" % finding)
-  raise SystemExit(1 if findings else 0)
-  EOF
-  ```
+## Errors
 
-  Pass condition: the inspected count names how many modules were
-  read — zero is a real answer where `FORBIDDEN` is empty or the tree
-  carries no Python — followed by `layering violations: 0`
-- An abstract or overridable operation MUST NOT declare a variadic
-  parameter — `**kwargs`, `*args`, or the equivalent in any language with
-  variadics. A variadic in a base states no contract a subtype can honour
-  or break: it guarantees only that the call compiles, so every subtype
-  narrows what the base promised and a caller holding the abstract type
-  cannot invoke the operation without knowing the concrete class, which is
-  the abstraction inverted. This is the contravariance rule on parameters
-  (Liskov and Wing, 1994); what a codebase lacks is not the principle but
-  the tell
-- Nothing reports it. A linter has no rule for it, review reads one class
-  at a time and each reads fine alone, and the tests pass because they
-  instantiate concrete classes. In one project the divergence went unseen
-  until a type checker was wired years later and reported 122 of them in a
-  single module
-- Where a class part-way down a hierarchy offers a capability its own
-  subtypes MUST NOT offer, that capability MUST get its own name rather
-  than a widened parameter list on the shared operation. Widening the
-  shared contract hands every subtype a capability that breaks it, and
-  having the subtypes drop the parameter is the divergence above. A
-  subtype declining a differently-named method breaks nothing; a subtype
-  declining a parameter its supertype promised breaks every caller holding
-  the supertype
-- The check is a strict type checker's override rule — the tool is bound
-  per ecosystem in `base-<language>-tooling`, not here. Where a project
-  freezes such findings rather than fixing them, the variadic ones are the
-  entries to shrink first: they are not missing annotations, they are the
-  abstraction not holding
-- Where the checker itself is frozen over a hierarchy, the check is a
-  contract test that walks every concrete class and compares each
-  overridden operation against its declaration on the base: the override
-  stays the same kind of member (a classmethod does not become an
-  instance method), keeps the base's first parameter, only appends
-  parameters after the base's own rather than dropping or reordering
-  one, and declares no variadic itself
-- Read the override through the class's own descriptor, not through an
-  instance lookup. A plain `getattr` resolves a `staticmethod` or
-  `classmethod` to its already-bound callable and hides the callable's
-  own signature behind that resolution — reading it with
-  `inspect.getattr_static` and unwrapping `staticmethod`/`classmethod`
-  by hand is what keeps the three member kinds distinguishable
+- Validate input at boundaries and fail at once on invalid state
+- Read a value from its source-of-truth field, and raise when the field is
+  missing; never fall back to a value derived from a slug, name or hash
+- Bound every wait on another thread, process or connection, report why it
+  gave up, and check the worker's liveness as well as the deadline
+- Derive every deliberate raise from one package base, each type also from
+  the built-in its site raised before
+- Split an error type only where a caller could act differently
+- Keep a test that walks every raise in the package and fails on one
+  outside the hierarchy
+- Never let a caller-side input filter stand in for a precondition: widen
+  the filter, or assert the precondition inside the function
 
-  ```bash
-  py - <<'EOF'
-  import inspect
+## Deprecation and renames
 
-  # The hierarchy under contract. Empty until a project names its own.
-  BASE = None
-  HIERARCHY = ()
+- Deprecate a public symbol, naming its replacement, before a later change
+  removes it
+- Deprecate every part of one call site together, such as a method and its
+  keyword arguments, or break the whole call; never alias the outer name
+  alone
+- Keep a one-line shim under the old name when widening a return type, and
+  remove it in a later change
+- Retire a concept by sweeping every surface that still instructs its use,
+  tickets and plans included, until a search returns only historical
+  records
 
-  def unwrap(cls, name):
-      found = inspect.getattr_static(cls, name)
-      if isinstance(found, (staticmethod, classmethod)):
-          found = found.__func__
-      return found
+## Module structure
 
-  if BASE is None or not HIERARCHY:
-      print("no hierarchy named -- nothing to check")
-      raise SystemExit(0)
+- Build an internal module ready for extraction: inject host values as
+  constructor parameters, and give it its own public API, README, tests and
+  requirements (MUST)
+- Wrap a library in a thin CLI; never make the CLI the product
+- Split an oversized module into a package behind its existing import path,
+  re-exporting through `__init__`, and leave the test suite untouched as
+  the regression oracle
+- Split along a cohesive seam, each submodule importing only earlier
+  stages and never the package `__init__`
+- Keep constants beside the functions that use them
+- Reshape first, then split mechanically, where a split would change a
+  signature
+- Search the suite for code that reads module identity before splitting
+- Run the static gates (undefined names, an import smoke check, test
+  collection) before the full suite
+- Prove a split neutral with the untouched suite and a byte-identical
+  output diff
 
-  ops = [name for name, value in vars(BASE).items()
-        if inspect.isfunction(value)
-        or isinstance(value, (staticmethod, classmethod))]
-  print("abstract operations inspected: %d" % len(ops))
+## Ports and variants
 
-  findings = []
-  for name in ops:
-      base_kind = type(inspect.getattr_static(BASE, name))
-      base_params = list(
-          inspect.signature(unwrap(BASE, name)).parameters.values())
+- Port a function into another language byte for byte: the same operation
+  order, character classes and edge cases, citing the original
+- Decompose a ported procedural script into small modules an orchestrator
+  dispatches on a declared type
+- Prefer a per-configuration flag with a safe default to a global
+  auto-detect, unless inputs partition cleanly on a measurable signal
 
-      for cls in HIERARCHY:
-          sub_kind = type(inspect.getattr_static(cls, name))
-          params = list(
-              inspect.signature(unwrap(cls, name)).parameters.values())
+## Library output
 
-          if base_kind is not sub_kind:
-              findings.append("%s.%s changes member kind" % (cls.__name__, name))
-          if not params or params[0].name != base_params[0].name:
-              findings.append("%s.%s drops the first parameter" % (cls.__name__, name))
-          prefix = [p.name for p in params[:len(base_params)]]
-          if prefix != [p.name for p in base_params]:
-              findings.append("%s.%s narrows or reorders the base signature"
-                              % (cls.__name__, name))
-          if any(p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD) for p in params):
-              findings.append("%s.%s declares a variadic" % (cls.__name__, name))
-
-  print("overrides checked: %d" % (len(ops) * len(HIERARCHY)))
-  print("findings: %d" % len(findings))
-  for finding in findings:
-      print("  %s" % finding)
-  raise SystemExit(1 if findings else 0)
-  EOF
-  ```
-
-  Pass condition: the command reports how many abstract operations it
-  inspected and how many overrides it checked, then `findings: 0`. An
-  empty `HIERARCHY` is a real answer, stated rather than passed silently
-- Before removing or renaming a public symbol, mark it deprecated with a
-  comment referencing the replacement; remove it in a follow-up change
-- Where a rename spans parts of one call site — a method and its keyword
-  arguments, a constructor and its parameters — the parts are deprecated
-  together or not at all, and the decision is made for the call rather than
-  per symbol. Aliasing the outer name alone produces a call that resolves and
-  then fails on its own arguments, naming a symbol the caller never wrote.
-  Either alias every part, accepting the shim on the signature, or break the
-  whole call so the failure names the first thing they typed. The
-  half-aliased middle is what the per-symbol reading produces, because the
-  cost is uneven — a map entry for a class, a wrapper for a method, a
-  `**kwargs` shim for a keyword argument that then stops stating what it
-  accepts — so a team aliases down the list until the cost bites. Nothing
-  catches it: each decision is defensible alone and the suite is written in
-  the new spelling throughout, so the broken call is never executed
-- When retiring a concept — a label, a lane, a flag, a convention — sweep
-  every surface that still instructs its use, not just the source tree. An
-  open ticket body, a planning document, or a draft change description is a
-  delayed write: implemented verbatim later, it reintroduces the concept
-  into the very files the retirement stripped it from. The sweep is done
-  when a search for the concept returns only historical records — decision
-  logs, change logs, journals — and no surviving instruction to apply it
-- When extending a function's return type (value → list, scalar → tuple),
-  keep a one-line shim under the old name returning the first/scalar
-  element so existing callers and tests survive; remove it in a follow-up
-- Magic numbers and magic strings must be named constants — unnamed literals
-  scattered across the codebase are a maintenance hazard
-- Size numeric thresholds (a filter, cutoff, bound, or tolerance) from the
-  actual distribution of the relevant quantity in the working data set
-  (p95, p99, max-legitimate) — not from first principles or intuition. A
-  threshold chosen by feel is too loose (masks bugs) or too tight (breaks
-  edge cases) with no record of why. Document the data source in the
-  constant's docstring so a future maintainer can rerun the analysis
-  against fresh data and re-validate
-- No substantial duplication across sibling modules — if the same code
-  appears in two or more places, extract a shared module; the third
-  copy is a bug
-- Consistent naming across modules — the same concept must use the same
-  name everywhere; divergent names for the same thing (e.g. `clearButton`
-  vs `clearBtn`) signal missing abstraction
-- When the same logic block repeats across three or more modules,
-  extract a shared module; short inline repetition (e.g. three similar
-  assignments) does not warrant extraction — only substantial
-  duplicated logic
-- **Fail Fast**: validate inputs at boundaries and throw immediately on
-  invalid state; do not propagate bad data through the system
-- **Fail loud, not silent on auto-derivation**: when a value can be
-  either derived algorithmically (from a slug, name, hash) or read from
-  a source-of-truth field, prefer the read; when the field is missing,
-  raise/error rather than fall back to the derived value. A
-  wrong-but-plausible derived value (a 404 URL, a mismatched ID) emitted
-  without warning is worse than a script that refuses to run until the
-  data is correct
-- **Every wait on another thread, process or connection is bounded**,
-  and reports why it gave up. An unbounded wait for a signal a failing
-  worker will never send does not fail — it hangs, and the reason lands
-  where the caller cannot act on it: a bind error on the worker's stderr
-  under a caller spinning on a readiness flag forever. Where the worker
-  can die, check liveness as well as the deadline, so a dead worker fails
-  at once rather than waiting out the timeout. The shape is any thread
-  handshake, subprocess readiness check, connection wait or lock
-  acquisition, and the symptom (a hang) is unrelated to the cause, which
-  is what makes it expensive to diagnose
-- **Errors a package raises on purpose form one hierarchy**: every
-  deliberate raise derives from a single package base, so a caller
-  catches refusals and nothing else, and a bug inside the package
-  surfaces as what it is rather than as a refusal. Each type also
-  derives from the built-in its site raised before, so adopting the
-  hierarchy breaks no existing caller or assertion. Depth is bounded by
-  whether a caller could act differently, not by what a test wants to
-  pin: a missing URL scheme invites prepending one while an unsupported
-  scheme is a refusal, so those separate; two encodings that both mean
-  "retry differently" share a type. A type per raise site re-encodes
-  the messages as class names and serves the tests, not the callers. The
-  contract erodes one commit at a time and no linter reads it — one
-  checks that exceptions are handled, never that they are declared — so
-  a test walks every raise in the package and fails on one outside the
-  hierarchy
-- **A caller-side input filter is not a precondition**: when a runner
-  filters its inputs by a caller-side criterion (data availability,
-  ground-truth presence, a feature flag) that is tighter than the inner
-  function's actual preconditions, the function silently rots whenever an
-  unrelated change breaks it on the excluded inputs — no test exercises
-  them. Either widen the filter so the function runs over its full input
-  domain, or push the precondition into the function as an assertion so
-  it fails loud. A filter that "happens to" exclude broken inputs is a
-  buried defect waiting for someone to lift it
-- **Law of Demeter**: a module should only talk to its direct
-  dependencies; chaining through objects (`a.b.c.d`) signals missing
-  abstraction
-- **High Cohesion**: modules that change together should live together;
-  a module whose parts serve unrelated concerns should be split
-- **Per-config opt-in over global auto-detect**: when an algorithm
-  variant helps one input class and hurts another, prefer a per-config
-  flag with a safe default over a global threshold that auto-detects
-  which class an input belongs to. Auto-detect works only when the input
-  cleanly partitions on a measurable signal; when it does not, it
-  misclassifies silently — often for the worst input. Per-config opt-in
-  captures the human-known classification directly
-- **Cross-language function ports must be byte-equivalent**: when a
-  function exists in one language and is consumed by code in another,
-  port it exactly — same operation order, character classes, and edge
-  cases (empty input, leading/trailing separators). Reference the
-  original in the port's docstring so the invariant is discoverable.
-  Never re-implement from the name or description alone — that produces
-  close-but-diverging siblings that surface as silent data corruption
-- **Decompose a ported mega-script into a strategy-dispatched
-  pipeline**: when porting a procedural script (one file, branching
-  control flow per case) into a typed library, split it into small
-  single-responsibility modules with the orchestrator dispatching on a
-  declared type-axis (enum / Literal / tagged union). Adding a case
-  becomes "add a dispatch arm," not "sprinkle if-this-case throughout,"
-  and each stage becomes testable in isolation — this composes the
-  existing strategy and composition patterns, not a new one
-- **Build extraction-ready internal modules**: structure an internal
-  module today so it can become a standalone repo or submodule tomorrow
-  without a rewrite. Host-specific values (cache dirs, config) MUST be
-  injected as constructor parameters with portable defaults, never read
-  from host globals; the module MUST own its public API (`__init__`
-  re-exports), README, tests, and requirements; a thin CLI wraps the
-  library rather than being the product. Extraction stays deferred, but
-  the module is ready the moment it is wanted
-- **Split an oversized module into a package behind its import path**:
-  when `mod.py` becomes `mod/`, preserve the public import path via
-  `__init__` re-exports so callers and the test module are NOT modified.
-  The unchanged suite is then the split's regression oracle; rewriting
-  the tests' imports to the new submodules forfeits it, by touching the
-  oracle in the same change that restructures the code under test. This
-  is the in-repo step toward **Build extraction-ready internal
-  modules** — the same `__init__`-owns-the-API discipline, applied
-  before extraction is on the table
-- Split by a cohesive seam (data-flow stage is the usual one) and keep
-  the submodule graph acyclic: each submodule imports only earlier
-  stages, and no submodule imports the package `__init__`. Re-export
-  the public API and the private helpers the test module imports
-  directly, listing both in `__all__` so the linter does not flag them
-  unused. Constants travel with the functions that use them — a central
-  `constants.py` orphans provenance from the code and fights cohesion
-- The untouched-suite oracle certifies a MOVE: same call graph, same
-  signatures, new file boundaries. Confirm the seam is crossable without
-  changing a signature before invoking it. Where the cohesive seam runs
-  through a class — methods becoming free functions, a strategy protocol,
-  dependencies becoming parameters — that is a design change, not a split.
-  The suite stays green over rewritten call paths it was never written to
-  distinguish, so the recipe certifies a neutrality it cannot establish,
-  and it does so most confidently where the suite is thinnest. Sequence
-  the two instead: reshape first under whatever verification the reshape
-  actually needs, then split mechanically once the seam is clean, with the
-  oracle intact for the second step
-- The oracle assumes nothing in the suite reads module identity, and a
-  mature suite usually has something that does. A helper filtering
-  candidates on the module a class reports, a coverage gate enumerating
-  submodules without recursing, a check parsing the package file for its
-  declarations — after the split each reads an `__init__` that declares
-  nothing. They break by examining an empty set rather than by finding a
-  difference, which is the shape `testing-negative-assertion-coverage`
-  warns about, arriving through a restructure rather than a bad query; a
-  negative assertion among them passes vacuously instead of breaking.
-  Search the suite for module identity before the split, not after
-- Verify a split with the cheap static gates before the slow suite:
-  linter undefined-name/unused, an import smoke check, then test
-  collection. They catch every mechanical split error instantly, so the
-  full suite runs once — and a green run of the untouched suite plus a
-  byte-identical output diff is what proves the split behaviour-neutral
-
-## A library writes nothing to the host's streams
 [ID: quality-library-output]
 
-- A library MUST NOT write to the host's standard output or error, and
-  MUST NOT configure logging beyond its own logger; the host decides
-  where output goes
-- The library's logger MUST be injectable, with its own module logger as
-  the fallback
-- The silence MUST be checked in a fresh process: a test runner that
-  installs its own handler hides the library's default
+- Never write to the host's standard output or error from a library, and
+  never configure logging beyond the library's own logger (MUST)
+- Make the library's logger injectable, falling back to its module logger
+- Check the silence in a fresh process; a test runner's handler hides the
+  default
 
-## A workaround comment is a half-filed defect report
+## Encoding and line endings
+
+- Encode every committed file in UTF-8, with LF line endings (MUST)
+- Keep identifiers ASCII (MUST); comments, docstrings, strings and
+  documentation carry no charset restriction
+
+```bash
+pre-commit run check-ascii-identifiers --all-files --verbose
+```
+
+Pass condition: the inspected count is above zero and
+`non-ASCII identifiers` is zero. The hook reads Python; `not applicable`
+means the project tracks none.
+
+- Set a program's output encoding explicitly, and pin its line ending where
+  another program reads the output. In Python, at the entry point:
+  `sys.stdout.reconfigure(encoding="utf-8", newline="\n")`
+- Commit an `.editorconfig` and a `.gitattributes` with `* text=auto`,
+  adding `eol=lf` for hard LF
+- Mark a text path exempt from LF with `-text` in `.gitattributes`
+- Let a linter format on save; keep manual style rules to a minimum
+
+```bash
+git ls-files --eol | awk -F'\t' '
+  $2 ~ /\.(md|py|ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts)$/ {
+    seen++
+    if ($1 !~ /^i\/lf/) { bad[++n] = $0 }
+  }
+  END {
+    printf "text files inspected: %d\n", seen + 0
+    printf "files not filed i/lf: %d\n", n + 0
+    for (i = 1; i <= n; i++) print "  " bad[i]
+  }'
+```
+
+Pass condition: the inspected count is above zero and the count of files
+not filed `i/lf` is zero. It matches "not `i/lf`" so a file git filed as
+`i/-text` for a stray carriage return is caught too.
+
+- Refresh a checkout older than `.gitattributes` by rewriting its files or
+  re-cloning; the index being right does not make the checkout right
+
+```bash
+eol() { git ls-files --eol | awk -F'\t' "$1"; }
+total=$(eol '$1 ~ /^i\/lf/' | wc -l)
+drifted=$(eol '$1 ~ /^i\/lf/ && $1 !~ /w\/lf/' | wc -l)
+echo "text files tracked: $total"
+echo "checked out against a different convention: $drifted"
+eol '$1 ~ /^i\/lf/ && $1 !~ /w\/lf/ { print "  " $2 }'
+if [ "$total" -eq 0 ]; then
+  echo "no text file reached; the extension or index pattern drifted"
+  exit 1
+fi
+[ "$drifted" -eq 0 ] || exit 1
+```
+
+Pass condition: the first count is above zero and the second is zero;
+either failing exits non-zero.
+
+## Comments
+
+- Prefer code that needs no comment; comment only intent the code cannot
+  express
+- Re-verify a comment explaining why something is safe whenever the code
+  is next read
+- Never cite a ticket, PR or ADR number in a code comment, docstring or
+  commented configuration; state the substance (MUST NOT)
+- Name a source (author, year, method) where non-obvious or scientific
+  logic needs one (MAY)
+- Enforce the citation ban with a test that greps comments, docstrings and
+  commented configuration for `#\d+` and `ADR\s*\d+`
+- Audit the citations to an item when closing or superseding it, and fix
+  each one left pointing at it
+
+```bash
+rg -n "#<number>\b"
+```
+
+Pass condition: no line it prints still points at the closed item.
+
+- Place a block comment directly above the item it documents: never to
+  the right of code, tool directives excepted, and never separated from the
+  item by a blank line (MUST)
+- Separate comment-plus-item groups with one blank line; a comment opening
+  a block or bracket needs none above it
+- Wrap comment prose to the project's line-length limit, in commented
+  configuration too
+
+```bash
+pre-commit run check-comment-layout --all-files --verbose
+```
+
+Pass condition: the files-checked count is above zero and
+`layout violations` is zero. The hook reads Python, tracked and untracked
+but never ignored; whether a comment sits above the right item takes a
+person.
+
+## Debug code
+
+- Commit no debug output (`print()`, `console.log()`) and no hardcoded
+  breakpoint
+- Delete commented-out code
+- Gate debug tooling behind a flag or environment variable, off by default
+
+### Probe scripts
+
+- Write a probe, a throwaway script that measures data or behaviour,
+  rather than guess
+- Name a probe as temporary (`probe_*.py`, `scratch_*.ts`), and delete it
+  before the commit that uses its findings (MUST)
+- Keep findings in source comments, decision records or docs, never in
+  the probe
+- Use a probe for a uniform edit across many call sites; review the diff,
+  then delete the probe
+
+### Scripts directory
+
+- Keep a file under `scripts/` only while a documented command invokes it,
+  CI runs it, or such a file imports it; delete it otherwise (MUST)
+- Hold `scripts/` to the review and formatting rules of shipped source
+
+```bash
+pre-commit run find-unreferenced-scripts --all-files --verbose
+```
+
+Pass condition: the scripts-inspected and files-searched counts are above
+zero and `unreferenced` is zero. `--dir` names the directory;
+`not applicable` means it holds no script.
+
+## Rejected mechanisms
 
 [ID: quality-rejected-mechanism-sweep]
 
-A comment explaining why one module avoids a construct is evidence that
-the construct is wrong everywhere, not a note about local taste. Someone
-diagnosed a shared mistake, fixed the module they were looking at, and
-had no reason to check the others — so the siblings that still use it
-carry no comment saying so, and this comment is the only record that
-they were never checked.
+- Grep the codebase for a construct a comment records as not working,
+  before moving on: `grep -rn '<the construct>' <source root>`
+- Read every hit as a suspected instance of the same defect, not a style
+  question
 
-- When a comment names a **rejected mechanism** — a specific construct,
-  call, or idiom recorded as not working — grep the codebase for that
-  mechanism before moving on: `grep -rn '<the construct>' <source root>`.
-  The pattern is already written down for you, in the comment. Scope the
-  search to the construct, not to the prose around it
-- Read every hit as a suspected instance of the same defect rather than
-  as a style question. The comment recorded an outcome, and the outcome
-  does not depend on which module the construct sits in
-- Where the sweep finds none, the comment is doing its narrower job and
-  the cost was one command. Where it finds hits, what looked like a
-  design note was an unfixed bug with a known diagnosis
-- This is the discovery half of `testing-shared-path-breadth`, which
-  covers verifying every call site once they are known. The sweep is how
-  the other call sites are found at all — from a comment rather than
-  from a diff
-
-## A document's account of what a check ignores decays from the code
+## Exemption docs
 
 [ID: quality-exemption-doc-duty]
 
-A check's exemptions are written twice: once in the check, and once in
-whatever document explains it. The second copy has no gate. The check's
-own tests exercise the exemptions rather than the sentence describing
-them, and the diff that adds an exemption touches one source module and
-has no reason to open a Markdown file — so a reviewer of that diff sees a
-correct, well-tested change, and the document silently stops being true.
-
-The direction is what the neighbouring rules miss. They protect a check
-from a document, or ask a document to name its check. This is a document
-making a claim about a check's internals, and it decays from the check's
-side.
-
-- Changing what a check exempts is a documentation edit as well as a code
-  edit. Before adding or removing an exemption, sweep the documents for
-  the check's name and re-read every hit against the new exemption set
-- Sweep for the name a document would plausibly use, not only the source
-  identifier. A check's module name and the name its documentation calls
-  it by are routinely different, and the sweep reports a clean zero under
-  the wrong one
-- Prose SHOULD point at the exemption constant rather than enumerate what
-  it holds. A document saying "what `EXCLUDED` names" cannot go stale by a
-  count; one saying "two things are deliberately excluded" goes stale the
-  moment a third is added
-- Where the enumeration is the more readable choice, write the list
-  without a cardinal in front of it. The number is the falsifiable half,
-  and dropping it costs nothing
-
-This is the documentation half of `quality-rejected-mechanism-sweep`, which
-sweeps the source from a comment. This one sweeps the documents from a
-check, at the same kind of well-defined moment and for one command.
+- Treat changing what a check exempts as a documentation edit: sweep the
+  documents for the check's name and re-read every hit
+- Sweep for the name a document would use, not only the source identifier
+- Point prose at the exemption constant rather than enumerate it (SHOULD)
+- Write an enumeration without a cardinal in front of it
 
 ```bash
 # The check whose exemptions are changing, named as a document would
@@ -533,91 +327,46 @@ echo "documents naming ${module}: $(echo "$naming" | grep -c .)"
 echo "$naming"
 ```
 
-Pass condition: the scanned count is non-zero — a zero means the search
-reached no documents rather than that none mentions the check — and every
-listed document is read against the new exemption set. A naming count of
-zero under a non-zero scan is a real answer, and is the common one.
+Pass condition: the scanned count is above zero, and every listed document
+is read against the new exemption set. A naming count of zero is a real
+answer.
 
-## A new constraint is swept against the corpus it already governs
+## New constraints
 
 [ID: quality-constraint-corpus-sweep]
 
-A constraint is written for what gets authored next. What already exists is
-a separate question, and a change that does not ask it ships green over its
-own violations — the state that looks most like compliance. Nothing asks
-later either: the change reads as done, and a sweep that stopped at one file
-leaves no record of the files it never opened.
-
-- A change that adds a constraint — a rule, a check, a tightened bound, a
-  narrowed exemption — MUST run it against the corpus that already exists
-  before it merges, and MUST record in that change what the sweep covered
-  and what it found
-- Record the sweep as a measurement a later reader can re-run: where it
-  looked, how many items it inspected, how many violate, and what was done
-  with them. "Swept `templates/`, N runnable blocks, M violations, fixed"
-  names a tree someone can read again; "applied the rule" names nothing
-- A sweep that did not reach the whole corpus MUST say so and name what it
-  left out. Recorded without its gap, a partial sweep reads as a complete
-  one, and the part it skipped is the part nobody asks about again
-- Where the corpus does not comply, the change MUST state which outcome it
-  took: fix the instances now, or freeze them. A freeze names each instance
-  rather than counting them, gates whatever is written afterwards, and
-  reports a named instance that no longer violates, so the list only
-  shrinks
-- Where the corpus is immutable once merged — decision records, released
-  changelog sections, published tags — the sweep still runs and its result
-  is still recorded. The change states the boundary the constraint binds
-  forward from, so the members before it read as outside the rule rather
-  than as debt. Whether one of them may be repaired in place is for the
-  rules governing that record to say
-- A constraint that ships with no check of its own has nothing to sweep
-  with. The change records that, with the instances it already knows of,
-  rather than reporting a clean sweep it never ran
-
-This is the corpus half of the two sweeps above.
-`quality-rejected-mechanism-sweep` sweeps the source from a comment,
-`quality-exemption-doc-duty` sweeps the documents from a check, and this one
-sweeps what already exists from a constraint just added.
+- Run a new constraint (a rule, a check, a tightened bound, a narrowed
+  exemption) against the existing corpus before it merges (MUST)
+- Record in that change where the sweep looked, how many items it
+  inspected, how many violate, and what was done (MUST)
+- Name what a partial sweep left out (MUST)
+- State whether the violations were fixed or frozen; a freeze names each
+  instance, gates new work and reports an instance that stops violating
+- Run and record the sweep on an immutable corpus too, such as decision
+  records or released changelog sections, and state the boundary the
+  constraint binds forward from
+- Record a constraint shipped without a check as such, with the instances
+  already known
 
 ## Destructive operations
 
 [ID: quality-destructive-ownership]
 
-An operation that deletes, truncates, overwrites or kills decides what
-to act on from its inputs, and the inputs are precisely what fail. A
-configurable path resolves somewhere unintended when the value is empty
-or the variable unset; a before-and-after sample attributes a process
-that merely appeared during the window. Either failure alone is
-survivable. Paired with a filter on a generic property — a file
-extension, a process name — it destroys something the user never
-offered the operation.
-
-- A destructive operation acts only on what it can prove it created.
-  Proof is a property the operation's own subsystem wrote: process
-  ancestry, a key scheme, a filename prefix, a marker file, an ownership
-  tag. Never a path, a configuration value, or a file extension
-- Where the proof is unavailable the operation finds nothing — not an
-  error, not a prompt, not a best guess. The safe outcome of a lost
-  ownership check is that the destructive step has no work to do, so a
-  mis-resolved target yields an empty sweep rather than a broad one
-- Validating the input is not a substitute. A wrong path can be
-  perfectly valid, so the two defences fail independently and both are
-  needed: reject the empty configuration value, and match the key scheme
-- The rule holds beyond caches — a build tool clearing an output
-  directory, a log rotator pruning old logs, a temp-file reaper. Anywhere
-  the target set is "the files in a directory someone configured"
-
-The ownership filter looks redundant, and that is the whole point.
-Inside the directory it was written for it matches everything the
-generic pattern matches, so the next reader to call it dead code will be
-right about the common case and wrong about the reason it exists:
+- Delete, truncate, overwrite or kill only what the operation can prove it
+  created: process ancestry, a key scheme, a filename prefix, a marker file
+  or an ownership tag; never a path, a configuration value or a file
+  extension
+- Find nothing where the proof is unavailable: no error, no prompt, no
+  guess
+- Validate the input as well: reject an empty configuration value, and
+  match the key scheme
+- Apply this to every reaper: a cache clean, an output-directory clear, a
+  log rotation, a temp-file sweep
 
 ```
 match on ".html"              wrong directory -> README.html deleted
 match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 ```
-
-The path bug still happens. It stops being destructive.
 
 ## Expensive computations (if applicable)
 
@@ -853,31 +602,18 @@ condition that gives the result meaning is what fails.
   (diff viewers, side-by-side dispute resolution) are out of scope —
   they are downstream of the signal and do not bias it
 
-## Cross-validation and tool trust
+## Check trust
 
 [ID: quality-cross-validation]
 
-When output is cross-validated against an external source (vendor
-page, API, spec sheet, scrape), two distinct failure modes produce
-misleading divergence reports: a buggy validation tool that misreads
-the source, and a semantic mismatch between *stored default* and
-*source silence*. Both look like "the data is wrong" and waste
-maintainer time on phantom fixes.
+### Tools
 
-### Verify the tool before trusting its output
-
-- When a validation, scraping, or migration tool drives a bulk
-  change, confirm the tool is correct BEFORE acting on its output
-- A systematic tool bug masquerades as data divergence — applying
-  the tool's values blindly corrupts correct stored data
-- Treat a physically implausible output value as a tool defect:
-  fix, re-run, then apply
-- When the external source itself looks wrong (stale page, wrong
-  record served), cross-check an independent source before
-  overwriting stored data
-- Applies to scrapers, importers, schema-migration verifiers, and
-  lint-driven codemods — any automated diff that drives a bulk
-  change
+- Confirm a validation, scraping, migration or codemod tool is correct
+  before acting on its output in bulk
+- Treat a physically implausible output as a tool defect: fix it, re-run,
+  then apply
+- Cross-check an independent source before overwriting stored data with a
+  source that looks wrong
 
 ### Distinguish source-silent from source-says-false
 
@@ -896,550 +632,49 @@ maintainer time on phantom fixes.
   verification semantics pull in opposite directions, and the naive
   implementation looks correct until run against real data
 
-### A check whose own source is in scope will match itself
+### Self-match
 
-A check that scans for a pattern carries that pattern in its own source.
-Where the scan can reach the file the check lives in — a repository-wide
-walk, a script written into the tree it inspects, a rule quoted in the
-documentation being linted — the check reports on itself.
+- Test a check whose scan can reach its own source: run it from a tree with
+  and without that source; the inspected count rises and the findings stay
+  identical
+- Constrain the scan to where the pattern can legitimately appear, such as
+  the comment half of a line, rather than excluding a path
+- Name what an unavoidable exclusion excludes, and why (MUST)
+- Constrain by the narrowest property separating a real occurrence from a
+  quoted one
 
-Every other control in this file is about a check reaching far enough: did
-it run, did it load the corpus, would it fail if the defect were present. A
-count of zero is a failure precisely because it means the check reached
-nothing. Self-match is the opposite failure, and each of those controls
-reports healthy while it happens.
+### Verdicts and readings
 
-- Two shapes, and only the first is visible without looking for it. A
-  self-match that **inflates** adds findings that are not defects, so the
-  check fails loudly on a clean tree and someone investigates. One that
-  **absorbs** is worse: a conformance check finding its own example of the
-  correct form counts a pass, and reports a clean tree having verified
-  nothing about the project
-- Test it by running the check from a tree that contains the check's own
-  source, and comparing against a run from a tree that does not. Pass
-  condition: the count of inputs inspected RISES, proving the check read
-  its own source, and the findings are IDENTICAL. A count that does not
-  rise means the test did not exercise anything
-- Fix it by constraining the scan to where the pattern can legitimately
-  appear rather than by excluding a path — a comment directive is found by
-  reading the comment half of a line, not by skipping the file that lists
-  the directives. An exclusion is the fallback, and it MUST name what it
-  excludes and why, because a path exclusion silently grows to cover real
-  findings as the tree changes
-- Constrain by the narrowest property that separates a real occurrence from
-  a quoted one. An exemption written against a broader property absorbs
-  true findings — one written to skip a pattern's *neighbourhood* rather
-  than the pattern's *position* is the absorbing shape arriving by a
-  different route
+- Report what a judgement check inspected and found, in the record a
+  person reads (MUST)
+- Report that a check tied to a moment does not apply, with exit status 3,
+  when the moment is not in progress; detect the moment, never the empty
+  input (MUST)
+- Refuse, as a finding and never as exit 3, when the command that should
+  yield a comparison baseline yields none, and print the baseline on its
+  own line (MUST)
+- Reach an automatic verdict on every threshold a check declares; the
+  judgement is what remains (MUST)
+- Read that threshold from the check's pass condition, never from a sample
+  of its output (MUST)
+- Say which counts carry the verdict and which are for a reader, where a
+  check carries both (MUST)
+- Record beside each judgement disposition what takes a person (MUST)
+- Report what a check saw whatever its verdict (MUST)
+- Carry a shipped check's verdict in its exit status, and prove the status
+  separates a planted violation from a clean tree (MUST)
+- Say beside a check whose verdict takes a person what that judgement is
+- Keep exit 3, the check answering this run, apart from a skip a person
+  records in advance
+- Separate readings, verdicts and not-applicable answers in a run's summary
+  (MUST)
+- Never wire a governance signal as a build gate where the project's own
+  rules oblige the change that trips it (MUST NOT)
+- Never weaken the rule behind a check to make it green or quiet
 
-### A check whose verdict is a judgement is reported, not scored
+## Enforcement
 
-Some checks have no automatic verdict. The signal is real and the call on
-it takes a person: whether a change deserved a test, whether a documented
-step was skipped for a good reason, whether an entry reads as the document
-class it sits in. A runner wires such a check one of two ways, and each
-fails silently from the opposite direction.
-
-**Scoring it fires on compliance.** A governance signal wired as a build
-gate fails every conforming change once the project's own rules oblige the
-change that trips it — a rule requiring a registration edit for each new
-check makes every conforming change trip a gate that scores registration
-edits. A gate that every conforming change trips measures nothing, and
-what broke is the wiring rather than the signal.
-
-**Silencing it fires on nothing.** A runner that records the check as
-passing without surfacing what it printed has run a check that told
-nobody. The output reaches no reader, the summary counts a pass, and the
-result is what not running it would have produced, with a green tick
-attached.
-
-**Answering it outside its moment fires on a question nobody asked.** Some
-checks are about a moment rather than a tree: a release being prepared, a
-migration under way, a branch open for review. Outside that moment their
-inputs are empty by construction, so they emit a count whose pass
-condition assumes the moment is in progress — the shape of a failure,
-correctly derived, and not a verdict anyone can act on. Executing cleanly
-is not the same as answering something, and a reader who meets the same
-inapplicable line on every run stops reading the report it sits in.
-
-**Reading it where a verdict was available fires on the reader.** A check
-that declares a threshold and prints a count measured against it has
-already decided. Wiring it as a reading asks a person to repeat the
-comparison, in a pile where a real finding gets the attention a line
-reporting a corpus size gets. The cost is not hypothetical: six changelog
-entries between 73 and 97 words shipped across five pull requests, every
-one of which ran the suite, read that nothing had failed, and was right
-to. What kept those checks unscored was the runner carrying output for a
-reading and not for a verdict, which makes visibility a reason to leave a
-verdict unreached.
-
-- A check whose verdict is a judgement MUST report what it inspected and
-  what it found, in the record a person actually reads
-- A check whose question is tied to a moment MUST detect that the moment
-  is not in progress and report that it does not apply, rather than
-  emitting a count. Inapplicability is a result; a number that only means
-  something during a release is a line the reader must know the calendar
-  to interpret
-- Detect the moment, not the emptiness. The two coincide often enough to
-  be confused and they are not the same state: a release check whose
-  carried count is zero today can read one tomorrow because an unrelated
-  change merged, with nothing fixed and nothing decided in between. Ask
-  what makes the moment identifiable — the tag is at HEAD, the branch is
-  the base, no migration is under way — and answer that
-- A check that derives a comparison baseline by running a command MUST
-  verify the command produced one, and refuse rather than compare when it
-  did not. A command that yields nothing is not a command that yields a
-  value meaning there is nothing to compare: the comparison is undefined,
-  and an undefined comparison is answered by whatever the empty value
-  happens to sort against. Every date is later than the empty string and
-  every commit range starting at it is empty, so the check reports a clean
-  result from a comparison that never ran
-- That refusal is a finding, not an inapplicability. The question is still
-  live and it is the missing baseline that needs answering, so the status
-  reserved for a moment that is not in progress is the wrong one to reach
-  for. A moment that has not arrived and a baseline that failed to resolve
-  are different states with different remedies, and one of them is a bug
-- The absence reaches the output before it reaches the verdict. A line
-  interpolating the baseline prints `records covering , released` and
-  reads as a formatting slip to anyone scanning for a number. Print the
-  baseline the check resolved on its own line, so the value the comparison
-  used is visible whichever verdict follows
-- The class is wider than a version-control tag: a threshold read from a
-  command, a previous value queried from an API, a base ref, a scan root.
-  Each is a parameter the check does not hold until the command returns
-  one. Which derived values are baselines and which are the data being
-  examined takes a person to say — the data is legitimately empty — so
-  this constraint stays declarative rather than naming a check
-- A verdict is a judgement only where no line of the check's output can be
-  decided. A threshold the check declares, with a count measured against
-  it, is decided and MUST reach an automatic verdict; the judgement is
-  what remains after that
-- That declaration MUST be read from the check's stated pass condition,
-  never from a sample of its output. The output is one run against one
-  tree, and it misleads in both directions: a violation count reading zero
-  today looks like a rule requiring zero, and a count the rule tolerates
-  reads as one it forbids. Where the two disagree the pass condition
-  governs, and the disagreement is itself a finding about the check
-- A check MAY carry a verdict and a reading together, where the reading is
-  addressed to the person the verdict's failure summons rather than to the
-  verdict itself. The prose MUST then say which counts carry the verdict
-  and which are for that reader. Scoring the reader's counts fails a
-  legitimate case twice for one reason, and dropping them sends the
-  escalation with no evidence attached; a check that mixes the two
-  silently is worse than either
-- Every judgement disposition MUST record what about the check takes a
-  person, beside the disposition rather than in the review that set it. A
-  judgement with no stated reason is indistinguishable from a verdict
-  nobody got round to writing, and the pile is where that difference stops
-  being visible
-- Reporting what a check saw MUST NOT depend on how its verdict was
-  reached. The counts that say whether a check reached its inputs are what
-  a failure is read against, so dropping them when a verdict is reached
-  drops them exactly when they are needed
-- A shipped check MUST carry its verdict in its exit status: zero where its
-  pass condition holds, non-zero where it does not. A pass condition
-  satisfied by the absence of output declares no verdict at all — the run
-  that reported the defect exits exactly as the clean run does, so a
-  consumer wiring the check into a pipeline gets a pass over the finding,
-  and the only reader it reaches is whoever was watching the output
-- Where the verdict genuinely takes a person, the check MUST say so beside
-  itself and name what the judgement is. That is a declaration a check
-  makes, not a state it falls into by leaving its status at zero, and
-  downstream the two are the same check
-- Prove the status separates the two cases before trusting it: run the
-  check against a tree that violates the rule and one that does not, and
-  confirm the planted violation reached the output before reading either
-  status. A check exiting zero on both signals nothing, one exiting
-  non-zero on both signals nothing, and both satisfy a rule asking only
-  that an exit status exist
-- A check that determines at run time that it does not apply MUST say so
-  with a reserved exit status, 3, beside the sentence that explains it.
-  The status is what a runner reads: a phrase matched in output is a
-  convention no check declares, and any rewording of the sentence breaks
-  it silently
-- That status is not the disposition a person sets in advance. Skipping a
-  check is a judgement about the project — it cannot apply here at all —
-  made once and recorded where the check is registered. Exit 3 is the
-  check answering, this run, about this moment, and the same check applies
-  next week. Folding the second into the first loses that it ran and
-  answered
-- A run's summary MUST separate the checks awaiting a reading from the
-  checks a verdict was reached on, and both from the checks that answered
-  that they do not apply. Folding both into one count of passes
-  is the silencing failure arriving through the summary rather than
-  through the body — a finding filed under a total that says there is
-  nothing to look at
-- A governance signal MUST NOT be wired as a build gate where the
-  project's own rules oblige the change that trips it. Report it where a
-  reviewer reads it; the merge decision is the half that takes a person
-- Neither failure is repaired by changing the rule behind the check.
-  Weakening the rule to make a gate green, and dropping the signal to
-  quiet one, both answer a question nobody asked
-- Which signals are governance, and where a reviewer reads them, are
-  project judgements: this constraint stays declarative, and inventing a
-  score for it is the first failure above arriving by a shorter route
-
-## Code style
-
-- Encode every committed file in UTF-8
-- Identifiers MUST be ASCII. A name is typed, searched and compared,
-  so a character unreachable from a keyboard or confusable with the
-  ASCII it resembles turns all three into guesswork — a Cyrillic `а`
-  in a variable name reads as Latin `a` and matches nothing. The
-  check is language-specific, because only a tokenizer can tell an
-  identifier from the prose around it. The Python one, which states what
-  it read and what it found:
-
-  ```bash
-  py - <<'EOF'
-  import io, subprocess, token, tokenize
-
-  # Identifiers only. Comments, docstrings and string content are
-  # documentation and carry no charset restriction.
-  tracked = subprocess.run(["git", "ls-files", "*.py"], capture_output=True,
-                           text=True).stdout.split()
-  findings = []
-  for name in tracked:
-      with io.open(name, "rb") as handle:
-          for item in tokenize.tokenize(handle.readline):
-              if item.type != token.NAME:
-                  continue
-              bad = sorted({ord(c) for c in item.string if ord(c) > 127})
-              if bad:
-                  codes = " ".join("U+%04X" % c for c in bad)
-                  findings.append("%s:%d %s %s"
-                                  % (name, item.start[0], item.string, codes))
-
-  # A check printing only its findings cannot say whether it read anything:
-  # an empty corpus and a clean tree produce the same silence.
-  print("python files inspected: %d" % len(tracked))
-  print("non-ASCII identifiers: %d" % len(findings))
-  for finding in findings:
-      print("  " + finding)
-
-  # The status carries the verdict too. A check that names what it found and
-  # exits zero is green wherever the caller reads the code, not the output.
-  raise SystemExit(1 if findings else 0)
-  EOF
-  ```
-
-  Pass condition: the inspected count is above zero and the identifier
-  count is zero. Zero inspected means the pathspec reached no Python at
-  all, which is the check reading nothing rather than a clean tree.
-
-- Comments, docstrings and string content carry NO charset
-  restriction, and neither does documentation. They are written for
-  readers, in whatever language and symbols the reader needs. A rule
-  that reaches them buys a house typography at the cost of everything
-  else, and it reaches further than it looks: a generator whose string
-  literals draw a diagram is writing a document, not code
-- A program that writes text MUST set its output encoding explicitly
-  rather than inheriting the console's, and a program whose output is
-  another program's input MUST pin its line ending at the same
-  boundary. Inheriting is what turns a correct string into mojibake on
-  someone else's machine, and the boundary is what needs fixing, not
-  every string that crosses it. The line ending is the other half of
-  that boundary and fails worse, because it fails silently: a mangled
-  character is visible in the output, while a trailing carriage return
-  makes every downstream comparison miss and the consumer report a
-  confident zero rather than an error. This is a different rule from
-  the committed-file one below — such output is never committed. In
-  Python, at the entry point:
-  `sys.stdout.reconfigure(encoding="utf-8", newline="\n")`
-- Line endings MUST be LF — CRLF is not acceptable in any committed file
-- A linter SHOULD enforce formatting automatically on save; keep manual style
-  rules to a minimum
-- Commit an `.editorconfig` file at the project root — enforces indent
-  style, indent size, line endings, charset, and trailing whitespace
-  across all editors without tool-specific config
-- Commit a `.gitattributes` at the project root with `* text=auto`
-  (add `eol=lf` where the project wants hard LF) — the git-side
-  guarantee that no CRLF is committed, covering files written by any
-  tool, editor, or contributor without an EditorConfig plugin.
-  EditorConfig normalizes editor-side only; `.gitattributes` enforces
-  the LF rule at commit and checkout. `text=auto` is a heuristic, not
-  a promise: one stray carriage return makes git classify the blob as
-  binary and skip the conversion, so the guarantee has a hole exactly
-  where a malformed write put one
-
-```bash
-git ls-files --eol | awk -F'\t' '
-  $2 ~ /\.(md|py|ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts)$/ {
-    seen++
-    if ($1 !~ /^i\/lf/) { bad[++n] = $0 }
-  }
-  END {
-    printf "text files inspected: %d\n", seen + 0
-    printf "files not filed i/lf: %d\n", n + 0
-    for (i = 1; i <= n; i++) print "  " bad[i]
-  }'
-```
-
-  Pass condition: the inspected count is above zero and the count of files
-  not filed `i/lf` is zero. Zero inspected means the extension filter
-  matched nothing, which is the check reading nothing rather than a tree
-  with no text in it. Every committed text blob
-  reports `i/lf` on the index side, whatever the checkout convention is.
-  Match on "not `i/lf`" rather than on `i/crlf`: a file carrying CRLF
-  *and* a lone carriage return is filed `i/-text`, so a check naming
-  `i/crlf` passes over the worst version of the defect it exists to
-  catch. Filter by extension because `i/-text` is the right answer for
-  an image and a finding for a `.md`; a text path that must be exempt
-  gets an explicit `-text` in `.gitattributes`, which states the
-  exemption where a reader will find it. Split on the tab: the status
-  fields are space-separated and only the path is tab-delimited, so a
-  whitespace-split `$4` lands in the middle of the attribute list and
-  the check silently matches nothing
-- The index being right does not make the checkout right. `.gitattributes`
-  governs what a fresh clone writes, so a working copy created before the
-  file landed keeps whatever it was checked out with, indefinitely and
-  invisibly: every commit from it is still normalised, and `git status`
-  stays clean, while every tool that reads the files sees different bytes
-  than the same tool on a colleague's machine. A byte-level measurement
-  taken there is not reproducible anywhere else, and an edit script that
-  matches on a line ending silently rewrites the whole file or nothing at
-  all. Refresh a drifted checkout by rewriting the offending files, or by
-  re-cloning; the check is what says one has drifted:
-
-  ```bash
-  eol() { git ls-files --eol | awk -F'\t' "$1"; }
-  total=$(eol '$1 ~ /^i\/lf/' | wc -l)
-  drifted=$(eol '$1 ~ /^i\/lf/ && $1 !~ /w\/lf/' | wc -l)
-  echo "text files tracked: $total"
-  echo "checked out against a different convention: $drifted"
-  eol '$1 ~ /^i\/lf/ && $1 !~ /w\/lf/ { print "  " $2 }'
-  if [ "$total" -eq 0 ]; then
-    echo "no text file reached; the extension or index pattern drifted"
-    exit 1
-  fi
-  [ "$drifted" -eq 0 ] || exit 1
-  ```
-
-  Pass condition: the first count is above zero, proving the command
-  reached the index, and the second is zero; either failing reaches a
-  non-zero status. The first count is what separates a clean tree from a
-  pattern that stopped matching, which report the same zero on the second.
-- Prefer self-documenting code — if a comment feels necessary, treat it as a
-  signal that the code needs restructuring before the comment is added
-- Add comments only where the intent cannot be expressed in code
-- A comment that explains *why* something is safe ("X holds because Y") is a
-  load-bearing claim, not documentation — re-verify it against current data the
-  next time the code is read, never rely on it as-is. Reasoning comments rot
-  faster than the code they annotate: the code stays correct while the predicate
-  the comment cites silently goes false
-- A comment or doc note that cites an issue, PR, or ADR by number inherits
-  that reference's lifecycle: when the cited item is closed without action,
-  superseded, or replaced by a different fix, the citation is a defect even
-  when the annotated code still works — a future reader tracing the stale
-  number lands on a dead thread and misses the live follow-up. Fix it in a
-  small change. When closing or superseding an item that comments may cite,
-  audit the references in the same change. This lists them; search for the
-  tracker URL the same way:
-
-```bash
-rg -n "#<number>\b"
-```
-
-  Pass condition: no line it prints still points at the stale item
-- In code comments, docstrings and commented configuration, go further:
-  never cite a ticket, PR, or ADR *number* at all — code outlives the
-  tracker, so state the substance instead (name the descriptor, source,
-  or derivation, not "see #123" or "per ADR 0002"). Markdown docs
-  (README, ADRs, the dev journal) are the opposite: cross-referencing
-  issues and ADRs by number is their job. One exception in code:
-  non-obvious or scientific logic MAY name a *source* (author + year +
-  method — "Rappé 1992"), which ages gracefully where an issue number
-  does not. Enforce with a test that greps comments, docstrings and
-  commented configuration for `#\d+` / `ADR\s*\d+`
-- A block comment MUST sit directly above the item it documents: never
-  trailing to the right of code (tool directives like `# noqa` / `# nosec`
-  are excepted), and never separated from that item by a blank line
-- Separate each comment-plus-item group from the next with a single blank
-  line, so the comment and the lines it explains read as one unit
-- A comment that is the first thing inside a block or a bracketed literal
-  is exempt from that separation: it opens the first group rather than
-  dividing two, and the line above it is the `def`, `if`, `for`, `try` or
-  opening bracket the comment is inside. There is nothing to separate it
-  from, and a blank line inserted there detaches the comment from the item
-  it documents — the violation the rule above forbids
-- Wrap comment prose to the project's configured line-length limit, the same
-  limit as code. Enforce this for commented configuration files
-  (`pyproject.toml`, YAML, CI workflows) too, even where the linter does not
-  scan them
-- Check — comment layout, for the two violations that are mechanically
-  visible: a comment block with code directly above it and no blank line
-  between them, and an aside to the right of code that is not a tool
-  directive. Scope: the repository's Python — what git tracks plus the
-  untracked files a commit could still add, never what `.gitignore`
-  excludes, which is not the project's code to fix. Read through
-  `tokenize` — a line-based grep reports the
-  `#` in a usage example inside a docstring, which is not a comment at all.
-  `OPENERS` carries the exemption above; test it against
-  the code the line above *ends* with, since a line closing the previous
-  entry (`],`) opens nothing and its comment is a real finding. Whether a
-  comment sits above the *right* item is not mechanical and stays
-  declarative; wrap width is the formatter's. Pass condition: the command
-  reports how many files it checked and prints nothing after that. A count
-  of zero fails it — the enumeration reached nothing:
-
-  ```bash
-  py - <<'EOF'
-  import io, pathlib, subprocess, tokenize
-  DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
-  SKIP = (".venv", "venv", "build", "dist", ".git", ".tox")
-  OPENERS = (":", "(", "[", "{")
-
-  # A walk cannot read .gitignore and reads a vendored or generated tree as
-  # the project's own source. Tracked files plus the untracked ones a commit
-  # could still add, and nothing that is ignored.
-  listed = subprocess.run(
-      ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
-       "*.py"], capture_output=True).stdout.decode("utf-8").split("\0")
-  paths = [pathlib.Path(name) for name in listed if name
-           and not any(part in SKIP for part in pathlib.Path(name).parts)]
-  print("Python files checked: %d" % len(paths))
-
-  # Zero files and a clean tree print the same thing otherwise.
-  findings = []
-  if not paths:
-      findings.append("no Python file was listed; the enumeration is broken, "
-                      "not the tree clean")
-
-  for path in paths:
-      src = path.read_text(encoding="utf-8").splitlines()
-      with io.open(str(path), "rb") as fh:
-          for tok in tokenize.tokenize(fh.readline):
-              if tok.type != tokenize.COMMENT:
-                  continue
-              row, col = tok.start
-              if src[row - 1][:col].strip():
-                  if not tok.string.lstrip("#").strip().startswith(DIRECTIVES):
-                      findings.append("%s:%d: aside to the right of code"
-                                      % (path.as_posix(), row))
-              elif row > 1 and src[row - 2].strip():
-                  above = src[row - 2].split("#")[0].rstrip()
-                  if not src[row - 2].strip().startswith("#") and not (
-                          above.endswith(OPENERS)):
-                      findings.append("%s:%d: comment block with code directly "
-                                      "above it" % (path.as_posix(), row))
-
-  for finding in findings:
-      print(finding)
-
-  raise SystemExit(1 if findings else 0)
-  EOF
-  ```
-
-## Debug code
-
-- No debug statements in committed code: no `print()`, `console.log()`,
-  `fmt.Println()`, or equivalent used for debugging
-- No hardcoded breakpoints (`debugger`, `pdb.set_trace()`) in committed code
-- No commented-out code blocks — delete dead code; version control is the
-  history
-- Debug tooling (profilers, REPL helpers, verbose loggers) MUST be
-  gated behind a flag or environment variable, never on by default
-
-### Probe scripts
-
-- Probe scripts are throwaway tooling: a small file that measures or
-  inspects something (data shape, file structure, runtime behaviour)
-  and prints findings to inform a source change
-- Name them so they are obviously temporary: `probe_*.py`, `_probe.sh`,
-  `scratch_*.ts`, or equivalent
-- A probe script MUST be deleted before the commit that uses its
-  findings — the script itself never lands on `main`
-- Findings worth keeping go into source comments, ADRs, or docs —
-  not the probe script
-- Probe scripts are the antidote to guessing: prefer writing one
-  over inferring data shape or runtime behaviour from incomplete
-  evidence
-- A throwaway probe also fits a uniform mechanical migration: when one
-  edit repeats across hundreds of identical call sites (e.g. inserting a
-  new required field at a fixed anchor in a large data file), a small
-  `probe_*` script that performs the insertion is faster and safer than
-  hand-editing or an opaque `sed` one-liner. The diff is the audit trail,
-  not the script — review the diff, then delete the probe before the
-  commit
-
-### The scripts directory
-
-A probe never lands, so `scripts/` is not where throwaway work lives — a
-directory cannot be the home for files that must not be committed. What it
-holds is maintained tooling that is not shipped: unshipped is a packaging
-fact, not a licence to leave a file unowned.
-
-- A file under `scripts/` MUST be eligible on one of three grounds:
-  invoked by a command the documentation names, executed by CI, or
-  imported by a file that is. The third is a real branch and not a
-  courtesy — a helper module nothing invokes directly is still live, and
-  a rule with only the first two deletes it
-- A file eligible on none of the three MUST be deleted rather than
-  reshaped. Its findings, if any, were supposed to have moved into source
-  comments, a decision record or the docs when the change that used them
-  landed
-- Where the project keeps a persistent `scripts/`, every file in it is
-  covered by the same review and formatting rules as shipped source. A
-  directory exempt from them accumulates files nobody will open
-
-No automated gate reaches these files on its own. An unshipped script is
-outside the packaged artifact, so the packaging checks say nothing; it
-carries no tests, so coverage says nothing; and where a project froze lint
-findings per file on adoption, it sits inside the freeze and the linter
-says nothing either. That combination is why the directory accumulates,
-and why this rule needs a check rather than a convention:
-
-```bash
-py - <<'EOF'
-import pathlib, subprocess
-
-SCRIPTS = pathlib.Path("scripts")
-files = sorted(p for p in SCRIPTS.rglob("*")
-               if p.is_file() and p.suffix in (".py", ".sh", ".ts", ".js"))
-print("scripts inspected: %d" % len(files))
-if not files:
-    print("no scripts directory, or it holds none - nothing to check")
-    raise SystemExit(0)
-
-tracked = subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split()
-corpus = []
-for name in tracked:
-    if name.startswith("scripts/"):
-        continue
-    try:
-        corpus.append(pathlib.Path(name).read_text(encoding="utf-8", errors="ignore"))
-    except OSError:
-        pass
-print("files searched for a reference: %d" % len(corpus))
-blob = chr(10).join(corpus)
-
-dead = [f.as_posix() for f in files if f.as_posix() not in blob and f.name not in blob]
-print("unreferenced: %d" % len(dead))
-for name in dead:
-    print("  %s" % name)
-EOF
-```
-
-Pass condition: the check prints how many scripts it inspected and how many
-files it searched for a reference, then `unreferenced: 0`. Both counts are
-load-bearing — a searched count of zero means the corpus never loaded, and
-reports the same clean result as a directory where everything is
-referenced. A name appearing anywhere in the corpus counts, which
-deliberately under-reports: it flags only a file nothing mentions at all,
-so every hit is a real finding rather than a judgement call.
-
-## Automated enforcement
-
-- Quality conventions in this document are enforced automatically via
-  quality gates (editor → pre-commit → CI)
-- A code or data generator MUST emit output that passes the project's
-  linters and formatters natively — never rely on `lint --fix` as a
-  post-process step. A fix pass at the consumer end hides the generator's
-  responsibility, makes every re-emit a noisy diff, and confuses
-  contributors who regenerate and see unexplained changes. Any time
-  `lint --fix` is needed to clean generated output, treat it as a
-  generator bug to fix at the source
-
-## Testing
-
-- Tests must pass before merging to `main`
+- Enforce these conventions through the gates: editor, pre-commit, CI
+- Make a generator emit output that passes the linters natively; a needed
+  `lint --fix` is a generator bug (MUST)
+- Merge to `main` only with passing tests
