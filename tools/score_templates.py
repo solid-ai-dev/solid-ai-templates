@@ -29,6 +29,14 @@ BASELINE = ROOT / "tests" / "baselines" / "template-quality.txt"
 # them never edits the upstream file it merges.
 FORK_BASELINE = ROOT / "tests" / "baselines" / "fork-template-quality.txt"
 
+# Where each baseline lived before the tests folder was grouped by suite. A
+# baseline left there is read by nothing, so a fall in score would pass;
+# the ratchet refuses until it is moved rather than reading either place.
+MOVED_BASELINES = {
+    ROOT / "tests" / "template-quality-baseline.txt": BASELINE,
+    ROOT / "tests" / "fork-template-quality-baseline.txt": FORK_BASELINE,
+}
+
 # A file with no baseline row starts at this score or above. Below it, the
 # file is recorded on purpose with --update, never by accident.
 NEW_FILE_FLOOR = 70
@@ -373,6 +381,12 @@ BASELINE_HEADER = """\
 """
 
 
+def unmoved_baselines():
+    """A line per baseline still at its old path, naming where it goes."""
+    return [f"{rel(old)} is at its old path; move it to {rel(new)}"
+            for old, new in MOVED_BASELINES.items() if old.exists()]
+
+
 def check(scores, baseline, fork_baseline):
     """Findings for the ratchet: each a line naming the file and why."""
     findings = []
@@ -568,6 +582,12 @@ def main(args):
         for name in names:
             print_detail((ROOT / name).resolve())
         return 0
+    if "--update" in args or "--check" in args:
+        unmoved = unmoved_baselines()
+        if unmoved:
+            for line in unmoved:
+                print(f"refusing: {line}")
+            return 1
     results = score_all()
     scores = {name: r[0] for name, r in results.items()}
     if "--update" in args:
