@@ -14,7 +14,7 @@ templates/          # every template, plus the manifest
   manifest.yaml     # the dependency graph every tool reads
 tools/              # resolve_chain.py, sync_docs.py, check_release.py, the audits
 tests/              # the three runners; smoke/, conformance/, baselines/
-docs/               # this specification, decisions, playbook, audits, test specs
+docs/               # specification, decisions, playbook, rationale, audits, test specs
 ```
 
 A fork adds its own directories, such as `templates/stack/`,
