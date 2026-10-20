@@ -86,9 +86,9 @@ and never edits one upstream owns.
 
 | Runner | Reads | Checks |
 |--------|-------|--------|
-| `tests/run_smoke.py` | The manifest and the templates' structure | References resolve, IDs are unique, chains are valid, governed tiers hold; the checks live in `tests/smoke/`, one module per family |
-| `tests/run_conformance.py` | The templates' own fenced checks | Runs each against this repository, or skips it with a stated reason |
-| `tests/run_fork_sync.py` | A simulated fork | The change merges into a fork that appends a stack, and smoke passes there |
+| `tests/smoke/run.py` | The manifest and the templates' structure | References resolve, IDs are unique, chains are valid, governed tiers hold; the checks live in `tests/smoke/`, one module per family |
+| `tests/conformance/run.py` | The templates' own fenced checks | Runs each against this repository, or skips it with a stated reason |
+| `tests/fork_sync/run.py` | A simulated fork | The change merges into a fork that appends a stack, and smoke passes there |
 
 `docs/tests/index.md` lists every check and `docs/tests/codification.md` the ID
 scheme.

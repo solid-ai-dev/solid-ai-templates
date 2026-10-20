@@ -1,15 +1,15 @@
 """Run the checks the templates embed against this repository.
 
-`run_smoke.py` checks that the templates COMPOSE -- that references
+The smoke suite checks that the templates COMPOSE -- that references
 resolve, that IDs are unique, that chains are non-empty. It does not run
 the checks the templates prescribe to their consumers, and this repository
 is a consumer of its own base tier. Three rules shipped and were violated
 here before anything ran them.
 
 Usage:
-    py tests/run_conformance.py            # every registered check
-    py tests/run_conformance.py --list     # dispositions, run nothing
-    py tests/run_conformance.py <find>     # one check, by its find string
+    py tests/run.py conformance            # every registered check
+    py tests/run.py conformance --list     # dispositions, run nothing
+    py tests/run.py conformance <find>     # one check, by its find string
 
 A check reaches one of five results. PASS and FAIL are automatic
 verdicts; ERR is a check that could not run; N/A is a check that
@@ -31,8 +31,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from conformance import SKIP, MANUAL, READ
 from conformance.dispositions import CHECKS, SKIP_BUDGETS
@@ -226,7 +224,7 @@ def reading(result):
 
 
 BUDGET = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                      "conformance", "reading-budget.txt")
+                      "reading-budget.txt")
 
 
 def budgeted():

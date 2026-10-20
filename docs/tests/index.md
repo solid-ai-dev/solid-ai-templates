@@ -12,7 +12,7 @@ carry those, such as Imbra's.
 
 ## What every smoke check reports
 
-Each check in `run_smoke.py` states what it inspected, not only what it
+Each check in `tests/smoke/run.py` states what it inspected, not only what it
 found, and the counts print on every run whatever the verdict. A count of
 zero is a failure: a corpus that quietly empties reports the same clean
 result as a tree with nothing wrong in it, and the suite's tally of passing

@@ -81,7 +81,7 @@ jobs:
       - name: Run the release gates
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python tests/run_conformance.py
+        run: python tests/run.py conformance
 
   # The release's notes are its CHANGELOG.md section, so each entry is
   # written once. A rerun updates the notes of a release already made.

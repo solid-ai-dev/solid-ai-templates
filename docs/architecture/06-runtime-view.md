@@ -107,7 +107,7 @@ upstream main ──merge──► fork ──► fork's smoke ──► fork's 
                      to its own keys, restore upstream's text
 ```
 
-`py tests/run_fork_sync.py` simulates this on every pull request: it lands
+`py tests/run.py fork_sync` simulates this on every pull request: it lands
 the change on a fork that appends a stack and edits its fork-owned files,
 and asserts the merge is otherwise clean. The playbook, "Sync with upstream
 as a fork", gives the steps.

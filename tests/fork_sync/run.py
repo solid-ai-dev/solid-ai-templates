@@ -6,8 +6,8 @@ Implements:
   SAIT-INT-MNF-06-001A  — a fork that only appends merges upstream cleanly
 
 Usage:
-  py tests/run_fork_sync.py                   # upstream change: HEAD
-  py tests/run_fork_sync.py --base=<ref>      # fork from merge-base(HEAD, ref)
+  py tests/run.py fork_sync                   # upstream change: HEAD
+  py tests/run.py fork_sync --base=<ref>      # fork from merge-base(HEAD, ref)
 """
 
 import datetime
@@ -241,7 +241,7 @@ def follow_renames(repo, base, upstream, fork, merged):
 def nested_smoke(repo, upstream):
     """Run the merged tree's own smoke suite, with SYS-20 against upstream."""
     env = dict(os.environ, SAIT_UPSTREAM_REF=upstream)
-    run = subprocess.run([sys.executable, "tests/run_smoke.py"], cwd=repo,
+    run = subprocess.run([sys.executable, "tests/run.py", "smoke"], cwd=repo,
                          env=env, capture_output=True, text=True,
                          encoding="utf-8")
     lines = run.stdout.splitlines()

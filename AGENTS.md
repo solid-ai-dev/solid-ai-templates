@@ -23,9 +23,9 @@ py tools/sync_docs.py              # regenerate generated sections
 py tools/sync_docs.py --check      # exit 1 if any is stale
 py tools/resolve_chain.py --roots   # every root a project can pick
 py tools/resolve_chain.py <id>      # one root's resolved file list
-py tests/run_smoke.py         # structure and resolution
-py tests/run_conformance.py   # the templates' own checks, run here
-py tests/run_fork_sync.py     # the change merged into a simulated fork
+py tests/run.py smoke         # structure and resolution
+py tests/run.py conformance   # the templates' own checks, run here
+py tests/run.py fork_sync     # the change merged into a simulated fork
 ```
 
 The playbook lists the rest: release check, redundancy audit, quality
@@ -174,7 +174,7 @@ labels are terminal, applied when closing without action: `duplicate`
 - Where a merged ADR and the templates disagree, the templates govern
   and the ADR stands as history
 - Copy `docs/decisions/template.md` for a new ADR;
-  `py tests/run_smoke.py ADR-01` enforces the schema
+  `py tests/run.py smoke ADR-01` enforces the schema
 
 ### 2.7 Rule language
 
@@ -225,8 +225,8 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 ### 4.2 During the session
 
 - Size the local checks to the change. A template, manifest, tool or test
-  change runs `py tests/run_smoke.py` and, for any template prose edit,
-  `py tests/run_conformance.py`: smoke reads structure, while every rule
+  change runs `py tests/run.py smoke` and, for any template prose edit,
+  `py tests/run.py conformance`: smoke reads structure, while every rule
   about the templates' own text — line width, a check outside a fence —
   is enforced from conformance. A documentation-only change runs
   markdownlint and a scan for lines over 88 characters, and pushes once

@@ -20,9 +20,9 @@ Implements:
   SAIT-INT-MNF-01-001A  — all manifest entries reference valid paths and IDs
 
 Usage:
-  py tests/run_smoke.py              # run all checks
-  py tests/run_smoke.py SYS-01       # run one check by short ID
-  py tests/run_smoke.py SYS-01 MNF-01
+  py tests/run.py smoke              # run all checks
+  py tests/run.py smoke SYS-01       # run one check by short ID
+  py tests/run.py smoke SYS-01 MNF-01
 """
 
 import datetime

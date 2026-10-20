@@ -164,7 +164,7 @@ schema; smoke check ADR-01 enforces the current one, which adds
    refresh `date`, and add this ADR's id to its `superseded_by`
    list. Preserve historical claims; format-only changes are also allowed
    under the decision-record rules in `AGENTS.md`.
-6. Run `py tests/run_smoke.py ADR-01` to validate the frontmatter
+6. Run `py tests/run.py smoke ADR-01` to validate the frontmatter
    schema before opening the PR.
 7. If the ADR **removes** a concept, sweep for prose that still
    assumes it — in `templates/` and in open issue bodies:
@@ -227,7 +227,7 @@ chains and the model limits of its stacks.
 
 1. **Smoke check**: run the automated structural checks — no agent required:
    ```bash
-   py tests/run_smoke.py
+   py tests/run.py smoke
    ```
    This verifies all `[DEPENDS ON: ...]` paths, unique IDs, `[EXTEND: ...]` /
    `[OVERRIDE: ...]` references, and `manifest.yaml` consistency in one pass.
@@ -336,10 +336,11 @@ planted cases first and refuses a run that scored no template.
 ## Run the test suite
 
 ```bash
-py tests/run_smoke.py              # structural checks — seconds
-py tests/run_conformance.py        # the templates' own checks, run here
-py tests/run_conformance.py --list # dispositions only, run nothing
-py tests/run_fork_sync.py         # a fork that only appends merges HEAD
+py tests/run.py all                # every suite CI runs, in its order
+py tests/run.py smoke              # structural checks — seconds
+py tests/run.py conformance        # the templates' own checks, run here
+py tests/run.py conformance --list # dispositions only, run nothing
+py tests/run.py fork_sync         # a fork that only appends merges HEAD
 py -m pyflakes tools tests        # the tooling's own lint
 npx markdownlint-cli2 --config .github/linters/.markdownlint-cli2.jsonc
 pre-commit run --all-files         # whitespace, final newline, YAML
@@ -374,14 +375,14 @@ upstream (`solid-ai-dev/solid-ai-templates`). Smoke and the release gates
 then fetch upstream's `main` and export `SAIT_UPSTREAM_REF` and
 `UPSTREAM_REF` as `upstream/main`; unset, they skip the fetch.
 
-`run_smoke.py` prints what each check inspected under its verdict — the
+`tests/smoke/run.py` prints what each check inspected under its verdict — the
 files scanned, the chains resolved, the directives compared. Those lines are
 not findings; read them when a count moves without the tree moving, which is
 how a check that silently stopped reaching its corpus shows up. A count of
 zero fails the check, and a check that passes while reporting nothing is
 failed by the runner itself.
 
-`run_smoke.py` checks that the templates COMPOSE. `run_conformance.py`
+`tests/smoke/run.py` checks that the templates COMPOSE. `tests/conformance/run.py`
 checks that this repository OBEYS them — it extracts every fenced check in
 `templates/` and either runs it here or records why it does not apply.
 Adding a fenced check to a template without a disposition in
@@ -491,12 +492,12 @@ adds to every chain's core tier under `fork_core:`, and never edits
    history, so SYS-20 compares the manifest's upstream keys with the
    revision the fork last merged:
    ```bash
-   SAIT_UPSTREAM_REF=upstream/main py tests/run_smoke.py
+   SAIT_UPSTREAM_REF=upstream/main py tests/run.py smoke
    ```
    Unset, SYS-20 treats the checkout as upstream and compares the manifest
    with itself
 
-`py tests/run_fork_sync.py` simulates a fork merging upstream's `HEAD`
+`py tests/run.py fork_sync` simulates a fork merging upstream's `HEAD`
 this way on every upstream pull request.
 
 ---
@@ -512,7 +513,7 @@ Where the fixture can live outside `templates/`, write it, run the single
 check by a string from its body, and delete it:
 
 ```bash
-py tests/run_conformance.py "<string from the check body>"
+py tests/run.py conformance "<string from the check body>"
 ```
 
 Where the fixture must live UNDER `templates/` — anything the check scans
@@ -525,7 +526,7 @@ the registry reconciliation:
 py - <<'EOF'
 import sys, tempfile
 sys.path.insert(0, "tests")
-from run_conformance import iter_blocks, run_block
+from conformance.run import iter_blocks, run_block
 
 body = next(b[3] for b in iter_blocks()
             if b[0] == "core/docs.md" and any("<find>" in l for l in b[3]))
@@ -751,11 +752,11 @@ view reports it:
 gh issue list --state open --limit 200 --json number,title,milestone --jq '.[] | select(.milestone == null) | [.number, .title] | @tsv'
 ```
 
-- Verify a claim with the tool the claim is about: `py tests/run_smoke.py`
+- Verify a claim with the tool the claim is about: `py tests/run.py smoke`
   for a structural claim, `py tools/resolve_chain.py` for a reach or chain claim,
   `py tools/audit_redundancy.py` for a duplication claim. Where the claim
   counts fenced blocks, use the extractor the runner uses, `iter_blocks` in
-  `tests/run_conformance.py`, rather than a grep over `templates/` — a grep
+  `tests/conformance/run.py`, rather than a grep over `templates/` — a grep
   counts occurrences no runner reads
 - Re-verify only the issues a candidate milestone would take. The rest of
   the backlog is not re-audited each cut, and age alone closes none of it
@@ -850,7 +851,7 @@ second wrap-up in one session.
 3. **Epic checklists** — update them if relevant
 4. **ADRs** — record any decision a consumer can observe in
    `docs/decisions/` (`AGENTS.md`, "Decision records")
-5. **Smoke tests** — run `py tests/run_smoke.py` and confirm it passes
+5. **Smoke tests** — run `py tests/run.py smoke` and confirm it passes
 6. **AGENTS.md** — place each new rule by checking, in order: code, ADR,
    README, playbook, `AGENTS.md`, the agent's own memory. `AGENTS.md` is
    the home only for a rule the agent applies on every turn; it holds
@@ -901,7 +902,7 @@ Imbra fork's is `templates/imbra/git.md`), and upstream's conformance run
 includes none of them. The steps below are what this
 repository still does. On every tag push the `Release gates` workflow
 fails a lightweight tag, runs `py tools/check_release.py` and
-`py tests/run_conformance.py`, and then publishes the release with the
+`py tests/run.py conformance`, and then publishes the release with the
 tag's `CHANGELOG.md` section as its notes. It can be dispatched with the
 version as an input to run the gates at the release commit, where it
 publishes nothing. The first gate checks step 2's cut:
@@ -915,7 +916,7 @@ version that is not the SemVer step its section owes. Exit 2 means no
 release was named or no previous tag was found, so nothing was compared.
 
 1. Confirm the milestone's issues are all closed and `main` is green
-   (`py tests/run_smoke.py` passes) and up to date (`git pull`)
+   (`py tests/run.py smoke` passes) and up to date (`git pull`)
 2. Cut `CHANGELOG.md` — reconcile the `Unreleased` section against the
    commits since the previous tag:
    ```bash
@@ -982,7 +983,7 @@ Which of those steps are actually enforced, audited per step as
 
 | Step | Enforced by |
 | --- | --- |
-| 1 | `py tests/run_smoke.py`, plus the milestone's own issue list |
+| 1 | `py tests/run.py smoke`, plus the milestone's own issue list |
 | 2 | `tools/check_release.py`, for the cut and the version; the reconciliation against the commits is read by hand |
 | 3 | `release-gates.yml`, whose first job fails a pushed lightweight `v*` tag |
 | 4 | `release-gates.yml`, which publishes only after its gates pass; step 7 confirms it |

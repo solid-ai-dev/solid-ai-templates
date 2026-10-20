@@ -19,15 +19,15 @@ jobs:
       matrix:
         include:
           - name: Run smoke tests
-            run: python tests/run_smoke.py
+            run: python tests/run.py smoke
 
           - name: Run the templates' own checks against this repository
-            run: python tests/run_conformance.py
+            run: python tests/run.py conformance
 
           # A fork syncs by merging upstream. This merges the change under
           # test into a simulated fork and runs smoke on the result.
           - name: Check a fork that only appends merges this change
-            run: python tests/run_fork_sync.py
+            run: python tests/run.py fork_sync
 
           - name: Check the release check still reads its planted cases
             run: python tools/check_release.py --self-test

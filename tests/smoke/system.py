@@ -916,17 +916,23 @@ MANUAL_SPEC = re.compile(r"^automatable:\s*manual\s*$", re.M)
 
 
 def _runner_text():
-    """The text of every runner in tests/ other than run_smoke.py.
+    """The text of the modules at tests/ and every suite's run.py but smoke's.
 
-    That file's registry is read as data; its prose names specs it does not
-    run, so it is not searched as text.
+    The smoke registry is read as data; its runner's prose names specs it
+    does not run, so it is not searched as text.
     """
     tests = os.path.join(ROOT, "tests")
-    texts = []
+    paths = []
     for name in sorted(os.listdir(tests)):
-        if name.endswith(".py") and name != "run_smoke.py":
-            with io.open(os.path.join(tests, name), encoding="utf-8") as f:
-                texts.append(f.read())
+        path = os.path.join(tests, name)
+        if name.endswith(".py"):
+            paths.append(path)
+        elif name != "smoke" and os.path.isfile(os.path.join(path, "run.py")):
+            paths.append(os.path.join(path, "run.py"))
+    texts = []
+    for path in paths:
+        with io.open(path, encoding="utf-8") as f:
+            texts.append(f.read())
     return "\n".join(texts)
 
 

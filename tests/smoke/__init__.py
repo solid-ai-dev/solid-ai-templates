@@ -1,4 +1,4 @@
-"""The smoke checks, one module per family; tests/run_smoke.py runs them.
+"""The smoke checks, one module per family; tests/smoke/run.py runs them.
 """
 
 import os
