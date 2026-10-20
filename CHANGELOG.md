@@ -28,6 +28,8 @@ Releases up to 2.63.0 are listed in
   pipeline-diagnostic and Python-only test rules are removed ([#2069])
 - The docs template drops its line-width and figure scripts, and the
   Mermaid and bulk-generator rules ([#2071])
+- The review template drops its full issue-verification procedure and its
+  numerical-gate items ([#2072])
 
 ### Added
 
@@ -81,6 +83,8 @@ Releases up to 2.63.0 are listed in
   to data-migration ([#2069])
 - The docs rules are short, topic-headed lists; line width is left to the
   Markdown linter ([#2071])
+- The review rules are short, topic-headed lists; shared browser state
+  moves to frontend-quality ([#2072])
 
 ### Deprecated
 
@@ -138,6 +142,7 @@ Releases up to 2.63.0 are listed in
 [#2066]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2066
 [#2069]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2069
 [#2071]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2071
+[#2072]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2072
 
 ## [2.90.0] - 2026-09-12
 
