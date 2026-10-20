@@ -61,7 +61,9 @@ tags: [tooling, hooks, checks, compatibility]
 
 ### Assertions
 
-1. Assert the manifest and the dispatch table name the same hooks
+1. Assert the manifest and the dispatch table name the same hooks, and the
+   package's top-level modules are exactly the dispatched hooks; shared
+   code lives in `support/`
 2. Assert each entry is `solid-ai-checks <id> --pre-commit`
 3. Assert each hook a template names is in the manifest
 4. Assert each planted violation fails, or is listed for a reading hook

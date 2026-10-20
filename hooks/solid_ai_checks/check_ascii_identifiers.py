@@ -9,7 +9,7 @@ import argparse
 import token
 import tokenize
 
-from .files import tracked
+from .support.files import tracked
 
 
 def main(argv, report):

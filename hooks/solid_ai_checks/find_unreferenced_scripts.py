@@ -7,7 +7,7 @@ which under-reports on purpose: every finding is a file nothing mentions.
 
 import argparse
 
-from .files import normalised, tracked
+from .support.files import normalised, tracked
 
 SUFFIXES = (".py", ".sh", ".ts", ".js")
 

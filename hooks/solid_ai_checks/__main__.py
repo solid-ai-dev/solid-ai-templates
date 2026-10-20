@@ -12,8 +12,8 @@ from . import (check_ascii_identifiers, check_comment_layout,
                find_import_bans, find_line_continuations,
                find_unfenced_checks, find_unreferenced_scripts,
                report_test_edits)
-from .files import NotARepository
-from .report import Report
+from .support.files import NotARepository
+from .support.report import Report
 
 # The hook IDs are frozen once shipped, like a section ID.
 HOOKS = {

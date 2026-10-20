@@ -7,7 +7,7 @@ named one keeps failing on the next.
 import argparse
 import re
 
-from .files import read_lines, tracked
+from .support.files import read_lines, tracked
 
 SUPPRESSIONS = (
     ("noqa", re.compile(r"noqa(?![:])")),

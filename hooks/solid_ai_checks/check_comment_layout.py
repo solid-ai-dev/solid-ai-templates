@@ -9,7 +9,7 @@ import argparse
 import subprocess
 import tokenize
 
-from .files import VENDORED, NotARepository, normalised, read_lines
+from .support.files import VENDORED, NotARepository, normalised, read_lines
 
 DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
 

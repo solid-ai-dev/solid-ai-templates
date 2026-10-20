@@ -20,4 +20,4 @@ solid-ai-checks = "solid_ai_checks.__main__:main"
 
 [tool.setuptools]
 package-dir = { "" = "hooks" }
-packages = ["solid_ai_checks"]
+packages = ["solid_ai_checks", "solid_ai_checks.support"]

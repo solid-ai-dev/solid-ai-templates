@@ -198,6 +198,17 @@ def check_sys_23():
     for hook in sorted(set(shipped) ^ set(HOOKS)):
         failures.append("  %s: in one of .pre-commit-hooks.yaml and "
                         "solid_ai_checks.HOOKS, not both" % hook)
+
+    # A top-level module is a hook and nothing else; shared code lives in
+    # support/, so a helper cannot pass for a misnamed hook.
+    package = os.path.join(HOOKS_DIR, "solid_ai_checks")
+    modules = {name[:-3] for name in os.listdir(package)
+               if name.endswith(".py") and not name.startswith("__")}
+    dispatched = {m.__name__.rsplit(".", 1)[1] for m in HOOKS.values()}
+    for module in sorted(modules ^ dispatched):
+        failures.append("  solid_ai_checks/%s.py: a top-level module that is "
+                        "not a hook, or a hook with no module; shared code "
+                        "goes in support/" % module)
     for hook, entry in sorted(shipped.items()):
         owed = "solid-ai-checks %s --pre-commit" % hook
         if entry.get("entry") != owed:

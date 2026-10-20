@@ -8,7 +8,7 @@ adapter it is meant not to know.
 import argparse
 import ast
 
-from .files import tracked
+from .support.files import tracked
 
 
 def imported(tree):
