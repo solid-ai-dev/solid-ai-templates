@@ -1,6 +1,14 @@
 # Backend — HTTP Conventions
 [ID: backend-http]
 
+## Port binding
+- Bind the service to a port the process opens itself; never depend on a
+  web server injected at runtime
+- Read the port from an environment variable such as `PORT`; never
+  hardcode it (MUST)
+- Use a well-known default in development, and the port the platform
+  assigns in production
+
 ## Handler design
 - Handlers are thin: decode request → call service → encode response
 - No business logic in handlers — delegate to a service layer
