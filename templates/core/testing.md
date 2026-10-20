@@ -33,6 +33,9 @@ tool drives it.
 ## Coverage
 
 - Cover every happy path the functional requirements define
+- Cover negative inputs and edge cases as well (SHOULD)
+- Cover each dependency's faults at every tier: unavailable, malformed
+  response, timeout, degraded operation (SHOULD)
 - Meet the project's coverage threshold for new code before merging
 - Never let coverage regress between releases
 - Run every automated test from CI, with no human step
