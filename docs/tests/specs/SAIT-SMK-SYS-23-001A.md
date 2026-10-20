@@ -56,7 +56,8 @@ tags: [tooling, hooks, checks, compatibility]
 3. For each case in `CASES`, commit its files to a fresh repository and run
    the hook there directly
 4. Run `report-test-edits` against a base: at the base, at the base in
-   pre-commit mode, and after a commit editing a test
+   pre-commit mode, after a commit editing a test, and against a base that
+   does not resolve
 
 ### Assertions
 
@@ -67,7 +68,10 @@ tags: [tooling, hooks, checks, compatibility]
 5. Assert each clean subject passes
 6. Assert a subject with nothing to check exits 3 run directly, and prints
    `not applicable:` and exits 0 in pre-commit mode
-7. Assert the hook, hook-command and planted-case counts are non-zero
+7. Assert a root written as `./docs` or `.` reaches the paths git prints
+8. Assert `report-test-edits` fails on a base that does not resolve, in
+   both modes, since a missing baseline compares nothing
+9. Assert the hook, hook-command and planted-case counts are non-zero
 
 ### Negative controls
 

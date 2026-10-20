@@ -420,7 +420,8 @@ pre-commit run report-test-edits --hook-stage manual --all-files --verbose
 Pass condition: the not-pure-additions count MUST be zero for the change
 to keep the lenient path. Each line after the five counts names a test file
 the change edited rather than added. The hook compares against
-`origin/main`; `--base` and `--tests` set the ref and the test root.
+`origin/main`; `--base` and `--tests` set the ref and the test root. A
+base that does not resolve fails the run: fetch it first.
 
 On the base with a clean tree it prints `not applicable`: no change is
 under review. On the base with uncommitted work it asks for a commit.
