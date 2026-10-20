@@ -9246,3 +9246,50 @@ to #2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
   the old file exists, and a fork-merge-ours tree keeps the old entry point
 - VS Code's Problems panel covers only open files; run the bundled
   checkers from the command line to see a whole directory
+
+## 2026-10-20 — Hooks ship, three core templates rewritten
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- `core/quality-gates.md` rewritten, then given topic headings and ordered
+  by use; its horizontal rules removed (#2060)
+- ADR-055: a check over 15 lines ships as a pre-commit hook from this
+  repository; the template names `pre-commit run <hook-id>` (#2061)
+- `hooks/solid_ai_checks/` ships 11 hooks, packaged by `pyproject.toml` and
+  listed in `.pre-commit-hooks.yaml`; shared code sits in `support/`, and
+  SYS-23 plants a violation and a clean case for every hook (#2062, #2063,
+  #2066)
+- The extraction rules move to an opt-in `base-embedded-checks` (#2062)
+- `core/quality.md` rewritten, 23.8 to 98.9; ADR-056 moves the
+  calibration, expensive-computation and source-silence rules to an opt-in
+  `base-measurement` (#2063, #2065)
+- `core/git.md` rewritten, 27.1 to 88.8 (#2066)
+
+**Pull requests merged:** #2060 to #2063, #2065, #2066.
+
+**Issues closed:** none; #2024, #1006 and #2059 are part done.
+
+**Issues created:** #2059.
+
+**ADRs:** ADR-055, ADR-056.
+
+**Gaps flagged:**
+- #2024 and #1006 continue with `testing`, `docs`, `review`, `config` and
+  `agents`; #2057 and #2059 also gate the v3.0.0 tag
+- This journal branch is unpushed
+
+**Lessons:**
+- A rule an agent already follows unprompted costs context and adds
+  nothing; sort each rule as habit-countering, reminder, default or
+  repo-specific before keeping it
+- Short topic headings, as the top-scoring templates use, read better than
+  sentence-long commands that restate the first bullet
+- pre-commit fails a hook on any nonzero exit and hides a passing hook's
+  output, so "not applicable" maps to a printed line and exit 0, and the
+  command asks for `--verbose`
+- Every review round on a hook found an argument the hook accepted and
+  then ignored: an unresolved base, an unnormalised path, a malformed
+  `--forbid`. Validate every argument and plant each bad spelling
+- The comment-layout hook flagged two of this session's own files on its
+  first runs here
