@@ -1,7 +1,7 @@
 ---
 id: SAIT-INT-MNF-05-001A
 uuid: a1b2c3d4-e5f6-7890-abcd-ef1234567823
-title: resolve.py resolution matches the PyYAML resolution
+title: resolve_chain.py resolution matches the PyYAML resolution
 product: sait
 type: int
 area: MANIF
@@ -19,7 +19,7 @@ tags: [manifest, resolution, parser-parity]
 
 > **Given** the repository is cloned and `manifest.yaml` is present
 > **When** every stack is resolved with both the stdlib-only parser in
-> `tools/resolve.py` and the PyYAML-based parser used by smoke
+> `tools/resolve_chain.py` and the PyYAML-based parser used by smoke
 > **Then** the two ordered file chains are identical for every stack
 
 ## Results
@@ -30,7 +30,7 @@ tags: [manifest, resolution, parser-parity]
 | FAILED | One or more stacks resolve to different chains between the two parsers |
 | SKIPPED | `manifest.yaml` is absent or PyYAML is not installed |
 | BLOCKED | `SAIT-INT-MNF-02-001A` is failing |
-| ERROR | `tools/resolve.py` cannot be imported; file system is inaccessible |
+| ERROR | `tools/resolve_chain.py` cannot be imported; file system is inaccessible |
 
 ## Steps
 
@@ -42,14 +42,14 @@ tags: [manifest, resolution, parser-parity]
 ### Execution
 
 1. Load `manifest.yaml` with the hand-rolled parser in
-   `tools/resolve.py` and resolve each stack's chain
+   `tools/resolve_chain.py` and resolve each stack's chain
 2. Load `manifest.yaml` with `yaml.safe_load` and resolve each stack's
    chain with the same algorithm
 3. Compare the two ordered file lists per stack
 
 ### Assertions
 
-1. Assert each stack's `resolve.py` chain equals its PyYAML chain,
+1. Assert each stack's `resolve_chain.py` chain equals its PyYAML chain,
    element-for-element and in order
 
 ### Teardown

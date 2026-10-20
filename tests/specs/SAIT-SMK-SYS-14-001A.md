@@ -1,6 +1,6 @@
 ---
 id: SAIT-SMK-SYS-14-001A
-title: resolve.py accounts for every argument it is given
+title: resolve_chain.py accounts for every argument it is given
 product: sait
 type: smoke
 area: SYS
@@ -48,7 +48,7 @@ tags: [tooling, resolver, cli, composition]
 
 ### Execution
 
-1. Run `tools/resolve.py` once per case in `RESOLVE_CASES`, capturing
+1. Run `tools/resolve_chain.py` once per case in `RESOLVE_CASES`, capturing
    status, stdout and stderr
 2. Compare the status against the case's expectation
 3. Where the case names a phrase, assert it appears in the combined
@@ -74,7 +74,7 @@ exits 1 for the right one.
 ### Negative controls
 
 1. **The defect that motivated the check.** The resolver took the first
-   argument and ignored the rest, so `resolve.py <valid-root>
+   argument and ignored the rest, so `resolve_chain.py <valid-root>
    <missing-root>` exited 0 having resolved a chain the caller did not
    ask for. The two-root case fails against that behaviour
 2. **A status right for the wrong reason.** A build failing on an

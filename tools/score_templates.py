@@ -2,13 +2,13 @@
 docs/design/template-content-quality.md, "Measured criteria".
 
 Usage:
-    py tools/template_quality.py                 # score every template
-    py tools/template_quality.py <file>...       # score named files, with detail
-    py tools/template_quality.py --sections      # the lowest-scoring sections
-    py tools/template_quality.py --calibrate     # each metric's distribution
-    py tools/template_quality.py --check         # CI gate: no score below baseline
-    py tools/template_quality.py --update        # record today's scores as baseline
-    py tools/template_quality.py --self-test     # planted cases only
+    py tools/score_templates.py                 # score every template
+    py tools/score_templates.py <file>...       # score named files, with detail
+    py tools/score_templates.py --sections      # the lowest-scoring sections
+    py tools/score_templates.py --calibrate     # each metric's distribution
+    py tools/score_templates.py --check         # CI gate: no score below baseline
+    py tools/score_templates.py --update        # record today's scores as baseline
+    py tools/score_templates.py --self-test     # planted cases only
 
 Every metric reads prose only: fenced code, tables and section directives
 are left out, because they are not rules an agent reads as prose. No
@@ -281,8 +281,8 @@ UPSTREAM_KEYS = ("base", "backend", "frontend")
 def upstream_files(manifest_text):
     """The template paths the manifest files under an upstream key."""
     sys.path.insert(0, str(ROOT / "tools"))
-    import resolve
-    manifest = resolve.parse_manifest(manifest_text)
+    import resolve_chain
+    manifest = resolve_chain.parse_manifest(manifest_text)
     return {entry["file"] for key in UPSTREAM_KEYS
             for entry in manifest.get(key) or [] if "file" in entry}
 
@@ -366,7 +366,7 @@ def write_baseline(path, rows, header):
 
 
 BASELINE_HEADER = """\
-# Template quality scores, recorded by `py tools/template_quality.py --update`.
+# Template quality scores, recorded by `py tools/score_templates.py --update`.
 # `--check` fails a template scoring below its row here, a template with no
 # row scoring below the new-file floor, and a row naming no template. Raise
 # a row by improving the template and re-recording; never lower one by hand.

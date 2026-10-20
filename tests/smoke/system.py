@@ -9,7 +9,7 @@ import sys
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
-from resolve import entry_sections
+from resolve_chain import entry_sections
 
 from lib import ROOT, repository_files, template_files
 from .common import (
@@ -276,7 +276,7 @@ def check_sys_07():
 
 
 # ---------------------------------------------------------------------------
-# SYS-09 — sync.py --check inspects without writing
+# SYS-09 — sync_docs.py --check inspects without writing
 # ---------------------------------------------------------------------------
 # A gate that repairs what it inspects reports clean on its second run, so
 # only its first invocation carries information. This runs against a
@@ -292,9 +292,9 @@ def check_sys_09():
     if tools_dir not in sys.path:
         sys.path.insert(0, tools_dir)
     try:
-        import sync as sync_tool
+        import sync_docs as sync_tool
     except ImportError as error:
-        return [f"  tools/sync.py could not be imported: {error}"]
+        return [f"  tools/sync_docs.py could not be imported: {error}"]
 
     marker = "demo"
     stale = (
@@ -317,11 +317,11 @@ def check_sys_09():
         assertions += 2
         if not changed:
             failures.append(
-                "  sync.py --check did not report a difference it should see"
+                "  sync_docs.py --check did not report a difference it should see"
             )
         if after != stale:
             failures.append(
-                "  sync.py --check wrote to the file it was inspecting — the "
+                "  sync_docs.py --check wrote to the file it was inspecting — the "
                 "first invocation repairs the tree and the second reports "
                 "clean"
             )
@@ -332,7 +332,7 @@ def check_sys_09():
         assertions += 1
         if "FRESH" not in written:
             failures.append(
-                "  sync.py without --check did not write; the read-only "
+                "  sync_docs.py without --check did not write; the read-only "
                 "assertion above would pass on a no-op"
             )
 
@@ -525,7 +525,7 @@ def check_sys_11():
 # ---------------------------------------------------------------------------
 # Sizes count decoded characters, not bytes on disk: read() opens in text
 # mode, so a CRLF working copy and an LF one measure the same tree the
-# same. Nothing gates the size -- `sync.py` writes it into the README's
+# same. Nothing gates the size -- `sync_docs.py` writes it into the README's
 # model-limits table, which is where a reader meets it.
 
 def _measure_chains():
@@ -662,7 +662,7 @@ def check_sys_13():
 # Test registry
 # ---------------------------------------------------------------------------
 
-# SYS-14 -- resolve.py accounts for every argument it is given
+# SYS-14 -- resolve_chain.py accounts for every argument it is given
 #
 # The resolver took args[0] and ignored the rest, so a root that does not
 # exist passed silently whenever it followed a valid one and the wrong chain
@@ -682,14 +682,14 @@ RESOLVE_CASES = [
     (["--bogus-flag"], 1, "Unknown flag"),
 
     # Bare invocation is the usage path, not an error -- same as --help.
-    ([], 0, "resolve.py"),
+    ([], 0, "resolve_chain.py"),
 ]
 
 
 def check_sys_14():
     seen = Inspected()
-    resolver = os.path.join(ROOT, "tools", "resolve.py")
-    seen.count("resolve.py argument cases", RESOLVE_CASES)
+    resolver = os.path.join(ROOT, "tools", "resolve_chain.py")
+    seen.count("resolve_chain.py argument cases", RESOLVE_CASES)
     failures = []
 
     for args, want_code, want_phrase in RESOLVE_CASES:
@@ -700,13 +700,13 @@ def check_sys_14():
         shown = " ".join(args) or "(no arguments)"
         if proc.returncode != want_code:
             failures.append(
-                f"  resolve.py {shown}: exit {proc.returncode}, expected "
+                f"  resolve_chain.py {shown}: exit {proc.returncode}, expected "
                 f"{want_code}"
             )
             continue
         if want_phrase and want_phrase not in (proc.stdout + proc.stderr):
             failures.append(
-                f"  resolve.py {shown}: exit {want_code} as expected, but the "
+                f"  resolve_chain.py {shown}: exit {want_code} as expected, but the "
                 f"message does not carry {want_phrase!r}, so the status may "
                 f"be right for the wrong reason"
             )
@@ -787,7 +787,7 @@ def check_sys_15():
 # -----------------------------------------------------------------------
 # The README's model-limits table states, per stack category, the
 # smallest context window that still holds the largest chain plus the
-# interview. sync.py regenerates it, so a change that crosses a tier
+# interview. sync_docs.py regenerates it, so a change that crosses a tier
 # updates the cell and passes sync --check: the crossing arrives as one
 # changed word in a generated table, in a diff whose author is reading
 # something else.
@@ -831,9 +831,9 @@ def check_sys_16():
         return [MISSING_YAML]
 
     sys.path.insert(0, os.path.join(ROOT, "tools"))
-    from sync import (CHARS_PER_TOKEN, OVERHEAD_TOKENS, CONTEXT_WINDOWS,
-                      _window_label)
-    from resolve import load_manifest, resolve_chain, concat_chain
+    from sync_docs import (CHARS_PER_TOKEN, OVERHEAD_TOKENS, CONTEXT_WINDOWS,
+                           _window_label)
+    from resolve_chain import load_manifest, resolve_chain, concat_chain
 
     failures = []
     seen = Inspected()
@@ -1088,7 +1088,7 @@ def check_sys_18():
 
 
 # ---------------------------------------------------------------------------
-# SYS-19 -- resolve.py names a missing dependency and a dependency cycle
+# SYS-19 -- resolve_chain.py names a missing dependency and a dependency cycle
 # ---------------------------------------------------------------------------
 
 # A fork's stacks depend on upstream IDs the fork does not control, so a
@@ -1169,9 +1169,10 @@ BROKEN_CASES = [
 ]
 
 RESOLVE_WITH = (
-    "import sys; sys.path.insert(0, sys.argv[1]); import resolve; "
-    "resolve.MANIFEST = sys.argv[2]; sys.argv = ['resolve.py', sys.argv[3]]; "
-    "resolve.main()"
+    "import sys; sys.path.insert(0, sys.argv[1]); import resolve_chain; "
+    "resolve_chain.MANIFEST = sys.argv[2]; "
+    "sys.argv = ['resolve_chain.py', sys.argv[3]]; "
+    "resolve_chain.main()"
 )
 
 

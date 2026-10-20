@@ -64,13 +64,13 @@ Platform: platform-github
 | `Extras` | MAY | Template IDs outside the stack's chain, comma-separated |
 | `Platform` | MAY | A platform ID from the fork |
 
-The IDs above are the Imbra fork's; `py tools/resolve.py --roots` lists the
+The IDs above are the Imbra fork's; `py tools/resolve_chain.py --roots` lists the
 ones a checkout carries.
 
 ## 6.4 Resolution
 
 Input: a root and the manifest. Output: the ordered list of files to load.
-Today `tools/resolve.py` resolves one root, steps 1 to 3 and 6. Steps 4 and
+Today `tools/resolve_chain.py` resolves one root, steps 1 to 3 and 6. Steps 4 and
 5 belong to the declaration block of section 6.3 and are proposed.
 
 Without Python, follow steps 1 to 3 by hand: load every file in the
@@ -93,8 +93,8 @@ within one depth the order `depends_on` declares. `core/agents.md` is not
 appended; a project that wants it in the chain declares it as an extra.
 
 ```bash
-py tools/resolve.py <id>            # the file list
-py tools/resolve.py <id> --concat   # the concatenated chain
+py tools/resolve_chain.py <id>            # the file list
+py tools/resolve_chain.py <id> --concat   # the concatenated chain
 ```
 
 ## 6.5 A fork taking an upstream change

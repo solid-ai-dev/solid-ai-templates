@@ -386,7 +386,7 @@ ADDED = set()
 resolved = set(ADDED)
 for root in ROOTS:
     out = subprocess.run(
-        [sys.executable, "tools/resolve.py", root],
+        [sys.executable, "tools/resolve_chain.py", root],
         cwd=SUBMODULE, capture_output=True, text=True, check=True,
     ).stdout
     resolved |= {ln.strip() for ln in out.splitlines() if ln.strip()}

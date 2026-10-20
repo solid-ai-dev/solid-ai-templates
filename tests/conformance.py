@@ -108,16 +108,16 @@ CHECKS = [
 
     # -- core/git.md -------------------------------------------------
 
-    # This repository's regenerator is sync.py, and what it writes depends
+    # This repository's regenerator is sync_docs.py, and what it writes depends
     # on the tree -- a fork's examples document among them -- so the diff
     # covers the whole tree. The run therefore reads committed work only,
-    # which is how the suite is run anyway. sync.py's own report is
+    # which is how the suite is run anyway. sync_docs.py's own report is
     # silenced, so anything printed is a diff.
     {"file": "core/git.md", "find": "<regenerate-command>",
      "title": "Regenerated artifact matches its sources", "do": RUN,
      "expect": [],
      "substitute": {"<regenerate-command>":
-                    PYTHON + " tools/sync.py > /dev/null || exit 1",
+                    PYTHON + " tools/sync_docs.py > /dev/null || exit 1",
                     "<artifact-path>": "."}},
 
     {"file": "core/git.md", "find": "--ignore-all-space <file>",

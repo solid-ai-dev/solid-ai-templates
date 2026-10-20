@@ -19,10 +19,10 @@ file. What the project is: `README.md`; how it works: `docs/spec.md`.
 `py` is the Windows launcher; on macOS and Linux run `python3`.
 
 ```bash
-py tools/sync.py              # regenerate generated sections
-py tools/sync.py --check      # exit 1 if any is stale
-py tools/resolve.py --roots   # every root a project can pick
-py tools/resolve.py <id>      # one root's resolved file list
+py tools/sync_docs.py              # regenerate generated sections
+py tools/sync_docs.py --check      # exit 1 if any is stale
+py tools/resolve_chain.py --roots   # every root a project can pick
+py tools/resolve_chain.py <id>      # one root's resolved file list
 py tests/run_smoke.py         # structure and resolution
 py tests/run_conformance.py   # the templates' own checks, run here
 py tests/run_fork_sync.py     # the change merged into a simulated fork
@@ -193,8 +193,8 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 
 ### 3.1 Checks
 
-- CI runs smoke, conformance, fork sync, `release_check.py --self-test`,
-  `sync.py --check`, `resolve.py --check`, the redundancy audit, the
+- CI runs smoke, conformance, fork sync, `check_release.py --self-test`,
+  `sync_docs.py --check`, `resolve_chain.py --check`, the redundancy audit, the
   template-quality ratchet, pyflakes, markdownlint, the pre-commit hooks
   and gitleaks on every PR and on push to `main`
 - Every runner writes a timestamped report to `tests/reports/`
@@ -239,7 +239,7 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 - A conformance run is not clean until its judgement readings are read —
   `0 failed` counts only the automatic verdicts (playbook, "Run the test
   suite")
-- Run `py tools/sync.py` after the LAST template edit of a change, not
+- Run `py tools/sync_docs.py` after the LAST template edit of a change, not
   the first — a section regenerated before a later edit is stale
 - If a change affects multiple documents, update all in the same PR
 - Do not drift from the agreed scope without checking with the user

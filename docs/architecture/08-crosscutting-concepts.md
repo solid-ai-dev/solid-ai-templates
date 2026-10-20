@@ -156,4 +156,4 @@ tier must record it in `tests/context-tiers.txt` in the same change
 - [agent-context-tradeoffs.md](../design/agent-context-tradeoffs.md): how
   context size and startup design affect latency and quality
 - [template-content-quality.md](../design/template-content-quality.md): the
-  measured criteria `tools/template_quality.py` scores
+  measured criteria `tools/score_templates.py` scores

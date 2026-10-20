@@ -33,16 +33,16 @@ restated in each.
 | `SAIT-SMK-SYS-04-001A` | SMK | P0 | DEPENDS ON headers match manifest depends_on |
 | `SAIT-SMK-SYS-06-001A` | SMK | P1 | Every usable stack's resolved chain carries the MUST sections |
 | `SAIT-SMK-SYS-07-001A` | SMK | P2 | 360 audit reports live only under docs/audits/ |
-| `SAIT-SMK-SYS-09-001A` | SMK | P2 | sync.py --check inspects without writing |
+| `SAIT-SMK-SYS-09-001A` | SMK | P2 | sync_docs.py --check inspects without writing |
 | `SAIT-SMK-SYS-10-001A` | SMK | P2 | A quoted DEPENDS ON in prose is not a declaration |
 | `SAIT-SMK-SYS-11-001A` | SMK | P2 | Prose ID references resolve in every chain carrying the file |
 | `SAIT-SMK-SYS-13-001A` | SMK | P1 | The instructed manual walk reaches what the resolver carries |
-| `SAIT-SMK-SYS-14-001A` | SMK | P1 | resolve.py accounts for every argument it is given |
+| `SAIT-SMK-SYS-14-001A` | SMK | P1 | resolve_chain.py accounts for every argument it is given |
 | `SAIT-SMK-SYS-15-001A` | SMK | P1 | A stack outside the exempt layers resolves the security tier |
 | `SAIT-SMK-SYS-16-001A` | SMK | P1 | A stack category's context tier moves only on purpose |
 | `SAIT-SMK-SYS-17-001A` | SMK | P2 | Every registered check names a spec document that exists |
 | `SAIT-SMK-SYS-18-001A` | SMK | P1 | A stack outside the constrained categories resolves the gate tier |
-| `SAIT-SMK-SYS-19-001A` | SMK | P1 | resolve.py names a missing dependency and a dependency cycle |
+| `SAIT-SMK-SYS-19-001A` | SMK | P1 | resolve_chain.py names a missing dependency and a dependency cycle |
 | `SAIT-SMK-SYS-20-001A` | SMK | P1 | A fork leaves upstream's manifest keys as it last merged them |
 | `SAIT-SMK-SYS-21-001A` | SMK | P1 | A fork's own key and its core-tier additions resolve |
 | `SAIT-SMK-SYS-22-001A` | SMK | P1 | A deprecation names a live replacement |
@@ -61,5 +61,5 @@ restated in each.
 | `SAIT-INT-MNF-02-001A` | INT | P0 | All stacks resolve to valid, non-empty file lists |
 | `SAIT-INT-MNF-03-001A` | INT | P0 | All resolved chains include core tier files |
 | `SAIT-INT-MNF-04-001A` | INT | P1 | Prompt builds for all stacks |
-| `SAIT-INT-MNF-05-001A` | INT | P0 | resolve.py resolution matches the PyYAML resolution |
+| `SAIT-INT-MNF-05-001A` | INT | P0 | resolve_chain.py resolution matches the PyYAML resolution |
 | `SAIT-INT-MNF-06-001A` | INT | P1 | A fork that only appends merges an upstream change cleanly |

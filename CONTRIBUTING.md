@@ -47,8 +47,8 @@ py tests/run_smoke.py
 | `docs/playbook.md` | How to make each kind of change |
 | `AGENTS.md` | The rules an agent applies in this repository |
 
-`py tools/resolve.py --roots` lists every root, and
-`py tools/resolve.py <id>` prints the chain a root resolves to.
+`py tools/resolve_chain.py --roots` lists every root, and
+`py tools/resolve_chain.py <id>` prints the chain a root resolves to.
 
 ## Before you open a pull request
 
@@ -63,11 +63,11 @@ py tests/run_conformance.py
 ```
 
 If you edited anything under `templates/`, regenerate the derived files and
-commit the result with your change. `py tools/sync.py --check` reports a
+commit the result with your change. `py tools/sync_docs.py --check` reports a
 mismatch without writing anything, and CI fails on one:
 
 ```bash
-py tools/sync.py
+py tools/sync_docs.py
 ```
 
 ## What a change has to carry

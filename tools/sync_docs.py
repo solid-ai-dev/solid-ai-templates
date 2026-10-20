@@ -2,8 +2,8 @@
 architecture chapters from manifest.yaml.
 
 Usage:
-    py tools/sync.py           # update all targets
-    py tools/sync.py --check   # exit 1 if any file would change
+    py tools/sync_docs.py           # update all targets
+    py tools/sync_docs.py --check   # exit 1 if any file would change
 """
 
 import io
@@ -86,7 +86,7 @@ def _readme_extras(core_ids, entries, stacks):
     from the manifest's stacks: key alone leaves a fifth of the catalogue
     off the page that describes the catalogue.
     """
-    from resolve import opt_in_roots
+    from resolve_chain import opt_in_roots
 
     lines = [
         "| Template | Kind | Description |",
@@ -113,7 +113,7 @@ def _readme_root_counts(core_ids, entries, stacks):
     extra resolving to the core tier plus one file is the smallest case,
     not the only one, and the prose said otherwise for half the roots.
     """
-    from resolve import opt_in_roots, resolve_chain
+    from resolve_chain import opt_in_roots, resolve_chain
 
     extras = opt_in_roots(core_ids, entries, stacks)
     beyond = []
@@ -205,7 +205,7 @@ def _interview_stacks(manifest):
     stacks = manifest.get("stacks", [])
 
     # The id column is what the instructions above the table consume:
-    # both `resolve.py <stack-id>` and `generated/<stack-id>.md` take the
+    # both `resolve_chain.py <stack-id>` and `generated/<stack-id>.md` take the
     # id, and most of the ids are not derivable from the filename beside
     # them. Generated from the manifest with the rest of the row, so the
     # two cannot disagree.
@@ -244,7 +244,7 @@ NEWLINE = "\n"
 
 def _spec_chain_examples():
     """Render the worked chain examples from the resolver itself."""
-    from resolve import load_catalogue as _load, resolve_chain
+    from resolve_chain import load_catalogue as _load, resolve_chain
 
     core_ids, entries, stacks = _load()
     known = set(entry["id"] for entry in stacks)
@@ -263,7 +263,7 @@ def _spec_chain_examples():
         blocks.append(
             "### Example: " + heading + NEWLINE * 2
             + "```bash" + NEWLINE
-            + "py tools/resolve.py " + stack_id + NEWLINE
+            + "py tools/resolve_chain.py " + stack_id + NEWLINE
             + "```" + NEWLINE * 2
             + "```" + NEWLINE + body + NEWLINE + "```"
         )
@@ -300,7 +300,7 @@ def _window_label(size):
 
 def _readme_model_limits():
     """Render README.md's model table from the resolved chains themselves."""
-    from resolve import load_catalogue as _load, resolve_chain, concat_chain
+    from resolve_chain import load_catalogue as _load, resolve_chain, concat_chain
 
     core_ids, entries, stacks = _load()
 
@@ -409,7 +409,7 @@ def _update_file(path, replacements, check_mode=False):
 
 def _catalogue(manifest):
     """The parsed manifest without its fixture entries."""
-    from resolve import is_fixture
+    from resolve_chain import is_fixture
 
     # Every block this script writes describes what a project can pick. A
     # fixture is test input, so it stays off the README, spec and interview.
@@ -465,10 +465,10 @@ def main():
 
     manifest_text = io.open(MANIFEST, encoding="utf-8").read()
 
-    # One parser, not two. resolve.py's is the implementation MNF-05
+    # One parser, not two. resolve_chain.py's is the implementation MNF-05
     # cross-validates against PyYAML; a second copy here drifted from it
     # silently, dropping the core tier and every block-list depends_on.
-    from resolve import parse_manifest
+    from resolve_chain import parse_manifest
 
     manifest = _catalogue(parse_manifest(manifest_text))
 
@@ -480,7 +480,7 @@ def main():
     # it is the resolver's own entry point and returns the core tier and the
     # stack list the root split needs. Reusing it keeps one definition of
     # what an opt-in root is.
-    from resolve import load_catalogue
+    from resolve_chain import load_catalogue
 
     core_ids, entries, stacks = load_catalogue()
     spec_core_tier = _spec_core_tier(core_ids, entries)
@@ -557,8 +557,8 @@ def main():
         else:
             print(f"  OK    {path.name}")
 
-    # Check generated/ files via resolve.py
-    from resolve import load_catalogue as _load, check_generated, generate_all
+    # Check generated/ files via resolve_chain.py
+    from resolve_chain import load_catalogue as _load, check_generated, generate_all
     core_ids, entries, stacks = _load()
     stale, orphans = check_generated(core_ids, entries, stacks)
     for name in orphans:

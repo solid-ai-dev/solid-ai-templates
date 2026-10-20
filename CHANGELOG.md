@@ -11,6 +11,8 @@ Releases up to 2.63.0 are listed in
 
 ### Breaking changes
 
+- The tools are named verb-first: resolve_chain, sync_docs, check_release
+  and score_templates ([#2052])
 - Stacks, platforms, process rules and the interview move to forks; pin
   2.90.0 or a fork ([#1972])
 - The core rules require only a README and the two agent files ([#1964])
@@ -102,6 +104,7 @@ Releases up to 2.63.0 are listed in
 [#2046]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2046
 [#2048]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2048
 [#2049]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2049
+[#2052]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2052
 
 ## [2.90.0] - 2026-09-12
 

@@ -1,6 +1,6 @@
 ---
 id: SAIT-SMK-SYS-09-001A
-title: sync.py --check inspects without writing
+title: sync_docs.py --check inspects without writing
 product: sait
 type: smoke
 area: SYS
@@ -31,7 +31,7 @@ tags: [tooling, staleness-gate, check-timing]
 | FAILED | Check mode wrote to the file, missed the difference, or plain mode did not write |
 | SKIPPED | — |
 | BLOCKED | — |
-| ERROR | `tools/sync.py` cannot be imported |
+| ERROR | `tools/sync_docs.py` cannot be imported |
 
 ## Steps
 

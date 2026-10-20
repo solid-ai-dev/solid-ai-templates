@@ -28,7 +28,7 @@ and layer templates only.
      file: templates/<dir>/<name>.md
      description: <what the file covers>
    ```
-5. Run `py tools/sync.py` after the last template edit. It regenerates the
+5. Run `py tools/sync_docs.py` after the last template edit. It regenerates the
    generated sections in `docs/architecture/` and `README.md`; do
    not edit those by hand
 6. Upstream carries no stack to reference the new file. A fork's stacks
@@ -50,8 +50,8 @@ genericity before it becomes template content:
 
    ```bash
    # how many roots resolve a candidate file?
-   for s in $(py tools/resolve.py --roots); do
-     py tools/resolve.py "$s" | grep -q 'core/review.md' && echo "$s"
+   for s in $(py tools/resolve_chain.py --roots); do
+     py tools/resolve_chain.py "$s" | grep -q 'core/review.md' && echo "$s"
    done | wc -l
    ```
 
@@ -104,7 +104,7 @@ genericity before it becomes template content:
 1. `git mv <old-path> <new-path>`
 2. Update every `[DEPENDS ON: ...]` header that references the old path
 3. Update `manifest.yaml` — change the `file:` field for the entry
-4. Run `py tools/sync.py` for the generated sections, then search
+4. Run `py tools/sync_docs.py` for the generated sections, then search
    `docs/` and `README.md` for the old filename and replace the rest
 5. Verify with `git status` that no old references remain
 
@@ -238,7 +238,7 @@ chains and the model limits of its stacks.
    carries no stacks, so the size shows in the forks that resolve the
    file: a fork's `README.md` model-limits table reports it per stack
    category beside the smallest context window that still holds it, and
-   `py tools/sync.py --check` fails there when the table drifts from the
+   `py tools/sync_docs.py --check` fails there when the table drifts from the
    tree.
 
    In a fork, a category crossing to a larger window is a change to what
@@ -308,17 +308,17 @@ applies.
 
 ## Score template quality
 
-`tools/template_quality.py` scores each template's form against the
+`tools/score_templates.py` scores each template's form against the
 criteria in `docs/design/template-content-quality.md`, "Measured criteria":
 rule length, prose share, sentence length, instructions, hedges, history and
 section size, from 0 to 100.
 
 ```bash
-py tools/template_quality.py              # every template, lowest first
-py tools/template_quality.py templates/core/testing.md   # one file in detail
-py tools/template_quality.py --sections   # the lowest-scoring sections
-py tools/template_quality.py --check      # the CI ratchet
-py tools/template_quality.py --update     # re-record the baseline
+py tools/score_templates.py              # every template, lowest first
+py tools/score_templates.py templates/core/testing.md   # one file in detail
+py tools/score_templates.py --sections   # the lowest-scoring sections
+py tools/score_templates.py --check      # the CI ratchet
+py tools/score_templates.py --update     # re-record the baseline
 ```
 
 Pass condition for `--check`: `findings: 0` and exit zero. It runs the
@@ -638,7 +638,7 @@ steps below apply them in order.
 
 Where a cut carries more than one pull request, every branch after the
 first goes `BEHIND`. A merge that changes the manifest changes what
-`tools/sync.py` generates into `README.md` and `docs/architecture/`, so the
+`tools/sync_docs.py` generates into `README.md` and `docs/architecture/`, so the
 second branch carries generated sections built from a tree that lacks the
 first one's change. Git reports the branch `MERGEABLE` — the edits fall
 in different regions of the same files — so nothing warns that the
@@ -651,7 +651,7 @@ mergeable is not the same claim as current:
 ```bash
 gh pr update-branch <number>
 git pull
-py tools/sync.py --check
+py tools/sync_docs.py --check
 ```
 
 Pass condition: the gate prints `All files in sync` **after** the
@@ -752,13 +752,13 @@ gh issue list --state open --limit 200 --json number,title,milestone --jq '.[] |
 ```
 
 - Verify a claim with the tool the claim is about: `py tests/run_smoke.py`
-  for a structural claim, `py tools/resolve.py` for a reach or chain claim,
+  for a structural claim, `py tools/resolve_chain.py` for a reach or chain claim,
   `py tools/audit_redundancy.py` for a duplication claim. Where the claim
   counts fenced blocks, use `tests/conformance.py`'s own extractor rather
   than a grep over `templates/` — a grep counts occurrences no runner reads
 - Re-verify only the issues a candidate milestone would take. The rest of
   the backlog is not re-audited each cut, and age alone closes none of it
-- Measure reach in roots, with `py tools/resolve.py --roots`, before siting
+- Measure reach in roots, with `py tools/resolve_chain.py --roots`, before siting
   a rule that could go in either of two templates
 - Title the milestone `vA.B.C — <theme>`. The annotated tag message quotes
   the theme, so a bare version leaves the tag with nothing to quote
@@ -783,7 +783,7 @@ issue had been put in it solely to satisfy the release gate.
 Run this before proposing to rename or restructure a document other
 repositories carry — the three `core/docs.md` requires (`README.md`,
 `AGENTS.md`, `CLAUDE.md`) and any a fork's process prescribes, such as
-`docs/PLAYBOOK.md` or `CHANGELOG.md`. `tools/sync.py` reaches this
+`docs/PLAYBOOK.md` or `CHANGELOG.md`. `tools/sync_docs.py` reaches this
 repository and nothing else, so the cost sits downstream, in repositories
 no gate here can see.
 
@@ -899,13 +899,13 @@ process, so a fork carries them in a template of its own (ADR-049; the
 Imbra fork's is `templates/imbra/git.md`), and upstream's conformance run
 includes none of them. The steps below are what this
 repository still does. On every tag push the `Release gates` workflow
-fails a lightweight tag, runs `py tools/release_check.py` and
+fails a lightweight tag, runs `py tools/check_release.py` and
 `py tests/run_conformance.py`, and then publishes the release with the
 tag's `CHANGELOG.md` section as its notes. It can be dispatched with the
 version as an input to run the gates at the release commit, where it
 publishes nothing. The first gate checks step 2's cut:
 ```bash
-py tools/release_check.py vA.B.C
+py tools/check_release.py vA.B.C
 ```
 Pass condition: it names the release, the previous tag and the ref the
 changelog was read from, prints `findings: 0`, and exits zero. A finding
@@ -982,7 +982,7 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run_smoke.py`, plus the milestone's own issue list |
-| 2 | `tools/release_check.py`, for the cut and the version; the reconciliation against the commits is read by hand |
+| 2 | `tools/check_release.py`, for the cut and the version; the reconciliation against the commits is read by hand |
 | 3 | `release-gates.yml`, whose first job fails a pushed lightweight `v*` tag |
 | 4 | `release-gates.yml`, which publishes only after its gates pass; step 7 confirms it |
 | 5 | nothing — an open milestone after a published release is silent |

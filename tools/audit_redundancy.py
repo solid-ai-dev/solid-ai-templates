@@ -36,7 +36,7 @@ import re
 import sys
 from difflib import SequenceMatcher
 
-from resolve import load_manifest, opt_in_roots, resolve_chain, read_file
+from resolve_chain import load_manifest, opt_in_roots, resolve_chain, read_file
 
 # Set the output encoding and the line ending at the boundary rather
 # than inheriting the console defaults. The encoding mangles any

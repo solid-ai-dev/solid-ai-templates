@@ -1,6 +1,6 @@
 ---
 id: SAIT-SMK-SYS-19-001A
-title: resolve.py names a missing dependency and a dependency cycle
+title: resolve_chain.py names a missing dependency and a dependency cycle
 product: sait
 type: smoke
 area: SYS
