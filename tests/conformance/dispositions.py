@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 19
+SKIP_BUDGET = 12
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
