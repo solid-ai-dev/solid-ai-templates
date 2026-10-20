@@ -80,21 +80,30 @@ Which documents a project keeps, and how they stay true.
 
 - Wrap Markdown at the width the project declares, never at one written
   into a rule
-- Declare the width once, in the Markdown linter's configuration or in
-  `.editorconfig`, never both
+- Declare the width as the line-length setting in the Markdown linter's
+  configuration (MUST); the linter reads no other file, so a width set only
+  in `.editorconfig` goes unenforced
 - Declare in the same place which of fenced blocks, table rows and headings
   are exempt
 - Exempt a line only where an unbreakable token, a bare URL or a Markdown
   link, holds it over the width
 - Enforce the width with the Markdown linter's line-length rule in CI
-  (MUST); a project that declares no width has no rule
+  (MUST), passing the configuration and the files to lint explicitly; a
+  project that declares no width has no rule
 
 ```bash
-npx markdownlint-cli2
+CONFIG=<markdownlint-config>
+echo "width settings in $CONFIG: $(grep -c 'line_length' "$CONFIG")"
+out=$(npx --yes markdownlint-cli2 --config "$CONFIG" "**/*.md" 2>&1)
+status=$?
+echo "files linted: $(echo "$out" | sed -n 's/^Linting: \([0-9]*\) file.*/\1/p')"
+echo "$out" | grep -E ' MD[0-9]{3}'
+exit $status
 ```
 
-Pass condition: the run reports `0 issues`, with the line-length rule on at
-the declared width.
+Pass condition: both counts are non-zero, nothing follows them, and the
+block exits zero. A zero width count means the linter falls back to its
+default width; a zero file count means the globs reached nothing.
 
 ## Writing style
 

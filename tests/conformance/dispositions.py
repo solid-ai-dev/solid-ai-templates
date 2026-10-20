@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 13
+SKIP_BUDGET = 12
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -71,12 +71,11 @@ CHECKS = [
 
     # -- core/docs.md ------------------------------------------------
 
-    {"file": "core/docs.md", "find": "npx markdownlint-cli2",
+    {"file": "core/docs.md", "find": "npx --yes markdownlint-cli2",
      "title": "Markdown holds to the declared line width",
-     "do": SKIP,
-     "reason": "Needs Node, which this runner does not install. CI's "
-               "markdownlint job runs it over every tracked Markdown file "
-               "with this repository's configuration."},
+     "do": RUN, "expect": ["nonzero", "nonzero"],
+     "substitute": {"CONFIG=<markdownlint-config>":
+                    "CONFIG=.github/linters/.markdownlint-cli2.jsonc"}},
 
     # -- core/agents.md ----------------------------------------------
 
