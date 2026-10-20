@@ -93,17 +93,21 @@ Which documents a project keeps, and how they stay true.
 
 ```bash
 CONFIG=<markdownlint-config>
-echo "width settings in $CONFIG: $(grep -c 'line_length' "$CONFIG")"
+widths=$(grep -c 'line_length' "$CONFIG")
+echo "width settings in $CONFIG: $widths"
 out=$(npx --yes markdownlint-cli2 --config "$CONFIG" "**/*.md" 2>&1)
 status=$?
-echo "files linted: $(echo "$out" | sed -n 's/^Linting: \([0-9]*\) file.*/\1/p')"
+files=$(echo "$out" | sed -n 's/^Linting: \([0-9]*\) file.*/\1/p')
+echo "files linted: ${files:-0}"
 echo "$out" | grep -E ' MD[0-9]{3}'
-exit $status
+[ "$widths" -gt 0 ] && [ "${files:-0}" -gt 0 ] && exit "$status"
+exit 1
 ```
 
 Pass condition: both counts are non-zero, nothing follows them, and the
 block exits zero. A zero width count means the linter falls back to its
-default width; a zero file count means the globs reached nothing.
+default width, a zero file count means the globs reached nothing, and
+either exits non-zero.
 
 ## Writing style
 
