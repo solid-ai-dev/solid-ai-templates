@@ -39,115 +39,17 @@ awk 'length > 80' FILE
 
 Pass condition: no output. Any line printed is longer than the limit.
 
-Find a check stated outside a fence. Match over the paragraph, not the
-line, because prose wraps:
+Find a check stated outside a fence. It matches over the paragraph, not
+the line, because prose wraps:
 
 ```bash
-py - <<'EOF'
-import io, os, re
-
-# Point ROOTS at the directories holding the project's rule documents --
-# templates, context files, contributor guides. Anywhere a rule may state
-# a check.
-ROOTS = ["templates"]
-
-# A stated check pairs a verification phrase with the command it
-# introduces. The pair is matched over a paragraph, because a wrapped
-# check puts the phrase on one line and the command on the next.
-PHRASE = re.compile(
-    r"(?:verify|check|confirm)\s+with"
-    r"|(?:verified|checked|confirmed)\s+by"
-    r"|pass condition"
-    r"|\b(?:[\w-]+\s+)?checks?:",
-    re.IGNORECASE)
-COMMAND = re.compile(r"[`][^`]+[`]")
-
-# The other order: the command comes first and its pass condition after
-# it, with no announcing phrase at all.
-VERDICT = re.compile(
-    r"output\s+must\s+be\s+empty"
-    r"|\bno\s+output\s+means"
-    r"|\bis\s+done\s+when",
-    re.IGNORECASE)
-
-# A sentence boundary between the phrase and the command means the
-# paragraph talks ABOUT a check and names a command somewhere else.
-# Requiring the two to share a sentence is what separates a check stated
-# in prose from prose that mentions one.
-BREAK = re.compile(r"[.]\s")
-WINDOW = 5
-
-# Written rather than spelled literally: three backticks at the start of a
-# line would close the block this check is quoted inside. Fenced lines are
-# skipped, so the check does not match its own source either way.
-FENCE = "`" * 3
-BULLET = re.compile(r"\s*(?:[-*+]\s|\d+[.]\s)")
-
-inspected, findings = 0, []
-
-def examine(path, para, numbers, marks):
-    """Record a finding where the paragraph states a check no fence holds."""
-    if not para:
-        return 0
-    near = min(min(abs(m - n) for m in marks) for n in numbers) if marks \
-        else WINDOW + 1
-    if near <= WINDOW:
-        return 1
-    joined = " ".join(line.strip() for line in para)
-    pairs = [(p, COMMAND.search(joined, p.end()))
-             for p in PHRASE.finditer(joined)]
-    pairs += [(c, VERDICT.search(joined, c.end()))
-              for c in COMMAND.finditer(joined)]
-    for first, second in pairs:
-        if second and not BREAK.search(joined[first.end():second.start()]):
-            findings.append("%s:%d %s" % (
-                path, numbers[0], joined[first.start():second.end()]))
-            break
-    return 1
-
-for root in ROOTS:
-    for parent, _, names in os.walk(root):
-        for name in sorted(names):
-            if not name.endswith(".md"):
-                continue
-            path = os.path.join(parent, name)
-            lines = io.open(path, encoding="utf-8").read().splitlines()
-            marks = [n for n, line in enumerate(lines, 1)
-                     if line.lstrip().startswith(FENCE)]
-            fenced, para, numbers = False, [], []
-            for number, line in enumerate(lines, 1):
-                stripped = line.lstrip()
-                skip = (stripped.startswith(FENCE) or not line.strip()
-                        or stripped.startswith("|") or stripped.startswith("#"))
-                if skip or (para and BULLET.match(line)):
-                    inspected += examine(path, para, numbers, marks)
-                    para, numbers = [], []
-                if stripped.startswith(FENCE):
-                    fenced = not fenced
-                    continue
-                if fenced or skip:
-                    continue
-                para.append(line)
-                numbers.append(number)
-            inspected += examine(path, para, numbers, marks)
-
-print("prose paragraphs inspected: %d" % inspected)
-print("checks stated outside a fence: %d" % len(findings))
-for finding in findings:
-    print("  " + finding)
-
-raise SystemExit(1 if findings else 0)
-EOF
+pre-commit run find-unfenced-checks --all-files --verbose
 ```
 
-Pass condition: the inspected count is above zero and the finding count is
-zero. An inspected count of zero means `ROOTS` named nothing that exists,
-which is the check reaching no input rather than a clean tree.
-
-- Add a literal to `PHRASE` or `VERDICT` only together with the check in
-  the project that motivated it
-- Control any edit to either both ways: a check stated in prose is
-  reported, and the same check inside a fence is not
+Pass condition: the paragraph count is above zero and the
+`checks stated outside a fence` count is zero. Give the hook a `--root`
+argument for each directory holding rule documents; a paragraph count of
+zero means the roots named nothing, not that the tree is clean.
 
 ## Conventions as tests
 
@@ -245,148 +147,22 @@ informally.
 - Demonstrate the defect on the fixing branch where the tree can be put in
   the failing state
 
-### Extraction
+### Shipped checks
 
-- Never indent a fenced check deeper than the first indentation of its
-  code; put it flush and point to it from the step
-- Prefer a quoted heredoc to an inline `-c` string, and never write the
-  heredoc opener itself in prose
-- Confirm that a line continuation survived into the committed file
-- Fold a command onto one line, or bind its parts to shell variables,
-  rather than continue it (SHOULD)
-- Build an exact backslash in quoted text with `chr(92)` rather than
-  transcribing it
-- Write patterns without backslash escapes:
+- Take a check these templates ship as a pre-commit hook from the pinned
+  repository, never by copying its code
+- Run it with the command the template states; `--verbose` shows the
+  counts a passing hook prints
+- Read `not applicable: <reason>` as the hook finding nothing to check,
+  never as a pass
 
-  | Instead of | Write |
-  |------------|-------|
-  | `\d` | `[0-9]` |
-  | `\w` | `[A-Za-z0-9_]` |
-  | `\b` at each end | `(?<![A-Za-z0-9])` and `(?![A-Za-z0-9])` |
-  | a literal backslash | `chr(92)` |
-
-Every embedded check MUST compile when extracted the way a reader extracts
-it. Adapt `ROOTS` to the files that carry the rules:
-
-```bash
-py - <<'EOF'
-import pathlib, re
-
-# The files that carry rules and their checks.
-ROOTS = ["templates"]
-
-# A shipped check is a heredoc inside a fenced block. The fence may be
-# indented under a list item, and a renderer strips that indent -- so
-# strip it here too, or the extracted body will not compile.
-FENCE = re.compile(r"^([ ]*)```")
-found, broken, scanned = 0, [], 0
-for root in ROOTS:
-    for path in sorted(pathlib.Path(root).rglob("*.md")):
-        scanned += 1
-        lines = path.read_text(encoding="utf-8").splitlines()
-        n = 0
-        while n < len(lines):
-            opened = FENCE.match(lines[n])
-            if not opened:
-                n += 1
-                continue
-            indent, body, n = len(opened.group(1)), [], n + 1
-            while n < len(lines) and not FENCE.match(lines[n]):
-                line = lines[n]
-                body.append(line[indent:] if not line[:indent].strip() else line)
-                n += 1
-            n += 1
-            text = chr(10).join(body)
-            if "<<'EOF'" not in text:
-                continue
-            found += 1
-            marker = chr(10) + "EOF"
-            source = text.split("<<'EOF'", 1)[1].split(marker, 1)[0]
-            source = source.lstrip(chr(10))
-            try:
-                compile(source, str(path), "exec")
-            except SyntaxError as error:
-                broken.append((path, error.lineno, error.msg))
-
-print("markdown files scanned: %d" % scanned)
-print("embedded checks found: %d" % found)
-print("checks that do not compile: %d" % len(broken))
-for path, lineno, msg in broken:
-    print("%s: extracted body line %s does not compile: %s"
-          % (path, lineno, msg))
-if not found:
-    print("no embedded checks found; the extraction pattern drifted")
-
-raise SystemExit(1 if broken or not found else 0)
-EOF
+```yaml
+- repo: https://github.com/solid-ai-dev/solid-ai-templates
+  rev: v3.0.0
+  hooks:
+    - id: find-unfenced-checks
+      args: [--root, docs]
 ```
-
-Pass condition: the first two counts MUST be non-zero and the third MUST
-be zero; anything printed after them names a check that does not compile.
-The scanned count shows the corpus the found count covers.
-
-This locator reports where a continuation could be lost. It cannot detect
-one already lost, so read its list against the source:
-
-```bash
-py - <<'EOF'
-import pathlib, re
-
-# The files that carry rules and their checks.
-ROOTS = ["templates"]
-
-# A continuation only matters where a reader copies the block and runs
-# it. The languages a check is written in are the corpus; a fenced
-# workflow or a table of output is an example, and a line ending in a
-# continuation is valid where it sits.
-CHECK_LANGUAGES = ("bash", "sh", "python", "py")
-
-FENCE = re.compile(r"^([ ]*)```(\w*)")
-blocks, inspected, risky = 0, 0, []
-for root in ROOTS:
-    for path in sorted(pathlib.Path(root).rglob("*.md")):
-        lines = path.read_text(encoding="utf-8").splitlines()
-        n = 0
-        while n < len(lines):
-            opened = FENCE.match(lines[n])
-            if not opened:
-                n += 1
-                continue
-            indent, language = len(opened.group(1)), opened.group(2)
-            n += 1
-            blocks += 1
-            runnable = language in CHECK_LANGUAGES
-            inspected += 1 if runnable else 0
-            while n < len(lines) and not FENCE.match(lines[n]):
-                line = lines[n]
-                body = line[indent:] if not line[:indent].strip() else line
-                if runnable and body.rstrip().endswith(chr(92)):
-                    risky.append((path, n + 1))
-                n += 1
-            n += 1
-
-print("fenced blocks found: %d" % blocks)
-print("blocks in a check language: %d" % inspected)
-print("lines ending in a continuation: %d" % len(risky))
-for path, number in risky:
-    print("%s:%d" % (path, number))
-if not blocks:
-    print("no fenced blocks found; the extraction pattern drifted")
-elif not inspected:
-    print("no block is in a check language; the language filter drifted")
-
-# The continuation count is a reading, not a verdict: the check cannot
-# tell a deliberate continuation from an accidental one, and a person
-# reads the lines against what was written. An empty corpus is a verdict,
-# because it means the extraction drifted rather than the tree being clean.
-raise SystemExit(1 if not blocks or not inspected else 0)
-EOF
-```
-
-Pass condition: it reports the fenced blocks found, those in a check
-language, and the lines among them ending in a continuation, then lists
-them. A non-zero continuation count is a list to read, not a failure. Zero
-on either of the first two counts is a failure: an extraction drifted.
 
 ## Check timing
 
@@ -595,56 +371,13 @@ ruff check --isolated src/                      ->  366 findings, ruff defaults
 Scan for a bare suppression:
 
 ```bash
-py - <<'EOF'
-import pathlib, re
-
-SUPPRESSIONS = (
-    ("noqa", re.compile(r"noqa(?![:])")),
-    ("nosec", re.compile(r"nosec(?![:]|[ ][A-Z][0-9])")),
-    ("nolint", re.compile(r"nolint(?![:])")),
-    ("eslint-disable-next-line",
-     re.compile(r"eslint-disable-next-line(?![ ]*[a-zA-Z@])")),
-)
-
-HASH = (".py", ".sh", ".rb", ".yml", ".yaml")
-
-# Vendored and installed code is not this project's to suppress in. Left
-# in scope it dominates the count -- an environment directory carries
-# thousands of files and hundreds of third-party suppressions, and the
-# project's own handful is invisible among them.
-SKIP = (".venv", "venv", "node_modules", "build", "dist", ".git", ".tox",
-        "vendor", "site-packages")
-files = [p for p in pathlib.Path(".").rglob("*")
-         if p.is_file() and p.suffix in (".py", ".js", ".ts", ".go", ".jsx", ".tsx")
-         and not any(part in SKIP for part in p.parts)]
-print("files scanned: %d" % len(files))
-total = 0
-bare = []
-for path in files:
-    marker = "#" if path.suffix in HASH else "//"
-    for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-        # Only the comment half of the line can hold a directive. Scanning
-        # the whole line makes the check match its own pattern table.
-        if marker not in line:
-            continue
-        comment = line.split(marker, 1)[1]
-        for name, pattern in SUPPRESSIONS:
-            if name in comment:
-                total += 1
-                if pattern.search(comment):
-                    bare.append("%s:%d: %s" % (path.as_posix(), i, line.strip()))
-print("suppressions found: %d" % total)
-print("bare (naming no rule): %d" % len(bare))
-for entry in bare:
-    print("  %s" % entry)
-
-raise SystemExit(1 if bare else 0)
-EOF
+pre-commit run find-bare-suppressions --all-files --verbose
 ```
 
-Pass condition: it prints the files scanned and the suppressions found, then
-`bare (naming no rule): 0`. Zero files scanned is a failure: the suffix list
-misses the project's languages. Confirm a found count of zero, not accept it.
+Pass condition: the files-scanned count is above zero and
+`bare (naming no rule)` is zero. Zero files scanned means the hook's
+suffixes miss the project's languages. Confirm a found count of zero
+rather than accept it.
 
 ## Length-gate exemptions
 
@@ -677,39 +410,22 @@ person.
   existing test file; a diff only adding test files keeps it
 - Put invariants that must not be renegotiated — safety, authentication,
   authorisation — under code ownership
+- Fetch the base before classifying a change; a base that does not resolve
+  fails the classification
 
-Classify a change against the project's test root:
+Classify a change against the project's test root, after committing it:
 
 ```bash
-BASE=origin/main
-if [ "$(git rev-parse HEAD)" = "$(git rev-parse $BASE)" ]; then
-  if [ -n "$(git status --porcelain)" ]; then
-    echo "HEAD is at $BASE and the work is uncommitted; commit it and run again"
-    exit 0
-  fi
-  echo "HEAD is at $BASE and the tree is clean; no change is under review, so this check does not apply"
-  exit 3
-fi
-ALL=$(git diff --name-status $BASE...HEAD)
-TESTS=$(git diff --name-status $BASE...HEAD -- 'tests/*')
-LOOSENED=$(echo "$TESTS" | grep -vE '^A' || true)
-NUMSTAT=$(git diff --numstat $BASE...HEAD -- 'tests/*')
-ADDED=$(echo "$NUMSTAT" | awk '{ total += $1 } END { print total + 0 }')
-REMOVED=$(echo "$NUMSTAT" | awk '{ total += $2 } END { print total + 0 }')
-echo "files changed in range: $(echo "$ALL" | grep -c . || true)"
-echo "test-file changes inspected: $(echo "$TESTS" | grep -c . || true)"
-echo "changes that are not pure additions: $(echo "$LOOSENED" | grep -c . || true)"
-echo "test-root lines added: $ADDED"
-echo "test-root lines removed: $REMOVED"
-echo "$LOOSENED" | grep . || true
+pre-commit run report-test-edits --hook-stage manual --all-files --verbose
 ```
 
-Pass condition: the not-pure-additions count MUST be zero. Anything printed
-after the five counts lists the loosened changes, and a change keeps the
-lenient path only while that list is empty.
+Pass condition: the not-pure-additions count MUST be zero for the change
+to keep the lenient path; each line after the counts names an edited test
+file. `--base`, by default `origin/main`, and `--tests` set the ref and
+the test root.
 
-On the base with a clean tree the check exits 3: no change is under review.
-On the base with uncommitted work it exits 0 and asks for a commit.
+On the base with a clean tree it prints `not applicable`: no change is
+under review. On the base with uncommitted work it asks for a commit.
 
 The line counts are a reading, not a verdict. More lines removed than added
 under the test root is the shape of a weakening shipped without its

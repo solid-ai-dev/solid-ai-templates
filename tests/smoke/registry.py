@@ -3,6 +3,7 @@ in place, so a check reading it sees the fork's checks too.
 """
 
 from .adr import check_adr_01
+from .hooks import check_sys_23
 from .manifest import (
     check_mnf_01, check_mnf_02, check_mnf_03, check_mnf_04, check_mnf_05)
 from .system import (
@@ -106,4 +107,7 @@ CHECKS = [
     {"id": "SYS-22", "spec": "SAIT-SMK-SYS-22-001A",
      "title": "A deprecation names a live replacement",
      "fn": check_sys_22},
+    {"id": "SYS-23", "spec": "SAIT-SMK-SYS-23-001A",
+     "title": "A hook a template names is shipped and catches its plant",
+     "fn": check_sys_23},
 ]

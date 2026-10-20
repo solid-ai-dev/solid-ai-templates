@@ -47,7 +47,7 @@ block, with the pass condition beside it.
 
 1. **Threshold**: a check of 15 lines or fewer stays inline in its
    template. A longer one MUST move to a hook.
-2. **Location**: hook code lives under `checks/`, and
+2. **Location**: hook code lives under `hooks/`, and
    `.pre-commit-hooks.yaml` and `pyproject.toml` sit at the repository root,
    where pre-commit requires them.
 3. **Language**: Python standard library only, `language: python`, so the

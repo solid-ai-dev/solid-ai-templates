@@ -315,15 +315,18 @@ CHECKS = [
      "title": "Sizing one frozen rule family", "do": SKIP,
      "reason": "Names a rule family and a source root as placeholders, and "
                "runs `ruff` against a project that has adopted a freeze. "
-               "This repository ships Markdown, has no `pyproject.toml`, no "
-               "linter freeze and no `src/`, so there is no family to size."},
+               "This repository has no linter freeze and no `src/`, so "
+               "there is no family to size."},
 
-    {"file": "core/quality-gates.md", "find": "SUPPRESSIONS = (",
+    # The hooks scan the tracked tree. The Markdown ones take --root, which
+    # here is the templates: the docs quote checks in prose on purpose, as
+    # history and as worked examples of the defects the hooks find.
+    {"file": "core/quality-gates.md", "find": "find-bare-suppressions",
      "title": "A suppression names the rule it suppresses", "do": RUN,
      "expect": ["nonzero", "any", "zero"]},
 
     {"file": "core/quality-gates.md",
-     "find": "'tests/*'", "title": "A change to an existing test is visible",
+     "find": "report-test-edits", "title": "A change to an existing test is visible",
      "do": RUN, "expect": MANUAL,
      "reason": "Governance rather than a pass/fail metric: it decides "
                "review eligibility, not whether the build is green. Every "
@@ -332,26 +335,31 @@ CHECKS = [
                "conforming change on arrival."},
 
     {"file": "core/quality-gates.md",
-     "find": "A shipped check is a heredoc inside a fenced block",
-     "title": "A shipped rule states its check", "do": RUN,
+     "find": "find-unfenced-checks",
+     "title": "Every stated check is in a form a tool can extract",
+     "do": RUN, "args": ["--root", "templates"],
      "expect": ["nonzero", "nonzero", "zero"]},
 
-    {"file": "core/quality-gates.md", "find": "CHECK_LANGUAGES = (",
+    # -- core/embedded-checks.md ---------------------------------
+
+    {"file": "core/embedded-checks.md",
+     "find": "compile-embedded-checks",
+     "title": "A shipped rule states its check", "do": RUN,
+     "args": ["--root", "templates"],
+     "expect": ["nonzero", "nonzero", "zero"]},
+
+    {"file": "core/embedded-checks.md", "find": "find-line-continuations",
      "title": "A shipped check is safe to run where it is documented",
-     "do": RUN, "expect": ["nonzero", "nonzero", READ],
+     "do": RUN, "args": ["--root", "templates"],
+     "expect": ["nonzero", "nonzero", "nonzero", READ],
      "reading": "The continuation count and the lines under it. A non-zero "
                 "count is not a failure -- it is the set to read against "
                 "what was written, because the check cannot tell a "
                 "continuation that is safe where it sits from one a reader "
-                "would lose. The two counts above it are decided: its pass "
-                "condition says zero on either is a failure, the first "
-                "meaning the fence pattern drifted and the second the "
-                "language filter."},
-
-    {"file": "core/quality-gates.md",
-     "find": "checks stated outside a fence",
-     "title": "Every stated check is in a form a tool can extract",
-     "do": RUN, "expect": ["nonzero", "zero"]},
+                "would lose. The three counts above it are decided: zero "
+                "files means the root named nothing, zero blocks that the "
+                "fence pattern drifted, and zero check-language blocks that "
+                "the language filter did."},
 
 ]
 

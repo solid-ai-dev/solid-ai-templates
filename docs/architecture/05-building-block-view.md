@@ -13,7 +13,10 @@ templates/          # every template, plus the manifest
   fixture/          # one stack and one platform, test input only
   manifest.yaml     # the dependency graph every tool reads
 tools/              # resolve_chain.py, sync_docs.py, check_release.py, the audits
+hooks/              # the hooks templates name; consumers run them through pre-commit
 tests/              # the three runners; smoke/, conformance/, baselines/
+pyproject.toml      # packages hooks/ for pre-commit
+.pre-commit-hooks.yaml  # the shipped hook IDs
 docs/               # specification, decisions, playbook, rationale, audits, test specs
 ```
 
@@ -47,7 +50,7 @@ reaches a chain depends on its tier.
 |------|---------|-----------------|
 | Core | `core:`, then a fork's `fork_core:` | Seeded into every chain; never needs declaring |
 | Opt-in | CI (`cicd`, `quality-gates`), security, devsecops, containers, deployment, config, data | Only when a stack's `depends_on` names it |
-| Orthogonal | Advanced data templates, a fork's platforms and workflow choices | Picked in the interview and resolved as a root of its own |
+| Orthogonal | Advanced data templates, embedded checks, a fork's platforms and workflow choices | Picked in the interview and resolved as a root of its own |
 
 The core tier, as the manifest states it today:
 
@@ -81,13 +84,14 @@ and never edits one upstream owns.
 | `tools/check_release.py` | Checks a release's changelog cut and SemVer step |
 | `tools/audit_redundancy.py` | Finds duplicate rules across resolved chains |
 | `tools/score_templates.py` | Scores each template and holds the score to its baseline |
+| `hooks/solid_ai_checks/` | The checks templates name as hooks; run by pre-commit or `python -m solid_ai_checks <hook-id>` (ADR-055) |
 
 ## 5.5 Checks
 
 | Runner | Reads | Checks |
 |--------|-------|--------|
 | `tests/smoke/run.py` | The manifest and the templates' structure | References resolve, IDs are unique, chains are valid, governed tiers hold; the checks live in `tests/smoke/`, one module per family |
-| `tests/conformance/run.py` | The templates' own fenced checks | Runs each against this repository, or skips it with a stated reason |
+| `tests/conformance/run.py` | The templates' own fenced checks, including the hooks they name | Runs each against this repository, or skips it with a stated reason |
 | `tests/fork_sync/run.py` | A simulated fork | The change merges into a fork that appends a stack, and smoke passes there |
 
 `docs/tests/index.md` lists every check and `docs/tests/codification.md` the ID
