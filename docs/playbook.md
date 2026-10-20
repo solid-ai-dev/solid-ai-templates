@@ -350,6 +350,11 @@ chains and the model limits of its stacks.
    coherence. The e2e suite that automates this reading lives in the
    forks (ADR-049).
 
+3. **Self-claims**: verify every claim the changed text makes about itself
+   ("each section covers X", "the table below compares N criteria") by
+   counting the thing claimed with a tool, not by reading it. Scope it to
+   the changed sections, so the cost stays proportional to the diff
+
 Reports are written to `tests/reports/` after every run, named for the
 time and the tree — `<timestamp>-<runner>-<short-hash>.md`, with `-dirty`
 where the working tree was not that commit, and no suffix where there is
@@ -847,6 +852,91 @@ At the measured 57 issues a month, at least 93 of the 150 accepted reports
 wait in the backlog, and more do once triage time comes out of that
 capacity. That is the service level: a report is read in the next batch,
 and accepted work waits for a release that selects it.
+
+---
+
+## Pick up an issue
+
+An issue describes the tree on its filing date. By the time it is picked
+up, the tree has moved, a decision may have moved the rule, and another
+session may already be implementing it. Implemented from the text alone,
+each produces coherent, tested work that addresses something that was not
+the problem. Before writing anything:
+
+- Re-read the target file for coverage that landed since the filing date
+- Verify anything the issue cites as existing (a rule, a file, a command,
+  a behaviour); an issue written downstream may quote that project's rules
+  as this one's
+- Run what the issue proposes against the tree; a constraint that flags
+  working code is a wrong rule, not an under-enforced one
+- Restate the scope before starting if it moved
+- Check the open pull requests for one that already closes it
+- List the decision records accepted since the filing date, and confirm
+  none moves what the issue proposes
+- Where the issue defers to another issue's approach, read what that one
+  shipped, not what it proposed
+- Resolve a cited version (a tag, release, pinned revision, schema
+  version) against its source; a superseded one still resolves
+- Sort the members of any closed classification in the acceptance criteria
+  yourself, count what each branch caught, and decide a member that fits no
+  branch separately
+
+| Shape | What it looks like |
+|-------|--------------------|
+| Narrower than filed | The section already covers most of it; the work is two bullets, not a rewrite |
+| Wider than filed | The defect is present in siblings the issue does not mention |
+| Wrong as filed | The proposed rule, run against the tree, flags correct code |
+| Already in flight | An open pull request already implements it |
+| Superseded as filed | A decision since the filing date moved the rule, the home or the mechanism |
+| Stale by a sibling's route | The sibling shipped a different approach than the one the issue defers to |
+| Cited version not current | A named version still resolves but is no longer the one to build against |
+| Classification incomplete | A member of the set falls outside every named branch |
+
+The last shape resists checking: nothing in the issue is false, and an
+absent branch leaves no trace in the text. One issue asked for abandoned
+scripts to be classed as entry points or throwaway probes, with probes
+removed. One was neither: a walkthrough whose docstring held the only
+statement of why a checksum goes onto the wire low byte first.
+
+Three shapes are mechanically checkable, and each fails the same way: an
+empty result reads as a clear field whether the query found nothing or
+reached nothing.
+
+```bash
+gh pr list --state open --limit 100 --json number,body --jq 'length as $n | "open pull requests inspected: " + ($n|tostring), (.[] | select(.body | test("[Cc]loses #<N>([^0-9]|$)")) | "already in flight: #" + (.number|tostring))'
+```
+
+Pass condition: the count matches the open pull requests the tracker shows,
+and nothing follows it. The trailing character class is load-bearing:
+without it, a search for issue 104 matches a body closing 1041.
+
+```bash
+git log --since=<filing date> --name-only --format= -- docs/decisions/ | sort -u
+```
+
+Pass condition: none of the listed records moves the rule, the home or the
+mechanism the issue names. Run it once without `--since` to confirm the
+path resolves. Where a record does move it, implement the decision and
+state the deviation from the acceptance criteria in the pull request.
+
+```bash
+SIBLING=<N>
+echo "sibling #$SIBLING state: $(gh issue view "$SIBLING" --json state --jq '.state')"
+linked=$(gh issue view "$SIBLING" --json closedByPullRequestsReferences --jq '.closedByPullRequestsReferences | length')
+echo "pull requests linked to it: $linked"
+if [ "$linked" -eq 0 ]; then
+  echo "nothing links a pull request to it; read the route from the merge commit naming the issue, not from the issue body"
+  exit 1
+fi
+for pr in $(gh issue view "$SIBLING" --json closedByPullRequestsReferences --jq '.closedByPullRequestsReferences[].number'); do
+  echo "  #$pr $(gh pr view "$pr" --json state --jq '.state')"
+  gh pr diff "$pr" --name-only | sed 's/^/    /'
+done
+```
+
+Pass condition: the sibling's state, at least one linked pull request, and
+the files each touched. Check the deferring criterion against those files;
+a mechanism named in none of them is the finding.
 
 ---
 

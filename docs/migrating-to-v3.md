@@ -36,6 +36,9 @@ receives nothing (ADR-051).
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
 | Mermaid parser quirks, bulk-emit and round-trip generator rules | `base-docs` | removed |
+| Verifying a filed issue in full, its shapes and checks; counting a text's self-claims | `base-review` | this repository's playbook; a short form stays |
+| Review of shared browser and framework state | `base-review` | `frontend-quality` |
+| Numerical-gate and score-component review items | `base-review` | removed |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
