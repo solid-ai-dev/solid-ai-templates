@@ -51,7 +51,7 @@ A caller-side finding, such as a strict type checker's unannotated-call code,
 counts once for every call into something still frozen, so a caller's count
 cannot fall while its callees are frozen. Cheapest-first lands on a leaf
 caller, which is cleaned in full while its count barely moves. The shape, with
-four modules and 514 findings taken root-first:
+four modules taken root-first and 514 findings between them:
 
 | Slice | Module | Own findings | Total remaining after |
 | --- | --- | --- | --- |
