@@ -184,7 +184,7 @@ as a simplification. Both turn a red gate green. Only one leaves a gate.
   wrong about itself, and nothing later tells that from a finding answered
   properly. A gate whose cheapest remedy is falsifying its input is defective.
 
-### Retrofitting a linter
+### Linters
 
 A per-file freeze gates a new file on everything, stops an existing file
 getting worse, and makes shrinking the table the migration. A hand-maintained
@@ -193,7 +193,7 @@ fails untouched code when a release adds rules to a selected family. The known
 cost: a file-level freeze does not re-gate an existing file when it is edited.
 Line-level would, and no widely available linter offers it.
 
-### Where the gate cannot freeze per file
+### Per-slice corpus
 
 A ratchet freezes which instances fail and leaves the analysis whole; widening
 the corpus per slice narrows the corpus and leaves the rule whole. Both are
@@ -241,7 +241,7 @@ passed before passes after for the same reason, so it is not the control.
 Narrowing seventy handlers in one downstream migration left four sites wrong;
 a contract test walking the whole hierarchy found all four.
 
-### The suppression beside the table
+### Site-local suppressions
 
 A project holding only the freeze has one mechanism for two claims, and the
 rule against adding a file to the table correctly blocks the second, leaving

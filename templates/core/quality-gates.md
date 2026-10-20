@@ -8,7 +8,7 @@ What to gate, how to build the check, how to adopt a gate on existing
 code, and how to read and change one afterwards. When gates run, and
 against which thresholds, is the project's choice.
 
-## Pair a checkable constraint with its check
+## Paired checks
 
 [ID: quality-gates-pair-check]
 
@@ -149,7 +149,7 @@ which is the check reaching no input rather than a clean tree.
 - Control any edit to either both ways: a check stated in prose is
   reported, and the same check inside a fence is not
 
-## Encode an if-X-then-Y convention as a test
+## Conventions as tests
 
 [ID: quality-gates-convention-as-test]
 
@@ -160,7 +160,7 @@ An "if X then Y" convention is checkable when Y is mechanically comparable.
 - Name the pair that broke the invariant in the test's failure
 - Keep a convention that cannot be tested, such as prose tone, declarative
 
-## Gate committed generated files for staleness
+## Generated-file staleness
 
 [ID: quality-gates-staleness]
 
@@ -184,7 +184,7 @@ schema output — drift silently without a gate.
 - Never scope the filter to the generator alone
 - Fail the gate when a committed artifact differs from a fresh render
 
-## Gate every step of a procedure, or mark it ungated
+## Procedure steps
 
 [ID: quality-gates-procedure-steps]
 
@@ -194,7 +194,7 @@ schema output — drift silently without a gate.
   where it is written
 - Gate first the step whose omission cannot be corrected afterwards
 
-## Promote a resistant case to a gated tier
+## Tier promotion
 
 [ID: base-quality-gates-tier-promotion]
 
@@ -208,11 +208,11 @@ informally.
   test, a tutorial example to a CI-verified one, a manual smoke test to an
   automated regression
 
-## Run the check in the form it ships
+## Running a check
 
 [ID: quality-gates-check-runs]
 
-### Run it and report what it saw
+### Reporting
 
 - Run a check in the form it ships before merging the rule: extract it
   from the committed file and execute it
@@ -230,7 +230,7 @@ informally.
 - Triage a violation count far larger than expected as a possible defect
   in the check before working it as a backlog
 
-### Control it before merge
+### Controls
 
 - Negative-control a check before merge: plant each break mode, confirm it
   is flagged, and confirm a valid input is not
@@ -249,7 +249,7 @@ informally.
 - Demonstrate the defect on the fixing branch where the tree can be put in
   the failing state
 
-### Write it to survive extraction
+### Extraction
 
 - Never indent a fenced check deeper than the first indentation of its
   code; put it flush and point to it from the step
@@ -392,7 +392,7 @@ language, and the lines among them ending in a continuation, then lists
 them. A non-zero continuation count is a list to read, not a failure. Zero
 on either of the first two counts is a failure: an extraction drifted.
 
-## Run a check after the change it gates
+## Check timing
 
 [ID: quality-gates-check-timing]
 
@@ -405,7 +405,7 @@ on either of the first two counts is a failure: an extraction drifted.
 - List "the change is not in the subject yet" among the causes of an empty
   result
 
-## Select a check's subject by what is under test
+## Check subject
 
 [ID: quality-gates-check-selection]
 
@@ -420,7 +420,7 @@ it usually lives in another file, so its reviewer has no reason to look.
 - Treat a check that has never failed, on a rule never enforced, as blind
   until a planted violation makes it fail
 
-## Keep every gate's scope in agreement
+## Gate scope
 
 [ID: quality-gates-scope-agreement]
 
@@ -428,7 +428,7 @@ In a polyglot repo, or one holding captured fixtures, a gate breaks
 silently three ways: the formatter walks the wrong files, the PR gate skips
 work, and an aggregate job passes on skipped checks.
 
-### Ignore lists and CI path-filter MUST agree
+### Ignore lists and path filters
 
 - Make the formatter and linter ignore lists and the CI path filter cover
   the same set of paths
@@ -440,7 +440,7 @@ work, and an aggregate job passes on skipped checks.
   is off the list
 - Ask first which candidate someone else runs; it is the likeliest omission
 
-### Formatter-vs-generator escalation
+### Generator output
 
 When a generator emits into a directory a commit-time formatter walks, all
 three MUST hold:
@@ -451,7 +451,7 @@ three MUST hold:
   `quality-gates-staleness`)
 - Land both in the same pull request
 
-### Skipped is not passed
+### Skipped jobs
 
 - Never let the aggregate `gate` job report success when a code-touching
   change skipped the build through a path filter
@@ -461,7 +461,7 @@ three MUST hold:
 - Verify the encoding on the skipped path: make one upstream job skip,
   confirm the gate fails, then revert
 
-### A configured scope is verified by coverage, not exit status
+### Scope coverage
 
 A gate that ran green over almost nothing looks like a real pass. Its scope
 parameter is separate from the check, and review usually reads the check:
@@ -485,7 +485,7 @@ parameter is separate from the check, and review usually reads the check:
 `security/devsecops.md` requires full history for the secret scan; that is
 one instance of this rule.
 
-### Green CI does not prove environment independence
+### Environment independence
 
 CI runs one clean environment. A check whose input depends on the
 developer's environment passes there and fails on a laptop.
@@ -499,7 +499,7 @@ developer's environment passes there and fails on a laptop.
 - Run the gate locally on the development OS once per session where the CI
   matrix omits it
 
-## Retrofit a gate by freezing instances, never by narrowing it
+## Retrofitting a gate
 
 [ID: quality-gates-retrofit-ratchet]
 
@@ -512,7 +512,7 @@ developer's environment passes there and fails on a laptop.
   the gate reads
 - When a finding is false, fix the gate and record why in the same change
 
-### Retrofitting a linter
+### Linters
 
 A modern linter on an existing codebase reports too much to adopt as
 written. Two responses work and two are traps:
@@ -532,7 +532,7 @@ written. Two responses work and two are traps:
 - Accept that a file-level freeze does not re-gate an existing file when it
   is edited
 
-### Where the gate cannot freeze per file
+### Per-slice corpus
 
 A gate with no per-file ignore, such as a test that enumerates its own
 corpus, widens that corpus one cleaned slice at a time instead:
@@ -602,7 +602,7 @@ ruff check --isolated src/                      ->  366 findings, ruff defaults
 - Control the whole hierarchy: build every class with a value the
   interface cannot carry, and assert the declared error type comes back
 
-### The suppression beside the table
+### Site-local suppressions
 
 The freeze says a file was broken on adoption day. A site-local
 suppression says a rule is wrong at one line. Keep the two apart.
@@ -671,7 +671,7 @@ Pass condition: it prints the files scanned and the suppressions found, then
 `bare (naming no rule): 0`. Zero files scanned is a failure: the suffix list
 misses the project's languages. Confirm a found count of zero, not accept it.
 
-## Let a length gate discover its exemptions
+## Length-gate exemptions
 
 [ID: quality-gates-length-bound-exemptions]
 
@@ -683,7 +683,7 @@ misses the project's languages. Confirm a found count of zero, not accept it.
   as the file or directory that holds it
 - Adopt in slices, and expect the list to grow while the corpus does
 
-## Escalate a change that weakens a test
+## Test edits
 
 [ID: quality-gates-test-edit-boundary]
 
@@ -740,11 +740,11 @@ The line counts are a reading, not a verdict. More lines removed than added
 under the test root is the shape of a weakening shipped without its
 replacement. A range total of zero means the check inspected nothing.
 
-## Read a gate verdict before acting on it
+## Verdict reading
 
 [ID: quality-gates-verdict-reading]
 
-### Disaggregate verdict, plausibility, and accuracy
+### Verdict, plausibility, accuracy
 
 - Before acting on a failing verdict, separate three judgments: the
   verdict, the plausibility of the output's shape, and its accuracy
@@ -753,7 +753,7 @@ replacement. A range total of zero means the check inspected nothing.
 - Fix the check per input class when its plausibility test is unsound for
   that class
 
-### Lenient gates need a human residual check
+### Lenient gates
 
 - Keep a lenient gate, and document which artifact types also need a
   maintainer's review before commit
