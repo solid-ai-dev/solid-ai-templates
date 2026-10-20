@@ -53,7 +53,7 @@ jobs:
           - name: Lint the Python tooling
             run: |
               pip install pyflakes==4.0.2
-              python -m pyflakes tools tests checks
+              python -m pyflakes tools tests hooks
 
           # Smoke and conformance run the hooks' code directly. This builds
           # and installs the package through pre-commit, as a consumer's

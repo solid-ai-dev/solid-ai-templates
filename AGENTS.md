@@ -10,7 +10,7 @@ file. What the project is: `README.md`; how it works: `docs/spec.md`.
 - **Owner**: Imbra Ltd — Branimir Georgiev
 - **Repo**: github.com/solid-ai-dev/solid-ai-templates
 - **Stack**: plain Markdown templates; Python for `tools/`, `tests/` and the
-  pre-commit hooks in `checks/`, which run in consumers' CI (ADR-055)
+  pre-commit hooks in `hooks/`, which run in consumers' CI (ADR-055)
 - **Model**: inline — every rule is in this file
 - **Upstream**: stacks, platforms, process templates and the interview
   live in forks (ADR-049, ADR-050), never here
@@ -27,7 +27,7 @@ py tools/resolve_chain.py <id>      # one root's resolved file list
 py tests/run.py smoke         # structure and resolution
 py tests/run.py conformance   # the templates' own checks, run here
 py tests/run.py fork_sync     # the change merged into a simulated fork
-PYTHONPATH=checks py -m solid_ai_checks <hook-id>   # run one hook directly
+PYTHONPATH=hooks py -m solid_ai_checks <hook-id>   # run one hook directly
 ```
 
 The playbook lists the rest: release check, redundancy audit, quality
@@ -131,7 +131,7 @@ labels are terminal, applied when closing without action: `duplicate`
 - A shipped check states its command in a fenced block, with the pass
   condition in prose beside it — a command typed into a sentence cannot
   be extracted, counted or run (ADR-031)
-- A check script over 15 lines ships as a hook under `checks/`, listed in
+- A check script over 15 lines ships as a hook under `hooks/`, listed in
   `.pre-commit-hooks.yaml`; the template states
   `pre-commit run <hook-id> --all-files --verbose` (ADR-055). A shipped
   hook ID is frozen like a section ID

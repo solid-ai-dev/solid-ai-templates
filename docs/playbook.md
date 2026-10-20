@@ -43,11 +43,11 @@ hook (ADR-055). A shipped hook ID is frozen, so choose it with the owner:
 verb-object, `check-` for a verdict, `find-` for a list of violations,
 `report-` for a reading.
 
-1. Add `checks/solid_ai_checks/<hook_id>.py` with `main(argv, report)`. Print
+1. Add `hooks/solid_ai_checks/<hook_id>.py` with `main(argv, report)`. Print
    the inspected counts through `report.count`, each violation through
    `report.finding`, and return `report.finish(...)` or
    `report.not_applicable(...)`
-2. Register it in `HOOKS` in `checks/solid_ai_checks/__main__.py`, and add
+2. Register it in `HOOKS` in `hooks/solid_ai_checks/__main__.py`, and add
    its entry to `.pre-commit-hooks.yaml`:
    `entry: solid-ai-checks <hook-id> --pre-commit`, `pass_filenames: false`,
    `always_run: true`, `verbose: true`

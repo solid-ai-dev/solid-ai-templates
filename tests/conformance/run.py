@@ -61,11 +61,11 @@ RUNNABLE = ("bash", "python", "sh", "py")
 HEREDOC_OPEN = re.compile(r"^\s*py - <<'EOF'\s*$")
 
 # A template names a shipped check by its pre-commit command. The runner
-# runs the hook's code from checks/ directly, with the arguments this
+# runs the hook's code from hooks/ directly, with the arguments this
 # repository's disposition gives it, because a consumer passes those
 # through its own pre-commit config and the command line carries none.
 HOOK_COMMAND = re.compile(r"^\s*pre-commit run ([a-z0-9-]+)\b")
-CHECKS_DIR = os.path.join(ROOT, "checks")
+HOOKS_DIR = os.path.join(ROOT, "hooks")
 
 
 def hook_id(body):
@@ -126,7 +126,7 @@ def is_python(body):
 
 def run_hook(hook, args):
     """Run a shipped hook directly, as `python -m solid_ai_checks`."""
-    env = dict(os.environ, PYTHONPATH=CHECKS_DIR)
+    env = dict(os.environ, PYTHONPATH=HOOKS_DIR)
     proc = subprocess.run(
         [sys.executable, "-m", "solid_ai_checks", hook] + list(args or []),
         cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8",

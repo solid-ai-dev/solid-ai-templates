@@ -13,9 +13,9 @@ templates/          # every template, plus the manifest
   fixture/          # one stack and one platform, test input only
   manifest.yaml     # the dependency graph every tool reads
 tools/              # resolve_chain.py, sync_docs.py, check_release.py, the audits
-checks/             # the hooks templates name; consumers run them through pre-commit
+hooks/              # the hooks templates name; consumers run them through pre-commit
 tests/              # the three runners; smoke/, conformance/, baselines/
-pyproject.toml      # packages checks/ for pre-commit
+pyproject.toml      # packages hooks/ for pre-commit
 .pre-commit-hooks.yaml  # the shipped hook IDs
 docs/               # specification, decisions, playbook, rationale, audits, test specs
 ```
@@ -84,7 +84,7 @@ and never edits one upstream owns.
 | `tools/check_release.py` | Checks a release's changelog cut and SemVer step |
 | `tools/audit_redundancy.py` | Finds duplicate rules across resolved chains |
 | `tools/score_templates.py` | Scores each template and holds the score to its baseline |
-| `checks/solid_ai_checks/` | The checks templates name as hooks; run by pre-commit or `python -m solid_ai_checks <hook-id>` (ADR-055) |
+| `hooks/solid_ai_checks/` | The checks templates name as hooks; run by pre-commit or `python -m solid_ai_checks <hook-id>` (ADR-055) |
 
 ## 5.5 Checks
 

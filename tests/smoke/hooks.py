@@ -16,7 +16,7 @@ import tempfile
 from testkit import ROOT, template_files
 from .common import HAS_YAML, Inspected, MISSING_YAML, read, yaml
 
-CHECKS_DIR = os.path.join(ROOT, "checks")
+HOOKS_DIR = os.path.join(ROOT, "hooks")
 HOOK_COMMAND = re.compile(r"^\s*pre-commit run ([a-z0-9-]+)\b", re.M)
 
 FENCE = "`" * 3
@@ -62,7 +62,7 @@ def git(cwd, *args):
 
 
 def run_hook(cwd, hook, args, pre_commit=False):
-    env = dict(os.environ, PYTHONPATH=CHECKS_DIR)
+    env = dict(os.environ, PYTHONPATH=HOOKS_DIR)
     argv = [sys.executable, "-m", "solid_ai_checks", hook] + list(args)
     if pre_commit:
         argv.append("--pre-commit")
@@ -134,11 +134,11 @@ def check_sys_23():
     manifest = yaml.safe_load(read(os.path.join(ROOT, ".pre-commit-hooks.yaml")))
     shipped = {h["id"]: h for h in seen.count("hooks in the manifest",
                                               manifest or [])}
-    sys.path.insert(0, CHECKS_DIR)
+    sys.path.insert(0, HOOKS_DIR)
     try:
         from solid_ai_checks.__main__ import HOOKS
     finally:
-        sys.path.remove(CHECKS_DIR)
+        sys.path.remove(HOOKS_DIR)
     for hook in sorted(set(shipped) ^ set(HOOKS)):
         failures.append("  %s: in one of .pre-commit-hooks.yaml and "
                         "solid_ai_checks.HOOKS, not both" % hook)
