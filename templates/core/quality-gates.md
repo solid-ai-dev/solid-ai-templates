@@ -8,8 +8,6 @@ How a check is built: retrofitting a gate without narrowing it, pairing a
 constraint with its check, and running the check in the form it ships.
 When gates run, and against which thresholds, is the project's choice.
 
----
-
 ## Retrofit a gate by freezing instances, never by narrowing it
 
 [ID: quality-gates-retrofit-ratchet]
@@ -186,8 +184,6 @@ Pass condition: it prints the files scanned and the suppressions found, then
 `bare (naming no rule): 0`. Zero files scanned is a failure: the suffix list
 misses the project's languages. Confirm a found count of zero, not accept it.
 
----
-
 ## A gate bounding a length discovers its exemptions
 
 [ID: quality-gates-length-bound-exemptions]
@@ -202,8 +198,6 @@ They surface one slice at a time.
 - Express the exemption as the shape that makes the count external, never
   as the file or directory it was found in
 - Adopt in slices, and expect the list to grow while the corpus does
-
----
 
 ## Editing a test moves the standard, not the work
 
@@ -262,8 +256,6 @@ The line counts are a reading, not a verdict. More lines removed than added
 under the test root is the shape of a weakening shipped without its
 replacement. A range total of zero means the check inspected nothing.
 
----
-
 ## Reading a gate verdict honestly
 
 [ID: quality-gates-verdict-reading]
@@ -286,8 +278,6 @@ A gate verdict is a signal to interpret, not a conclusion to act on.
 - Never tighten a threshold to catch one artifact's defect where it would
   mis-flag legitimate runs
 - Treat a passing gate as necessary, not sufficient
-
----
 
 ## Gate scope agreement
 
@@ -368,8 +358,6 @@ developer's environment passes there and fails on a laptop.
 - Run the gate locally on the development OS once per session where the CI
   matrix omits it
 
----
-
 ## Promote a resistant case to a gated tier
 [ID: base-quality-gates-tier-promotion]
 
@@ -406,8 +394,6 @@ schema output — drift silently without a gate.
   source assets the render consumes, and the committed artifacts
 - Never scope the filter to the generator alone
 - Fail the gate when a committed artifact differs from a fresh render
-
----
 
 ## Pair a checkable constraint with its check
 
@@ -549,8 +535,6 @@ which is the check reaching no input rather than a clean tree.
 - Control any edit to either both ways: a check stated in prose is
   reported, and the same check inside a fence is not
 
----
-
 ## An ungated step beside a gated one reads as enforced
 
 [ID: quality-gates-procedure-steps]
@@ -563,8 +547,6 @@ too. Enforcement is not transitive between adjacent steps.
 - Gate the remaining steps, or mark each unenforced step as unenforced
   where it is written
 - Gate first the step whose omission cannot be corrected afterwards
-
----
 
 ## Run the check in the form it ships
 
@@ -746,8 +728,6 @@ language, and the lines among them ending in a continuation, then lists
 them. A non-zero continuation count is a list to read, not a failure. Zero
 on either of the first two counts is a failure: an extraction drifted.
 
----
-
 ## A check reports the moment it ran
 
 [ID: quality-gates-check-timing]
@@ -764,8 +744,6 @@ result describes a tree that no longer exists.
 - List "the change is not in the subject yet" among the causes of an empty
   result
 
----
-
 ## A check selects its subject, and the subject can move
 
 [ID: quality-gates-check-selection]
@@ -781,8 +759,6 @@ it usually lives in another file, so its reviewer has no reason to look.
 - Treat a check that has never failed, on a rule never enforced, as blind
   until a planted violation makes it fail
 
----
-
 ## Convention-as-test
 
 [ID: quality-gates-convention-as-test]
@@ -793,5 +769,3 @@ An "if X then Y" convention is checkable when Y is mechanically comparable.
   satisfying X and asserts they share Y
 - Name the pair that broke the invariant in the test's failure
 - Keep a convention that cannot be tested, such as prose tone, declarative
-
----
