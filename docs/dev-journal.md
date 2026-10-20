@@ -9199,3 +9199,50 @@ to #2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
   once that marker is deleted; require the pair
 - A presence check on a bare token passes against any document carrying
   it; check for the instruction's own phrase
+
+## 2026-10-19/20 — Pre-tag tooling: CI, tests, tools, licence, a first core rewrite
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- CI runs each gate as its own job behind one required `smoke` check, and
+  gitleaks is checksum-verified (#2045)
+- tag-guard folds into the release workflow, which now publishes the
+  GitHub Release from the version's changelog section (#2046)
+- `run_smoke.py` is split into `tests/smoke/`, one module per family (#2047)
+- Relicensed from CC BY 4.0 to MIT (#2048)
+- The Markdown lint config moves to `.github/linters/`; the width is also
+  in `.editorconfig` (#2049)
+- Tools are named verb-first: `resolve_chain`, `sync_docs`,
+  `check_release`, `score_templates` (#2052)
+- Tests are grouped by suite, specs and the index move to `docs/tests/`,
+  and one wrapper runs them: `py tests/run.py <suite>` or `all`; the
+  shared helpers are `tests/testkit/` (#2053, #2055)
+- Measured the editor's checkers over `tests/` and `tools/`: Ruff 204,
+  Mypy 19, pyright 177, pyflakes 0 (#2056)
+- #2024 moved before the tag; `core/quality-gates.md` rewritten as one-line
+  rules, 19.2 to 85.9, reasoning in `docs/rationale/` (local, unpushed)
+
+**Pull requests merged:** #2044 to #2049, #2052, #2053, #2055.
+
+**Issues closed:** #2031, #2032, #2033, #2050, #2051, #2054.
+
+**Issues created:** #2050, #2051, #2054, #2056, #2057, #2058.
+
+**ADRs:** none.
+
+**Gaps flagged:**
+- The `core/quality-gates.md` rewrite awaits the maintainer's read before
+  its PR; seven core files remain in #2024
+- The v3 migration guide omits the fork-side moves of this session (#2057)
+- The verb-first naming and commit-only rules have no home yet (#2058)
+
+**Lessons:**
+- pyflakes passes a runtime import by an old module name; only running
+  the suite caught `import sync` after the rename
+- A search that matches `pathlib` for `lib` can invent a dependency; read
+  the import lines before claiming one
+- Reviewer findings on a moved path: a renamed baseline must refuse while
+  the old file exists, and a fork-merge-ours tree keeps the old entry point
+- VS Code's Problems panel covers only open files; run the bundled
+  checkers from the command line to see a whole directory
