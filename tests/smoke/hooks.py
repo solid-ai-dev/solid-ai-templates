@@ -218,6 +218,7 @@ def off_limits_cases():
         if code != 0 or len(findings) != 1 or "files changed: 2" not in lines:
             failures.append("  report-off-limits-paths, a touched workflow: "
                             "exited %d, printed %s" % (code, lines))
+
         # The same directory spelled as a user might type it, which git
         # never prints.
         for spelling in ("./.github/workflows/",
