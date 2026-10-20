@@ -49,6 +49,21 @@ def normalised(roots):
     return tuple(prefixes)
 
 
+def path_prefix(raw):
+    """A path prefix spelled as git prints paths; empty for the whole tree.
+
+    `./.github/workflows/` and `.github\\workflows\\` both become
+    `.github/workflows/`. A trailing slash is kept, because `.env` names a
+    file prefix and `migrations/` a directory, and the two match
+    differently.
+    """
+    text = raw.strip().replace(chr(92), "/")
+    clean = posixpath.normpath(text) if text else "."
+    if clean == ".":
+        return ""
+    return clean + "/" if text.endswith("/") else clean
+
+
 def read_lines(path):
     with open(path, encoding="utf-8") as handle:
         return handle.read().splitlines()

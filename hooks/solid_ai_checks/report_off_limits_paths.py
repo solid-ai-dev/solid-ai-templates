@@ -7,10 +7,12 @@ where owed, the proposal are a person's to write.
 
 import argparse
 
+from .support.files import path_prefix
 from .support.history import git, open_change
 
 
 def touches(path, prefix):
+    """Whether a path git printed falls under a normalised prefix."""
     return path.startswith(prefix) or ("/" + prefix) in path
 
 
@@ -22,8 +24,11 @@ def main(argv, report):
                         help="an off-limits path prefix; repeatable")
     args = parser.parse_args(argv)
 
+    # git prints `.github/workflows/ci.yml`, so a prefix spelled
+    # `./.github/workflows/` or with backslashes must be respelled before
+    # it can match; left raw, the protected change drops out of the report.
     prefixes = report.count("off-limits paths declared",
-                            [p for p in args.path if p.strip()])
+                            [path_prefix(p) for p in args.path if p.strip()])
     if not prefixes:
         return report.not_applicable("no --path declared off-limits")
 

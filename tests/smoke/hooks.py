@@ -218,6 +218,17 @@ def off_limits_cases():
         if code != 0 or len(findings) != 1 or "files changed: 2" not in lines:
             failures.append("  report-off-limits-paths, a touched workflow: "
                             "exited %d, printed %s" % (code, lines))
+        # The same directory spelled as a user might type it, which git
+        # never prints.
+        for spelling in ("./.github/workflows/",
+                         ".github%sworkflows%s" % (chr(92), chr(92))):
+            code, lines, findings = run_hook(
+                work, "report-off-limits-paths",
+                ["--base", "base", "--path", spelling])
+            if code != 0 or len(findings) != 1:
+                failures.append("  report-off-limits-paths, the path spelled "
+                                "%r: exited %d, printed %s"
+                                % (spelling, code, lines))
         code, lines, findings = run_hook(
             work, "report-off-limits-paths", ["--base", "base", "--path",
                                               "migrations/"])
