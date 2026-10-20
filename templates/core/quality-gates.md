@@ -12,13 +12,9 @@ When gates run, and against which thresholds, is the project's choice.
 
 [ID: quality-gates-retrofit-ratchet]
 
-A red gate turns green two ways: exempt the failing instances, or narrow
-what the gate checks. Only the first leaves a gate behind.
-
 - Make a red gate green by exempting failing instances, never by narrowing
-  what it evaluates
-- Never remove a compared field, disable a strict sub-flag or loosen a
-  matcher to make a gate pass
+  what it evaluates: removing a compared field, disabling a strict sub-flag
+  or loosening a matcher
 - Retire an exemption whose remedy is known by applying the remedy
 - Fix a genuine defect when the fix is small, instead of narrowing the check
 - Clear a finding by changing the condition it describes, never the input
@@ -188,15 +184,12 @@ misses the project's languages. Confirm a found count of zero, not accept it.
 
 [ID: quality-gates-length-bound-exemptions]
 
-A gate that bounds a length cannot list its exemptions on adoption day.
-They surface one slice at a time.
-
 - Treat a length gate's exemption list as discovered, not derived
 - Exempt a case only when something other than the author sets the count:
   a licence text, one label per line of code, a banner ruled top and
   bottom, a table of a published specification's fields
 - Express the exemption as the shape that makes the count external, never
-  as the file or directory it was found in
+  as the file or directory that holds it
 - Adopt in slices, and expect the list to grow while the corpus does
 
 ## Editing a test moves the standard, not the work
@@ -259,8 +252,6 @@ replacement. A range total of zero means the check inspected nothing.
 ## Reading a gate verdict honestly
 
 [ID: quality-gates-verdict-reading]
-
-A gate verdict is a signal to interpret, not a conclusion to act on.
 
 ### Disaggregate verdict, plausibility, and accuracy
 
@@ -359,6 +350,7 @@ developer's environment passes there and fails on a laptop.
   matrix omits it
 
 ## Promote a resistant case to a gated tier
+
 [ID: base-quality-gates-tier-promotion]
 
 Gated tiers fail the build; ungated ones are spot-checked or verified
@@ -403,15 +395,8 @@ A stated constraint without its check is decorative: a violating artifact
 looks like a clean one. A constraint a generated project inherits carries
 that risk furthest.
 
-- An output constraint that is mechanically checkable MUST name its
-  agent-runnable check — the command to run and the pass condition. A
-  line-length limit of 80, for example, pairs with:
-
-```bash
-awk 'length > 80' FILE
-```
-
-  Pass condition: no output. Any line printed is longer than the limit
+- Name the agent-runnable check of an output constraint that is
+  mechanically checkable: the command to run and the pass condition (MUST)
 - State the check next to the rule, so the two travel together into every
   generated artifact
 - Put the command in a fenced block; prose carries the pass condition
@@ -424,6 +409,14 @@ awk 'length > 80' FILE
   required status check (see `quality-gates-staleness`)
 - Test a pattern check against its own source, as
   `quality-cross-validation` states
+
+A line-length limit of 80, for example, pairs with:
+
+```bash
+awk 'length > 80' FILE
+```
+
+Pass condition: no output. Any line printed is longer than the limit.
 
 Find a check stated outside a fence. Match over the paragraph, not the
 line, because prose wraps:
@@ -539,9 +532,6 @@ which is the check reaching no input rather than a clean tree.
 
 [ID: quality-gates-procedure-steps]
 
-Where one step of a procedure is gated, operators trust the ungated steps
-too. Enforcement is not transitive between adjacent steps.
-
 - Audit a procedure step by step, recording against each step the check
   that enforces it, or that nothing does
 - Gate the remaining steps, or mark each unenforced step as unenforced
@@ -552,8 +542,7 @@ too. Enforcement is not transitive between adjacent steps.
 
 [ID: quality-gates-check-runs]
 
-A check that was written and never run looks enforced and is not. One that
-travels into a generated project fails where nobody can debug it.
+### Run it and report what it saw
 
 - Run a check in the form it ships before merging the rule: extract it
   from the committed file and execute it
@@ -568,8 +557,11 @@ travels into a generated project fails where nobody can debug it.
 - Report an empty result as a failure where emptiness means drift
 - Emit ASCII only, and print an offending character's code point, never
   the character
-- Never indent a fenced check deeper than the first indentation of its
-  code; put it flush and point to it from the step
+- Triage a violation count far larger than expected as a possible defect
+  in the check before working it as a backlog
+
+### Control it before merge
+
 - Negative-control a check before merge: plant each break mode, confirm it
   is flagged, and confirm a valid input is not
 - Plant behavioural breaks that keep the interface intact
@@ -586,6 +578,11 @@ travels into a generated project fails where nobody can debug it.
   observable effect on the current tree
 - Demonstrate the defect on the fixing branch where the tree can be put in
   the failing state
+
+### Write it to survive extraction
+
+- Never indent a fenced check deeper than the first indentation of its
+  code; put it flush and point to it from the step
 - Prefer a quoted heredoc to an inline `-c` string, and never write the
   heredoc opener itself in prose
 - Confirm that a line continuation survived into the committed file
@@ -601,9 +598,6 @@ travels into a generated project fails where nobody can debug it.
   | `\w` | `[A-Za-z0-9_]` |
   | `\b` at each end | `(?<![A-Za-z0-9])` and `(?![A-Za-z0-9])` |
   | a literal backslash | `chr(92)` |
-
-- Triage a violation count far larger than expected as a possible defect
-  in the check before working it as a backlog
 
 Every embedded check MUST compile when extracted the way a reader extracts
 it. Adapt `ROOTS` to the files that carry the rules:
@@ -731,9 +725,6 @@ on either of the first two counts is a failure: an extraction drifted.
 ## A check reports the moment it ran
 
 [ID: quality-gates-check-timing]
-
-A check reports the state at the instant it runs. Run early, its clean
-result describes a tree that no longer exists.
 
 - Run a check after the change it gates, never before
 - Where the check's subject is committed history, run it after committing,
