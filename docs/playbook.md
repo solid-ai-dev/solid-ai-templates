@@ -115,7 +115,8 @@ detector's rule and the style rule that shapes the text can both be right
 and still combine into a blind spot. A check requiring a command in a
 fenced block matched a phrase and the command on one line, and the 88-column
 wrap put them on two lines; a check requiring generated figures matched a
-digit, and spelling numerals under ten made "Eight files" invisible to it.
+digit, and spelling numerals under ten made a spelled count invisible to
+it.
 
 - Plant one fixture per style rule that can re-render what the detector
   forbids: the wrap column, the numeral convention, heading case, dash and
