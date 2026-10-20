@@ -39,7 +39,7 @@ def run_all():
         return 1
     failed = []
     for name in ALL:
-        print(f"\n=== {name}")
+        print(f"\n=== {name}", flush=True)
         code = subprocess.run([sys.executable, __file__, name]).returncode
         if code:
             failed.append(name)
