@@ -83,6 +83,10 @@ base:
     file: templates/core/embedded-checks.md
     description: Checks written into Markdown - extraction, escapes, continuations
     depends_on: [base-quality-gates]
+  - id: base-measurement
+    file: templates/core/measurement.md
+    description: Numerical routines, calibration against reference data, source silence
+    depends_on: [base-quality]
 platform:
   - id: platform-fixture
     file: templates/fixture/platform.md

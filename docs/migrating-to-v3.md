@@ -28,6 +28,7 @@ receives nothing (ADR-051).
 | Rules for decision records, changelogs and journals | upstream | a fork |
 | Long check scripts in the core templates | fenced in the template | pre-commit hooks the template names |
 | Rules for writing a check into Markdown | `base-quality-gates` | `base-embedded-checks`, by `Extras` |
+| Rules for numerical routines, calibration and source silence | `base-quality` | `base-measurement`, by `Extras` |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
@@ -62,7 +63,8 @@ fork.
 5. Replace any check script copied from a 2.x template with the hook the
    template now names, pinned in `.pre-commit-config.yaml` to the same tag
    as the templates. Where the project's own docs carry check scripts, add
-   `base-embedded-checks` to `Extras`
+   `base-embedded-checks` to `Extras`; where it computes, calibrates or
+   extracts values, add `base-measurement`
 
 No guide document a project carries is renamed — see
 [Guide documents](#guide-documents).
