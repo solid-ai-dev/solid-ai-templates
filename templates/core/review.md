@@ -54,8 +54,8 @@ items 2 to 4.
 - File a separate task for an infrastructure failure, and note it in the
   merge decision
 - Never retry until green without saying so (MUST NOT)
-- Never bypass a failing check with `--no-verify` or an admin merge unless
-  the maintainer explicitly accepts the risk (MUST NOT)
+- Never bypass a failing check by skipping hooks or by an admin merge
+  unless the maintainer explicitly accepts the risk (MUST NOT)
 
 ## Structure audit
 
