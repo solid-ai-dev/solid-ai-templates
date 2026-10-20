@@ -64,7 +64,7 @@ tags: [manifest, fork, composition, merge]
    changes nothing against the base; keep the fork's side of any conflict
    in a fork-owned document, point the fork's own files at each path
    upstream renamed, as a fork migrating would, then run the merged
-   tree's `run_smoke.py` with `SAIT_UPSTREAM_REF` at the upstream side
+   tree's `tests/smoke/run.py` with `SAIT_UPSTREAM_REF` at the upstream side
 4. FS-03, when a commit in the range carries the trailer
    `Fork-merge: ours` and no merge in the range already took it with
    `-s ours` (a merge whose tree is its first parent's): merge with

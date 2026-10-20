@@ -77,7 +77,7 @@ For every file in `docs/decisions/` matching the pattern `NNN-*.md`
 
 1. Run the smoke runner:
    ```bash
-   py tests/run_smoke.py ADR-01
+   py tests/run.py smoke ADR-01
    ```
 
 ### Assertions

@@ -1,11 +1,14 @@
-"""Shared utilities for smoke and e2e test runners."""
+"""What every test suite shares: the repository's files, the verdict words,
+the arguments and the run report.
+"""
 
 import datetime
 import io
 import os
 import subprocess
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
 
 
 def load_dotenv():

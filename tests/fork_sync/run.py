@@ -6,8 +6,8 @@ Implements:
   SAIT-INT-MNF-06-001A  — a fork that only appends merges upstream cleanly
 
 Usage:
-  py tests/run_fork_sync.py                   # upstream change: HEAD
-  py tests/run_fork_sync.py --base=<ref>      # fork from merge-base(HEAD, ref)
+  py tests/run.py fork_sync                   # upstream change: HEAD
+  py tests/run.py fork_sync --base=<ref>      # fork from merge-base(HEAD, ref)
 """
 
 import datetime
@@ -19,7 +19,7 @@ import subprocess
 import sys
 import tempfile
 
-from runner import ROOT, PASS, FAIL, ERR, write_report, print_verdict
+from testkit import ROOT, PASS, FAIL, ERR, write_report, print_verdict
 
 # Same boundary settings as the other runners: UTF-8 out, and LF line
 # endings, so a consumer reading this output on Windows sees no stray
@@ -238,12 +238,32 @@ def follow_renames(repo, base, upstream, fork, merged):
     return commit(repo, merged, "fork: follow upstream renames", edit), renames
 
 
+# The smoke entry point each layout ships, newest first. A merge that keeps
+# the fork's side, such as one marked Fork-merge: ours, can leave a tree
+# from before the wrapper, so the merged tree's own entry point is used.
+SMOKE_ENTRY_POINTS = [
+    ["tests/run.py", "smoke"],
+    ["tests/run_smoke.py"],
+]
+
+
+def smoke_command(repo):
+    """The merged tree's smoke command, or None if it ships neither."""
+    for command in SMOKE_ENTRY_POINTS:
+        if os.path.isfile(os.path.join(repo, command[0])):
+            return [sys.executable] + command
+    return None
+
+
 def nested_smoke(repo, upstream):
     """Run the merged tree's own smoke suite, with SYS-20 against upstream."""
+    command = smoke_command(repo)
+    if command is None:
+        return 1, None, ["  the merged tree ships no smoke entry point: "
+                         + " or ".join(c[0] for c in SMOKE_ENTRY_POINTS)]
     env = dict(os.environ, SAIT_UPSTREAM_REF=upstream)
-    run = subprocess.run([sys.executable, "tests/run_smoke.py"], cwd=repo,
-                         env=env, capture_output=True, text=True,
-                         encoding="utf-8")
+    run = subprocess.run(command, cwd=repo, env=env, capture_output=True,
+                         text=True, encoding="utf-8")
     lines = run.stdout.splitlines()
     verdict = next((l for l in reversed(lines) if l.startswith("VERDICT:")),
                    None)

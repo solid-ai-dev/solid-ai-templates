@@ -34,7 +34,7 @@ confirms Python, PyYAML and the checkout:
 ```bash
 git clone https://github.com/solid-ai-dev/solid-ai-templates.git
 cd solid-ai-templates
-py tests/run_smoke.py
+py tests/run.py smoke
 ```
 
 ## Find your way around
@@ -52,14 +52,11 @@ py tests/run_smoke.py
 
 ## Before you open a pull request
 
-Run the structural checks, fork sync, and, if you edited a template's
-prose, the templates' own checks against this repository. CI runs all
-three:
+Run every suite CI runs: the structural checks, the templates' own checks
+against this repository, and fork sync:
 
 ```bash
-py tests/run_smoke.py
-py tests/run_fork_sync.py
-py tests/run_conformance.py
+py tests/run.py all     # smoke, conformance and fork sync, as CI runs them
 ```
 
 If you edited anything under `templates/`, regenerate the derived files and

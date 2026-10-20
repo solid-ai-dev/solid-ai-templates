@@ -2,7 +2,7 @@
 
 This repository is a consumer of its own base tier, so the checks the
 templates prescribe apply here. Every runnable fenced block under
-`templates/` MUST appear below exactly once. `run_conformance.py` fails on
+`templates/` MUST appear below exactly once. `tests/conformance/run.py` fails on
 a block with no entry, which is what stops a check added to a template from
 arriving unexamined.
 

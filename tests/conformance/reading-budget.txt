@@ -1,6 +1,6 @@
 # The checks allowed to await a reading, one title per line.
 #
-# `run_conformance.py` reports a check as REVIEW when its disposition
+# `tests/conformance/run.py` reports a check as REVIEW when its disposition
 # reaches no automatic verdict. The runner exits zero on a reading, because
 # a reading is not a failure -- so in CI the job is green, the summary line
 # scrolls past, and the set can grow with nothing registering that it did.
