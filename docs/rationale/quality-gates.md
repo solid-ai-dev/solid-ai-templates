@@ -108,11 +108,11 @@ one slice at a time, and a list that stopped growing while the corpus grows is
 a finding. A path-scoped exemption absorbs every future violation in that
 neighbourhood, which is what the freeze exists to avoid.
 
-Measured on a project adopting a two-line comment bound and a ten-line
-docstring bound across about 99 files: four exemptions surfaced across two
-slices, a licence header, comments trailing consecutive lines of code, a ruled
-banner and a wire-layout table. In all four something other than the author
-sets the count.
+Measured on a downstream project of about a hundred source files, adopting a
+two-line comment bound and a ten-line docstring bound: four exemptions surfaced
+across two slices, a licence header, comments trailing consecutive lines of
+code, a ruled banner and a wire-layout table. In all four something other than
+the author sets the count.
 
 ---
 
