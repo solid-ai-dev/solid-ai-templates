@@ -8,9 +8,10 @@ fails a hook on any nonzero exit.
 import sys
 
 from . import (check_ascii_identifiers, check_comment_layout,
-               compile_embedded_checks, find_bare_suppressions,
-               find_import_bans, find_line_continuations,
-               find_unfenced_checks, find_unreferenced_scripts,
+               check_heading_numbers, compile_embedded_checks,
+               find_bare_suppressions, find_import_bans,
+               find_line_continuations, find_unfenced_checks,
+               find_unreferenced_scripts, report_off_limits_paths,
                report_test_edits)
 from .support.files import NotARepository
 from .support.report import Report
@@ -26,6 +27,8 @@ HOOKS = {
     "check-comment-layout": check_comment_layout,
     "find-import-bans": find_import_bans,
     "find-unreferenced-scripts": find_unreferenced_scripts,
+    "check-heading-numbers": check_heading_numbers,
+    "report-off-limits-paths": report_off_limits_paths,
 }
 
 
