@@ -28,13 +28,13 @@ tags: [tests, references, registry, index]
 
 | Result | Condition |
 |--------|-----------|
-| PASSED | Every registered spec names a document under `tests/specs/` and has a row in `tests/INDEX.md` |
+| PASSED | Every registered spec names a document under `docs/tests/specs/` and has a row in `docs/tests/index.md` |
 | FAILED | A registered spec names no document on disk |
-| FAILED | A registered spec has no row in `tests/INDEX.md` |
+| FAILED | A registered spec has no row in `docs/tests/index.md` |
 | FAILED | A registry entry carries no spec field at all |
-| FAILED | A document on disk has no row in `tests/INDEX.md` |
+| FAILED | A document on disk has no row in `docs/tests/index.md` |
 | FAILED | A document no registered check cites and no runner in `tests/` names, which does not declare `automatable: manual` |
-| FAILED | `tests/INDEX.md` names a spec with no document on disk |
+| FAILED | `docs/tests/index.md` names a spec with no document on disk |
 | FAILED | The check read no registry entries, no documents or no index rows |
 | SKIPPED | — |
 | BLOCKED | — |
@@ -53,8 +53,8 @@ tags: [tests, references, registry, index]
 
 ### Execution
 
-1. List the `.md` documents under `tests/specs/` by stem
-2. Read `tests/INDEX.md`
+1. List the `.md` documents under `docs/tests/specs/` by stem
+2. Read `docs/tests/index.md`
 3. For every entry in the smoke `CHECKS` registry
    (`tests/smoke/registry.py`), resolve its `spec` field against both
 4. For every document on disk, look for its row in the index and for a
@@ -88,7 +88,7 @@ have landed before its result was read.
    check named `SYS-16`, so the corpus is confirmed to have changed
    rather than the message alone
 3. **A document present and unindexed.** Deleting the `SYS-16` row from
-   `tests/INDEX.md` MUST fail on the index half while the disk half
+   `docs/tests/index.md` MUST fail on the index half while the disk half
    passes, which is what separates the two assertions. Observed
    2026-09-07
 4. **An orphan.** A document on disk that nothing cites passed, which the

@@ -937,17 +937,15 @@ def check_sys_17():
     failures = []
     seen = Inspected()
 
-    # CODIFICATION.md sits beside the specs because it defines their IDs;
-    # it is the scheme, not a spec, so it owes no index row.
-    spec_dir = os.path.join(ROOT, "tests", "specs")
+    spec_dir = os.path.join(ROOT, "docs", "tests", "specs")
     on_disk = {}
     for name in os.listdir(spec_dir):
-        if name.endswith(".md") and name != "CODIFICATION.md":
+        if name.endswith(".md"):
             with io.open(os.path.join(spec_dir, name),
                          encoding="utf-8") as handle:
                 on_disk[os.path.splitext(name)[0]] = handle.read()
 
-    with io.open(os.path.join(ROOT, "tests", "INDEX.md"),
+    with io.open(os.path.join(ROOT, "docs", "tests", "index.md"),
                  encoding="utf-8") as handle:
         index = handle.read()
 
@@ -961,7 +959,7 @@ def check_sys_17():
     for spec in sorted(on_disk):
         if spec not in index:
             failures.append(f"  {spec}: on disk with no row in "
-                            f"tests/INDEX.md")
+                            f"docs/tests/index.md")
         if spec in cited or spec in runners:
             continue
         if MANUAL_SPEC.search(on_disk[spec]):
@@ -972,8 +970,8 @@ def check_sys_17():
             f"procedure nothing runs"
         )
     for spec in sorted(indexed - set(on_disk)):
-        failures.append(f"  {spec}: named in tests/INDEX.md with no "
-                        f"document under tests/specs/")
+        failures.append(f"  {spec}: named in docs/tests/index.md with no "
+                        f"document under docs/tests/specs/")
 
     for check in CHECKS:
         spec = check.get("spec")
@@ -985,13 +983,13 @@ def check_sys_17():
         if spec not in on_disk:
             failures.append(
                 f"  {check['id']}: spec {spec} names no document under "
-                f"tests/specs/ -- a registry entry can cite a document "
+                f"docs/tests/specs/ -- a registry entry can cite a document "
                 f"nobody wrote and the run stays green"
             )
         if spec not in index:
             failures.append(
                 f"  {check['id']}: spec {spec} has no row in "
-                f"tests/INDEX.md, which is where a reader goes for the "
+                f"docs/tests/index.md, which is where a reader goes for the "
                 f"list of what the suite checks"
             )
 

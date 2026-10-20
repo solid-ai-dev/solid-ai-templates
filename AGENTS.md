@@ -198,7 +198,7 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
   template-quality ratchet, pyflakes, markdownlint, the pre-commit hooks
   and gitleaks on every PR and on push to `main`
 - Every runner writes a timestamped report to `tests/reports/`
-  (gitignored); `tests/INDEX.md` lists every check
+  (gitignored); `docs/tests/index.md` lists every check
 - markdownlint holds every tracked Markdown file to the rules; never add
   an `ignores` entry to `.github/linters/.markdownlint-cli2.jsonc`
 

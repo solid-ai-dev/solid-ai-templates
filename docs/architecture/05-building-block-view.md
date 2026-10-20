@@ -13,8 +13,8 @@ templates/          # every template, plus the manifest
   fixture/          # one stack and one platform, test input only
   manifest.yaml     # the dependency graph every tool reads
 tools/              # resolve_chain.py, sync_docs.py, check_release.py, the audits
-tests/              # the three runners; smoke/, conformance/, baselines/, specs/
-docs/               # this specification, decisions, playbook, audits
+tests/              # the three runners; smoke/, conformance/, baselines/
+docs/               # this specification, decisions, playbook, audits, test specs
 ```
 
 A fork adds its own directories, such as `templates/stack/`,
@@ -90,5 +90,5 @@ and never edits one upstream owns.
 | `tests/run_conformance.py` | The templates' own fenced checks | Runs each against this repository, or skips it with a stated reason |
 | `tests/run_fork_sync.py` | A simulated fork | The change merges into a fork that appends a stack, and smoke passes there |
 
-`tests/INDEX.md` lists every check and `tests/specs/CODIFICATION.md` the ID
+`docs/tests/index.md` lists every check and `docs/tests/codification.md` the ID
 scheme.

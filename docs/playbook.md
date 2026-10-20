@@ -360,7 +360,7 @@ The e2e suite and the efficacy benchmark read what the templates generate,
 so they live in the forks with the stacks and the interview (ADR-049).
 Smoke and conformance read the templates themselves.
 
-See `tests/specs/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
+See `docs/tests/codification.md` for the ID scheme and `docs/tests/index.md` for the
 full list of specs. Setup, PyYAML included, is in `CONTRIBUTING.md`, "Set up".
 
 The runners end with a `VERDICT:` line, printed after the report path so
