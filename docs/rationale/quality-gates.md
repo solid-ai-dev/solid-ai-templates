@@ -6,6 +6,163 @@ prevents and the worked examples are here, one heading per section ID.
 
 ---
 
+## quality-gates-pair-check
+
+A constraint that travels into a generated project, such as a template output
+constraint inherited by a generated context file, carries the decorative risk
+furthest: the project inherits the rule with no way to check it.
+
+The fence makes a check extractable: a tool can count the checks a document
+states, run them, and reconcile the two counts. A count over the parseable
+form alone is complete only by assumption, and a green run coexists with a
+violated rule whose check was typed in prose.
+
+The detector matches over a paragraph because the project's own width rule
+splits an inline check across two lines, and a line-scoped detector reads each
+half as innocent. Two individually correct rules combine into a blind spot. A
+phrase added to its vocabulary without an instance widens the false positives
+and finds nothing.
+
+---
+
+## quality-gates-convention-as-test
+
+A prose convention is forgotten and the next divergent record lands
+undetected; a test enumerating the records fails loudly, naming the pair. For
+example, entries sharing a canonical product URL share their generated image
+file, and build outputs in one locale share a glossary file.
+
+---
+
+## quality-gates-staleness
+
+Hand-written content reproducing tool output is not stale in the gate's sense:
+it sits outside the gate's subject, so the gate reports nothing about it while
+appearing to govern the file. One file can hold a generated section and a
+hand-written block, and `--check` reports it in sync while the hand-written
+half is wrong. Worked examples of a tool's output are the most common case.
+
+A marker the file no longer carries matches nothing, so the text comes back
+unchanged and `--check` compares it with itself; deleting a marker pair
+freezes that block permanently. Without the gate a stale file looks identical
+to a fresh one. The issue asking for a gate usually names only the generator's
+path, which is why filters scoped to it are the common mistake.
+
+---
+
+## quality-gates-procedure-steps
+
+An operator runs a procedure top to bottom. One step's gate fires, is fixed
+and passes, which feels like the procedure checking the work, and the ungated
+step is simply not done. A procedure with no gates invites care; one gate
+invites trust in all of it. Re-cutting a published release to repair an
+omitted step is worse than the gap, so the archive keeps the gap.
+
+---
+
+## base-quality-gates-tier-promotion
+
+Promotion converts a silent failure into a measurable metric, so the eventual
+fix lands against a regression target instead of working blind. When a fix
+does not fit one session, measure first by elevating the case a tier.
+
+---
+
+## quality-gates-check-runs
+
+A check that was written but never run is the decoration the pairing rule
+exists to prevent, and it is worse than none because it looks enforced.
+
+- **Inputs, not just findings.** A command that reached zero files and one
+  that found zero violations print the same thing.
+- **Every finding.** Stopping at the first turns one review into as many runs
+  as there are offenders.
+- **Indentation.** A renderer strips the fence's indentation from every line,
+  so a block indented five spaces under a step turns a four-space nested line
+  into a three-space one and stops compiling.
+- **Controls.** A control tripping on a signature, an import or a missing file
+  exercises the harness, not the check; the discriminating plant accepts a new
+  parameter and ignores it. A layer in front, such as a parser or schema, can
+  raise before the check runs, with the same exit status. A tool that writes
+  only on a difference does nothing to a file already in its target state, so
+  a clean run proves nothing until the subject is put in a state it must act
+  on.
+- **Landing.** A plant that matched nothing exits zero, so a missed plant and a
+  blind check give identical evidence. Confirm it in the artifact the check
+  reads: a listing from git's index does not see the working tree. An
+  assertion that finds the planted value anywhere passes when a sibling
+  already carried it. A revert that restores from the index discards unstaged
+  work silently.
+- **Preventive fixes.** A fix with no effect on the current tree prints the
+  same output on both sides, so without a synthetic subject it is
+  indistinguishable from a no-op, including to whoever later removes it.
+- **Escapes.** An inline `-c` string loses escapes to shell expansion. A lost
+  continuation joins two lines and nothing reports it; a lost escape inside a
+  pattern leaves a check of the right length that parses, runs and matches the
+  wrong set. A vanished `\b` still compiles and widens the match silently; a
+  degraded `\d` warns only on stderr. A pattern with no backslash cannot lose
+  one.
+- **Counts far above expectation** can mean the rule is wrong, not
+  under-enforced.
+
+The continuation locator keeps two counts so its deliberate narrowing to check
+languages stays visible: it once reported two valid continuations inside a
+documented `run:` step for as long as it scanned every language.
+
+---
+
+## quality-gates-check-timing
+
+Run before the change, a check reports the state before the change, and
+nothing in the output distinguishes it from a run against finished work. A
+check that repairs its own subject answers differently the second time. The
+failure is silent by construction: an early pass and a final pass are the
+same line of output, and the run that would contradict it is the one nobody
+makes.
+
+---
+
+## quality-gates-check-selection
+
+Selecting a CI run by recency is correct until a second workflow is added for
+an unrelated reason; then the check reports whichever finished last and hides
+the other, and a contributor can read a green scan and call a red build good.
+
+A line-ending gate counting index entries classified as CRLF is the sharper
+case. A file that gains a NUL byte is reclassified as binary, which stops it
+being normalised and stops it matching the gate's filter. The count stays zero
+exactly while the defect is present.
+
+---
+
+## quality-gates-scope-agreement
+
+A directory excluded from the formatter but not from the CI filter, or the
+reverse, leaves part of the tree checked by one gate and not the other.
+Captured fixtures must stay byte-for-byte; reformatting them changes the test
+input. A path-scoped gate that works as configured can still be incomplete,
+because an author enumerates what they run; the candidate someone else runs
+has the weakest guarantee about its environment.
+
+A formatter that rewrites generator output makes the generator's `--check` fail
+on a clean checkout, so the staleness gate cannot even be wired into CI.
+
+A passing-because-skipped check looks identical to a passing one in the CI
+interface. A failed upstream trips both a correct fan-in, which compares every
+result against success, and a naive one, which compares against failure; only
+a skipped upstream separates them.
+
+A gate that ran green over almost nothing is worse than a skip, because a skip
+is at least visible. The full-history secret-scan rule is one instance.
+
+CI runs on a clean checkout in one environment. A test reading the working
+tree sees local scratch and ignored artifacts CI never sees, and a test
+depending on line endings, locale, timezone, case sensitivity or binaries
+passes in CI and fails locally. Running locally first catches what a
+clean-room CI cannot.
+
+---
+
 ## quality-gates-retrofit-ratchet
 
 Ratcheting a complexity gate is the familiar case, and it generalises. Its
@@ -149,160 +306,3 @@ check, not a change to the producer.
 A lenient gate is the complement: a single-sample dip in a curve passes a
 tolerance averaged across samples. Tightening the threshold would mis-flag
 legitimate runs, so the gate stays and a human glance covers the residue.
-
----
-
-## quality-gates-scope-agreement
-
-A directory excluded from the formatter but not from the CI filter, or the
-reverse, leaves part of the tree checked by one gate and not the other.
-Captured fixtures must stay byte-for-byte; reformatting them changes the test
-input. A path-scoped gate that works as configured can still be incomplete,
-because an author enumerates what they run; the candidate someone else runs
-has the weakest guarantee about its environment.
-
-A formatter that rewrites generator output makes the generator's `--check` fail
-on a clean checkout, so the staleness gate cannot even be wired into CI.
-
-A passing-because-skipped check looks identical to a passing one in the CI
-interface. A failed upstream trips both a correct fan-in, which compares every
-result against success, and a naive one, which compares against failure; only
-a skipped upstream separates them.
-
-A gate that ran green over almost nothing is worse than a skip, because a skip
-is at least visible. The full-history secret-scan rule is one instance.
-
-CI runs on a clean checkout in one environment. A test reading the working
-tree sees local scratch and ignored artifacts CI never sees, and a test
-depending on line endings, locale, timezone, case sensitivity or binaries
-passes in CI and fails locally. Running locally first catches what a
-clean-room CI cannot.
-
----
-
-## base-quality-gates-tier-promotion
-
-Promotion converts a silent failure into a measurable metric, so the eventual
-fix lands against a regression target instead of working blind. When a fix
-does not fit one session, measure first by elevating the case a tier.
-
----
-
-## quality-gates-staleness
-
-Hand-written content reproducing tool output is not stale in the gate's sense:
-it sits outside the gate's subject, so the gate reports nothing about it while
-appearing to govern the file. One file can hold a generated section and a
-hand-written block, and `--check` reports it in sync while the hand-written
-half is wrong. Worked examples of a tool's output are the most common case.
-
-A marker the file no longer carries matches nothing, so the text comes back
-unchanged and `--check` compares it with itself; deleting a marker pair
-freezes that block permanently. Without the gate a stale file looks identical
-to a fresh one. The issue asking for a gate usually names only the generator's
-path, which is why filters scoped to it are the common mistake.
-
----
-
-## quality-gates-pair-check
-
-A constraint that travels into a generated project, such as a template output
-constraint inherited by a generated context file, carries the decorative risk
-furthest: the project inherits the rule with no way to check it.
-
-The fence makes a check extractable: a tool can count the checks a document
-states, run them, and reconcile the two counts. A count over the parseable
-form alone is complete only by assumption, and a green run coexists with a
-violated rule whose check was typed in prose.
-
-The detector matches over a paragraph because the project's own width rule
-splits an inline check across two lines, and a line-scoped detector reads each
-half as innocent. Two individually correct rules combine into a blind spot. A
-phrase added to its vocabulary without an instance widens the false positives
-and finds nothing.
-
----
-
-## quality-gates-procedure-steps
-
-An operator runs a procedure top to bottom. One step's gate fires, is fixed
-and passes, which feels like the procedure checking the work, and the ungated
-step is simply not done. A procedure with no gates invites care; one gate
-invites trust in all of it. Re-cutting a published release to repair an
-omitted step is worse than the gap, so the archive keeps the gap.
-
----
-
-## quality-gates-check-runs
-
-A check that was written but never run is the decoration the pairing rule
-exists to prevent, and it is worse than none because it looks enforced.
-
-- **Inputs, not just findings.** A command that reached zero files and one
-  that found zero violations print the same thing.
-- **Every finding.** Stopping at the first turns one review into as many runs
-  as there are offenders.
-- **Indentation.** A renderer strips the fence's indentation from every line,
-  so a block indented five spaces under a step turns a four-space nested line
-  into a three-space one and stops compiling.
-- **Controls.** A control tripping on a signature, an import or a missing file
-  exercises the harness, not the check; the discriminating plant accepts a new
-  parameter and ignores it. A layer in front, such as a parser or schema, can
-  raise before the check runs, with the same exit status. A tool that writes
-  only on a difference does nothing to a file already in its target state, so
-  a clean run proves nothing until the subject is put in a state it must act
-  on.
-- **Landing.** A plant that matched nothing exits zero, so a missed plant and a
-  blind check give identical evidence. Confirm it in the artifact the check
-  reads: a listing from git's index does not see the working tree. An
-  assertion that finds the planted value anywhere passes when a sibling
-  already carried it. A revert that restores from the index discards unstaged
-  work silently.
-- **Preventive fixes.** A fix with no effect on the current tree prints the
-  same output on both sides, so without a synthetic subject it is
-  indistinguishable from a no-op, including to whoever later removes it.
-- **Escapes.** An inline `-c` string loses escapes to shell expansion. A lost
-  continuation joins two lines and nothing reports it; a lost escape inside a
-  pattern leaves a check of the right length that parses, runs and matches the
-  wrong set. A vanished `\b` still compiles and widens the match silently; a
-  degraded `\d` warns only on stderr. A pattern with no backslash cannot lose
-  one.
-- **Counts far above expectation** can mean the rule is wrong, not
-  under-enforced.
-
-The continuation locator keeps two counts so its deliberate narrowing to check
-languages stays visible: it once reported two valid continuations inside a
-documented `run:` step for as long as it scanned every language.
-
----
-
-## quality-gates-check-timing
-
-Run before the change, a check reports the state before the change, and
-nothing in the output distinguishes it from a run against finished work. A
-check that repairs its own subject answers differently the second time. The
-failure is silent by construction: an early pass and a final pass are the
-same line of output, and the run that would contradict it is the one nobody
-makes.
-
----
-
-## quality-gates-check-selection
-
-Selecting a CI run by recency is correct until a second workflow is added for
-an unrelated reason; then the check reports whichever finished last and hides
-the other, and a contributor can read a green scan and call a red build good.
-
-A line-ending gate counting index entries classified as CRLF is the sharper
-case. A file that gains a NUL byte is reclassified as binary, which stops it
-being normalised and stops it matching the gate's filter. The count stays zero
-exactly while the defect is present.
-
----
-
-## quality-gates-convention-as-test
-
-A prose convention is forgotten and the next divergent record lands
-undetected; a test enumerating the records fails loudly, naming the pair. For
-example, entries sharing a canonical product URL share their generated image
-file, and build outputs in one locale share a glossary file.
