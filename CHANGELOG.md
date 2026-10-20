@@ -67,6 +67,8 @@ Releases up to 2.63.0 are listed in
   moves to a rationale doc ([#2060])
 - Rules for writing a check into Markdown move to an opt-in template,
   embedded-checks ([#2062])
+- The quality rules are short, topic-headed lists, and four of their checks
+  ship as hooks ([#2063])
 
 ### Deprecated
 
@@ -119,6 +121,7 @@ Releases up to 2.63.0 are listed in
 [#2055]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2055
 [#2060]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2060
 [#2062]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2062
+[#2063]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2063
 
 ## [2.90.0] - 2026-09-12
 

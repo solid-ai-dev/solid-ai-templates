@@ -6,8 +6,8 @@ locator cannot tell a lost one from a kept one; it lists where to look.
 
 import argparse
 
-from .fences import blocks
-from .files import read_lines, tracked
+from .support.fences import blocks
+from .support.files import read_lines, tracked
 
 # A fenced workflow or a table of output is an example, where a line ending
 # in a continuation is valid. Only a block a reader copies and runs counts.

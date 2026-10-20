@@ -26,7 +26,7 @@ templates/core/embedded-checks.md 86.7
 templates/core/git.md 27.1
 templates/core/oop.md 83.2
 templates/core/quality-gates.md 90.3
-templates/core/quality.md 23.8
+templates/core/quality.md 81.1
 templates/core/review.md 54.7
 templates/core/testing.md 30.6
 templates/data/data-governance.md 100.0

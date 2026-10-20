@@ -6,8 +6,8 @@ is not.
 
 import argparse
 
-from .fences import blocks
-from .files import read_lines, tracked
+from .support.fences import blocks
+from .support.files import read_lines, tracked
 
 OPENER = "<<'EOF'"
 NEWLINE = chr(10)

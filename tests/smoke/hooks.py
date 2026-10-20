@@ -61,6 +61,45 @@ CASES = [
     ("find-unfenced-checks", "a root of .",
      {"docs/rules.md": "Verify with `git status`.\n"}, ["--root", "."],
      1, 1),
+    ("check-ascii-identifiers", "an identifier with an accented letter",
+     {"app.py": "caf%s = 1\n" % chr(233)}, [], 1, 1),
+    ("check-ascii-identifiers", "an ASCII identifier",
+     {"app.py": "cafe = 1\n"}, [], 0, 0),
+    ("check-ascii-identifiers", "no Python file",
+     {"README.md": "x\n"}, [], 3, 0),
+    ("check-comment-layout", "a comment block with code directly above",
+     {"app.py": "x = 1\n%s note\ny = 2\n" % HASH}, [], 1, 1),
+    ("check-comment-layout", "an aside to the right of code",
+     {"app.py": "x = 1  %s note\n" % HASH}, [], 1, 1),
+    ("check-comment-layout", "a comment above its item, after a blank line",
+     {"app.py": "x = 1\n\n%s note\ny = 2\n" % HASH}, [], 0, 0),
+    ("find-import-bans", "a domain module importing an adapter",
+     {"domain/core.py": "import adapters.db\n", "adapters/db.py": "x = 1\n"},
+     ["--forbid", "domain:adapters"], 1, 1),
+    ("find-import-bans", "a domain module importing nothing banned",
+     {"domain/core.py": "import os\n", "adapters/db.py": "x = 1\n"},
+     ["--forbid", "domain:adapters"], 0, 0),
+    ("find-import-bans", "no ban declared",
+     {"domain/core.py": "import adapters.db\n"}, [], 3, 0),
+    ("find-import-bans", "a ban written without its colon",
+     {"domain/core.py": "import adapters.db\n"},
+     ["--forbid", "domain=adapters"], 1, 1),
+    ("find-import-bans", "a ban with a doubled colon",
+     {"domain/core.py": "import adapters.db\n"},
+     ["--forbid", "domain::adapters"], 1, 1),
+    ("find-import-bans", "a ban whose side is not a module name",
+     {"domain/core.py": "import adapters.db\n"},
+     ["--forbid", "domain:adapters."], 1, 1),
+    ("find-import-bans", "a malformed ban beside a valid one",
+     {"domain/core.py": "import os\n"},
+     ["--forbid", "domain:adapters", "--forbid", ":adapters"], 1, 1),
+    ("find-unreferenced-scripts", "a script nothing names",
+     {"scripts/old.py": "x = 1\n", "README.md": "Nothing here.\n"},
+     [], 1, 1),
+    ("find-unreferenced-scripts", "a script the README names",
+     {"scripts/old.py": "x = 1\n", "README.md": "Run old.py.\n"}, [], 0, 0),
+    ("find-unreferenced-scripts", "no scripts directory",
+     {"README.md": "x\n"}, [], 3, 0),
 ]
 
 
@@ -78,7 +117,7 @@ def run_hook(cwd, hook, args, pre_commit=False):
     proc = subprocess.run(argv, cwd=cwd, env=env, capture_output=True,
                           text=True, encoding="utf-8", errors="replace")
     lines = [l for l in proc.stdout.splitlines() if l.strip()]
-    findings = [l for l in lines if re.match(r"^\S+:[0-9]+: [A-Z]+ ", l)]
+    findings = [l for l in lines if re.match(r"^\S+:[0-9]+: [A-Z-]+ ", l)]
     return proc.returncode, lines, findings
 
 
@@ -165,6 +204,17 @@ def check_sys_23():
     for hook in sorted(set(shipped) ^ set(HOOKS)):
         failures.append("  %s: in one of .pre-commit-hooks.yaml and "
                         "solid_ai_checks.HOOKS, not both" % hook)
+
+    # A top-level module is a hook and nothing else; shared code lives in
+    # support/, so a helper cannot pass for a misnamed hook.
+    package = os.path.join(HOOKS_DIR, "solid_ai_checks")
+    modules = {name[:-3] for name in os.listdir(package)
+               if name.endswith(".py") and not name.startswith("__")}
+    dispatched = {m.__name__.rsplit(".", 1)[1] for m in HOOKS.values()}
+    for module in sorted(modules ^ dispatched):
+        failures.append("  solid_ai_checks/%s.py: a top-level module that is "
+                        "not a hook, or a hook with no module; shared code "
+                        "goes in support/" % module)
     for hook, entry in sorted(shipped.items()):
         owed = "solid-ai-checks %s --pre-commit" % hook
         if entry.get("entry") != owed:

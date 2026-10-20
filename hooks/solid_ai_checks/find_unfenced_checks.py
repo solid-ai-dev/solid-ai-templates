@@ -7,7 +7,7 @@ tool that runs the fenced checks reports clean over a rule nobody runs.
 import argparse
 import re
 
-from .files import read_lines, tracked
+from .support.files import read_lines, tracked
 
 # A stated check pairs a verification phrase with the command it
 # introduces. The pair is matched over a paragraph, because a wrapped check
