@@ -410,6 +410,8 @@ person.
   existing test file; a diff only adding test files keeps it
 - Put invariants that must not be renegotiated — safety, authentication,
   authorisation — under code ownership
+- Fetch the base before classifying a change; a base that does not resolve
+  fails the classification
 
 Classify a change against the project's test root, after committing it:
 
@@ -420,8 +422,7 @@ pre-commit run report-test-edits --hook-stage manual --all-files --verbose
 Pass condition: the not-pure-additions count MUST be zero for the change
 to keep the lenient path. Each line after the five counts names a test file
 the change edited rather than added. The hook compares against
-`origin/main`; `--base` and `--tests` set the ref and the test root. A
-base that does not resolve fails the run: fetch it first.
+`origin/main`; `--base` and `--tests` set the ref and the test root.
 
 On the base with a clean tree it prints `not applicable`: no change is
 under review. On the base with uncommitted work it asks for a commit.
