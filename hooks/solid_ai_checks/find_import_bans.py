@@ -7,8 +7,13 @@ adapter it is meant not to know.
 
 import argparse
 import ast
+import re
 
 from .support.files import tracked
+
+# A dotted module prefix: identifiers joined by single dots. A side that is
+# not one can never match an import, so the ban it names checks nothing.
+MODULE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*([.][A-Za-z_][A-Za-z0-9_]*)*$")
 
 
 def imported(tree):
@@ -40,12 +45,13 @@ def main(argv, report):
     # unchecked, so every supplied pair is validated and a bad one fails.
     bans = []
     for raw in args.forbid:
-        importer, _, banned = raw.partition(":")
-        if not importer.strip() or not banned.strip():
+        parts = [p.strip() for p in raw.split(":")]
+        if len(parts) != 2 or not all(MODULE.match(p) for p in parts):
             report.finding("--forbid", 0, "ARGUMENT",
-                           "%r is not IMPORTER:IMPORTED" % raw)
+                           "%r is not IMPORTER:IMPORTED, two dotted module "
+                           "names" % raw)
             continue
-        bans.append((importer.strip(), banned.strip()))
+        bans.append(tuple(parts))
     report.count("import bans declared", bans)
     if report.findings:
         return report.finish(True)
