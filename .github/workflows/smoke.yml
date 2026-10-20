@@ -53,7 +53,16 @@ jobs:
           - name: Lint the Python tooling
             run: |
               pip install pyflakes==4.0.2
-              python -m pyflakes tools tests
+              python -m pyflakes tools tests hooks
+
+          # Smoke and conformance run the hooks' code directly. This builds
+          # and installs the package through pre-commit, as a consumer's
+          # pin does, so a packaging defect fails here and not downstream.
+          - name: Install a shipped hook the way a consumer does
+            run: |
+              pip install pre-commit==4.3.0
+              pre-commit validate-manifest .pre-commit-hooks.yaml
+              pre-commit try-repo . find-bare-suppressions --all-files --verbose
     steps:
       # Fork sync forks from the merge base of HEAD and origin/main, and a
       # fork's release checks read its tag history, so a shallow clone

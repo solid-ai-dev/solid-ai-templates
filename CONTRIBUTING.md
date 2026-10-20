@@ -27,9 +27,10 @@ You need:
   suite"), and
   `pip install pre-commit` then `pre-commit install`
 
-There is no build step: the templates are plain Markdown. Clone the
-repository and run the structural checks once; a `VERDICT: PASS` line
-confirms Python, PyYAML and the checkout:
+There is no build step: the templates are plain Markdown, and the hooks in
+`hooks/` run in place with `PYTHONPATH=hooks py -m solid_ai_checks
+<hook-id>`. Clone the repository and run the structural checks once; a
+`VERDICT: PASS` line confirms Python, PyYAML and the checkout:
 
 ```bash
 git clone https://github.com/solid-ai-dev/solid-ai-templates.git

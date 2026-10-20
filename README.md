@@ -10,6 +10,7 @@ keep your team on design and testing.
   companies have
 - The same rules for every team member and every project
 - Ready-made rules for testing, security, Git, CI/CD and APIs
+- Ready-made checks for the rules, run as pre-commit hooks
 - Skip, adapt or override the rules
 - New rules never change your project without your say
 

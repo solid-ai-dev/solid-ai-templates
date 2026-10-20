@@ -113,7 +113,8 @@ A template is a list of rules an agent reads in context and applies on the
 next turn. A good one states each rule once, briefly, as an instruction, and
 leaves reasons and history to the prose docs. `tools/score_templates.py`
 measures that on prose only: fenced code, tables and section directives are
-left out.
+left out. A template rewritten to that form keeps its reasoning in
+`docs/rationale/`, one file per template and one heading per section ID.
 
 | Criterion | Metric | Good | Bad | Weight | Why it matters to an agent |
 |---|---|---|---|---|---|

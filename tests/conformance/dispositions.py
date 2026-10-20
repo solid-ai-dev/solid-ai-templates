@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 22
+SKIP_BUDGET = 12
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -138,26 +138,27 @@ CHECKS = [
     # The documents here with a numbered structure that concurrent branches
     # edit. Run on every pass, the check holds them consistent whichever
     # branch merged last.
-    {"file": "core/git.md", "find": "PATHS = [\"<file>\"]",
+    {"file": "core/git.md", "find": "check-heading-numbers",
      "title": "Numbered headings stay consistent across concurrent edits",
-     "do": RUN, "expect": ["line"] * 12,
-     "substitute": {'PATHS = ["<file>"]':
-                    'PATHS = ['
-                    '"AGENTS.md", '
-                    '"docs/playbook.md", '
-                    '"docs/architecture/01-introduction-and-goals.md", '
-                    '"docs/architecture/02-constraints.md", '
-                    '"docs/architecture/03-context-and-scope.md", '
-                    '"docs/architecture/04-solution-strategy.md", '
-                    '"docs/architecture/05-building-block-view.md", '
-                    '"docs/architecture/06-runtime-view.md", '
-                    '"docs/architecture/08-crosscutting-concepts.md", '
-                    '"docs/architecture/10-quality-requirements.md", '
-                    '"docs/architecture/11-risks-and-technical-debt.md", '
-                    '"docs/architecture/12-glossary.md"]'}},
+     "do": RUN, "expect": ["nonzero", "nonzero", "zero"],
+     "args": [arg for path in (
+         "AGENTS.md",
+         "docs/playbook.md",
+         "docs/architecture/01-introduction-and-goals.md",
+         "docs/architecture/02-constraints.md",
+         "docs/architecture/03-context-and-scope.md",
+         "docs/architecture/04-solution-strategy.md",
+         "docs/architecture/05-building-block-view.md",
+         "docs/architecture/06-runtime-view.md",
+         "docs/architecture/08-crosscutting-concepts.md",
+         "docs/architecture/10-quality-requirements.md",
+         "docs/architecture/11-risks-and-technical-debt.md",
+         "docs/architecture/12-glossary.md") for arg in ("--path", path)]},
 
-    {"file": "core/git.md", "find": "BASE = \"origin/main\"",
+    {"file": "core/git.md", "find": "report-off-limits-paths",
      "title": "A diff touching an off-limits path says so", "do": RUN,
+     "args": ["--path", ".github/workflows/", "--path", ".env",
+              "--path", "migrations/"],
      "expect": MANUAL,
      "reason": "The finding is whether the change SAYS SO about the path it "
                "touches, which is prose in a pull request body and not a "
@@ -165,21 +166,13 @@ CHECKS = [
 
     # -- core/quality.md ------------------------------------------
 
-    {"file": "core/quality.md", "find": "FORBIDDEN = ()",
-     "title": "A directional layering ban names its check", "do": SKIP,
-     "reason": "FORBIDDEN is empty by design -- this repository's own "
-               "Python (tools/, tests/) is a flat test/tooling layer "
-               "with no domain/adapter split to bound. Re-examine if "
-               "one is ever adopted."},
-
-    {"file": "core/quality.md", "find": "def unwrap(cls, name)",
-     "title": "A frozen override checker is backed by a hierarchy "
-              "contract test", "do": SKIP,
-     "reason": "BASE and HIERARCHY are empty by design -- this "
-               "repository's own Python (tools/, tests/) declares one "
-               "plain class (tests/smoke/common.py's Inspected) with no "
-               "subtype and no overridable operation. Applies to a "
-               "consuming project's own abstract hierarchy."},
+    # The shipped hooks are this repository's one real boundary: they run
+    # in consumers' CI and must not reach the maintainer-side tools or the
+    # tests.
+    {"file": "core/quality.md", "find": "find-import-bans",
+     "title": "A directional layering ban names its check", "do": RUN,
+     "args": ["--forbid", "hooks:tools", "--forbid", "hooks:tests"],
+     "expect": ["nonzero", "nonzero", "zero"]},
 
     {"file": "core/quality.md", "find": "rg -n \"#<number>",
      "title": "Closing a cited item audits the citations to it",
@@ -196,18 +189,18 @@ CHECKS = [
                "exemption is added or removed, not as a property of the "
                "tree."},
 
-    {"file": "core/quality.md", "find": "Identifiers only",
+    {"file": "core/quality.md", "find": "check-ascii-identifiers",
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    {"file": "core/quality.md", "find": "aside to the right of code",
-     "title": "Comment layout", "do": RUN, "expect": ["nonzero"]},
+    {"file": "core/quality.md", "find": "check-comment-layout",
+     "title": "Comment layout", "do": RUN, "expect": ["nonzero", "zero"]},
 
-    {"file": "core/quality.md", "find": "SCRIPTS = pathlib.Path",
-     "title": "The scripts directory carries the rules it owes", "do": SKIP,
-     "reason": "This repository has no `scripts/` directory. Its permanent "
-               "tooling lives in `tools/`, which the rule's own text scopes "
-               "out. Re-examine if `scripts/` is ever added."},
+    # This repository has no scripts/; its maintained, unshipped tooling is
+    # tools/, which is the directory the rule is about.
+    {"file": "core/quality.md", "find": "find-unreferenced-scripts",
+     "title": "The scripts directory carries the rules it owes", "do": RUN,
+     "args": ["--dir", "tools"], "expect": ["nonzero", "nonzero", "zero"]},
 
     {"file": "core/quality.md",
      "find": "ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts",
@@ -241,54 +234,12 @@ CHECKS = [
 
     # -- core/testing.md ---------------------------------------------
 
-    {"file": "core/testing.md", "find": "tests.helper import X",
-     "title": "The tier layout's imports hold on the project's runner",
-     "do": SKIP,
-     "reason": "Probes the runner a project adopts the tier layout on. "
-               "This repository's tests are standalone scripts run with "
-               "`py`, with no pytest suite and no tier directories."},
-
-    {"file": "core/testing.md", "find": "module-under-change",
-     "title": "A remedy naming another check is re-read before narrowing it",
-     "do": SKIP,
-     "reason": "Takes the module whose scope is narrowing as an argument. "
-               "It is run per change, not as a property of the tree."},
-
     {"file": "core/testing.md", "find": "guard-field-name",
      "title": "A guard field has a consumer, not only an assignment",
      "do": SKIP,
      "reason": "Takes the module under review and the guard field as "
                "arguments. It is run when one inert primitive is found, to "
                "sweep for its siblings, not as a property of the tree."},
-
-    {"file": "core/testing.md", "find": "class ServerFixture",
-     "title": "Fixture shape for a threaded server", "do": SKIP,
-     "reason": "An illustration of the pattern, not a check. It has no pass "
-               "condition and names a project's own server class."},
-
-    {"file": "core/testing.md", "find": "type[(]self[)]",
-     "title": "A class attribute is not mutated through the instance",
-     "do": RUN, "expect": ["nonzero"], "grep": True},
-
-    {"file": "core/testing.md", "find": "SERVER_THREAD_NAME",
-     "title": "A test names its server thread", "do": SKIP,
-     "reason": "An illustration of the naming pattern, not a check."},
-
-    {"file": "core/testing.md", "find": "ssl.TLSVersion.TLSv1_2",
-     "title": "A TLS floor is asserted, not assumed", "do": SKIP,
-     "reason": "An illustration: an assertion a consuming project's own "
-               "suite makes about its own context object."},
-
-    {"file": "core/testing.md", "find": "pkg.__all__",
-     "title": "Everything in __all__ is importable", "do": SKIP,
-     "reason": "This repository ships no importable package. It applies to "
-               "a library stack, which a fork carries."},
-
-    {"file": "core/testing.md", "find": "def fingerprint(path)",
-     "title": "A mechanical move leaves the fingerprint unchanged",
-     "do": SKIP,
-     "reason": "Compares two revisions of a module named as arguments; run "
-               "during a module split, not against a tree."},
 
     # -- security/devsecops.md ---------------------------------------
 
@@ -315,15 +266,18 @@ CHECKS = [
      "title": "Sizing one frozen rule family", "do": SKIP,
      "reason": "Names a rule family and a source root as placeholders, and "
                "runs `ruff` against a project that has adopted a freeze. "
-               "This repository ships Markdown, has no `pyproject.toml`, no "
-               "linter freeze and no `src/`, so there is no family to size."},
+               "This repository has no linter freeze and no `src/`, so "
+               "there is no family to size."},
 
-    {"file": "core/quality-gates.md", "find": "SUPPRESSIONS = (",
+    # The hooks scan the tracked tree. The Markdown ones take --root, which
+    # here is the templates: the docs quote checks in prose on purpose, as
+    # history and as worked examples of the defects the hooks find.
+    {"file": "core/quality-gates.md", "find": "find-bare-suppressions",
      "title": "A suppression names the rule it suppresses", "do": RUN,
      "expect": ["nonzero", "any", "zero"]},
 
     {"file": "core/quality-gates.md",
-     "find": "'tests/*'", "title": "A change to an existing test is visible",
+     "find": "report-test-edits", "title": "A change to an existing test is visible",
      "do": RUN, "expect": MANUAL,
      "reason": "Governance rather than a pass/fail metric: it decides "
                "review eligibility, not whether the build is green. Every "
@@ -332,26 +286,31 @@ CHECKS = [
                "conforming change on arrival."},
 
     {"file": "core/quality-gates.md",
-     "find": "A shipped check is a heredoc inside a fenced block",
-     "title": "A shipped rule states its check", "do": RUN,
+     "find": "find-unfenced-checks",
+     "title": "Every stated check is in a form a tool can extract",
+     "do": RUN, "args": ["--root", "templates"],
      "expect": ["nonzero", "nonzero", "zero"]},
 
-    {"file": "core/quality-gates.md", "find": "CHECK_LANGUAGES = (",
+    # -- core/embedded-checks.md ---------------------------------
+
+    {"file": "core/embedded-checks.md",
+     "find": "compile-embedded-checks",
+     "title": "A shipped rule states its check", "do": RUN,
+     "args": ["--root", "templates"],
+     "expect": ["nonzero", "nonzero", "zero"]},
+
+    {"file": "core/embedded-checks.md", "find": "find-line-continuations",
      "title": "A shipped check is safe to run where it is documented",
-     "do": RUN, "expect": ["nonzero", "nonzero", READ],
+     "do": RUN, "args": ["--root", "templates"],
+     "expect": ["nonzero", "nonzero", "nonzero", READ],
      "reading": "The continuation count and the lines under it. A non-zero "
                 "count is not a failure -- it is the set to read against "
                 "what was written, because the check cannot tell a "
                 "continuation that is safe where it sits from one a reader "
-                "would lose. The two counts above it are decided: its pass "
-                "condition says zero on either is a failure, the first "
-                "meaning the fence pattern drifted and the second the "
-                "language filter."},
-
-    {"file": "core/quality-gates.md",
-     "find": "checks stated outside a fence",
-     "title": "Every stated check is in a form a tool can extract",
-     "do": RUN, "expect": ["nonzero", "zero"]},
+                "would lose. The three counts above it are decided: zero "
+                "files means the root named nothing, zero blocks that the "
+                "fence pattern drifted, and zero check-language blocks that "
+                "the language filter did."},
 
 ]
 

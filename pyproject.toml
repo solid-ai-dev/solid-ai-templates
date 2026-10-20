@@ -1,0 +1,23 @@
+# Packages the checks under hooks/ so pre-commit can install them as
+# hooks. pre-commit requires this file at the repository root.
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solid-ai-checks"
+
+# Never bumped. A consumer pins the hooks by the repository's tag, and the
+# release is the tag, so this package version carries no release meaning.
+version = "0.0.0"
+description = "The checks the solid-ai templates prescribe, as pre-commit hooks"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+
+[project.scripts]
+solid-ai-checks = "solid_ai_checks.__main__:main"
+
+[tool.setuptools]
+package-dir = { "" = "hooks" }
+packages = ["solid_ai_checks", "solid_ai_checks.support"]
