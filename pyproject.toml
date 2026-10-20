@@ -8,8 +8,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "solid-ai-checks"
 
-# Kept equal to the release tag; the release procedure bumps it.
-version = "3.0.0"
+# Never bumped. A consumer pins the hooks by the repository's tag, and the
+# release is the tag, so this package version carries no release meaning.
+version = "0.0.0"
 description = "The checks the solid-ai templates prescribe, as pre-commit hooks"
 license = { text = "MIT" }
 requires-python = ">=3.8"

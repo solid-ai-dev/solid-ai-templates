@@ -9,7 +9,8 @@ file. What the project is: `README.md`; how it works: `docs/spec.md`.
 
 - **Owner**: Imbra Ltd — Branimir Georgiev
 - **Repo**: github.com/solid-ai-dev/solid-ai-templates
-- **Stack**: plain Markdown templates; Python only for `tools/` and `tests/`
+- **Stack**: plain Markdown templates; Python for `tools/`, `tests/` and the
+  pre-commit hooks in `checks/`, which run in consumers' CI (ADR-055)
 - **Model**: inline — every rule is in this file
 - **Upstream**: stacks, platforms, process templates and the interview
   live in forks (ADR-049, ADR-050), never here
@@ -26,6 +27,7 @@ py tools/resolve_chain.py <id>      # one root's resolved file list
 py tests/run.py smoke         # structure and resolution
 py tests/run.py conformance   # the templates' own checks, run here
 py tests/run.py fork_sync     # the change merged into a simulated fork
+PYTHONPATH=checks py -m solid_ai_checks <hook-id>   # run one hook directly
 ```
 
 The playbook lists the rest: release check, redundancy audit, quality
@@ -129,6 +131,10 @@ labels are terminal, applied when closing without action: `duplicate`
 - A shipped check states its command in a fenced block, with the pass
   condition in prose beside it — a command typed into a sentence cannot
   be extracted, counted or run (ADR-031)
+- A check script over 15 lines ships as a hook under `checks/`, listed in
+  `.pre-commit-hooks.yaml`; the template states
+  `pre-commit run <hook-id> --all-files --verbose` (ADR-055). A shipped
+  hook ID is frozen like a section ID
 - A check that derives a comparison baseline by running a command MUST
   verify the command produced one and refuse when it did not — the
   refusal is a finding, never exit 3; see `base-quality`
@@ -233,7 +239,8 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 - Adding a fenced `bash`/`python` block to a template MUST add its
   disposition in `tests/conformance/dispositions.py` — run it here, or skip it with
   the reason it does not apply. A block unrunnable only because it names
-  a placeholder takes a `substitute`, not a skip. A judgement disposition
+  a placeholder takes a `substitute`, not a skip. A hook command takes the
+  arguments this repository runs it with in `args`. A judgement disposition
   MUST state what takes a person and name the check in
   `tests/conformance/reading-budget.txt`
 - A conformance run is not clean until its judgement readings are read —

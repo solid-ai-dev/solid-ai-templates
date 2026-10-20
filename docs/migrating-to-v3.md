@@ -26,6 +26,8 @@ receives nothing (ADR-051).
 | Workflow and process templates, the interview | upstream | a fork |
 | `examples/`, `generated/`, the e2e suite | upstream | a fork |
 | Rules for decision records, changelogs and journals | upstream | a fork |
+| Long check scripts in the core templates | fenced in the template | pre-commit hooks the template names |
+| Rules for writing a check into Markdown | `base-quality-gates` | `base-embedded-checks`, by `Extras` |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
@@ -57,6 +59,10 @@ fork.
 4. Review the diff. Adopt a new rule for a named need or a material risk;
    existing adopted rules stay effective, and declining one needs no ADR
    (`docs/playbook.md`, "Adopt a template policy update")
+5. Replace any check script copied from a 2.x template with the hook the
+   template now names, pinned in `.pre-commit-config.yaml` to the same tag
+   as the templates. Where the project's own docs carry check scripts, add
+   `base-embedded-checks` to `Extras`
 
 No guide document a project carries is renamed — see
 [Guide documents](#guide-documents).

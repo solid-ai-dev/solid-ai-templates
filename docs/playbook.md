@@ -36,6 +36,33 @@ and layer templates only.
 
 ---
 
+## Ship a check as a hook
+
+A check script over 15 lines leaves its template and ships as a pre-commit
+hook (ADR-055). A shipped hook ID is frozen, so choose it with the owner:
+verb-object, `check-` for a verdict, `find-` for a list of violations,
+`report-` for a reading.
+
+1. Add `checks/solid_ai_checks/<hook_id>.py` with `main(argv, report)`. Print
+   the inspected counts through `report.count`, each violation through
+   `report.finding`, and return `report.finish(...)` or
+   `report.not_applicable(...)`
+2. Register it in `HOOKS` in `checks/solid_ai_checks/__main__.py`, and add
+   its entry to `.pre-commit-hooks.yaml`:
+   `entry: solid-ai-checks <hook-id> --pre-commit`, `pass_filenames: false`,
+   `always_run: true`, `verbose: true`
+3. Replace the script in the template with
+   `pre-commit run <hook-id> --all-files --verbose` in a fenced block, and
+   restate the pass condition beside it in terms of the hook's output
+4. Point the block's disposition `find` at the hook ID, and put the
+   arguments this repository runs it with in `args`
+5. Add a planted violation and a clean subject to `CASES` in
+   `tests/smoke/hooks.py`, and confirm each fails without the hook's fix
+6. Run `py tests/run.py smoke` and `py tests/run.py conformance` after
+   committing
+
+---
+
 ## Drain a downstream lesson into a template
 
 A lesson sourced from one downstream project (a bug write-up, a session
