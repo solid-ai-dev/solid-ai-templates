@@ -44,3 +44,7 @@
   pass_filenames: false
   always_run: true
   verbose: true
+
+  # It reads committed history, so it runs after a commit, on request,
+  # not as the commit is being made.
+  stages: [manual]

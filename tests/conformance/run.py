@@ -60,6 +60,20 @@ RUNNABLE = ("bash", "python", "sh", "py")
 # is what runs; the wrapper is shell syntax the runner supplies itself.
 HEREDOC_OPEN = re.compile(r"^\s*py - <<'EOF'\s*$")
 
+# A template names a shipped check by its pre-commit command. The runner
+# runs the hook's code from checks/ directly, with the arguments this
+# repository's disposition gives it, because a consumer passes those
+# through its own pre-commit config and the command line carries none.
+HOOK_COMMAND = re.compile(r"^\s*pre-commit run ([a-z0-9-]+)\b")
+CHECKS_DIR = os.path.join(ROOT, "checks")
+
+
+def hook_id(body):
+    """The hook a block runs, or None when it is not a hook command."""
+    lines = [l for l in body if l.strip()]
+    match = HOOK_COMMAND.match(lines[0]) if len(lines) == 1 else None
+    return match.group(1) if match else None
+
 
 def iter_blocks():
     """Yield (rel_path, line, language, body) for every fenced block.
@@ -108,6 +122,17 @@ def unwrap(body):
 
 def is_python(body):
     return any(HEREDOC_OPEN.match(line) for line in body)
+
+
+def run_hook(hook, args):
+    """Run a shipped hook directly, as `python -m solid_ai_checks`."""
+    env = dict(os.environ, PYTHONPATH=CHECKS_DIR)
+    proc = subprocess.run(
+        [sys.executable, "-m", "solid_ai_checks", hook] + list(args or []),
+        cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8",
+        errors="replace", timeout=120)
+    out = (proc.stdout or "") + (proc.stderr or "")
+    return proc.returncode, [l for l in out.splitlines() if l.strip()]
 
 
 def run_block(body, language, workdir, substitute=None):
@@ -392,8 +417,12 @@ def main():
                 continue
 
             try:
-                code, out = run_block(block[3], block[2], workdir,
-                                      entry.get("substitute"))
+                hook = hook_id(block[3])
+                if hook:
+                    code, out = run_hook(hook, entry.get("args"))
+                else:
+                    code, out = run_block(block[3], block[2], workdir,
+                                          entry.get("substitute"))
             except Exception as exc:
                 print("  %-6s %s\n        %s -- %s" % (ERR, title, where, exc))
                 results[ERR] += 1

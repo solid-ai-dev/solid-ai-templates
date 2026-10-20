@@ -77,9 +77,6 @@ exists to prevent, and it is worse than none because it looks enforced.
   that found zero violations print the same thing.
 - **Every finding.** Stopping at the first turns one review into as many runs
   as there are offenders.
-- **Indentation.** A renderer strips the fence's indentation from every line,
-  so a block indented five spaces under a step turns a four-space nested line
-  into a three-space one and stops compiling.
 - **Controls.** A control tripping on a signature, an import or a missing file
   exercises the harness, not the check; the discriminating plant accepts a new
   parameter and ignores it. A layer in front, such as a parser or schema, can
@@ -96,18 +93,11 @@ exists to prevent, and it is worse than none because it looks enforced.
 - **Preventive fixes.** A fix with no effect on the current tree prints the
   same output on both sides, so without a synthetic subject it is
   indistinguishable from a no-op, including to whoever later removes it.
-- **Escapes.** An inline `-c` string loses escapes to shell expansion. A lost
-  continuation joins two lines and nothing reports it; a lost escape inside a
-  pattern leaves a check of the right length that parses, runs and matches the
-  wrong set. A vanished `\b` still compiles and widens the match silently; a
-  degraded `\d` warns only on stderr. A pattern with no backslash cannot lose
-  one.
 - **Counts far above expectation** can mean the rule is wrong, not
   under-enforced.
-
-The continuation locator keeps two counts so its deliberate narrowing to check
-languages stays visible: it once reported two valid continuations inside a
-documented `run:` step for as long as it scanned every language.
+- **Shipped checks.** A script copied out of a template stops following the
+  rule when the rule changes upstream. A pinned hook runs the check the rule
+  names, and the template carries the command instead of the code.
 
 ---
 
