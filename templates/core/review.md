@@ -2,411 +2,146 @@
 
 [ID: base-review]
 
+How a change is reviewed, and how a finding is proven before it is reported.
+
 ## Principle
 
-- All code MUST undergo a peer review before merging
-- The reviewer is accountable for what gets merged
-- The developer is responsible for the code they write
-- Reviews have priority over your own development — a blocked reviewer
-  blocks the team
+- Peer-review all code before merging (MUST)
+- Hold the reviewer accountable for what merges, and the developer for what
+  they write
+- Put reviews ahead of your own development; a blocked review blocks the
+  team
 
 ## Priority order
 
-Apply the following order when reviewing, from most to least critical.
-Use `templates/core/quality.md` (and any language-specific quality template
-the project carries) as the standard for items 2–4.
+Review in this order, most critical first. `templates/core/quality.md`, and
+any language quality template the project carries, is the standard for
+items 2 to 4.
 
-1. **Security exposure** — anything that could be exploited, any credential
-   or license problem
-2. **Functional correctness** — paths that produce wrong results, unhandled
-   failures, or race conditions
-3. **Clarity** — obscure names, deep nesting, high cognitive complexity,
+1. **Security**: anything exploitable, any credential or licence problem
+2. **Correctness**: wrong results, unhandled failures, race conditions
+3. **Clarity**: obscure names, deep nesting, high cognitive complexity,
    boolean flag parameters
-4. **Convention compliance** — code that deviates from agreed project patterns
+4. **Conventions**: deviations from the project's agreed patterns
 
 ## MUST checklist
 
-- [ ] No credentials, tokens, or sensitive values appear anywhere in the
-      committed files
-- [ ] Every failure path is explicitly handled — no silent catches, no
-      swallowed exceptions
-- [ ] Any new dependency carries a license compatible with the project policy
-- [ ] Significant logic or architectural decisions are captured in documentation
-- [ ] Existing documentation reflects the state of the code after this change
-- [ ] Every changed section was re-read whole, not just the changed line — a
-      sentence is correct only in relation to its neighbours, and each one
-      reads fine alone, so a diff review cannot catch the contradiction
-- [ ] Every claim the text makes **about itself** ("each section covers X",
-      "the table below compares N criteria") was verified by counting the
-      thing claimed with a tool rather than by reading it. Scope both
-      checks to changed sections, so the cost stays proportional to the
-      diff
-
-## MUST checklist — state and boundaries
-
-- [ ] If the change touches shared browser or framework state (history,
-      URL, localStorage, global context), verify what else depends on that
-      state — review the change in the context of the framework contract,
-      not in isolation
-- [ ] URL parameters and query strings are treated as untrusted external
-      input — validate before destructuring, indexing, or using as keys
-- [ ] Refactoring preserves behavior for ALL code paths — if a function
-      handles N cases, verify N × directions/modes; extracting a helper
-      must not silently change edge-case behavior (null handling, sort
-      direction, boundary values)
-
-## CI signals
-
-- [ ] When CI fails, separate **infra failures** (the action could not
-      run — network, missing release, broken pinning, runner OOM) from
-      **diff failures** (the check ran and produced a negative signal on
-      the diff). An infra failure is a signal about the workflow, not
-      the PR — surface it honestly in the merge decision rather than
-      retrying or ignoring it
-
-Practical guidance:
-
-- On a red check, read the log before calling the PR green or red
-- If the failure is infra (`curl 404`, `docker pull` timeout, package
-  not found), file a separate task to fix the workflow and note it in
-  the merge call
-- Do NOT retry-until-green silently — that masks the infra problem
-- Do NOT push past it with `--no-verify` or an admin merge unless the
-  maintainer explicitly accepts the risk
+- [ ] No credential, token or sensitive value appears in a committed file
+- [ ] Every failure path is handled; no silent catch, no swallowed exception
+- [ ] Every new dependency carries a licence the project's policy allows
+- [ ] Significant logic and architectural decisions are documented
+- [ ] Existing documentation matches the code after the change
+- [ ] Every changed section was re-read whole, not only the changed line
+- [ ] URL parameters and query strings are validated as untrusted input
+      before they are destructured, indexed or used as keys
+- [ ] A refactor preserves behaviour on every path: each case, direction and
+      mode, including null handling, sort order and boundary values
 
 ## SHOULD checklist
 
-- [ ] Non-trivial functions have a unit test for each relevant variant
-- [ ] Code coverage does not decrease
-- [ ] Lint errors/warnings do not increase
-- [ ] Third-party dependencies are necessary, understood, and well-maintained
-- [ ] Code is simple — no new abstraction without two or more call sites,
-      no new dependency without a documented reason
-- [ ] Numerical comparison gates (render-match scoring, calibration
-      tolerances, visual-regression diffs) lock the values they sample,
-      not the shape between samples — on render-producing pipelines
-      (charts, diagrams, illustrations) pair them with manual visual
-      review; a passing numerical gate is necessary, not sufficient
-- [ ] A score that sums or averages several components draws them from
-      genuinely independent variables, not algebraic transforms of one
-      another (`x`, `x/2`, `1/x`). Scale-invariant aggregation (z-scores,
-      ranks) collapses such components onto one axis, silently
-      re-weighting it while the code and the docs still claim independent
-      contributions. Where components share a quantity, drop the
-      redundant ones or state the real weighting
+- [ ] Each non-trivial function has a unit test per relevant variant
+- [ ] Coverage does not fall
+- [ ] Lint errors and warnings do not rise
+- [ ] Each third-party dependency is necessary, understood and maintained
+- [ ] No new abstraction without two call sites, and no new dependency
+      without a documented reason
+
+## CI signals
+
+- Read the log of a red check before calling the pull request green or red
+- Separate an infrastructure failure (the check could not run) from a diff
+  failure (it ran and found something), and say which in the merge decision
+- File a separate task for an infrastructure failure, and note it in the
+  merge decision
+- Never retry until green without saying so (MUST NOT)
+- Never bypass a failing check by skipping hooks or by an admin merge
+  unless the maintainer explicitly accepts the risk (MUST NOT)
 
 ## Structure audit
 
-A code review checks changed files. A structure audit checks project
-completeness. Run a structure audit after:
+- Run a structure audit, which checks project completeness rather than
+  changed files, after a new project setup, a framework or stack migration,
+  a new major layer, and before a release milestone
+- Verify every MUST in the base templates (the standard documents, a
+  `.gitignore`) and in the project's layer and stack templates
+- Verify each sub-clause of a MUST separately; a rule requiring examples and
+  their output is two checks
+- Extract a shared module where sibling components share the same code
+  (SHOULD)
 
-- New project setup
-- Framework or stack migration
-- Adding a major layer (backend, CI/CD, infrastructure)
-- Before a release milestone
+## Picking up an issue
 
-Verify every MUST from:
+- Re-read the target for existing coverage before writing anything; an
+  issue describes the tree on its filing date
+- Verify everything the issue cites as existing, and run what it proposes
+  against the tree before adopting it
+- Check the open pull requests and the decisions accepted since the filing
+  date for work that already closes or moves it
+- Treat a closed classification in the acceptance criteria as a claim:
+  sort every member yourself, and decide one that fits no branch separately
 
-- `templates/core/docs.md` — the standard documents exist
-- `templates/core/git.md` — `.gitignore` exists
-- The relevant frontend or backend layer template — required assets,
-  config files, SEO files
-- The relevant stack template — framework-specific files and conventions
+## Planning
 
-When a section contains multiple MUST sub-clauses, verify each sub-clause
-independently — do not pass the section as a whole. A rule requiring both
-usage examples AND the expected output of each is two separate checks.
+- Produce a plan before implementing a feature or a non-trivial change: the
+  files, the signatures or outline, the edge cases, and the assumptions
+- Never write implementation code until the plan is approved (MUST NOT)
+- Skip the plan for one-line fixes, typos and changes the requester has
+  specified in full
+- Stay inside the approved plan; when a constraint invalidates it, stop and
+  re-surface the options
 
-SHOULD also check:
+## Verifying a finding
 
-- No substantial duplication across sibling components — if two or more
-  components share the same code, extract a shared module
-
-## Verifying a filed issue before implementing it
-
-An issue is written against the tree as it stood on the filing date. By the
-time it is picked up the tree has moved — sometimes through work that closed
-a neighbouring issue, sometimes because the rule it argues from never existed
-in this project at all. An issue describing a gap is evidence the gap existed
-when it was filed, not that it exists now.
-
-The tree is not the only thing that moves. A decision accepted since the
-filing date can relocate the rule the issue proposes, and another session can
-already be implementing it — neither is visible from the issue, and neither is
-a defect in the issue.
-
-None of these shapes means the issue was wrong to file. Each produces subtly
-wrong work when implemented from the text alone, and the wrongness is
-invisible afterwards: the change is coherent, the tests pass, and it addresses
-something that was not the problem — or re-does something already in review.
-
-- [ ] Re-read the target file for existing coverage before writing anything.
-      A rule that landed since the filing date may already say most of it
-- [ ] Verify anything the issue cites as existing — a rule, a file, a command,
-      a behaviour. An issue written from a downstream project may quote that
-      project's rules as though they were this one's, and implementing it as
-      written cites a rule that is not there
-- [ ] Run what the issue proposes against the tree before adopting it. A
-      proposed constraint that would flag working code is a wrong rule, not
-      an under-enforced one
-- [ ] Restate the scope before starting if it moved. Narrower than filed
-      finishes sooner; wider needs saying before the work rather than after
-- [ ] Check the open pull requests for one that already closes it. An issue
-      stays open and unassigned while a complete implementation sits in
-      review, and the only link between them is in the pull request body
-- [ ] List the decision records accepted since the filing date and confirm
-      none of them moves what the issue proposes. An issue is correct as of
-      its filing date, and the tree it was measured against is not the tree
-      it will land in
-- [ ] Where the issue defers to another issue's approach, read what that
-      one shipped rather than what it proposed. A cited approach is a plan,
-      and a plan is what changes during implementation
-- [ ] Resolve a cited version identifier against its source rather than
-      confirming it exists. A tag, release, pinned revision or schema
-      version named in the issue was the current one on the filing date,
-      and existence is the wrong predicate for currency: a superseded
-      identifier still resolves, still checks out, and everything the issue
-      says about it is still true. Ask what the source calls current now,
-      and compare
-
-Eight shapes, all of which change what gets built:
-
-| Shape | What it looks like |
-|-------|--------------------|
-| Narrower than filed | The section already covers most of it; the work is two bullets, not a rewrite |
-| Wider than filed | The defect the issue names is present in two siblings it does not mention |
-| Wrong as filed | The rule it proposes, run against the tree, flags code that is correct |
-| Already in flight | The issue is open and unassigned while a complete implementation sits in an open pull request |
-| Superseded as filed | A decision accepted since the filing date moved the rule, the home, or the mechanism it names |
-| Stale by a sibling's route | The issue defers to another issue's approach; that issue shipped a different one, so a criterion names a mechanism nobody built |
-| Cited version is no longer current | The issue names a tag, release, pinned revision or schema version that was newest on the filing date; it still resolves, so every existence check passes, and it is no longer the one to build against |
-| Classification does not cover every member | The acceptance criteria sort a set into named branches, and a member falls outside all of them |
-
-The last is the one that resists checking, and it is the most dangerous
-of the eight. The other seven are found by comparing the issue to the
-tree, to a source of record, or to what a sibling shipped.
-This one is found only by disagreeing with a criterion you are meant to
-satisfy: acceptance criteria carrying a closed classification — each of
-these is either A or B, and the Bs are deleted — read as a checklist, and
-a checklist invites completion. Nothing about the issue is false. The
-members it named are classified correctly and the tree has not moved; the
-taxonomy is simply incomplete, and an absent branch leaves no trace in the
-text. It surfaces only at the member that needs it.
-
-- [ ] Treat a closed classification in acceptance criteria as a claim to
-      verify, not a frame to work inside. Sort the members yourself before
-      acting on any of them, and count what each branch caught — a branch
-      that caught everything is the finding
-- [ ] Where a member fits no branch, name it, state which branch it fails
-      and why, and decide it separately. Forcing it into the nearest branch
-      is what produces the damage, and the diff looks exactly like the
-      intended work afterwards
-
-That last point is why this shape is worth its row. Satisfying such a
-criterion literally can destroy something: one issue asked for abandoned
-scripts to be classified as entry points or throwaway probes, with probes
-removed rather than reshaped. Five were probes. The sixth was a walkthrough
-whose docstring held the only statement in that repository of why a
-checksum goes onto the wire low byte first — not an entry point, so the
-first branch missed it; not throwaway, so the second would have deleted it.
-
-"Wrong as filed" is the closest of the other six and does not fit: the
-rule the issue proposes does not flag correct work, and every member it
-named was classified correctly.
-
-Three shapes are mechanically checkable — already in flight, superseded
-as filed, and stale by a sibling's route — and all three fail the same way:
-an empty result reads as a clear field whether the query found nothing or
-reached nothing.
-
-```bash
-gh pr list --state open --limit 100 --json number,body --jq 'length as $n | "open pull requests inspected: " + ($n|tostring), (.[] | select(.body | test("[Cc]loses #<N>([^0-9]|$)")) | "already in flight: #" + (.number|tostring))'
-```
-
-Pass condition: the reported count matches the open pull requests the tracker
-shows, and nothing follows it. A count of zero where the tracker lists open
-pull requests means the query or the repository context is wrong rather than
-the field being clear. The trailing character class is load-bearing — without
-it, a search for issue 104 matches a body closing 1041.
-
-```bash
-git log --since=<filing date> --name-only --format= -- docs/decisions/ | sort -u
-```
-
-Pass condition: the command lists the decision records added or amended since
-the issue was filed, and none of them moves the rule, the home, or the
-mechanism the issue names. Run it once without `--since` to confirm the path
-resolves, because a mistyped directory and a genuinely quiet window print the
-same empty listing. Where a record does move it, implement the decision and
-state the deviation from the filed acceptance criteria in the pull request:
-the issue is not wrong and does not need re-filing, its criteria need reading
-against the record that superseded them.
-
-Where the issue defers to a sibling, the thing to read is what the sibling
-shipped. Its body is the proposal, it stays as written after the
-implementation diverges from it, and nothing in either issue records that
-they now disagree. Read the files the merged work touched:
-
-```bash
-SIBLING=<N>
-echo "sibling #$SIBLING state: $(gh issue view "$SIBLING" --json state --jq '.state')"
-linked=$(gh issue view "$SIBLING" --json closedByPullRequestsReferences --jq '.closedByPullRequestsReferences | length')
-echo "pull requests linked to it: $linked"
-if [ "$linked" -eq 0 ]; then
-  echo "nothing links a pull request to it; read the route from the merge commit naming the issue, not from the issue body"
-  exit 1
-fi
-for pr in $(gh issue view "$SIBLING" --json closedByPullRequestsReferences --jq '.closedByPullRequestsReferences[].number'); do
-  echo "  #$pr $(gh pr view "$pr" --json state --jq '.state')"
-  gh pr diff "$pr" --name-only | sed 's/^/    /'
-done
-```
-
-Pass condition: the command names the sibling's state, reports at least one
-linked pull request, and lists the files each one touched; a zero reaches a
-non-zero status. Zero on a closed sibling does not mean the route is
-unchanged — it means the link is absent and the merge commit is where the
-route is recorded. Then check the criterion that defers to the sibling
-against those files. A criterion naming a mechanism that appears in none of
-them is the finding, and the issue is not wrong: it described a plan
-accurately, and the plan changed.
-
-## Plan before implementing
-
-A plan is the cheapest artifact to review. Reading one costs minutes and
-can still change the design; reading the implementation costs hours and
-mostly changes details. An agent makes code cheap to produce, which by
-default moves the expensive review later rather than earlier.
-
-- Before implementing a feature or a non-trivial change, produce the
-  plan: the files to create or modify, the function signatures or
-  section outline, the edge cases, and the assumptions being made
-  explicit
-- Do NOT write implementation code until that plan is approved. The
-  assumptions are the part worth reading — a plan stating none is not a
-  plan, it is the request restated
-- Exempt: single-line fixes, typo corrections, and changes the requester
-  has already specified in full. Applying the rule to those costs more
-  than it saves
-- After approval, stay inside the plan. Where a constraint invalidates
-  it, stop and re-surface the options instead of re-planning silently
-  mid-implementation: the approval covered a plan that has since become
-  wrong
-
-## Verifying a finding before reporting it
-
-A finding is a hypothesis until it is demonstrated. Reporting a hypothesis as
-a defect costs the author more than missing it, because each one has to be
-disproved by hand. A finding that cannot be demonstrated MUST be labelled as
-unverified rather than presented alongside demonstrated ones.
-
-What you owe a finding depends on how it was produced.
+- Label a finding unverified until it is demonstrated (MUST)
 
 ### From reading
 
-- [ ] Reproduce the defect before reporting it — run the path, not the
-      argument that the path is wrong
-- [ ] When a reproduction contradicts a passing test, read the test before
-      concluding the code is wrong. A test that pins surprising behavior is
-      usually documenting a decision, and its comment is where the reason
-      lives
+- [ ] Reproduce the defect before reporting it: run the path
+- [ ] Read a passing test that contradicts the reproduction before blaming
+      the code; it may pin a decision
 
 ### From a measurement
 
-A tool that runs cleanly and returns a plausible number is the most convincing
-way to be wrong, and a zero is the most convincing number it can return — a
-silent failure and a real absence print the same thing.
-
-- [ ] Confirm the tool measures the unit the rule is written in — bytes are
-      not characters, `wc -c` is not `wc -m`, disk size is not size on disk
-- [ ] Confirm the tool measured the **scope** the claim is about. Many tools
-      silently narrow to a diff, a changed-files set, a sample, or one
-      partition when run in a pull-request or incremental context, and report
-      a count that is correct for that subset. A baseline claim about a whole
-      codebase MUST come from a whole-codebase run
-- [ ] Record which mode produced any number you keep. A figure with no scope
-      attached is read as a baseline by whoever finds it next, and an
-      incremental run reporting zero on a tree nobody has ever scanned is
-      evidence that no baseline exists, not evidence that it is clean
-- [ ] Hand-check one flagged item. If the hand-count disagrees with the tool,
-      the tool is measuring something else
-- [ ] Produce a count that carries a finding twice, by different means.
-      Agreement between two tools is the check; one tool run twice is not
-- [ ] Verify a zero by finding one positive by hand, and prefer a tool whose
-      failures are loud over one that can exit clean on an unsupported
-      feature. Nothing in the output separates a silent tool failure from a
-      genuine absence, and the absence is the more alarming finding of the two
+- [ ] The tool measures the rule's unit: bytes are not characters
+- [ ] The tool measured the claimed scope, not a diff, sample or partition;
+      a whole-codebase claim comes from a whole-codebase run (MUST)
+- [ ] The mode that produced each kept number is recorded beside it
+- [ ] One flagged item was checked by hand
+- [ ] Each count carrying a finding was produced twice, by different means
+- [ ] A zero was checked by finding one positive by hand
 
 ### From an extraction
 
-Extraction tools are silently partial: a parser walks the node types it knows
-and drops the rest, so "X is missing" often means "my extractor does not
-traverse the structure X lives in".
+- [ ] An element reported absent was checked against the raw artifact
+- [ ] Extracted size was compared with the raw artifact, and known elements
+      survived the round trip
+- [ ] The claim is scoped to what was inspected: "not verifiable from the
+      extract", never "missing"
 
-- [ ] Before asserting an element is **absent**, cross-check the raw artifact
-      itself, not just the tool's output
-- [ ] Sanity-check coverage — compare extracted size against the raw artifact
-      and confirm known-present elements survive the round trip
-- [ ] Scope the claim to what was inspected: "not verifiable from the
-      extract", never "missing". Absence of evidence from a lossy tool is not
-      evidence of absence
+### From a probe
 
-### From a probe running as the wrong principal
+- [ ] The probe ran as the principal the finding is about: anonymous, a
+      signed-in user, a service account or a CI runner
+- [ ] The credential type matches the consumer's: cookie, bearer token,
+      signed URL or mTLS
+- [ ] A claim the probe cannot make as that principal is scoped to the one
+      it tested
 
-A request's result depends on who makes it. A probe run anonymously, or with a
-different credential type than the real consumer uses, answers a different
-question than the finding claims to answer, and the obvious follow-up check
-usually confirms the wrong answer rather than exposing it.
+### From an agent
 
-- [ ] Name the principal the finding is about — anonymous visitor, signed-in
-      user, service account, CI runner — and confirm the probe ran as that
-      principal, not merely as something authenticated
-- [ ] Check the credential **type** matches, not only its presence. Cookie
-      sessions, bearer tokens, signed URLs and mTLS are not interchangeable,
-      and an endpoint honouring one commonly ignores another. A token added to
-      a cookie-authenticated endpoint reproduces the anonymous result and
-      reads like confirmation
-- [ ] Where the probe cannot assume the consumer's identity, scope the claim
-      to the principal tested — "returns 404 to an anonymous client", never
-      "is broken"
-
-### From an agent or subagent
-
-A finding reported by an agent is a lead, not evidence. Verify it against the
-source before acting on it or repeating it to anyone else.
-
-- Check the claim against the file, the commit, or the upstream document that
-  would settle it, not against the plausibility of the wording
-- "Could not confirm" is not evidence of absence. Distinguish a verified
-  negative from a failed lookup, and say which one you have
-- A finding confirmed by several agents is still one finding. Independent
-  agents share the same blind spots and can agree on the same wrong answer
-- When a finding turns out to be wrong after you have passed it on, correct it
-  plainly and name what the check actually showed
-
-When a finding contradicts an existing verified record, reconcile the two
-before changing anything:
-
-- Check whether both are reading the same artifact. Different pages,
-  endpoints, API versions, or product tiers routinely disagree, and each may
-  be locally correct
-- Prefer the source carrying more specific evidence — a record citing a file
-  with per-item detail outranks a summary citing a README
-- Treat "could not confirm" as a request to reconcile, never as a licence to
-  delete
-- Dispatch with the existing record attached, asking the agent to
-  **reconcile** rather than re-derive. An agent told only "verify this claim"
-  surfaces a different source; one told what was previously found, and where,
-  surfaces a genuine change
-- Record the reconciliation. If it reverses a documented decision, say so and
-  why, in the artifact that documented it
-
-Applies equally to the reviewer's own tooling: a grep that returns the expected
-answer for the wrong reason is the same failure in a cheaper form.
+- Check an agent's finding against the file, commit or document that
+  settles it before acting on it or repeating it
+- Distinguish a verified negative from a failed lookup, and say which
+- Count a finding several agents agree on as one finding
+- Correct a finding you passed on that proves wrong, and name what the
+  check showed
+- Reconcile a finding with a verified record it contradicts before
+  changing anything: confirm both read the same artifact, prefer the more
+  specific evidence, and record the outcome
+- Never delete a record because a check "could not confirm" it (MUST NOT)
 
 ## Deviations
 
-- Deviating from a SHOULD rule requires a written explanation in the pull
-  request
-- Deviating from a MUST rule requires explicit sign-off from a designated
-  approver before the change can land
+- Explain a deviation from a SHOULD rule in the pull request
+- Get sign-off from a designated approver before a deviation from a MUST
+  rule lands (MUST)

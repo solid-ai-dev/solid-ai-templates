@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 12
+SKIP_BUDGET = 9
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -196,27 +196,6 @@ CHECKS = [
     {"file": "core/quality.md", "find": "eol() { git ls-files --eol",
      "title": "The checkout carries the line ending the index does",
      "do": RUN, "expect": ["nonzero", "zero"]},
-
-    # -- core/review.md ----------------------------------------------
-
-    {"file": "core/review.md", "find": "open pull requests inspected",
-     "title": "An issue is not already in flight before work starts",
-     "do": SKIP,
-     "reason": "The jq filter carries `#<N>` for the issue being checked. "
-               "Run per issue when picking up work, not against a tree."},
-
-    {"file": "core/review.md", "find": "pull requests linked to it",
-     "title": "A sibling's shipped route, not the one it proposed",
-     "do": SKIP,
-     "reason": "Takes the sibling issue number as a placeholder. Run per "
-               "issue when picking one up that defers to another, not "
-               "against a tree."},
-
-    {"file": "core/review.md", "find": "--since=<filing date>",
-     "title": "A filed issue's claim is re-measured against the tree",
-     "do": SKIP,
-     "reason": "Takes the issue's filing date as an argument; run per issue "
-               "during a groom, which the playbook covers."},
 
     # -- core/testing.md ---------------------------------------------
 

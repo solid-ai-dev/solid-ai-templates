@@ -59,6 +59,8 @@ Rules:
 - Prefer URL state for anything the user should be able to bookmark or share
 - Keep global store slices small and focused — one slice per domain concern,
   not one slice for everything
+- Find everything that depends on shared browser state (history, URL,
+  localStorage, global context) before changing it
 
 ## Linting and formatting
 
