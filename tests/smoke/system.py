@@ -292,7 +292,7 @@ def check_sys_09():
     if tools_dir not in sys.path:
         sys.path.insert(0, tools_dir)
     try:
-        import sync as sync_tool
+        import sync_docs as sync_tool
     except ImportError as error:
         return [f"  tools/sync_docs.py could not be imported: {error}"]
 
@@ -831,8 +831,8 @@ def check_sys_16():
         return [MISSING_YAML]
 
     sys.path.insert(0, os.path.join(ROOT, "tools"))
-    from sync import (CHARS_PER_TOKEN, OVERHEAD_TOKENS, CONTEXT_WINDOWS,
-                      _window_label)
+    from sync_docs import (CHARS_PER_TOKEN, OVERHEAD_TOKENS, CONTEXT_WINDOWS,
+                           _window_label)
     from resolve_chain import load_manifest, resolve_chain, concat_chain
 
     failures = []
@@ -1170,7 +1170,8 @@ BROKEN_CASES = [
 
 RESOLVE_WITH = (
     "import sys; sys.path.insert(0, sys.argv[1]); import resolve_chain; "
-    "resolve.MANIFEST = sys.argv[2]; sys.argv = ['resolve_chain.py', sys.argv[3]]; "
+    "resolve_chain.MANIFEST = sys.argv[2]; "
+    "sys.argv = ['resolve_chain.py', sys.argv[3]]; "
     "resolve_chain.main()"
 )
 
