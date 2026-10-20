@@ -30,6 +30,8 @@ Releases up to 2.63.0 are listed in
   Mermaid and bulk-generator rules ([#2071])
 - The review template drops its full issue-verification procedure and its
   numerical-gate items ([#2072])
+- The config template drops the in-process config model and the dependency
+  updater rule ([#2073])
 
 ### Added
 
@@ -85,6 +87,8 @@ Releases up to 2.63.0 are listed in
   Markdown linter ([#2071])
 - The review rules are short, topic-headed lists; shared browser state
   moves to frontend-quality ([#2072])
+- The config rules are short, topic-headed lists; port binding moves to
+  backend-http ([#2073])
 
 ### Deprecated
 
@@ -143,6 +147,7 @@ Releases up to 2.63.0 are listed in
 [#2069]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2069
 [#2071]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2071
 [#2072]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2072
+[#2073]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2073
 
 ## [2.90.0] - 2026-09-12
 

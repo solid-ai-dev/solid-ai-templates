@@ -39,6 +39,8 @@ receives nothing (ADR-051).
 | Verifying a filed issue in full, its shapes and checks; counting a text's self-claims | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
+| Port binding | `base-config` | `backend-http` |
+| The in-process config model and the interlocked-dependency updater rule | `base-config` | removed |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
