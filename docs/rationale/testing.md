@@ -48,7 +48,7 @@ A suite can be blind by construction. Where the code under test and the
 code asserting on it share an assumption, every assertion agrees and the
 assumption is never tested; coverage reports the lines as covered, by a
 witness that cannot disagree. Three defects of this shape shipped in one
-library and survived 258 passing tests: a checksum written and read high
+library and survived a fully passing suite: a checksum written and read high
 byte first where the format sends it low byte first; a length-prefixed
 frame read as whatever one socket read returned, which coincides on a local
 link and diverges across a router; an identifier written as a constant and
@@ -178,8 +178,8 @@ fingerprint proves the refactor and invariant tests guard the future.
 
 An output fingerprint cannot prove a formatter's rewrite was mechanical,
 because it assumes what is in question. Syntax trees answer it directly,
-and every mainstream language exposes them. One adoption rewrote 53 of 56
-files and reported a single differing tree, which had lost a redundant
+and every mainstream language exposes them. One adoption rewrote nearly every
+file and reported a single differing tree, which had lost a redundant
 `u""` prefix. The normalisation decides which differences are declared
 invisible, so it is stated before the result is read.
 

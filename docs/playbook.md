@@ -71,9 +71,9 @@ These hold for every check this repository runs, on top of the controls in
 
 **A missing precondition is refused, not reported.** When a suite's own
 dependency is absent (a parser, a toolchain, a network), every dependent
-check fails and the summary claims N defects in a tree that has none. A
-suite of 28 checks, 14 needing a YAML parser, reported 13 passed and 14
-failed with the parser stubbed out.
+check fails and the summary claims N defects in a tree that has none. With
+its YAML parser stubbed out, a suite reported every check that needed the
+parser as failed, half the suite.
 
 - Refuse the run, name the missing dependency once, and never word it as a
   finding
@@ -94,7 +94,7 @@ well-founded relaxation would have stopped reading documentation with.
   change
 - Let the invoker reject a check that passes silently; a rule each check
   has to remember is kept only by the authors who read it, and one suite
-  shipping this rule breached it in 25 of 26 checks
+  shipping this rule breached it in all but one of its checks
 
 ```bash
 module="<module-under-change>"
