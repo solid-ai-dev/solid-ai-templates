@@ -36,8 +36,19 @@ def main(argv, report):
                         help="directory to scan; repeatable")
     args = parser.parse_args(argv)
 
-    bans = [tuple(b.split(":", 1)) for b in args.forbid if ":" in b]
+    # A malformed ban dropped quietly leaves the boundary it meant to close
+    # unchecked, so every supplied pair is validated and a bad one fails.
+    bans = []
+    for raw in args.forbid:
+        importer, _, banned = raw.partition(":")
+        if not importer.strip() or not banned.strip():
+            report.finding("--forbid", 0, "ARGUMENT",
+                           "%r is not IMPORTER:IMPORTED" % raw)
+            continue
+        bans.append((importer.strip(), banned.strip()))
     report.count("import bans declared", bans)
+    if report.findings:
+        return report.finish(True)
     if not bans:
         return report.not_applicable("no --forbid IMPORTER:IMPORTED declared")
 
