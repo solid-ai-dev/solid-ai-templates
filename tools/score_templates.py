@@ -23,11 +23,11 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / "templates"
-BASELINE = ROOT / "tests" / "template-quality-baseline.txt"
+BASELINE = ROOT / "tests" / "baselines" / "template-quality.txt"
 
 # A fork scores its own templates against a baseline it owns, so recording
 # them never edits the upstream file it merges.
-FORK_BASELINE = ROOT / "tests" / "fork-template-quality-baseline.txt"
+FORK_BASELINE = ROOT / "tests" / "baselines" / "fork-template-quality.txt"
 
 # A file with no baseline row starts at this score or above. Below it, the
 # file is recorded on purpose with --update, never by accident.

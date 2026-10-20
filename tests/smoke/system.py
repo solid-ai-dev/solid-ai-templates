@@ -11,7 +11,7 @@ import sys
 # so a fork's own key is read here exactly as it is resolved there.
 from resolve_chain import entry_sections
 
-from lib import ROOT, repository_files, template_files
+from runner import ROOT, repository_files, template_files
 from .common import (
     _load_manifest, _resolve_stack, _roots_by_kind, _stacks,
     all_template_files, depends_on_refs, HAS_YAML, Inspected,
@@ -798,7 +798,7 @@ def check_sys_15():
 # category's stated requirements, and it is rare -- so it is recorded
 # where a diff shows it, and raised in the change that causes it.
 
-CONTEXT_TIERS = os.path.join("tests", "context-tiers.txt")
+CONTEXT_TIERS = os.path.join("tests", "smoke", "context-tiers.txt")
 
 
 def _tier_sort_key(label):
@@ -937,10 +937,12 @@ def check_sys_17():
     failures = []
     seen = Inspected()
 
+    # CODIFICATION.md sits beside the specs because it defines their IDs;
+    # it is the scheme, not a spec, so it owes no index row.
     spec_dir = os.path.join(ROOT, "tests", "specs")
     on_disk = {}
     for name in os.listdir(spec_dir):
-        if name.endswith(".md"):
+        if name.endswith(".md") and name != "CODIFICATION.md":
             with io.open(os.path.join(spec_dir, name),
                          encoding="utf-8") as handle:
                 on_disk[os.path.splitext(name)[0]] = handle.read()

@@ -6,7 +6,7 @@ import io
 import os
 import sys
 
-from lib import ROOT
+from runner import ROOT
 from .common import (
     _load_manifest, _resolve_stack, _stacks, HAS_YAML, Inspected, MISSING_YAML,
     read, yaml)

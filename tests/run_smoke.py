@@ -28,7 +28,7 @@ Usage:
 import datetime
 import sys
 
-from lib import PASS, FAIL, ERR, write_report, print_verdict
+from runner import PASS, FAIL, ERR, write_report, print_verdict
 from smoke import adr, common, manifest, system, templates
 from smoke.common import HAS_YAML, MISSING_YAML, TEMPLATE_DIRS
 from smoke.registry import CHECKS

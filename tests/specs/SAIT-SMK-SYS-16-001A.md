@@ -55,7 +55,7 @@ tags: [composition, context-window, readme, adoption]
 2. Convert to tokens and add the interview overhead, using `sync_docs.py`'s
    own constants rather than a second copy of them
 3. Take the smallest context window a model sells that still holds it
-4. Compare against `tests/context-tiers.txt` in both directions of
+4. Compare against `tests/smoke/context-tiers.txt` in both directions of
    membership
 5. Report the stacks measured, the categories measured and the
    categories recorded
@@ -80,7 +80,7 @@ have landed before its result was read.
    file MUST pass, since the chain stays under the 385,000 characters a
    128K window leaves after the interview. Observed 2026-09-06
 3. **A category with no record.** Deleting the `hypermedia` line from
-   `tests/context-tiers.txt` MUST fail. Observed 2026-09-06: the recorded
+   `tests/smoke/context-tiers.txt` MUST fail. Observed 2026-09-06: the recorded
    count moved 6 → 5 and the check named the unrecorded category, so the
    corpus is confirmed to have changed rather than the message alone
 

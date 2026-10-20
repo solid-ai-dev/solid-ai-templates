@@ -14,9 +14,7 @@ the wrong one.
 import os
 import sys
 
-# Disposition values.
-RUN = "run"
-SKIP = "skip"
+from conformance import MANUAL, READ, RUN, SKIP
 
 # Pass predicates, named here and implemented in the runner.
 #
@@ -63,9 +61,6 @@ SKIP = "skip"
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
 SKIP_BUDGET = 22
-
-MANUAL = "manual"
-READ = "read"
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -374,7 +369,7 @@ except ModuleNotFoundError as exc:
 
 # Each registry's entries beside the skip count it declares. A fork's file
 # that declares none is reported with None, which the runner refuses.
-SKIP_BUDGETS = [("tests/conformance.py", CHECKS, SKIP_BUDGET)]
+SKIP_BUDGETS = [("tests/conformance/dispositions.py", CHECKS, SKIP_BUDGET)]
 FORK_CHECKS = []
 if fork_dispositions is not None:
     FORK_CHECKS = fork_dispositions.CHECKS

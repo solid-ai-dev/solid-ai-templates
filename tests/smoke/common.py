@@ -10,7 +10,7 @@ import re
 # so a fork's own key is read here exactly as it is resolved there.
 from resolve_chain import core_tier, entry_sections
 
-from lib import ROOT, template_files
+from runner import ROOT, template_files
 
 
 # Bound to None without PyYAML, so a check can import it and guard on

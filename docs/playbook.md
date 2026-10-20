@@ -244,7 +244,7 @@ chains and the model limits of its stacks.
    In a fork, a category crossing to a larger window is a change to what
    a consumer needs to run the stack at all, and that is refused rather
    than reported: SYS-16 fails until the new tier is recorded in
-   `tests/context-tiers.txt` in the same change.
+   `tests/smoke/context-tiers.txt` in the same change.
 
    Before adding a paragraph, try stating the rule inside the one that
    already carries the narrow version of it. A widened rule folded in
@@ -360,7 +360,7 @@ The e2e suite and the efficacy benchmark read what the templates generate,
 so they live in the forks with the stacks and the interview (ADR-049).
 Smoke and conformance read the templates themselves.
 
-See `tests/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
+See `tests/specs/CODIFICATION.md` for the ID scheme and `tests/INDEX.md` for the
 full list of specs. Setup, PyYAML included, is in `CONTRIBUTING.md`, "Set up".
 
 The runners end with a `VERDICT:` line, printed after the report path so
@@ -385,7 +385,7 @@ failed by the runner itself.
 checks that this repository OBEYS them — it extracts every fenced check in
 `templates/` and either runs it here or records why it does not apply.
 Adding a fenced check to a template without a disposition in
-`tests/conformance.py` fails the run, which is what stops a new check from
+`tests/conformance/dispositions.py` fails the run, which is what stops a new check from
 arriving unexamined. A block in fork-owned content (stacks, platforms,
 workflow, the process sections) takes its entry in
 `tests/fork_dispositions.py` instead, and a smoke check reading such
@@ -412,7 +412,7 @@ cosmetic: the release-pipeline check was skipped for naming
 `<release-workflow>.yml` while `.github/workflows/release-gates.yml` had
 been shipping for weeks, and nothing re-read the reason.
 
-The number of skips is fixed too. `SKIP_BUDGET` in `tests/conformance.py`
+The number of skips is fixed too. `SKIP_BUDGET` in `tests/conformance/dispositions.py`
 states how many of its entries skip, and the runner fails when the count
 differs, so adding or retiring a skip moves that number in the same change.
 A fork declares its own `SKIP_BUDGET` in `tests/fork_dispositions.py`; a
@@ -421,10 +421,10 @@ fork file that declares none fails the run.
 A check only earns that status where nothing in its output can be decided.
 The changelog bound declares a limit and counts against it, so it is a
 scored verdict now, and each check that stays a judgement carries a
-`reason` in `tests/conformance.py` naming what about it takes a person.
+`reason` in `tests/conformance/dispositions.py` naming what about it takes a person.
 The runner refuses a judgement disposition that states none.
 
-Which checks may reach that status is fixed in `tests/reading-budget.txt`,
+Which checks may reach that status is fixed in `tests/conformance/reading-budget.txt`,
 one title per line above the reason it cannot reach a verdict. A reading
 the file does not name fails the run, so the set grows only in a diff that
 says why; a named check that reaches a verdict or reports it does not apply
@@ -754,8 +754,9 @@ gh issue list --state open --limit 200 --json number,title,milestone --jq '.[] |
 - Verify a claim with the tool the claim is about: `py tests/run_smoke.py`
   for a structural claim, `py tools/resolve_chain.py` for a reach or chain claim,
   `py tools/audit_redundancy.py` for a duplication claim. Where the claim
-  counts fenced blocks, use `tests/conformance.py`'s own extractor rather
-  than a grep over `templates/` — a grep counts occurrences no runner reads
+  counts fenced blocks, use the extractor the runner uses, `iter_blocks` in
+  `tests/run_conformance.py`, rather than a grep over `templates/` — a grep
+  counts occurrences no runner reads
 - Re-verify only the issues a candidate milestone would take. The rest of
   the backlog is not re-audited each cut, and age alone closes none of it
 - Measure reach in roots, with `py tools/resolve_chain.py --roots`, before siting

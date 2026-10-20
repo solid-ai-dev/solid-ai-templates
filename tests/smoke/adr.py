@@ -4,7 +4,7 @@
 import os
 import re
 
-from lib import ROOT
+from runner import ROOT
 from .common import HAS_YAML, Inspected, MISSING_YAML, read, yaml
 
 

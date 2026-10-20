@@ -44,7 +44,7 @@ jobs:
             run: python tools/audit_redundancy.py --check
 
           # A template may get better, never worse: each file's score is
-          # held to its row in tests/template-quality-baseline.txt.
+          # held to its row in tests/baselines/template-quality.txt.
           - name: Check no template's quality score fell
             run: python tools/score_templates.py --check
 

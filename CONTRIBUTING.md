@@ -94,7 +94,7 @@ py tools/sync_docs.py
   resolved file is read by every project on those chains, on every turn.
   Nothing refuses the size, but crossing to a larger context window is
   refused: SYS-16 fails until the new tier is recorded in
-  `tests/context-tiers.txt` in the same change.
+  `tests/smoke/context-tiers.txt` in the same change.
   Say in the pull request what the addition is worth, and prefer stating a
   widened rule inside the paragraph that already carries the narrow version
 

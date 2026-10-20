@@ -150,7 +150,7 @@ A fork names its own files; the Imbra fork names a stack
 
 Every rule in a widely resolved file is read on every turn by every project
 on that chain. A change that moves a stack category across a context-window
-tier must record it in `tests/context-tiers.txt` in the same change
+tier must record it in `tests/smoke/context-tiers.txt` in the same change
 (SYS-16). Two design documents go deeper:
 
 - [agent-context-tradeoffs.md](../design/agent-context-tradeoffs.md): how
