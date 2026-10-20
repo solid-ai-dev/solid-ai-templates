@@ -71,6 +71,8 @@ Releases up to 2.63.0 are listed in
   ship as hooks ([#2063])
 - Rules for numerical routines, calibration and source silence move to an
   opt-in measurement template ([#2065])
+- The git rules are short, topic-headed lists, and two of their checks
+  ship as hooks ([#2066])
 
 ### Deprecated
 
@@ -125,6 +127,7 @@ Releases up to 2.63.0 are listed in
 [#2062]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2062
 [#2063]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2063
 [#2065]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2065
+[#2066]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2066
 
 ## [2.90.0] - 2026-09-12
 
