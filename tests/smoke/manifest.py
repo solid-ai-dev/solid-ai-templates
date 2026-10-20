@@ -185,12 +185,12 @@ def check_mnf_04():
 
 
 # ---------------------------------------------------------------------------
-# MNF-05 — resolve.py resolution matches the PyYAML resolution
+# MNF-05 — resolve_chain.py resolution matches the PyYAML resolution
 # ---------------------------------------------------------------------------
-# The user-facing tools/resolve.py uses a stdlib-only hand-rolled manifest
+# The user-facing tools/resolve_chain.py uses a stdlib-only hand-rolled manifest
 # parser; smoke (and the manifest's own semantics) use PyYAML. A divergence
 # between the two — e.g. the multi-line depends_on bug, #654 — ships a wrong
-# generated/ chain that `resolve.py --check` cannot catch, since it only
+# generated/ chain that `resolve_chain.py --check` cannot catch, since it only
 # verifies self-consistency against the same parser. This gate resolves every
 # stack with BOTH parsers and fails on any mismatch, so the two can never
 # silently drift again regardless of which parser is edited next.
@@ -203,9 +203,9 @@ def check_mnf_05():
     if tools_dir not in sys.path:
         sys.path.insert(0, tools_dir)
     try:
-        import resolve as resolve_tool
+        import resolve_chain as resolve_tool
     except Exception as e:
-        return [f"  cannot import tools/resolve.py: {e}"]
+        return [f"  cannot import tools/resolve_chain.py: {e}"]
 
     core_h, entries_h, stacks = resolve_tool.load_manifest()
     core_y, entries_y, _ = _load_manifest()
@@ -223,13 +223,13 @@ def check_mnf_05():
         extra = [f for f in hand if f not in ref]
         parts = []
         if missing:
-            parts.append(f"missing from resolve.py: {', '.join(missing)}")
+            parts.append(f"missing from resolve_chain.py: {', '.join(missing)}")
         if extra:
-            parts.append(f"extra in resolve.py: {', '.join(extra)}")
+            parts.append(f"extra in resolve_chain.py: {', '.join(extra)}")
         if not parts:
             parts.append("same files, different order")
         failures.append(
-            f"  {sid}: resolve.py chain != PyYAML chain — "
+            f"  {sid}: resolve_chain.py chain != PyYAML chain — "
             f"{'; '.join(parts)}"
         )
 

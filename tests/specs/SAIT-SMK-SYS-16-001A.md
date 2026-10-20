@@ -52,7 +52,7 @@ tags: [composition, context-window, readme, adoption]
 
 1. Resolve and concatenate every stack's chain, and keep the largest per
    `layer` — the same quantity `README.md`'s model-limits table states
-2. Convert to tokens and add the interview overhead, using `sync.py`'s
+2. Convert to tokens and add the interview overhead, using `sync_docs.py`'s
    own constants rather than a second copy of them
 3. Take the smallest context window a model sells that still holds it
 4. Compare against `tests/context-tiers.txt` in both directions of

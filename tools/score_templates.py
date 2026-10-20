@@ -281,8 +281,8 @@ UPSTREAM_KEYS = ("base", "backend", "frontend")
 def upstream_files(manifest_text):
     """The template paths the manifest files under an upstream key."""
     sys.path.insert(0, str(ROOT / "tools"))
-    import resolve
-    manifest = resolve.parse_manifest(manifest_text)
+    import resolve_chain
+    manifest = resolve_chain.parse_manifest(manifest_text)
     return {entry["file"] for key in UPSTREAM_KEYS
             for entry in manifest.get(key) or [] if "file" in entry}
 

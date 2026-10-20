@@ -8,7 +8,7 @@ import re
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
-from resolve import core_tier, entry_sections
+from resolve_chain import core_tier, entry_sections
 
 from lib import ROOT, template_files
 
@@ -121,7 +121,7 @@ def _opt_in_roots(core_ids, entries):
     """The manifest IDs a project picks directly, that no stack chain carries.
 
     A project resolves its stack, then its extras, then its platform, each as
-    its own root -- the algorithm ADR-004 states and `tools/resolve.py`
+    its own root -- the algorithm ADR-004 states and `tools/resolve_chain.py`
     implements. An opt-in template is therefore guaranteed only the core tier
     plus its own dependency tree, so a directive or a prose reference it
     carries has to resolve there, not in a stack chain it may never be paired

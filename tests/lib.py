@@ -35,7 +35,7 @@ ERR  = "ERR "
 SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".idea",
              ".claude"}
 
-# templates/INTERVIEW.md is written by tools/sync.py from the manifest. It
+# templates/INTERVIEW.md is written by tools/sync_docs.py from the manifest. It
 # is a document the templates directory holds, not a template: it declares
 # no [ID:] section and takes no manifest entry. Naming it here keeps the
 # exception in one place, so a second generated document dropped beside it
@@ -82,7 +82,7 @@ def template_documents(prefix="templates/"):
 def template_files(prefix="templates/"):
     """The template corpus the manifest governs, repo-relative.
 
-    Every Markdown file under templates/ except the documents sync.py
+    Every Markdown file under templates/ except the documents sync_docs.py
     generates there, which carry no manifest entry and declare no sections.
     """
     return [p for p in template_documents(prefix)

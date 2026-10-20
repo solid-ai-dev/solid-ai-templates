@@ -33,12 +33,12 @@ jobs:
             run: python tools/check_release.py --self-test
 
           - name: Check generated docs are up to date
-            run: python tools/sync.py --check
+            run: python tools/sync_docs.py --check
 
           # Upstream offers no stack, so this reads a fork's cache of
           # resolved chains; upstream's run confirms the manifest parses.
           - name: Check the resolved stack chains are up to date
-            run: python tools/resolve.py --check
+            run: python tools/resolve_chain.py --check
 
           - name: Check for new redundant rules
             run: python tools/audit_redundancy.py --check

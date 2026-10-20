@@ -54,7 +54,7 @@ tags: [tooling, resolver, manifest, composition, fork]
 1. Write `FORK_MANIFEST`: `core: [base-a]`, `fork_core: [fork-readme]`, an
    `acme:` key holding `fork-readme`, `fork-lib` and `fork-unused`, and
    `stack-fork` depending on `fork-lib`
-2. Resolve `stack-fork` through `resolve.py`'s own entry point, with the
+2. Resolve `stack-fork` through `resolve_chain.py`'s own entry point, with the
    planted manifest in place of the real one
 3. Write `FORK_OUTSIDE_MANIFEST`, the same manifest with `fork-readme`
    depending on `fork-lib`, and resolve `stack-fork` against it

@@ -12,7 +12,7 @@ templates/          # every template, plus the manifest
   frontend/         # frontend layer: UX, CSS, content, static sites
   fixture/          # one stack and one platform, test input only
   manifest.yaml     # the dependency graph every tool reads
-tools/              # resolve.py, sync.py, check_release.py, the audits
+tools/              # resolve_chain.py, sync_docs.py, check_release.py, the audits
 tests/              # smoke, conformance and fork-sync runners, specs
 docs/               # this specification, decisions, playbook, audits
 ```
@@ -76,8 +76,8 @@ and never edits one upstream owns.
 
 | Tool | Does |
 |------|------|
-| `tools/resolve.py` | Resolves a root to its ordered file list, or the concatenated chain |
-| `tools/sync.py` | Regenerates the derived sections in this specification and in a fork's README; `--check` fails on drift |
+| `tools/resolve_chain.py` | Resolves a root to its ordered file list, or the concatenated chain |
+| `tools/sync_docs.py` | Regenerates the derived sections in this specification and in a fork's README; `--check` fails on drift |
 | `tools/check_release.py` | Checks a release's changelog cut and SemVer step |
 | `tools/audit_redundancy.py` | Finds duplicate rules across resolved chains |
 | `tools/score_templates.py` | Scores each template and holds the score to its baseline |

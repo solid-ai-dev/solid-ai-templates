@@ -77,12 +77,12 @@ reused for a different component within the same area.
 | `06` | Stack structure — every usable stack's resolved chain carries the ADR-017 MUST sections |
 | `07` | Audit storage — 360 audit reports live only under docs/audits/ with dated names |
 | `08` | *fork* — Example coverage — every showcased stack keeps its example CLAUDE.md |
-| `09` | Sync check — `sync.py --check` inspects without writing |
+| `09` | Sync check — `sync_docs.py --check` inspects without writing |
 | `10` | Quoted directive — a DEPENDS ON quoted in prose is not a declaration |
 | `11` | Prose ID references — resolve in every chain carrying the file |
 | `12` | — retired (frozen chain ceiling removed) |
 | `13` | Manual walk — the instructed walk reaches what the resolver carries |
-| `14` | Resolver arguments — resolve.py accounts for every argument it is given |
+| `14` | Resolver arguments — resolve_chain.py accounts for every argument it is given |
 | `15` | Security tier — a stack outside the exempt layers resolves it |
 | `16` | Context tier — a stack category's tier moves only on purpose |
 | `17` | Spec registration — every registered check names a spec that exists |
@@ -115,7 +115,7 @@ reused for a different component within the same area.
 | `02` | Resolution — all stacks resolve to valid, non-empty file lists |
 | `03` | Core tier — resolved chains include core tier files |
 | `04` | Prompt assembly — prompt builds for all stacks |
-| `05` | Parser parity — resolve.py resolution matches the PyYAML resolution |
+| `05` | Parser parity — resolve_chain.py resolution matches the PyYAML resolution |
 | `06` | Fork sync — a simulated fork merges an upstream change cleanly |
 
 ### STK - Stack (*fork*)
