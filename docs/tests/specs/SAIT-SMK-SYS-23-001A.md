@@ -58,6 +58,8 @@ tags: [tooling, hooks, checks, compatibility]
 4. Run `report-test-edits` against a base: at the base, at the base in
    pre-commit mode, after a commit editing a test, and against a base that
    does not resolve
+5. Run `report-off-limits-paths` on a branch touching a declared path, on
+   one touching none, and against a base that does not resolve
 
 ### Assertions
 

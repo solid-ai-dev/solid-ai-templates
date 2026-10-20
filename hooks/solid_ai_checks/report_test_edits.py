@@ -6,12 +6,8 @@ reading.
 """
 
 import argparse
-import subprocess
 
-
-def git(*args):
-    return subprocess.run(["git"] + list(args), capture_output=True,
-                          text=True, check=True).stdout
+from .support.history import git, open_change
 
 
 def main(argv, report):
@@ -22,27 +18,10 @@ def main(argv, report):
                         help="the project's test root")
     args = parser.parse_args(argv)
 
-    # A base that does not resolve, unfetched or mistyped, is a missing
-    # baseline. Reading it as "no change under review" would pass a run
-    # that compared nothing, so it is a failure.
-    try:
-        head, base = git("rev-parse", "HEAD").strip(), \
-            git("rev-parse", "--verify", args.base).strip()
-    except (OSError, subprocess.CalledProcessError):
-        report.finding(args.base, 0, "BASE",
-                       "cannot resolve HEAD and the base; fetch the base or "
-                       "pass --base")
-        return report.finish(True)
-    if head == base:
-        if git("status", "--porcelain").strip():
-            report.note("HEAD is at %s and the work is uncommitted; commit it "
-                        "and run again" % args.base)
-            return report.finish(False)
-        return report.not_applicable(
-            "HEAD is at %s and the tree is clean; no change is under review"
-            % args.base)
+    span, status = open_change(report, args.base)
+    if span is None:
+        return status
 
-    span = "%s...HEAD" % args.base
     scope = "%s/" % args.tests.rstrip("/")
     changed = [l for l in git("diff", "--name-status", span).splitlines() if l]
     tests = [l for l in git("diff", "--name-status", span, "--", scope)

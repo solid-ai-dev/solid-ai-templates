@@ -80,3 +80,23 @@
   pass_filenames: false
   always_run: true
   verbose: true
+
+- id: check-heading-numbers
+  name: Check numbered documents for repeated or skipped ordinals
+  entry: solid-ai-checks check-heading-numbers --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: report-off-limits-paths
+  name: Report committed changes touching off-limits paths
+  entry: solid-ai-checks report-off-limits-paths --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+  # It reads committed history, so it runs after a commit, on request,
+  # not as the commit is being made.
+  stages: [manual]

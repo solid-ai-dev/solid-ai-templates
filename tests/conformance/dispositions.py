@@ -138,26 +138,27 @@ CHECKS = [
     # The documents here with a numbered structure that concurrent branches
     # edit. Run on every pass, the check holds them consistent whichever
     # branch merged last.
-    {"file": "core/git.md", "find": "PATHS = [\"<file>\"]",
+    {"file": "core/git.md", "find": "check-heading-numbers",
      "title": "Numbered headings stay consistent across concurrent edits",
-     "do": RUN, "expect": ["line"] * 12,
-     "substitute": {'PATHS = ["<file>"]':
-                    'PATHS = ['
-                    '"AGENTS.md", '
-                    '"docs/playbook.md", '
-                    '"docs/architecture/01-introduction-and-goals.md", '
-                    '"docs/architecture/02-constraints.md", '
-                    '"docs/architecture/03-context-and-scope.md", '
-                    '"docs/architecture/04-solution-strategy.md", '
-                    '"docs/architecture/05-building-block-view.md", '
-                    '"docs/architecture/06-runtime-view.md", '
-                    '"docs/architecture/08-crosscutting-concepts.md", '
-                    '"docs/architecture/10-quality-requirements.md", '
-                    '"docs/architecture/11-risks-and-technical-debt.md", '
-                    '"docs/architecture/12-glossary.md"]'}},
+     "do": RUN, "expect": ["nonzero", "nonzero", "zero"],
+     "args": [arg for path in (
+         "AGENTS.md",
+         "docs/playbook.md",
+         "docs/architecture/01-introduction-and-goals.md",
+         "docs/architecture/02-constraints.md",
+         "docs/architecture/03-context-and-scope.md",
+         "docs/architecture/04-solution-strategy.md",
+         "docs/architecture/05-building-block-view.md",
+         "docs/architecture/06-runtime-view.md",
+         "docs/architecture/08-crosscutting-concepts.md",
+         "docs/architecture/10-quality-requirements.md",
+         "docs/architecture/11-risks-and-technical-debt.md",
+         "docs/architecture/12-glossary.md") for arg in ("--path", path)]},
 
-    {"file": "core/git.md", "find": "BASE = \"origin/main\"",
+    {"file": "core/git.md", "find": "report-off-limits-paths",
      "title": "A diff touching an off-limits path says so", "do": RUN,
+     "args": ["--path", ".github/workflows/", "--path", ".env",
+              "--path", "migrations/"],
      "expect": MANUAL,
      "reason": "The finding is whether the change SAYS SO about the path it "
                "touches, which is prose in a pull request body and not a "

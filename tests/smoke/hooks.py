@@ -100,6 +100,19 @@ CASES = [
      {"scripts/old.py": "x = 1\n", "README.md": "Run old.py.\n"}, [], 0, 0),
     ("find-unreferenced-scripts", "no scripts directory",
      {"README.md": "x\n"}, [], 3, 0),
+    ("check-heading-numbers", "two sections numbered alike",
+     {"spec.md": "## 1 One\n\n## 2 Two\n\n## 2 Again\n"},
+     ["--path", "spec.md"], 1, 1),
+    ("check-heading-numbers", "a skipped list ordinal",
+     {"spec.md": "## Steps\n\n1. One\n2. Two\n4. Four\n"},
+     ["--path", "spec.md"], 1, 1),
+    ("check-heading-numbers", "a consistent document",
+     {"spec.md": "## 1 One\n\n1. a\n2. b\n\n## 2 Two\n\n### 2.1 Sub\n"},
+     ["--path", "spec.md"], 0, 0),
+    ("check-heading-numbers", "a document with no ordinal",
+     {"spec.md": "## Plain\n\nText.\n"}, ["--path", "spec.md"], 1, 1),
+    ("check-heading-numbers", "no document named",
+     {"spec.md": "## 1 One\n"}, [], 3, 0),
 ]
 
 
@@ -186,6 +199,53 @@ def test_edit_cases():
     return failures
 
 
+def off_limits_cases():
+    """report-off-limits-paths on a branch touching a declared path."""
+    failures = []
+    work = planted_repo({"README.md": "x\n"})
+    try:
+        git(work, "branch", "base")
+        os.makedirs(os.path.join(work, ".github", "workflows"))
+        with open(os.path.join(work, ".github", "workflows", "ci.yml"),
+                  "w") as handle:
+            handle.write("on: push\n")
+        with open(os.path.join(work, "README.md"), "w") as handle:
+            handle.write("y\n")
+        git(work, "add", "-A")
+        git(work, "commit", "-q", "-m", "touch")
+        args = ["--base", "base", "--path", ".github/workflows/"]
+        code, lines, findings = run_hook(work, "report-off-limits-paths", args)
+        if code != 0 or len(findings) != 1 or "files changed: 2" not in lines:
+            failures.append("  report-off-limits-paths, a touched workflow: "
+                            "exited %d, printed %s" % (code, lines))
+
+        # The same directory spelled as a user might type it, which git
+        # never prints.
+        for spelling in ("./.github/workflows/",
+                         ".github%sworkflows%s" % (chr(92), chr(92))):
+            code, lines, findings = run_hook(
+                work, "report-off-limits-paths",
+                ["--base", "base", "--path", spelling])
+            if code != 0 or len(findings) != 1:
+                failures.append("  report-off-limits-paths, the path spelled "
+                                "%r: exited %d, printed %s"
+                                % (spelling, code, lines))
+        code, lines, findings = run_hook(
+            work, "report-off-limits-paths", ["--base", "base", "--path",
+                                              "migrations/"])
+        if code != 0 or findings:
+            failures.append("  report-off-limits-paths, no declared path "
+                            "touched: exited %d, printed %s" % (code, lines))
+        code, lines, _ = run_hook(work, "report-off-limits-paths",
+                                  ["--base", "no-such-ref", "--path", "x/"])
+        if code != 1:
+            failures.append("  report-off-limits-paths, an unresolved base: "
+                            "exited %d, owed 1" % code)
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return failures
+
+
 def check_sys_23():
     if not HAS_YAML:
         return [MISSING_YAML]
@@ -243,4 +303,5 @@ def check_sys_23():
                             "%d with %d" % (hook, label, code, len(findings),
                                             code_owed, found_owed))
     failures += test_edit_cases()
+    failures += off_limits_cases()
     return seen.failures() + failures, seen.notes()
