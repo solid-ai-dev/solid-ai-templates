@@ -1,0 +1,46 @@
+# The checks the templates prescribe, as pre-commit hooks. A hook ID is
+# frozen once shipped, like a section ID.
+#
+# Every hook reads the tracked tree itself, so pre-commit passes it no file
+# names and runs it on every commit. verbose shows a passing hook's
+# inspected counts, which pre-commit otherwise hides.
+
+- id: find-unfenced-checks
+  name: Find checks stated outside a fenced block
+  entry: solid-ai-checks find-unfenced-checks --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: compile-embedded-checks
+  name: Compile the Python checks embedded in Markdown
+  entry: solid-ai-checks compile-embedded-checks --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: find-line-continuations
+  name: List line continuations in embedded checks
+  entry: solid-ai-checks find-line-continuations --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: find-bare-suppressions
+  name: Find lint suppressions that name no rule
+  entry: solid-ai-checks find-bare-suppressions --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
+
+- id: report-test-edits
+  name: Report changes that edit an existing test
+  entry: solid-ai-checks report-test-edits --pre-commit
+  language: python
+  pass_filenames: false
+  always_run: true
+  verbose: true
