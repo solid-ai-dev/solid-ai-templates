@@ -35,7 +35,7 @@ base:
     description: Peer review priority, MUST/SHOULD checklists, deviation rules
   - id: base-testing
     file: templates/core/testing.md
-    description: Test pyramid, coverage thresholds, naming conventions
+    description: Test types, isolation, assertions, proving a change
   - id: base-agents
     file: templates/core/agents.md
     description: Output structure, models (inline/hybrid), formatting rules

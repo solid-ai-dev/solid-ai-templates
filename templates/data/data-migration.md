@@ -81,3 +81,12 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
   (restore from backup, manual data fix)
 - After the rollback window closes, the migration is considered
   permanent
+
+## Post-migration checks
+[ID: base-testing-data-validation]
+
+- Assert, after a bulk migration that writes records keyed by a derived
+  slug, that the written keys equal the slugs derived independently from
+  the source of truth (MUST)
+- Treat per-record validation as blind to a partial migration: an orphan
+  key and a missing entry are each individually valid

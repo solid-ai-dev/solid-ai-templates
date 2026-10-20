@@ -29,6 +29,10 @@ receives nothing (ADR-051).
 | Long check scripts in the core templates | fenced in the template | pre-commit hooks the template names |
 | Rules for writing a check into Markdown | `base-quality-gates` | `base-embedded-checks`, by `Extras` |
 | Rules for numerical routines, calibration and source silence | `base-quality` | `base-measurement`, by `Extras` |
+| Rules for writing this repository's checks: control runs, prose detectors, refused preconditions, remedy references | `base-testing` | this repository's playbook |
+| Python and pytest test mechanics: tier import modes, `__all__`, worked fixtures | `base-testing` | a fork's stack |
+| The cohort check after a bulk migration, `base-testing-data-validation` | `base-testing` | `base-data-migration` |
+| Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

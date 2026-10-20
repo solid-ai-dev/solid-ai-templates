@@ -234,54 +234,12 @@ CHECKS = [
 
     # -- core/testing.md ---------------------------------------------
 
-    {"file": "core/testing.md", "find": "tests.helper import X",
-     "title": "The tier layout's imports hold on the project's runner",
-     "do": SKIP,
-     "reason": "Probes the runner a project adopts the tier layout on. "
-               "This repository's tests are standalone scripts run with "
-               "`py`, with no pytest suite and no tier directories."},
-
-    {"file": "core/testing.md", "find": "module-under-change",
-     "title": "A remedy naming another check is re-read before narrowing it",
-     "do": SKIP,
-     "reason": "Takes the module whose scope is narrowing as an argument. "
-               "It is run per change, not as a property of the tree."},
-
     {"file": "core/testing.md", "find": "guard-field-name",
      "title": "A guard field has a consumer, not only an assignment",
      "do": SKIP,
      "reason": "Takes the module under review and the guard field as "
                "arguments. It is run when one inert primitive is found, to "
                "sweep for its siblings, not as a property of the tree."},
-
-    {"file": "core/testing.md", "find": "class ServerFixture",
-     "title": "Fixture shape for a threaded server", "do": SKIP,
-     "reason": "An illustration of the pattern, not a check. It has no pass "
-               "condition and names a project's own server class."},
-
-    {"file": "core/testing.md", "find": "type[(]self[)]",
-     "title": "A class attribute is not mutated through the instance",
-     "do": RUN, "expect": ["nonzero"], "grep": True},
-
-    {"file": "core/testing.md", "find": "SERVER_THREAD_NAME",
-     "title": "A test names its server thread", "do": SKIP,
-     "reason": "An illustration of the naming pattern, not a check."},
-
-    {"file": "core/testing.md", "find": "ssl.TLSVersion.TLSv1_2",
-     "title": "A TLS floor is asserted, not assumed", "do": SKIP,
-     "reason": "An illustration: an assertion a consuming project's own "
-               "suite makes about its own context object."},
-
-    {"file": "core/testing.md", "find": "pkg.__all__",
-     "title": "Everything in __all__ is importable", "do": SKIP,
-     "reason": "This repository ships no importable package. It applies to "
-               "a library stack, which a fork carries."},
-
-    {"file": "core/testing.md", "find": "def fingerprint(path)",
-     "title": "A mechanical move leaves the fingerprint unchanged",
-     "do": SKIP,
-     "reason": "Compares two revisions of a module named as arguments; run "
-               "during a module split, not against a tree."},
 
     # -- security/devsecops.md ---------------------------------------
 
