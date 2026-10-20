@@ -16,6 +16,7 @@ def open_change(report, base):
     base at HEAD with uncommitted work asks for a commit, and a base at
     HEAD with a clean tree does not apply.
     """
+
     # A base that does not resolve, unfetched or mistyped, is a missing
     # baseline. Reading it as "no change under review" would pass a run
     # that compared nothing, so it is a failure.
