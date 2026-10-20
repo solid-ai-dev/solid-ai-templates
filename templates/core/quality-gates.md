@@ -153,12 +153,8 @@ which is the check reaching no input rather than a clean tree.
 
 [ID: quality-gates-convention-as-test]
 
-An "if X then Y" convention is checkable when Y is mechanically comparable.
-
-- Encode such an invariant as a test that enumerates every record
-  satisfying X and asserts they share Y
-- Name the pair that broke the invariant in the test's failure
-- Keep a convention that cannot be tested, such as prose tone, declarative
+- Encode an "if X then Y" convention whose Y is mechanically comparable as
+  a test, and name the pair that broke it in the failure
 
 ## Generated-file staleness
 
@@ -514,23 +510,10 @@ developer's environment passes there and fails on a laptop.
 
 ### Linters
 
-A modern linter on an existing codebase reports too much to adopt as
-written. Two responses work and two are traps:
-
-| Response | Outcome |
-|----------|---------|
-| Fix everything first | Buries the gate change under a mechanical diff no reviewer can separate from a behavioural one, and gates untouched code the change was never about |
-| Ignore the offending rule families globally | Never ends. New code is ungated on exactly the rules the project says it wants, nothing ever fails, so nothing is ever fixed |
-| Freeze per file | Works |
-| Narrow the gate's corpus, widening it per slice | Works, where the tool has no per-file ignore |
-
-- Enable the full rule selection, then record adoption-day violations in a
-  per-file ignore table, each file listed with exactly the rules it broke
-- Generate the table from the linter's own output, never by hand
+- Adopt a linter with its full rule selection and a per-file ignore table
+  generated from its own output, never written by hand
 - Pin the linter to a minor range; the table records one version's findings
 - Never add a file to the table, or widen an entry, to make a gate pass
-- Accept that a file-level freeze does not re-gate an existing file when it
-  is edited
 
 ### Per-slice corpus
 
@@ -604,20 +587,12 @@ ruff check --isolated src/                      ->  366 findings, ruff defaults
 
 ### Site-local suppressions
 
-The freeze says a file was broken on adoption day. A site-local
-suppression says a rule is wrong at one line. Keep the two apart.
-
 - Suppress a finding that is wrong at one site at that site, never by
   adding the file to the freeze table
-- Name the rule in every site-local suppression — `# noqa: B017`,
-  `//nolint:errcheck`, `// eslint-disable-next-line no-unused-vars`
-- Never write a bare suppression
-- Put the reason directly above the suppressed line, as `base-quality`
-  places a block comment
-- Reserve a config-level disable for a decision that is genuinely tree-wide
+- Name the rule in every suppression, such as `# noqa: B017` or
+  `//nolint:errcheck`, and put the reason directly above the line
 
-A bare suppression is shorter than a named one, so pair the rule with this
-scan:
+Scan for a bare suppression:
 
 ```bash
 py - <<'EOF'
@@ -744,19 +719,8 @@ replacement. A range total of zero means the check inspected nothing.
 
 [ID: quality-gates-verdict-reading]
 
-### Verdict, plausibility, accuracy
-
-- Before acting on a failing verdict, separate three judgments: the
-  verdict, the plausibility of the output's shape, and its accuracy
-  against ground truth
-- Fix the producer when the output is inaccurate
-- Fix the check per input class when its plausibility test is unsound for
-  that class
-
-### Lenient gates
-
-- Keep a lenient gate, and document which artifact types also need a
-  maintainer's review before commit
-- Never tighten a threshold to catch one artifact's defect where it would
-  mis-flag legitimate runs
-- Treat a passing gate as necessary, not sufficient
+- Before acting on a failing verdict, decide whether the output is wrong,
+  which the producer fixes, or the check is unsound for that input class,
+  which a per-class fix to the check repairs
+- Treat a passing gate as necessary, not sufficient, and name the artifact
+  types a lenient gate leaves to a maintainer's review

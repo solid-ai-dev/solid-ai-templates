@@ -186,6 +186,16 @@ as a simplification. Both turn a red gate green. Only one leaves a gate.
 
 ### Linters
 
+A modern linter on an existing codebase reports too much to adopt as
+written. Two responses work and two are traps:
+
+| Response | Outcome |
+|----------|---------|
+| Fix everything first | Buries the gate change under a mechanical diff no reviewer can separate from a behavioural one, and gates untouched code the change was never about |
+| Ignore the offending rule families globally | Never ends. New code is ungated on exactly the rules the project says it wants, nothing ever fails, so nothing is ever fixed |
+| Freeze per file | Works |
+| Narrow the gate's corpus, widening it per slice | Works, where the tool has no per-file ignore |
+
 A per-file freeze gates a new file on everything, stops an existing file
 getting worse, and makes shrinking the table the migration. A hand-maintained
 table drifts and becomes a place to hide findings, and an unpinned linter
