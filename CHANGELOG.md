@@ -41,6 +41,8 @@ Releases up to 2.63.0 are listed in
 - The testing rules state the layout tests by tier need ([#2009])
 - A content template for content, assets, SEO and structured data
   ([#2016])
+- Long checks ship as pre-commit hooks, and templates name the hook to
+  run ([#2062])
 
 ### Changed
 
@@ -63,6 +65,8 @@ Releases up to 2.63.0 are listed in
 - A plain imperative counts as a binding rule ([#2017])
 - The quality-gates rules are short, topic-headed lists; their reasoning
   moves to a rationale doc ([#2060])
+- Rules for writing a check into Markdown move to an opt-in template,
+  embedded-checks ([#2062])
 
 ### Deprecated
 
@@ -114,6 +118,7 @@ Releases up to 2.63.0 are listed in
 [#2053]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2053
 [#2055]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2055
 [#2060]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2060
+[#2062]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2062
 
 ## [2.90.0] - 2026-09-12
 
