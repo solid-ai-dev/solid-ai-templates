@@ -124,6 +124,8 @@ labels are terminal, applied when closing without action: `duplicate`
   `.editorconfig` for Markdown and Python —
   exempt: table rows, fenced code, `[DEPENDS ON: ...]` directives, and
   unbreakable tokens (long URLs, Markdown link targets)
+- Write a directive's name in prose, never its bracket form — a parser
+  scanning for the form finds it in the sentence describing it
 - No HTML — Markdown only
 - A mechanically-checkable output constraint MUST name its
   agent-runnable check (command + pass condition); subjective
@@ -160,6 +162,9 @@ labels are terminal, applied when closing without action: `duplicate`
     words saying what changed, with no code formatting, ending with a link
     to the PR, which holds the why. A change needing no entry says so in the PR body
 - Do not duplicate content across documents — cross-reference instead
+- Never state a count about the tree in a document outside a generated
+  block or a dated record; `tools/check_doc_figures.py` gates it as a
+  local pre-commit hook
 - Write in present tense — past or future tense indicates out-of-sync
   documentation
 
@@ -233,8 +238,8 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 - Size the local checks to the change. A template, manifest, tool or test
   change runs `py tests/run.py smoke` and, for any template prose edit,
   `py tests/run.py conformance`: smoke reads structure, while every rule
-  about the templates' own text — line width, a check outside a fence —
-  is enforced from conformance. A documentation-only change runs
+  about the templates' own text, such as a check outside a fence, is
+  enforced from conformance. A documentation-only change runs
   markdownlint and a scan for lines over 88 characters, and pushes once
 - Adding a fenced `bash`/`python` block to a template MUST add its
   disposition in `tests/conformance/dispositions.py` — run it here, or skip it with

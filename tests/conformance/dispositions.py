@@ -71,25 +71,11 @@ CHECKS = [
 
     # -- core/docs.md ------------------------------------------------
 
-    # A fork carrying the efficacy benchmark keeps its arm files under
-    # `tests/efficacy/arms/`, which upstream does not have. They are a
-    # generator's verbatim output, which the benchmark's design forbids
-    # editing; `short`'s is held to its own budget and the others to none.
-    # They are source material the benchmark measures, not documentation,
-    # so both checks leave them out wherever they exist.
-    {"file": "core/docs.md", "find": "width, source = None, None",
-     "title": "Documentation line width matches the declared one",
-     "do": RUN, "expect": ["nonzero"],
-     "substitute": {'["git", "ls-files", "*.md"]':
-                    '["git", "ls-files", "*.md", '
-                    '":(exclude)tests/efficacy/arms/"]'}},
-
-    {"file": "core/docs.md", "find": "ungated figures",
-     "title": "A documentation figure comes from a generator",
-     "do": RUN, "expect": ["nonzero", "zero"],
-     "substitute": {'SOURCES = ("templates/", "generated/", "examples/")':
-                    'SOURCES = ("templates/", "generated/", "examples/", '
-                    '"tests/efficacy/arms/")'}},
+    {"file": "core/docs.md", "find": "npx --yes markdownlint-cli2",
+     "title": "Markdown holds to the declared line width",
+     "do": RUN, "expect": ["nonzero", "nonzero"],
+     "substitute": {"CONFIG=<markdownlint-config>":
+                    "CONFIG=.github/linters/.markdownlint-cli2.jsonc"}},
 
     # -- core/agents.md ----------------------------------------------
 
@@ -255,7 +241,7 @@ CHECKS = [
     # The example's limit stands for the project's own. Here that is the
     # 88 .editorconfig declares for Python, and the Python is all this
     # repository holds that carries no exempt line: its Markdown keeps
-    # table rows over the width, which core/docs.md's check exempts.
+    # table rows over the width, which its linter configuration exempts.
     {"file": "core/quality-gates.md", "find": "awk 'length > 80' FILE",
      "title": "An output constraint is paired with its check", "do": RUN,
      "expect": [],

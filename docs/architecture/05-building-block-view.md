@@ -84,6 +84,7 @@ and never edits one upstream owns.
 | `tools/check_release.py` | Checks a release's changelog cut and SemVer step |
 | `tools/audit_redundancy.py` | Finds duplicate rules across resolved chains |
 | `tools/score_templates.py` | Scores each template and holds the score to its baseline |
+| `tools/check_doc_figures.py` | Finds a count about the tree stated outside a generated block; a local pre-commit hook |
 | `hooks/solid_ai_checks/` | The checks templates name as hooks; run by pre-commit or `python -m solid_ai_checks <hook-id>` (ADR-055) |
 
 ## 5.5 Checks
