@@ -15,6 +15,8 @@ Releases up to 2.63.0 are listed in
   and score_templates ([#2052])
 - Test files are grouped by suite, and test specs move to docs/tests
   ([#2053])
+- One command runs the test suites: py tests/run.py smoke, conformance or
+  all ([#2055])
 - Stacks, platforms, process rules and the interview move to forks; pin
   2.90.0 or a fork ([#1972])
 - The core rules require only a README and the two agent files ([#1964])
@@ -108,6 +110,7 @@ Releases up to 2.63.0 are listed in
 [#2049]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2049
 [#2052]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2052
 [#2053]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2053
+[#2055]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2055
 
 ## [2.90.0] - 2026-09-12
 
