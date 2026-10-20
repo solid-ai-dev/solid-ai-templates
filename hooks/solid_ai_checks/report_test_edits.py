@@ -22,12 +22,17 @@ def main(argv, report):
                         help="the project's test root")
     args = parser.parse_args(argv)
 
+    # A base that does not resolve, unfetched or mistyped, is a missing
+    # baseline. Reading it as "no change under review" would pass a run
+    # that compared nothing, so it is a failure.
     try:
         head, base = git("rev-parse", "HEAD").strip(), \
-            git("rev-parse", args.base).strip()
+            git("rev-parse", "--verify", args.base).strip()
     except (OSError, subprocess.CalledProcessError):
-        return report.not_applicable(
-            "cannot resolve HEAD and %s in a git work tree" % args.base)
+        report.finding(args.base, 0, "BASE",
+                       "cannot resolve HEAD and the base; fetch the base or "
+                       "pass --base")
+        return report.finish(True)
     if head == base:
         if git("status", "--porcelain").strip():
             report.note("HEAD is at %s and the work is uncommitted; commit it "

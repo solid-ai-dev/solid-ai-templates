@@ -52,6 +52,15 @@ CASES = [
      {"app.py": "import os  %s noqa\n" % HASH}, [], 1, 1),
     ("find-bare-suppressions", "a suppression naming its rule",
      {"app.py": "import os  %s noqa: F401\n" % HASH}, [], 0, 0),
+
+    # git prints `docs/rules.md`; a root written another way must still
+    # reach it, and `.` means the whole tree.
+    ("find-unfenced-checks", "a root written as ./docs",
+     {"docs/rules.md": "Verify with `git status`.\n"}, ["--root", "./docs"],
+     1, 1),
+    ("find-unfenced-checks", "a root of .",
+     {"docs/rules.md": "Verify with `git status`.\n"}, ["--root", "."],
+     1, 1),
 ]
 
 
@@ -78,7 +87,9 @@ def planted_repo(files):
     work = tempfile.mkdtemp(prefix="sait-hooks-")
     git(work, "init", "-q")
     for name, text in files.items():
-        with open(os.path.join(work, name), "w", encoding="utf-8",
+        path = os.path.join(work, name)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8",
                   newline="\n") as handle:
             handle.write(text)
     git(work, "add", "-A")
@@ -119,6 +130,18 @@ def test_edit_cases():
         if code != 0 or owed not in lines or len(findings) != 1:
             failures.append("  report-test-edits, an edited test: exited %d, "
                             "printed %s" % (code, lines))
+
+        # A base that does not resolve is a missing baseline, and a run
+        # that compared nothing fails in either mode.
+        for pre_commit in (False, True):
+            code, lines, findings = run_hook(
+                work, "report-test-edits", ["--base", "no-such-ref"],
+                pre_commit=pre_commit)
+            if code != 1 or len(findings) != 1:
+                failures.append("  report-test-edits, an unresolved base%s: "
+                                "exited %d, printed %s"
+                                % (" under pre-commit" if pre_commit else "",
+                                   code, lines))
     finally:
         shutil.rmtree(work, ignore_errors=True)
     return failures

@@ -1,5 +1,6 @@
 """The files a hook reads: the tracked ones, never the working-tree walk."""
 
+import posixpath
 import subprocess
 
 # Vendored and installed code is not the project's own. Tracked copies of
@@ -25,12 +26,27 @@ def tracked(suffixes, roots=()):
     except (OSError, subprocess.CalledProcessError):
         raise NotARepository("not inside a git work tree")
     paths = listing.stdout.decode("utf-8").split("\0")
-    prefixes = tuple(r.rstrip("/") + "/" for r in roots)
+    prefixes = normalised(roots)
     return sorted(
         p for p in paths
         if p.endswith(tuple(suffixes))
         and (not prefixes or p.startswith(prefixes))
         and not any(part in VENDORED for part in p.split("/")))
+
+
+def normalised(roots):
+    """Roots as the prefixes git prints; empty when one names the whole tree.
+
+    git prints `docs/a.md`, so `./docs`, `docs/` and `docs\\` all have to
+    become `docs/` before they can match it, and `.` means every path.
+    """
+    prefixes = []
+    for root in roots:
+        clean = posixpath.normpath(root.replace(chr(92), "/"))
+        if clean in (".", ""):
+            return ()
+        prefixes.append(clean + "/")
+    return tuple(prefixes)
 
 
 def read_lines(path):
