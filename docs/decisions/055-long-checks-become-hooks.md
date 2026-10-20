@@ -53,19 +53,26 @@ block, with the pass condition beside it.
 3. **Language**: Python standard library only, `language: python`, so the
    hook environment installs nothing from a third party.
 4. **Template form**: the template keeps the rule, then a fenced
-   `pre-commit run <hook-id> --all-files`, with the pass condition in prose
-   beside it.
+   `pre-commit run <hook-id> --all-files --verbose`, with the pass condition
+   in prose beside it. pre-commit hides a passing hook's output, so the
+   command asks for it, and each hook also sets `verbose: true` in
+   `.pre-commit-hooks.yaml`.
 5. **Output contract**: a hook prints what it inspected, then one line per
-   violation (`path:line: CODE message`). It exits 0 on a pass, 1 on a
-   failure and 3 when it does not apply.
-6. **Frozen surface**: a shipped hook ID, its exit codes and its violation
-   codes are frozen like a section ID. A minor adds hooks, and a hook is
+   violation (`path:line: CODE message`). Run directly, the check exits 0
+   on a pass, 1 on a failure and 3 when it does not apply.
+6. **Not applicable under pre-commit**: pre-commit fails a hook on any
+   nonzero exit, so the hook entry point prints `not applicable: <reason>`
+   and exits 0 where the check would exit 3. The printed line, not the exit
+   status, carries the verdict there.
+7. **Frozen surface**: a shipped hook ID, its direct exit codes, its
+   `not applicable` line and its violation codes are frozen like a section
+   ID. A minor adds hooks, and a hook is
    retired only at a major.
-7. **Embedded-check authoring**: the rules for writing a script inside
+8. **Embedded-check authoring**: the rules for writing a script inside
    Markdown (fence indentation, quoted heredocs, escape-free patterns) move
    from `base-quality-gates` to a new opt-in template, `base-embedded-checks`.
    A project whose own docs carry scripts reaches it through `Extras`.
-8. **Conformance**: this repository runs every hook against itself, and a
+9. **Conformance**: this repository runs every hook against itself, and a
    template block naming a hook resolves to a hook that exists.
 
 ## Alternatives considered
@@ -99,10 +106,17 @@ ships in 3.0.0, before the freeze, and the CHANGELOG lists it under
 
 ## Security
 
-Consumers run this repository's code in their CI, pinned to a tag. Hooks
-read the tree and write nothing, use no network and import only the
-standard library, so a hook compromise is bounded to what a read-only
-script can report. A tag is never moved.
+A hook is trusted executable code: it runs with the permissions of the
+consumer's runner and could write files, start processes or reach the
+network. Nothing in pre-commit confines it. The design narrows the trust a
+consumer extends, without bounding it:
+
+- A hook is written to read the tree and write nothing, with no network
+  access, and review holds it to that. These are conventions, not
+  enforcement
+- Standard-library-only removes third-party packages from the supply chain
+- A consumer pins a tag, which this repository never moves, or a commit
+  SHA where it wants the pin to be immutable
 
 ## Related
 
