@@ -93,13 +93,13 @@ Which documents a project keeps, and how they stay true.
 
 ```bash
 CONFIG=<markdownlint-config>
-widths=$(grep -c 'line_length' "$CONFIG")
+widths=$(grep -c 'line_length' "$CONFIG" || true)
 echo "width settings in $CONFIG: $widths"
-out=$(npx --yes markdownlint-cli2 --config "$CONFIG" "**/*.md" 2>&1)
-status=$?
+status=0
+out=$(npx --yes markdownlint-cli2 --config "$CONFIG" "**/*.md" 2>&1) || status=$?
 files=$(echo "$out" | sed -n 's/^Linting: \([0-9]*\) file.*/\1/p')
 echo "files linted: ${files:-0}"
-echo "$out" | grep -E ' MD[0-9]{3}'
+echo "$out" | grep -E ' MD[0-9]{3}' || true
 [ "$widths" -gt 0 ] && [ "${files:-0}" -gt 0 ] && exit "$status"
 exit 1
 ```
