@@ -64,6 +64,70 @@ verb-object, `check-` for a verdict, `find-` for a list of violations,
 
 ---
 
+## Write or narrow a check
+
+These hold for every check this repository runs, on top of the controls in
+"Control-test a check you are changing".
+
+**A missing precondition is refused, not reported.** When a suite's own
+dependency is absent (a parser, a toolchain, a network), every dependent
+check fails and the summary claims N defects in a tree that has none. With
+its YAML parser stubbed out, a suite reported every check that needed the
+parser as failed, half the suite.
+
+- Refuse the run, name the missing dependency once, and never word it as a
+  finding
+- Scope the refusal to the checks selected; refusing checks that need
+  nothing from the dependency is the same overreach the other way
+- Answer the precondition once, before the first check, not in a guard per
+  check
+- Exit with a status a caller can tell apart from a failing run
+
+**A remedy naming another check is a claim about it.** A failure message
+may name a sibling check as what diagnoses the cause. Narrowing the sibling
+falsifies that message with no failing test and no diff on the file that
+broke: a line-ending gate's remedy pointed at a character gate that a
+well-founded relaxation would have stopped reading documentation with.
+
+- Before narrowing what a check examines, search the suite for the module's
+  name, and re-verify or re-word every remedy that names it in the same
+  change
+- Let the invoker reject a check that passes silently; a rule each check
+  has to remember is kept only by the authors who read it, and one suite
+  shipping this rule breached it in all but one of its checks
+
+```bash
+module="<module-under-change>"
+
+scanned=$(git ls-files 'tests/*.py')
+echo "test modules scanned: $(echo "$scanned" | grep -c .)"
+naming=$(echo "$scanned" | grep -v "/${module}[.]" | xargs grep -l "$module")
+echo "modules naming ${module}: $(echo "$naming" | grep -c .)"
+echo "$naming"
+```
+
+Pass condition: the scanned count is above zero, and every module listed is
+read against the change. A scanned count of zero means the search reached
+nothing; a naming count of zero against a non-zero scan is a real answer.
+
+**A detector over prose is controlled against the style guide.** The
+detector's rule and the style rule that shapes the text can both be right
+and still combine into a blind spot. A check requiring a command in a
+fenced block matched a phrase and the command on one line, and the 88-column
+wrap put them on two lines; a check requiring generated figures matched a
+digit, and spelling numerals under ten made a spelled count invisible to
+it.
+
+- Plant one fixture per style rule that can re-render what the detector
+  forbids: the wrap column, the numeral convention, heading case, dash and
+  quote characters
+- Match a construct longer than one word over the paragraph, not the line,
+  wherever the style guide sets a wrap column
+- Change the pattern, not the prose; rewriting the text fixes one instance
+  and leaves every later rendering unmatched
+
+---
+
 ## Drain a downstream lesson into a template
 
 A lesson sourced from one downstream project (a bug write-up, a session
@@ -567,9 +631,9 @@ EOF
 
 Pass condition: the fixture that must be reported is reported, the one
 that must not is not, and the check's own corpus counts move between the
-two runs. `testing-control-corpus-moves` in
-`templates/core/testing.md` is the rule, and says why the third is
-what makes the first two readable.
+two runs. The third is what makes the first two readable: a fixture the
+check never reached gives exactly the result a correctly silent check
+gives, and only a moving count tells them apart.
 
 For a check that takes an argument — a milestone, a module, a field —
 replace the placeholder line in `body` before calling `run_block`. The
@@ -622,6 +686,25 @@ A control proves something only when each of these holds:
   carries the file, run a control that MUST fail before believing it:
   `gh api` prints a 404 body to stdout, so `--jq '.name'` reads as a hit
   for every input
+- **See the corpus count move.** Adding a fixture adds to what is read; a
+  count that stays put means the fixture never entered the corpus, whatever
+  the run printed. Four checks moved 31 to 32, 91 to 92, 203 to 204 and 75
+  to 76 when converted to automatic verdicts
+- **Assert the placeholder was replaced.** A check run with its argument
+  placeholder still in place reads nothing, by another route
+- **Remove the fixture once the pair is read.** A fixture left in the
+  scanned tree becomes a standing finding that readers learn to dismiss
+
+For a family of checks that share one corpus reader (a tracked-file
+listing, a cursor, an API client), the control blinds that one call, not
+each member's enumeration:
+
+- Derive the members from the shared call, never from a hand-kept roster; a
+  member missing from a roster is never controlled
+- Size the control's own discovery count with a margin, since retiring a
+  member is an ordinary deletion
+- Ship the control as a test, so a member added without a coverage
+  assertion fails on its own pull request
 
 ---
 

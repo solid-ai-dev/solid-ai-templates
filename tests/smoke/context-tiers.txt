@@ -5,4 +5,4 @@
 # itself is not capped -- see ADR-041.
 #
 # <layer> <window>
-fixture 128K
+fixture 64K

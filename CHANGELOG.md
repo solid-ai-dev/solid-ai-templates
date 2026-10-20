@@ -24,6 +24,8 @@ Releases up to 2.63.0 are listed in
   ([#1941], [#1966])
 - SEO rules move from the frontend quality template to a new content
   template ([#2016])
+- Rules for writing checks leave the testing template for the playbook;
+  pipeline-diagnostic and Python-only test rules are removed ([#2069])
 
 ### Added
 
@@ -73,6 +75,8 @@ Releases up to 2.63.0 are listed in
   opt-in measurement template ([#2065])
 - The git rules are short, topic-headed lists, and two of their checks
   ship as hooks ([#2066])
+- The testing rules are short, topic-headed lists; the cohort check moves
+  to data-migration ([#2069])
 
 ### Deprecated
 
@@ -128,6 +132,7 @@ Releases up to 2.63.0 are listed in
 [#2063]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2063
 [#2065]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2065
 [#2066]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2066
+[#2069]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2069
 
 ## [2.90.0] - 2026-09-12
 
