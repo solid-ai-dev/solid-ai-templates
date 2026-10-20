@@ -61,6 +61,8 @@ Releases up to 2.63.0 are listed in
 - Paths, IDs, the manifest and the core rules stay stable until 4.0
   ([#1940], [#2014])
 - A plain imperative counts as a binding rule ([#2017])
+- The quality-gates rules are short, topic-headed lists; their reasoning
+  moves to a rationale doc ([#2060])
 
 ### Deprecated
 
@@ -111,6 +113,7 @@ Releases up to 2.63.0 are listed in
 [#2052]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2052
 [#2053]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2053
 [#2055]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2055
+[#2060]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2060
 
 ## [2.90.0] - 2026-09-12
 
