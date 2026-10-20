@@ -11,7 +11,7 @@ import sys
 # so a fork's own key is read here exactly as it is resolved there.
 from resolve_chain import entry_sections
 
-from runner import ROOT, repository_files, template_files
+from testkit import ROOT, repository_files, template_files
 from .common import (
     _load_manifest, _resolve_stack, _roots_by_kind, _stacks,
     all_template_files, depends_on_refs, HAS_YAML, Inspected,

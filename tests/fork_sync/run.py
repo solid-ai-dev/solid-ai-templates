@@ -19,7 +19,7 @@ import subprocess
 import sys
 import tempfile
 
-from runner import ROOT, PASS, FAIL, ERR, write_report, print_verdict
+from testkit import ROOT, PASS, FAIL, ERR, write_report, print_verdict
 
 # Same boundary settings as the other runners: UTF-8 out, and LF line
 # endings, so a consumer reading this output on Windows sees no stray

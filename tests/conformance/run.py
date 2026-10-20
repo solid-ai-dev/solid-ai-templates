@@ -34,7 +34,7 @@ import tempfile
 
 from conformance import SKIP, MANUAL, READ
 from conformance.dispositions import CHECKS, SKIP_BUDGETS
-from runner import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
+from testkit import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
                  print_verdict, template_documents)
 
 ERR = "ERR"
