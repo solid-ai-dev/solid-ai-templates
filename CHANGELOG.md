@@ -11,6 +11,8 @@ Releases up to 2.63.0 are listed in
 
 ### Breaking changes
 
+- The tools are named verb-first: resolve_chain, sync_docs, check_release
+  and score_templates ([#2052])
 - Stacks, platforms, process rules and the interview move to forks; pin
   2.90.0 or a fork ([#1972])
 - The core rules require only a README and the two agent files ([#1964])
@@ -50,8 +52,6 @@ Releases up to 2.63.0 are listed in
   ([#2048])
 - The Markdown lint config moves to .github/linters; a fork keeps its own
   .markdownlint.json ([#2049])
-- The release check and quality scorer are renamed check_release and
-  score_templates ([#2052])
 - The repository moved to the solid-ai-dev organisation; old links
   redirect ([#1841])
 - Paths, IDs, the manifest and the core rules stay stable until 4.0
