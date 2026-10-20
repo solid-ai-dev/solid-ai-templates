@@ -9,7 +9,7 @@ The givens the design accepts rather than chooses.
 | 1 | Plain Markdown, no build step | A template is read as written; nothing compiles or packages it. Python is needed only for the tools and checks | Chapter 4 |
 | 2 | Agent-agnostic | Any agent that reads a Markdown context file can use the output: Claude Code, Codex CLI, Cursor, GitHub Copilot and others | `templates/core/docs.md`, "Output file by agent" |
 | 3 | Generation is an agent reading Markdown | No compiler sits between the fork and the context file; instructions use neutral wording ("ask the user") | Chapter 6 |
-| 4 | Context windows are finite | Every rule in a widely resolved file is read by every project on that chain, on every turn | `tests/context-tiers.txt`, SYS-16 |
+| 4 | Context windows are finite | Every rule in a widely resolved file is read by every project on that chain, on every turn | `tests/smoke/context-tiers.txt`, SYS-16 |
 
 ## 2.2 Compatibility constraints
 

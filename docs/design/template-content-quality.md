@@ -145,11 +145,11 @@ score 85 or above, essay-like rules 40 or below.
 
 ### The ratchet
 
-`tests/template-quality-baseline.txt` records each template's score. CI runs
+`tests/baselines/template-quality.txt` records each template's score. CI runs
 `--check`, which fails a template scoring below its row, a new template
 scoring under 70 with no row, and a row naming no template. A change that
 improves a template re-records its row with `--update`. A fork records its
-own templates in `tests/fork-template-quality-baseline.txt`, so recording
+own templates in `tests/baselines/fork-template-quality.txt`, so recording
 them never edits the upstream file.
 
 The scores measure form, not correctness: a short, imperative, wrong rule

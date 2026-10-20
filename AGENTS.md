@@ -198,7 +198,7 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
   template-quality ratchet, pyflakes, markdownlint, the pre-commit hooks
   and gitleaks on every PR and on push to `main`
 - Every runner writes a timestamped report to `tests/reports/`
-  (gitignored); `tests/INDEX.md` lists every check
+  (gitignored); `docs/tests/index.md` lists every check
 - markdownlint holds every tracked Markdown file to the rules; never add
   an `ignores` entry to `.github/linters/.markdownlint-cli2.jsonc`
 
@@ -231,11 +231,11 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
   is enforced from conformance. A documentation-only change runs
   markdownlint and a scan for lines over 88 characters, and pushes once
 - Adding a fenced `bash`/`python` block to a template MUST add its
-  disposition in `tests/conformance.py` — run it here, or skip it with
+  disposition in `tests/conformance/dispositions.py` — run it here, or skip it with
   the reason it does not apply. A block unrunnable only because it names
   a placeholder takes a `substitute`, not a skip. A judgement disposition
   MUST state what takes a person and name the check in
-  `tests/reading-budget.txt`
+  `tests/conformance/reading-budget.txt`
 - A conformance run is not clean until its judgement readings are read —
   `0 failed` counts only the automatic verdicts (playbook, "Run the test
   suite")

@@ -5,7 +5,7 @@ directives that name them.
 import os
 import re
 
-from lib import ROOT, template_files
+from runner import ROOT, template_files
 from .common import (
     _load_manifest, _opt_in_roots, _resolve_stack, _roots_by_kind, _stacks,
     all_template_files, depends_on_refs, HAS_YAML, Inspected,

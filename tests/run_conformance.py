@@ -34,8 +34,9 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from conformance import CHECKS, SKIP, MANUAL, READ, SKIP_BUDGETS
-from lib import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
+from conformance import SKIP, MANUAL, READ
+from conformance.dispositions import CHECKS, SKIP_BUDGETS
+from runner import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
                  print_verdict, template_documents)
 
 ERR = "ERR"
@@ -225,7 +226,7 @@ def reading(result):
 
 
 BUDGET = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                      "reading-budget.txt")
+                      "conformance", "reading-budget.txt")
 
 
 def budgeted():
@@ -478,7 +479,7 @@ def main():
         print("  unbudgeted reading: %s" % title)
     if unbudgeted:
         print("A reading is not a failure, but an unregistered one is. "
-              "Reach a verdict, or add it to tests/reading-budget.txt in "
+              "Reach a verdict, or add it to tests/conformance/reading-budget.txt in "
               "this change with the reason it cannot.")
 
     # The report is where a reading is legible; the log is where it is

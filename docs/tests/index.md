@@ -3,8 +3,8 @@
 Procedure specifications for solid-ai-templates following the
 Imbra Procedure Specification Standard.
 
-Spec files live in `tests/specs/`. See `CODIFICATION.md` for the ID scheme, area codes,
-and component group registry.
+Spec files live in `specs/`, beside this file. See `codification.md` for the ID
+scheme, area codes, and component group registry.
 
 Upstream carries the smoke and integration specs only. The end-to-end and
 interview specs test stacks and the interview, so they live in the forks that
