@@ -41,5 +41,5 @@ templates/frontend/ux.md 93.5
 templates/infra/cicd.md 86.8
 templates/infra/containers.md 87.2
 templates/infra/deployment.md 95.4
-templates/security/devsecops.md 98.7
+templates/security/devsecops.md 100.0
 templates/security/security.md 96.2

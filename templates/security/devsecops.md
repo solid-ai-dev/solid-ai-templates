@@ -61,9 +61,8 @@ build, review and release, never after deployment.
 - Run SCA on every deployment to QA, staging and production (MUST)
 - Block the merge on findings you own: SCA over your own dependencies,
   such as `pip-audit`, `npm audit` or `govulncheck` (MUST)
-- Block a fixable critical or high image finding, from a scanner such as
-  Trivy or Grype (MUST); report an unfixable base-layer one, with an SBOM,
-  without blocking
+- Block a fixable critical or high image finding (MUST)
+- Report an unfixable base-layer finding with an SBOM, without blocking
 - Keep a scan that runs only on a tag or release job advisory, and off the
   deploy's dependency path
 - Track the base image with a dependency bot, so an available base update
@@ -74,9 +73,9 @@ build, review and release, never after deployment.
 - Generate a software bill of materials per release (MUST)
 - Describe what a consumer installs, not what CI built with: install the
   artifact into a clean environment and scan that (MUST)
-- Assert the component set before attaching the SBOM: each package and
-  version matches the expected runtime dependency set, and a library with
-  no runtime dependencies lists exactly one component (MUST)
+- Match each SBOM package and version to the expected runtime dependency
+  set before attaching it (MUST)
+- List exactly one component for a library with no runtime dependencies
 - Generate it reproducibly where the tool supports it, so anyone can
   rebuild the SBOM for a tag and compare it byte for byte
 - Attach it to the per-tag release record, never only to a CI artifact
@@ -94,9 +93,8 @@ jq -r '(.components // [])[] | "\(.name) \(.version // "-")"' "$SBOM" | sort
 ```
 
 Pass condition: the listed packages and versions equal the expected
-runtime dependency set, the library alone where it has none. A count of zero exits
-non-zero: the document carries no components, not a product without
-dependencies. A document jq cannot parse or read exits non-zero too.
+runtime dependency set. A zero count exits non-zero, since it means no
+components were recorded, and so does a document jq cannot read.
 
 ## DAST
 
