@@ -4,8 +4,6 @@ Why the rules in `templates/core/quality-gates.md` say what they say. The
 template states each rule as one instruction; the reasoning, the failure it
 prevents and the worked examples are here, one heading per section ID.
 
----
-
 ## quality-gates-pair-check
 
 A constraint that travels into a generated project, such as a template output
@@ -23,16 +21,12 @@ half as innocent. Two individually correct rules combine into a blind spot. A
 phrase added to its vocabulary without an instance widens the false positives
 and finds nothing.
 
----
-
 ## quality-gates-convention-as-test
 
 A prose convention is forgotten and the next divergent record lands
 undetected; a test enumerating the records fails loudly, naming the pair. For
 example, entries sharing a canonical product URL share their generated image
 file, and build outputs in one locale share a glossary file.
-
----
 
 ## quality-gates-staleness
 
@@ -48,8 +42,6 @@ freezes that block permanently. Without the gate a stale file looks identical
 to a fresh one. The issue asking for a gate usually names only the generator's
 path, which is why filters scoped to it are the common mistake.
 
----
-
 ## quality-gates-procedure-steps
 
 An operator runs a procedure top to bottom. One step's gate fires, is fixed
@@ -58,15 +50,11 @@ step is simply not done. A procedure with no gates invites care; one gate
 invites trust in all of it. Re-cutting a published release to repair an
 omitted step is worse than the gap, so the archive keeps the gap.
 
----
-
 ## base-quality-gates-tier-promotion
 
 Promotion converts a silent failure into a measurable metric, so the eventual
 fix lands against a regression target instead of working blind. When a fix
 does not fit one session, measure first by elevating the case a tier.
-
----
 
 ## quality-gates-check-runs
 
@@ -99,8 +87,6 @@ exists to prevent, and it is worse than none because it looks enforced.
   rule when the rule changes upstream. A pinned hook runs the check the rule
   names, and the template carries the command instead of the code.
 
----
-
 ## quality-gates-check-timing
 
 Run before the change, a check reports the state before the change, and
@@ -109,8 +95,6 @@ check that repairs its own subject answers differently the second time. The
 failure is silent by construction: an early pass and a final pass are the
 same line of output, and the run that would contradict it is the one nobody
 makes.
-
----
 
 ## quality-gates-check-selection
 
@@ -122,8 +106,6 @@ A line-ending gate counting index entries classified as CRLF is the sharper
 case. A file that gains a NUL byte is reclassified as binary, which stops it
 being normalised and stops it matching the gate's filter. The count stays zero
 exactly while the defect is present.
-
----
 
 ## quality-gates-scope-agreement
 
@@ -150,8 +132,6 @@ tree sees local scratch and ignored artifacts CI never sees, and a test
 depending on line endings, locale, timezone, case sensitivity or binaries
 passes in CI and fails locally. Running locally first catches what a
 clean-room CI cannot.
-
----
 
 ## quality-gates-retrofit-ratchet
 
@@ -255,8 +235,6 @@ exception because the narrower class varies by interpreter version. The linter
 is wrong there. Narrowing reintroduces the platform dependence, and freezing
 the file suppresses the check for every other assertion in it.
 
----
-
 ## quality-gates-test-edit-boundary
 
 Where tests are the source of truth, a merge-on-green policy cannot see a
@@ -276,8 +254,6 @@ test-file count of zero under a non-zero range total means no tests were
 touched, while a range total of zero means nothing was inspected. Exit 3 is
 the reserved status for a check whose moment is not in progress. This is
 governance, not a new threshold.
-
----
 
 ## quality-gates-verdict-reading
 

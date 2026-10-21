@@ -10,8 +10,6 @@ happens and why it's the only failure mode the project actually
 controls; this one covers *what to do about it* during review and
 audit.
 
----
-
 ## Why structure prevents dilution
 
 A model's attention isn't a fixed budget spread evenly across every
@@ -35,8 +33,6 @@ So a set of well-structured templates with unique, scoped rules behaves
 roughly like as many chapters of one well-organized reference. The
 same templates' content dumped into a single 100 KB CLAUDE.md would
 lose that advantage even though the bytes are identical.
-
----
 
 ## What compounds dilution
 
@@ -64,8 +60,6 @@ question, still gets occasional false-positive matches. Trim the
 dependency chain so every loaded template's rules can plausibly
 fire on this project.
 
----
-
 ## The discipline
 
 Twofold:
@@ -77,8 +71,6 @@ Twofold:
 - **Only load what applies.** A project's `[DEPENDS ON]` chain
   should resolve to templates whose rules are actually applicable.
   Audit periodically — drift accumulates as stacks evolve.
-
----
 
 ## What this means for review
 
@@ -104,8 +96,6 @@ not just correctness or style.
 See spike #350 (viability audit) for the broader framing — axes 2
 (rule effectiveness) and 7 (validation gap) are the load-bearing
 concerns, and this document supplies the operational checks.
-
----
 
 ## Measured criteria
 
@@ -156,8 +146,6 @@ them never edits the upstream file.
 The scores measure form, not correctness: a short, imperative, wrong rule
 scores well. They sit beside review and the efficacy benchmark, not in
 place of them.
-
----
 
 ## Source material
 

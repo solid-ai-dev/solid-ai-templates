@@ -9,8 +9,6 @@ figures are illustrative, not measured for this repo. Where a number
 appears with a range (e.g. "~3–8s"), treat it as order-of-magnitude
 intuition, not a benchmark.
 
----
-
 ## TL;DR
 
 - **Cold-start cost** = full prompt processed from scratch (templates +
@@ -22,8 +20,6 @@ intuition, not a benchmark.
 - **Optimize for clarity, not bytes.** A 15 KB document where each
   rule is one line beats a 30 KB document where the same rules are
   scattered through changelogs.
-
----
 
 ## Latency
 
@@ -61,8 +57,6 @@ noticeably slower than a 10k-token one (illustrative: ~3–8s vs ~1–2s
 before the model begins generating). Within the session the cache
 holds and CLAUDE.md size barely matters — but every new session pays
 the cold cost again.
-
----
 
 ## Quality
 
@@ -123,8 +117,6 @@ and audits are covered in detail in
 `docs/design/template-content-quality.md` — that's the operational
 home for keeping the template library in shape so this section's
 "mostly fine" stays true.
-
----
 
 ## Implications for templates
 
@@ -191,8 +183,6 @@ When the question is "should this go in CLAUDE.md?", reframe as:
 
 The result is a CLAUDE.md where every line earns its place by being a
 rule the agent will apply on the next turn.
-
----
 
 ## Source material
 

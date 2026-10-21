@@ -7,8 +7,6 @@ Applies to any backend service that has protected resources.
 Extends `security-authn` and `security-sessions` from the base
 security template with backend-specific depth.
 
----
-
 ## General principles
 
 - Authentication (who are you?) and authorization (what can you do?) are
@@ -16,8 +14,6 @@ security template with backend-specific depth.
 - Never implement your own cryptographic primitives — use well-audited libraries
 - Fail closed: deny access by default; grant explicitly
 - Centralise auth logic — no scattered permission checks across route handlers
-
----
 
 ## Authentication
 [EXTEND: security-authn]
@@ -31,8 +27,6 @@ security template with backend-specific depth.
 - Store refresh tokens server-side (database or cache) so they can be revoked —
   stateless refresh tokens cannot be invalidated before expiry
 
----
-
 ## Token transport
 [ID: backend-auth-token-transport]
 
@@ -42,8 +36,6 @@ security template with backend-specific depth.
 - Refresh tokens MUST be stored in `httpOnly`, `Secure`, `SameSite=Strict`
   cookies — never in `localStorage` or JavaScript-accessible memory
 - HTTPS required for all authenticated endpoints — no exceptions
-
----
 
 ## Authorization
 
@@ -57,8 +49,6 @@ security template with backend-specific depth.
 - Never trust client-supplied IDs for ownership checks — always verify that
   the authenticated user owns or has access to the requested resource
 
----
-
 ## API keys (service-to-service)
 
 - Issue API keys with the minimum required scope
@@ -67,8 +57,6 @@ security template with backend-specific depth.
 - Log every API key usage with the key ID (not the key value) and the
   calling service identity
 
----
-
 ## Observability
 
 - Log authentication failures at WARN with IP, user agent, and username
@@ -76,8 +64,6 @@ security template with backend-specific depth.
 - Log authorization failures at WARN with user ID, resource, and action
 - Alert on a spike in auth failures — may indicate a credential stuffing attack
 - Never log tokens, passwords, or secrets — even at DEBUG level
-
----
 
 ## Testing
 

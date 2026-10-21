@@ -5,8 +5,6 @@
 Test input for the checks that read a platform, not a platform to pick. It
 resolves as its own root, beside the fixture stack and never inside it.
 
----
-
 ## CI
 [ID: platform-fixture-ci]
 

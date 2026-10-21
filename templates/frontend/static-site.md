@@ -8,16 +8,12 @@ Abstract rules for any static site generated at build time and served as
 plain HTML, CSS, and minimal JavaScript. Never used directly — always
 extended by a framework-specific stack (Astro, Hugo, Eleventy, etc.).
 
----
-
 ## Stack
 [ID: static-site-stack]
 
 - Output: static HTML generated at build time
 - Serving: CDN or plain web server — no server-side runtime required
 - JavaScript: minimal and opt-in — zero-JS by default where possible
-
----
 
 ## Architecture principle
 [ID: static-site-architecture]
@@ -33,8 +29,6 @@ Edit here                    Deployed here
   client-side state is genuinely required
 - One stylesheet — no inline styles except dynamic/computed values
 
----
-
 ## Pages
 [ID: static-site-pages]
 
@@ -42,8 +36,6 @@ Edit here                    Deployed here
 |----------|---------|-------------------|
 | Homepage | `/`     | The site's entry page |
 | 404      | `/404`  | Custom error page |
-
----
 
 ## Code conventions
 [ID: static-site-code]
@@ -53,8 +45,6 @@ Edit here                    Deployed here
 - Let one formatter own all formatting, with its configuration committed;
   no style debates in code review
 
----
-
 ## CSS conventions
 [EXTEND: frontend-quality]
 
@@ -62,8 +52,6 @@ Edit here                    Deployed here
 - Use CSS custom properties from `:root` for all colours and spacing
 - BEM-like naming: `.component-element` (e.g. `.hero-grid`, `.nav-link`)
 - No CSS-in-JS, no utility frameworks unless explicitly chosen in stack
-
----
 
 ## Typography
 [ID: static-site-typography]
@@ -78,8 +66,6 @@ Edit here                    Deployed here
   the build serves statically
   and declare `@font-face` in CSS — never depend on external CDNs at runtime
 - Use `font-display: block` for self-hosted fonts to prevent layout shift
-
----
 
 ## Theme persistence
 [ID: static-site-theme]
@@ -98,16 +84,12 @@ Edit here                    Deployed here
 - MUST NOT set the theme in a body script or deferred module — this causes
   a visible flash from light to dark on every page load
 
----
-
 ## Performance
 [EXTEND: frontend-quality]
 
 - Preload critical above-the-fold assets (hero image, primary font)
 - Static generation by default — no client-side rendering unless necessary
 - Defer non-critical scripts
-
----
 
 ## Trailing slash
 [ID: static-site-trailing-slash]

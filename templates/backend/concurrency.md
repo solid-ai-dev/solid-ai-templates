@@ -5,8 +5,6 @@ Universal rules for multi-threading, multi-processing, and async I/O.
 Language-specific rules belong in the stack template via [EXTEND:
 backend-concurrency].
 
----
-
 ## When to use what
 
 | Workload | Recommended model | Avoid |
@@ -19,8 +17,6 @@ backend-concurrency].
 Default to async for I/O-bound services. Reach for processes only when
 CPU-bound work cannot be offloaded to a background job or worker process.
 
----
-
 ## Shared state
 
 - Avoid shared mutable state — prefer immutable data structures or
@@ -29,8 +25,6 @@ CPU-bound work cannot be offloaded to a background job or worker process.
   document which lock guards which data
 - Never hold a lock while performing I/O — risk of deadlock and contention
 - Prefer fine-grained locks over a single global lock
-
----
 
 ## Structured concurrency
 
@@ -42,8 +36,6 @@ CPU-bound work cannot be offloaded to a background job or worker process.
   as the first argument to any function that may block
 - On shutdown, cancel all in-flight work and wait for it to finish before
   the process exits — do not rely on OS cleanup
-
----
 
 ## Pitfalls
 
@@ -59,8 +51,6 @@ CPU-bound work cannot be offloaded to a background job or worker process.
   context (e.g. request ID, user identity) must be explicitly passed,
   not stored in thread-locals
 
----
-
 ## Observability
 
 - Log the concurrency model in use at service startup (thread pool size,
@@ -69,8 +59,6 @@ CPU-bound work cannot be offloaded to a background job or worker process.
   indicates a leak
 - Alert on deadlock symptoms: requests timing out uniformly across all
   endpoints with no error in logs
-
----
 
 ## Testing
 

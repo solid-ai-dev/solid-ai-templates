@@ -5,8 +5,6 @@
 Rules for migrating data between schemas, systems, or formats.
 Covers versioned migrations, bulk transfers, and rollback strategies.
 
----
-
 ## Migration versioning
 [ID: data-migration-versioning]
 
@@ -21,8 +19,6 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 - Migration files MUST be committed to version control alongside
   the code that depends on the schema change
 
----
-
 ## Migration structure
 [ID: data-migration-structure]
 
@@ -36,8 +32,6 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 - Separate schema migrations (DDL) from data migrations (DML)
   — they have different risk profiles and rollback strategies
 
----
-
 ## Pre-migration checks
 [ID: data-migration-prechecks]
 
@@ -48,8 +42,6 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
   dataset to measure duration and resource usage
 - Back up the affected tables or database before applying
   destructive migrations
-
----
 
 ## Zero-downtime migrations
 [ID: data-migration-zero-downtime]
@@ -66,8 +58,6 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
   table and breaks existing inserts
 - Use the database's online schema-change tooling for large table
   alterations
-
----
 
 ## Rollback strategy
 [ID: data-migration-rollback]

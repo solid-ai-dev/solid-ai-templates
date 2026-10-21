@@ -8,8 +8,6 @@ Upstream and its forks share this registry, so a number a fork uses is
 reserved here too. Entries marked *fork* name specs a fork carries, such
 as Imbra's; upstream carries none of them.
 
----
-
 ## ID format
 
 ```
@@ -25,15 +23,11 @@ as Imbra's; upstream carries none of them.
 | `NNN` | Three-digit sequence number within the group |
 | `VER` | Version letter — `A` original, `B` first major revision |
 
----
-
 ## Product code
 
 | Code | Product |
 |------|---------|
 | `SAIT` | solid-ai-templates |
-
----
 
 ## Procedure types
 
@@ -42,8 +36,6 @@ as Imbra's; upstream carries none of them.
 | `SMK` | Smoke test | Quick structural health check — files exist, IDs unique, paths resolve |
 | `INT` | Integration test | Verify two or more templates work together correctly |
 | `E2E` | End-to-end test | *fork* — Verify a complete interview → output generation flow |
-
----
 
 ## Areas
 
@@ -57,8 +49,6 @@ as Imbra's; upstream carries none of them.
 | `ITV` | Interview | *fork* — Interview flow — required questions, defaults, answer precedence |
 | `DPL` | Deployment | *fork* — Deployment target scenarios — cloud, hybrid, offline |
 | `ADR` | ADR governance | ADR file conventions — frontmatter schema, supersession links, status discipline |
-
----
 
 ## Component groups
 
@@ -177,8 +167,6 @@ reused for a different component within the same area.
 |--------|-----------|
 | `01` | Frontmatter schema — id, status, date, category, supersedes/superseded_by validity and reciprocal links |
 
----
-
 ## Version suffix
 
 | Suffix | Meaning |
@@ -189,8 +177,6 @@ reused for a different component within the same area.
 
 Amend in place (no new suffix) for: typo fixes, wording clarifications,
 corrected prerequisites where test intent is unchanged.
-
----
 
 ## Full ID examples
 

@@ -5,8 +5,6 @@ procedure. See `AGENTS.md` for authoring rules and `docs/spec.md` for the
 composition model. Commands use `py`; `CONTRIBUTING.md`, "Set up",
 gives the launcher on macOS and Linux.
 
----
-
 ## Add a new base or layer template
 
 Stacks, platforms, workflow and language templates live in forks
@@ -34,8 +32,6 @@ and layer templates only.
 6. Upstream carries no stack to reference the new file. A fork's stacks
    name it in their `[DEPENDS ON: ...]` headers once the fork merges it
 
----
-
 ## Ship a check as a hook
 
 A check script over 15 lines leaves its template and ships as a pre-commit
@@ -61,8 +57,6 @@ verb-object, `check-` for a verdict, `find-` for a list of violations,
    `tests/smoke/hooks.py`, and confirm each fails without the hook's fix
 6. Run `py tests/run.py smoke` and `py tests/run.py conformance` after
    committing
-
----
 
 ## Write or narrow a check
 
@@ -175,8 +169,6 @@ pattern that works when typed breaks when written through the tool:
 | `\b` at each end | `(?<![A-Za-z0-9])` and `(?![A-Za-z0-9])` |
 | a literal backslash | `chr(92)` |
 
----
-
 ## Drain a downstream lesson into a template
 
 A lesson sourced from one downstream project (a bug write-up, a session
@@ -238,8 +230,6 @@ genericity before it becomes template content:
    attention-dilution failure
 6. Validate per "Validate a template change"
 
----
-
 ## Rename a template file
 
 1. `git mv <old-path> <new-path>`
@@ -249,8 +239,6 @@ genericity before it becomes template content:
    `docs/` and `README.md` for the old filename and replace the rest
 5. Verify with `git status` that no old references remain
 
----
-
 ## Rename a section ID
 
 1. Change `[ID: <old>]` to `[ID: <new>]` in the source template
@@ -258,8 +246,6 @@ genericity before it becomes template content:
    — update every occurrence
 3. Update `manifest.yaml` if the ID is referenced in `depends_on` lists
 4. Update `manifest.yaml` if the concept maps to a template entry
-
----
 
 ## Author a new ADR
 
@@ -344,8 +330,6 @@ For consumers adopting the selective-adoption and ADR-threshold update:
   run the project's relevant existing checks. Select a released tag when the
   policy ships; until then the current pin remains usable.
 
----
-
 ## Generate a context file for a project
 
 Upstream ships no stacks, no interview and no pre-resolved chains
@@ -361,8 +345,6 @@ upstream as a fork".
 
 The fork's own documents own the generation paths, its pre-resolved
 chains and the model limits of its stacks.
-
----
 
 ## Validate a template change
 
@@ -409,8 +391,6 @@ time and the tree — `<timestamp>-<runner>-<short-hash>.md`, with `-dirty`
 where the working tree was not that commit, and no suffix where there is
 no repository to read.
 
----
-
 ## Audit redundancy
 
 A rule stated in two active sections of the same resolved chain dilutes
@@ -449,8 +429,6 @@ accepted for a reason takes a `BASELINE` entry in
 `tools/audit_redundancy.py` naming it; remove the entry once the
 duplicate is resolved — `--check` reports any entry that no longer
 applies.
-
----
 
 ## Review a template
 
@@ -491,7 +469,8 @@ skipped.
 5. **Rewrite.** One instruction per bullet, with its reason in
    `docs/rationale/<name>.md` under the same heading. Use topic headings of
    one to four words, as the top-scoring templates do, and order sections
-   by when the rule applies. Leave no horizontal rule
+   by when the rule applies. Leave no horizontal rule; a local pre-commit
+   hook fails on one
 6. **Keep the strength.** A plain imperative reads as MUST, so rewriting a
    SHOULD or MAY rule as an imperative raises it silently. Carry every
    SHOULD, MAY, "(if applicable)" and "where appropriate" onto the new
@@ -516,8 +495,6 @@ skipped.
    qualifier, the second side of a conflict) and say so in the pull
    request. Add a migration-guide row for each move or removal, and the
    CHANGELOG line once the pull request has its number
-
----
 
 ## Score template quality
 
@@ -544,8 +521,6 @@ planted cases first and refuses a run that scored no template.
 2. After improving a template, run `--update` and commit the raised rows
    with the change. Never lower a row by hand
 3. A new template scores 70 or above, or CI fails it until it is rewritten
-
----
 
 ## Run the test suite
 
@@ -653,8 +628,6 @@ change: the `reason` beside the disposition, and the title in the budget.
 Renaming a check means moving its budget line too — the runner reports the
 stale entry as an unbudgeted reading rather than ignoring it.
 
----
-
 ## Sync with upstream as a fork
 
 A fork stays current by merging upstream, never by copying files
@@ -713,8 +686,6 @@ adds to every chain's core tier under `fork_core:`, and never edits
 
 `py tests/run.py fork_sync` simulates a fork merging upstream's `HEAD`
 this way on every upstream pull request.
-
----
 
 ## Vendor the templates in a project
 
@@ -785,8 +756,6 @@ never adopted is removed or recorded as a deliberate addition.
 CI may not show a missing submodule exclusion: checkout actions commonly
 skip submodules, so CI sees an empty directory while the local command
 fails.
-
----
 
 ## Control-test a check you are changing
 
@@ -917,8 +886,6 @@ each member's enumeration:
 - Ship the control as a test, so a member added without a coverage
   assertion fails on its own pull request
 
----
-
 ## Run a 360-degree audit
 
 The 360 procedure is process, so a fork carries it in
@@ -936,8 +903,6 @@ when a stakeholder needs the whole picture.
   bottleneck, and per-dimension findings tables with a grade rationale.
 - File a labelled issue for every actionable finding (`AGENTS.md` §2.2)
   and reference it from the report.
-
----
 
 ## Submit a pull request
 
@@ -999,8 +964,6 @@ Pass condition: the documents-inspected and ordinals-inspected counts are
 above zero and `numbering problems` is zero. `.pre-commit-config.yaml`
 lists the documents; one with no ordinal is a finding, because the pattern
 drifted from its convention.
-
----
 
 ## Triage a report
 
@@ -1077,8 +1040,6 @@ At the measured 57 issues a month, at least 93 of the 150 accepted reports
 wait in the backlog, and more do once triage time comes out of that
 capacity. That is the service level: a report is read in the next batch,
 and accepted work waits for a release that selects it.
-
----
 
 ## Pick up an issue
 
@@ -1163,8 +1124,6 @@ Pass condition: the sibling's state, at least one linked pull request, and
 the files each touched. Check the deferring criterion against those files;
 a mechanism named in none of them is the finding.
 
----
-
 ## Groom the backlog
 
 Run this before scoping a cut. The procedure and the reasons behind its
@@ -1203,8 +1162,6 @@ the version being cut under a theme matching what actually shipped, and
 assign the closed issues to that. Met on 2026-09-03: `v2.73` was themed for
 six unstarted issues while five unrelated ones had already merged, and one
 issue had been put in it solely to satisfy the release gate.
-
----
 
 ## Survey the consuming repositories
 
@@ -1263,8 +1220,6 @@ no gate here can see.
    taken, before the decision is made. A survey quoted later without its date
    asserts about today's tree what was true on the day it ran
 
----
-
 ## Retire a document
 
 Retiring a document does not retire what it says.
@@ -1279,8 +1234,6 @@ Retiring a document does not retire what it says.
 - The concept-retirement sweep in `templates/core/quality.md` does not
   cover this: it chases instructions to apply a retired concept and settles
   for historical records, which are exactly what carry the content here
-
----
 
 ## Wrap up a session
 
@@ -1326,8 +1279,6 @@ second wrap-up in one session.
     turns into a fix. Where the checklist runs twice in a session, only
     the last pass writes the entry
 16. **Summary** — what was done and what is next
-
----
 
 ## Release a new version
 

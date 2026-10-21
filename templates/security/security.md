@@ -10,8 +10,6 @@ vulnerable components, identification and authentication failures,
 software and data integrity failures, logging and monitoring failures,
 and server-side request forgery.
 
----
-
 ## Input validation
 
 [ID: security-input]
@@ -27,8 +25,6 @@ and server-side request forgery.
 - Internal code trusts validated data — do not re-validate in
   service or repository layers
 
----
-
 ## Output encoding (XSS)
 
 [ID: security-output]
@@ -43,8 +39,6 @@ and server-side request forgery.
   or `| safe` with user-supplied data
 - Context matters — HTML encoding does not prevent URL injection
 
----
-
 ## Injection prevention
 
 [ID: security-injection]
@@ -58,8 +52,6 @@ and server-side request forgery.
 - Never pass user input to `eval()`, `exec()`, `Function()`,
   or equivalent dynamic code execution
 
----
-
 ## Authentication
 
 [ID: security-authn]
@@ -71,8 +63,6 @@ and server-side request forgery.
   attacks leak information through response time
 - Support multi-factor authentication for privileged operations
 - Lock accounts or throttle after repeated failed attempts
-
----
 
 ## Session management
 
@@ -86,8 +76,6 @@ and server-side request forgery.
   for sensitive applications, configurable otherwise
 - Invalidate sessions on logout — do not rely on cookie expiry
   alone
-
----
 
 ## Cross-site request forgery (CSRF)
 
@@ -110,8 +98,6 @@ and server-side request forgery.
   explicitly needs no CSRF token — the browser never adds that header
   on its own; an API that also accepts cookie authentication does
 
----
-
 ## Secrets in code
 
 [ID: security-secrets]
@@ -127,8 +113,6 @@ and server-side request forgery.
   removing from git history is not sufficient; the secret is
   compromised
 
----
-
 ## Transport security
 
 [ID: security-transport]
@@ -140,8 +124,6 @@ and server-side request forgery.
 - Use strong cipher suites — disable known-weak ciphers
 - Internal service-to-service traffic SHOULD use mTLS via a
   service mesh or explicit certificate configuration
-
----
 
 ## Security headers
 
@@ -166,8 +148,6 @@ and server-side request forgery.
 - Do not expose server version or technology stack in headers —
   remove `X-Powered-By`, `Server` version strings
 
----
-
 ## Error handling
 
 [ID: security-errors]
@@ -181,8 +161,6 @@ and server-side request forgery.
 - Do not reveal whether a resource exists via error messages —
   login errors should say "invalid credentials", not "user not
   found" vs "wrong password"
-
----
 
 ## Logging
 
@@ -199,8 +177,6 @@ and server-side request forgery.
 - Retain security logs for a defined period — compliance may
   require 90 days to 7 years
 
----
-
 ## CORS
 
 [ID: security-cors]
@@ -213,8 +189,6 @@ and server-side request forgery.
   needs
 - Set `Access-Control-Max-Age` to cache preflight responses —
   reduces latency and server load
-
----
 
 ## Deserialization and data integrity
 
@@ -231,8 +205,6 @@ and server-side request forgery.
   do not trust upstream registries blindly
 - CI/CD pipelines MUST use pinned, verified actions and images —
   never pull `latest` tags in production pipelines
-
----
 
 ## Server-Side Request Forgery (SSRF)
 
@@ -252,8 +224,6 @@ and server-side request forgery.
 - Limit response size and timeout for outbound requests to
   prevent resource exhaustion
 
----
-
 ## File uploads
 
 [ID: security-uploads]
@@ -267,8 +237,6 @@ and server-side request forgery.
   (path traversal risk)
 - Scan uploaded files for malware if the application serves them
   to other users
-
----
 
 ## Agent secrets handling
 

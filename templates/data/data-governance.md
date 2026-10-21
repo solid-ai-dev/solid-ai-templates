@@ -6,8 +6,6 @@ Rules for data classification, retention, privacy, and ownership.
 Applies to any project that stores or processes user data, business
 data, or regulated information.
 
----
-
 ## Data classification
 [ID: data-governance-classification]
 
@@ -23,8 +21,6 @@ data, or regulated information.
 - Access controls MUST match the classification tier — confidential
   and restricted data require role-based access
 
----
-
 ## PII handling
 [ID: data-governance-pii]
 
@@ -36,8 +32,6 @@ data, or regulated information.
   hard delete or anonymize, never just soft-delete PII
 - PII MUST NOT appear in logs, error messages, or stack traces
 - Mask or redact PII in non-production environments
-
----
 
 ## Retention
 [ID: data-governance-retention]
@@ -52,8 +46,6 @@ data, or regulated information.
 - Document the purge mechanism: soft delete → hard delete after
   N days, or direct hard delete
 
----
-
 ## Data ownership
 [ID: data-governance-ownership]
 
@@ -64,8 +56,6 @@ data, or regulated information.
 - Cross-domain data access MUST go through defined interfaces
   (APIs, views) — not direct table access
 - Document data ownership in the schema or data dictionary
-
----
 
 ## Audit trail
 [ID: data-governance-audit]

@@ -13,8 +13,6 @@ and shields the application tier. Keep business logic out of it — that
 belongs in the application layer. API-gateway routing inside a service
 mesh is covered by `microservices.md`.
 
----
-
 ## TLS termination
 
 - Terminate TLS at the edge and redirect all plain HTTP to HTTPS — the
@@ -69,8 +67,6 @@ mesh is covered by `microservices.md`.
   internal hostnames from responses
 - Restrict admin, metrics, and health endpoints to internal networks —
   never expose them through the public edge
-
----
 
 ## Testing
 [EXTEND: base-testing]

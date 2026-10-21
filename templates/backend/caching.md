@@ -4,16 +4,12 @@
 Cross-cutting caching rules for any backend service. Applies regardless of
 cache technology (Redis, Memcached, in-process).
 
----
-
 ## When to cache
 
 - Cache data that is expensive to compute or retrieve and changes infrequently
 - Do NOT cache data that MUST be real-time (e.g. account balances, stock levels)
 - Do NOT cache secrets, credentials, tokens, or PII — even temporarily
 - Prefer no cache over a stale cache for safety-critical or financial data
-
----
 
 ## Patterns
 
@@ -28,8 +24,6 @@ cache technology (Redis, Memcached, in-process).
 - Never cache at more than one layer for the same data — multiple caches
   create inconsistency and make invalidation impossible to reason about
 
----
-
 ## Keys
 
 - Namespaced keys: `<service>:<entity>:<id>` — e.g. `users:profile:42`
@@ -37,8 +31,6 @@ cache technology (Redis, Memcached, in-process).
   `users:v2:profile:42`
 - Document the key schema — undocumented keys become orphaned entries
 - Never construct keys from unvalidated user input — risk of cache poisoning
-
----
 
 ## TTL and expiry
 
@@ -49,8 +41,6 @@ cache technology (Redis, Memcached, in-process).
 - Use cache tags or explicit invalidation for data that must expire on write,
   not just on timeout
 
----
-
 ## Invalidation
 
 - Invalidate cache entries on write, not only on TTL expiry
@@ -59,8 +49,6 @@ cache technology (Redis, Memcached, in-process).
 - Prefer targeted invalidation (`DEL users:profile:42`) over broad flush
   (`FLUSHDB`) — a cache flush is an outage in disguise
 - Document which code path owns invalidation for each cache key
-
----
 
 ## Resilience
 
@@ -72,16 +60,12 @@ cache technology (Redis, Memcached, in-process).
 - Protect against cache stampede (thundering herd): use probabilistic early
   expiry, a mutex/lock on population, or a background refresh
 
----
-
 ## Observability
 
 - Instrument cache hit rate, miss rate, and eviction rate
 - Alert if hit rate drops significantly below baseline — indicates
   misconfigured TTL or an invalidation bug
 - Log cache errors at WARN level; log stampede events at INFO
-
----
 
 ## Testing
 [EXTEND: base-testing]
