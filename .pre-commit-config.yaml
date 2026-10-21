@@ -23,3 +23,32 @@ repos:
         language: python
         pass_filenames: false
         always_run: true
+
+      # The documents here with a numbered structure that concurrent
+      # branches edit; the playbook, "Submit a pull request", says why. The
+      # shipped hook runs from its source, which this repository does not
+      # install as a package.
+      - id: check-heading-numbers
+        name: check-heading-numbers
+        entry: >-
+          python -c "import sys; sys.path.insert(0, 'hooks');
+          from solid_ai_checks.__main__ import main;
+          sys.exit(main(['check-heading-numbers', '--pre-commit']
+          + sys.argv[1:]))"
+        language: python
+        pass_filenames: false
+        always_run: true
+        verbose: true
+        args:
+          - --path=AGENTS.md
+          - --path=docs/playbook.md
+          - --path=docs/architecture/01-introduction-and-goals.md
+          - --path=docs/architecture/02-constraints.md
+          - --path=docs/architecture/03-context-and-scope.md
+          - --path=docs/architecture/04-solution-strategy.md
+          - --path=docs/architecture/05-building-block-view.md
+          - --path=docs/architecture/06-runtime-view.md
+          - --path=docs/architecture/08-crosscutting-concepts.md
+          - --path=docs/architecture/10-quality-requirements.md
+          - --path=docs/architecture/11-risks-and-technical-debt.md
+          - --path=docs/architecture/12-glossary.md

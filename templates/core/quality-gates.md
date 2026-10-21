@@ -101,7 +101,7 @@ informally.
 
 - Run a check in the form it ships before merging the rule
 - Run a check whose subject is the change under review in the environment
-  that builds its tree; `base-git` states what that run has to show
+  that builds its tree
 - Report what a check inspected, not only what it found; the test-suite
   form of this rule is `testing-negative-assertion-coverage`
 - Report every finding before exiting; where a check cannot continue past
