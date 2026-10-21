@@ -17,7 +17,7 @@ templates/backend/messaging.md 96.8
 templates/backend/microservices.md 93.5
 templates/backend/monitoring.md 98.5
 templates/backend/observability.md 96.6
-templates/backend/webhooks.md 86.9
+templates/backend/webhooks.md 100.0
 templates/core/agents.md 100.0
 templates/core/config.md 99.3
 templates/core/docs.md 99.1
