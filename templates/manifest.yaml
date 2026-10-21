@@ -56,7 +56,7 @@ base:
     description: Env vars, secrets, fail-fast validation
   - id: base-deployment
     file: templates/infra/deployment.md
-    description: Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
+    description: Deployment targets, certs, load balancing, DNS, registries, secrets, network
   - id: base-data-quality
     file: templates/data/data-quality.md
     description: Data sourcing, completeness, freshness, research, scoring — data-heavy projects
