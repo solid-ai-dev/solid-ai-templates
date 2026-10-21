@@ -16,8 +16,9 @@ merged PR and a deployed artifact — humans approve, machines execute.
 
 ## Patterns
 
-- Use gate job, path filtering, fan-out/fan-in, artifact promotion,
-  caching, matrix builds, auto-merge, and deploy preview patterns
+- Select the patterns the project's workflow needs (MAY): gate job, path
+  filtering, fan-out/fan-in, artifact promotion, caching, matrix builds,
+  auto-merge, deploy previews
 - Build every image the project ships in the pipeline, never by hand
 
 ## Pipeline stages
