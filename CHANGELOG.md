@@ -121,6 +121,8 @@ Releases up to 2.63.0 are listed in
   is required at startup ([#2097])
 - The CI/CD template keeps the delivery gates and drops the fixed stages and
   environments ([#2098])
+- The deployment template keeps target-neutral rules and drops its per-target
+  product choices ([#2101])
 
 ### Deprecated
 
@@ -197,6 +199,7 @@ Releases up to 2.63.0 are listed in
 [#2096]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2096
 [#2097]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2097
 [#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
+[#2101]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2101
 
 ## [2.90.0] - 2026-09-12
 
