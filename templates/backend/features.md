@@ -62,15 +62,15 @@ temporary release mechanism.
   flag name and variant in the structured log properties
 - Emit a metric per flag variant — track error rate and latency separately
   for each variant to detect regressions introduced by the new path
-- Alert if flag evaluation fails — a broken flag service must not silently
-  default to the wrong variant; fail to the safe default and alert
+- Alert if flag evaluation fails, and apply the flag's declared failure
+  policy — never fall silently to a variant the policy does not name
 
 ## Tooling
 
-- Use a dedicated flag service or SDK (LaunchDarkly, Unleash, Flagsmith,
-  GrowthBook, or equivalent) — never implement flag storage in the application
-  database
-- Flags are not secrets — store targeting rules in the flag service, not in
-  environment variables or config files
-- The flag service must be available before the application can serve traffic
-  — treat it as a required dependency, not an optional one
+- Serve flags from a flag service or SDK, or from configuration the
+  application reloads at runtime; never from the application database
+- Keep a flag's targeting rules in one place, never split across
+  environment variables and code
+- Declare each flag's failure policy for a provider outage: the safe
+  default, or refusing traffic where the provider is a deliberate required
+  dependency
