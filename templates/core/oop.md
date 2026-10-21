@@ -57,8 +57,8 @@ stateless logic.
   avoid the anemic model where an external function mutates a data bag;
   this is the active-voice complement of "encapsulate state, expose
   behaviour" above
-- **Construct through factory classmethods or named constructors** rather
-  than free `build_*` / `init_*` functions that return the type
+- **Construct through named constructors or factory methods on the type**
+  rather than free functions that build and return it
 
 ## Design patterns
 

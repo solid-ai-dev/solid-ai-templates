@@ -58,6 +58,9 @@ receives nothing (ADR-051).
 | The unfenced-check hook and extraction rules | `base-quality-gates` | `base-embedded-checks` |
 | `quality-gates-length-bound-exemptions`, synthetic-subject and fixing-branch controls, the backslash table | `base-quality-gates`, `base-embedded-checks` | this repository's playbook |
 | The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
+| `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
+| Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral |
+| Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

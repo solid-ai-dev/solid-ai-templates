@@ -134,9 +134,8 @@ answer rather than an error.
 
 - Render only the reference data and the reading guides in an aid a person
   verifies against (MUST)
-- Put the candidate output in a separate, distinctly named artifact
-  (`*-overlay.png`, `*-prediction.md`), opened after the reading is
-  captured
+- Put the candidate output in a separate, distinctly named artifact,
+  opened after the reading is captured
 - Leave comparison views opened after the reading out of scope
 
 ## Source silence

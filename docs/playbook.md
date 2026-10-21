@@ -126,6 +126,19 @@ it.
 - Change the pattern, not the prose; rewriting the text fixes one instance
   and leaves every later rendering unmatched
 
+**A check's run separates verdicts from readings.** The runner here
+reports each kind apart, and a hook does the same through its exit status.
+
+- Report a check tied to a moment as not applicable, with exit status 3,
+  when the moment is not in progress; detect the moment, never the empty
+  input
+- Keep exit 3, the check answering this run, apart from a skip a person
+  records in advance
+- Record what a judgement check inspected and found where a person reads
+  it, and beside each judgement disposition what takes a person
+- Separate readings, verdicts and not-applicable answers in a run's
+  summary
+
 **A length gate's exemptions are discovered, not derived.** The list grows
 while the corpus does.
 
@@ -757,9 +770,26 @@ Changing what a check **exempts** is a documentation edit as well as a
 code edit. Sweep the documents for the check's name before merging and
 re-read every hit against the new exemption set: the check's own tests
 exercise the exemptions rather than the sentence describing them, so a
-document's account of them decays with nothing reporting it.
-`quality-exemption-doc-duty` in `templates/core/quality.md` is the
-rule, and ships the sweep.
+document's account of them decays with nothing reporting it. Sweep for
+the name a document would use, not only the source identifier; point
+prose at the exemption constant rather than enumerate it; and write an
+enumeration without a cardinal in front of it:
+
+```bash
+# The check whose exemptions are changing, named as a document would
+# refer to it.
+module="<check-name>"
+
+scanned=$(git ls-files '*.md')
+echo "documents scanned: $(echo "$scanned" | grep -c .)"
+naming=$(echo "$scanned" | xargs grep -l "$module")
+echo "documents naming ${module}: $(echo "$naming" | grep -c .)"
+echo "$naming"
+```
+
+Pass condition: the scanned count is above zero, and every listed
+document is read against the new exemption set. A naming count of zero
+is a real answer.
 
 Adding a constraint owes a sweep of its own. Run the new rule or check
 against the corpus that already exists before merging, and record in the

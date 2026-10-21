@@ -44,6 +44,8 @@ Releases up to 2.63.0 are listed in
   one-site rules ([#2080])
 - The quality-gates template drops its length-gate exemptions and ruff block
   ([#2081])
+- The quality template drops its exemption-doc sweep, porting rules and
+  check-harness rules ([#2082])
 
 ### Added
 
@@ -179,6 +181,7 @@ Releases up to 2.63.0 are listed in
 [#2079]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2079
 [#2080]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2080
 [#2081]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2081
+[#2082]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2082
 
 ## [2.90.0] - 2026-09-12
 

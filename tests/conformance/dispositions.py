@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 7
+SKIP_BUDGET = 6
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -156,14 +156,6 @@ CHECKS = [
      "reason": "Takes the item being closed or superseded as `<number>`. "
                "It is run per closure, in the change that closes the item, "
                "not as a property of the tree."},
-
-    {"file": "core/quality.md", "find": "documents naming ${module}",
-     "title": "A document naming a check is re-read when its exemptions change",
-     "do": SKIP,
-     "reason": "Takes the check whose exemptions are changing as an "
-               "argument. It is run per change, at the moment an "
-               "exemption is added or removed, not as a property of the "
-               "tree."},
 
     {"file": "core/quality.md", "find": "check-ascii-identifiers",
      "title": "Identifiers stay ASCII", "do": RUN,

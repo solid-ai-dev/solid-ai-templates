@@ -181,10 +181,8 @@ A central constants module orphans each constant's provenance from the code
 that uses it. The cheap static gates catch every mechanical split error at
 once, so the slow suite runs once.
 
-## Ports and variants
+## Variants
 
-A port re-implemented from a function's name or description produces
-close-but-diverging siblings that surface as silent data corruption.
 Auto-detect misclassifies silently, often the worst input, when inputs do not
 partition cleanly; a per-configuration flag captures the classification a
 person already knows.
@@ -252,15 +250,6 @@ construct is wrong everywhere. Someone diagnosed a shared mistake, fixed the
 module they were in, and had no reason to check the others. Where the sweep
 finds hits, a design note was an unfixed bug with a known diagnosis. This is
 the discovery half of verifying every call site.
-
-## quality-exemption-doc-duty
-
-A check's exemptions are written twice, and the document's copy has no gate.
-The diff adding an exemption has no reason to open a Markdown file, so the
-document silently stops being true. A module name and the name its
-documentation uses routinely differ, and a sweep under the wrong one reports
-a clean zero. "Two things are deliberately excluded" goes stale the moment a
-third is added; the cardinal is the falsifiable half.
 
 ## quality-constraint-corpus-sweep
 
