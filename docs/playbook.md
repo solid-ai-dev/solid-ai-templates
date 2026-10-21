@@ -458,6 +458,7 @@ skipped.
    - the strength count, which step 6 compares against:
 
      ```bash
+     set -o pipefail
      f=<file>
      { grep -oE '\bSHOULD( NOT)?\b|\bMAY\b' "$f" || [ $? -eq 1 ]; } | wc -l
      ```
