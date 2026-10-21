@@ -158,6 +158,11 @@ while the corpus does.
 - Control a check that alters its own subject with a single fresh
   invocation until it is fixed to inspect without mutating; a second run
   reads what the first one wrote
+- Read the first CI run of a check whose subject is the change under
+  review, and require a verdict there; a check that reports it does not
+  apply on its own change has failed. A pull-request run checks out a
+  detached merge commit, often shallow, so a check counting commits or
+  diffing against the base reads a tree no local control built
 
 **A backslash in an embedded check is built, not typed.** An agent's shell
 tool can strip or double a backslash on its way into a heredoc, so a
@@ -728,6 +733,10 @@ only when the pin equals HEAD.
 - Bump the pin to a released tag, never the default branch. A tag range
   such as `v3.0.0 → v3.1.0` is citable; a mid-flight revision imports rules
   no cut has released
+- Run `git submodule update --init --recursive` after pulling a merged
+  bump, before reading the vendored files. The pull moves the pointer and
+  leaves the tree at the old revision, which `git submodule status` marks
+  with a `+`
 
 The pin settles the version; the dependency graph settles which files to
 read. Resolve each changed file against the graph when reconciling a bump,
@@ -971,6 +980,25 @@ py tools/sync_docs.py --check
 Pass condition: the gate prints `All files in sync` **after** the
 update, having listed every document it compared. Run it before the
 update instead and it reports the previous state, which reads as a pass.
+
+A clean merge can also leave a numbered document wrong. One branch appends
+section 3.9; another inserts 3.5 and renumbers, so its last section is 3.9
+too, and git merges both without a conflict.
+
+- When two open pull requests edit a numbered document (`AGENTS.md`, this
+  playbook, `docs/architecture/`), the second to merge checks its
+  numbering
+- Run the check after merging the base in, never before
+- Treat numbered sections, ordered procedures and indexed table rows alike
+
+```bash
+pre-commit run check-heading-numbers --all-files --verbose
+```
+
+Pass condition: the documents-inspected and ordinals-inspected counts are
+above zero and `numbering problems` is zero. `.pre-commit-config.yaml`
+lists the documents; one with no ordinal is a finding, because the pattern
+drifted from its convention.
 
 ---
 

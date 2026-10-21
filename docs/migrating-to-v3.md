@@ -60,6 +60,8 @@ receives nothing (ADR-051).
 | The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
 | `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
 | Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral |
+| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | this repository's playbook; the `check-heading-numbers` hook still ships |
+| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | removed; a neutral editor-settings rule remains |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
