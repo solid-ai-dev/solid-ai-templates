@@ -15,7 +15,12 @@ ignored true one.
 A licence problem merged is a legal exposure shipped; it is cheapest to
 refuse at the pull request.
 
-### SBOM
+## SBOM
+
+SCA scans the dependencies for risk and gates the merge; the SBOM is the
+release artifact listing those same dependencies for whoever installs the
+product. They share a subject and differ in duty, so each has its own
+section.
 
 Every generator's most convenient mode reads an environment, and in CI the
 environment at hand is the build environment, the one that just ran the
