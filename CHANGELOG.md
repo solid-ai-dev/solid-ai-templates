@@ -38,6 +38,8 @@ Releases up to 2.63.0 are listed in
   rules ([#2075])
 - The devsecops template drops penetration testing and its IaC example list
   ([#2076])
+- The cicd, containers and data templates drop GitHub, Python and MySQL
+  specifics ([#2079])
 
 ### Added
 
@@ -168,6 +170,7 @@ Releases up to 2.63.0 are listed in
 [#2075]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2075
 [#2076]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2076
 [#2078]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2078
+[#2079]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2079
 
 ## [2.90.0] - 2026-09-12
 
