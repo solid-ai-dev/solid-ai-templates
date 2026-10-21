@@ -8,7 +8,7 @@ templates/backend/caching.md 100.0
 templates/backend/concurrency.md 94.8
 templates/backend/database.md 92.0
 templates/backend/edge.md 89.7
-templates/backend/errors.md 91.7
+templates/backend/errors.md 98.3
 templates/backend/features.md 92.2
 templates/backend/grpc.md 96.1
 templates/backend/http.md 97.8
