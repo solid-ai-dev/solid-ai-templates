@@ -18,7 +18,7 @@
 
 version: "1.0"
 
-core: [base-quality, base-git, base-docs, base-testing, base-review, base-oop]
+core: [base-quality, base-git, base-docs, base-testing, base-review]
 
 base:
   - id: base-git
@@ -74,7 +74,7 @@ base:
     depends_on: [base-data-modeling]
   - id: base-oop
     file: templates/core/oop.md
-    description: SOLID, OOP, GoF design patterns, AOP guidance
+    description: SOLID, object design, design patterns, cross-cutting concerns; opt-in
   - id: base-quality-gates
     file: templates/core/quality-gates.md
     description: How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict

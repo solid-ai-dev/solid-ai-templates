@@ -67,6 +67,7 @@ receives nothing (ADR-051).
 | `backend-quality`: N+1, async I/O, API deprecation, circuit breaker, outbox | `backend-quality` | already in `backend-database`, `backend-concurrency`, `backend-api`, `backend-errors`, `backend-messaging` |
 | `frontend-static-site`: one stylesheet, BEM naming, system fonts, the `localStorage` theme snippet, the page table, lint and format files | `frontend-static-site` | removed with the template; a fork's static-site stack carries its choices |
 | `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept |
+| `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
 | The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | this repository's playbook; the `check-heading-numbers` hook still ships |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | removed; a neutral editor-settings rule remains |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |

@@ -1,10 +1,10 @@
 ---
 id: "046"
-status: Accepted
-date: 2026-09-11
+status: Superseded
+date: 2026-10-21
 category: composition
 supersedes: []
-superseded_by: []
+superseded_by: ["057"]
 ---
 
 # ADR-046: Object-oriented design guidance is core

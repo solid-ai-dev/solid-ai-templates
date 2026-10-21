@@ -52,6 +52,8 @@ Releases up to 2.63.0 are listed in
   template ([#2102])
 - The frontend-static-site template is retired; its theme, trailing-slash and
   404 rules move to frontend-quality and frontend-content ([#2103])
+- Object-oriented design rules leave the core tier; declare base-oop in Extras to
+  keep them ([#2104])
 
 ### Added
 
@@ -212,6 +214,7 @@ Releases up to 2.63.0 are listed in
 [#2101]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2101
 [#2102]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2102
 [#2103]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2103
+[#2104]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2104
 
 ## [2.90.0] - 2026-09-12
 

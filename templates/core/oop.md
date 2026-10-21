@@ -4,89 +4,67 @@
 
 ## SOLID principles
 
-Apply SOLID at the class, module, and service level:
+Apply SOLID at the class, module and service level:
 
-- **S — Single Responsibility**: every class or module has exactly one reason
-  to change; split anything that serves more than one concern
-- **O — Open/Closed**: extend behaviour by adding new code, not by modifying
-  existing code; use interfaces, abstract base classes, or composition
-- **L — Liskov Substitution**: subtypes must be fully substitutable for their
-  base type without altering correctness; never override a method in a way
-  that weakens its contract
-- **I — Interface Segregation**: prefer many small, focused interfaces over
-  one large general-purpose one; callers should not depend on methods they
-  do not use
-- **D — Dependency Inversion**: depend on abstractions, not concretions;
-  inject dependencies rather than instantiating them inside a class
+- **Single responsibility**: give each class or module one reason to
+  change; split one that serves two concerns
+- **Open/closed**: extend behaviour by adding code, not by editing it,
+  through interfaces, abstract base classes or composition
+- **Liskov substitution**: keep every subtype substitutable for its base;
+  never override a method so that it weakens the contract
+- **Interface segregation**: prefer small, focused interfaces; never make a
+  caller depend on methods it does not use
+- **Dependency inversion**: depend on abstractions, and inject dependencies
+  rather than constructing them inside a class
 
-## OOP
+## Object design
 
-- Prefer **composition over inheritance** — inherit only to model a true
-  is-a relationship; compose for code reuse
-- **Encapsulate** implementation details — expose behaviour through a public
-  interface, hide state and implementation
-- Design to interfaces (or protocols / abstract base classes), not concrete
+- Prefer composition over inheritance; inherit only for a true is-a
+  relationship
+- Encapsulate state and implementation; expose behaviour through a public
+  interface
+- Design to interfaces, protocols or abstract base classes, not concrete
   types
-- Keep class hierarchies shallow — more than two levels of inheritance is a
-  signal to refactor towards composition
-- **Closed type families are tagged unions** — where every variant is
-  known when the type is written, discriminate a union by a literal field
-  (`kind`, `type`) so the compiler checks every branch handles every
-  variant; keep class hierarchies for families callers extend
-- **Internal identifiers must align with their layer** — a module or class
-  whose name implies a role it does not hold (an `endpoints.py` with no
-  routes, a `*RestApi` class that is not the REST API) misleads readers and
-  forces clarifying asides; when the layering and the name disagree, rename
-  to match the layer
+- Treat a hierarchy deeper than two levels as a signal to refactor toward
+  composition
+- Model a closed type family, every variant known when the type is
+  written, as a tagged union on a literal field (`kind`, `type`), so the
+  compiler checks every branch
+- Keep class hierarchies for families callers extend
+- Name a module or class for the role its layer gives it; rename an
+  `endpoints.py` with no routes or a `*RestApi` that is not the REST API
 
 ## When not to reach for a class
 [ID: base-oop-restraint]
 
-SOLID and the patterns above bias toward classes; this is the
-counterweight. Reach for a class to encapsulate state, not to house
-stateless logic.
+SOLID and the patterns below bias toward classes; these rules are the
+counterweight.
 
-- **Prefer a free function for stateless logic** — introduce a class
-  only to encapsulate state or attach behaviour to state it owns. A pure
-  transform (inputs → output, no retained state) stays a function; a
-  class only couples it to state it does not use
-- **A class whose only public method is `run()` / `execute()` is usually
-  a function in disguise** — keep the free function unless the retained
-  state genuinely warrants an object
-- **Put state-mutating behaviour on the object that owns the state** —
-  avoid the anemic model where an external function mutates a data bag;
-  this is the active-voice complement of "encapsulate state, expose
-  behaviour" above
-- **Construct through named constructors or factory methods on the type**
-  rather than free functions that build and return it
+- Write stateless logic as a free function; introduce a class only to
+  encapsulate state it owns
+- Treat a class whose only public method is `run()` or `execute()` as a
+  function in disguise, unless its retained state warrants an object
+- Put state-mutating behaviour on the object that owns the state, never in
+  an external function that mutates a data bag
+- Construct through named constructors or factory methods on the type,
+  not free functions that build and return it
 
 ## Design patterns
 
-- Apply established **GoF design patterns** where they fit the problem —
-  do not invent ad-hoc solutions for problems that have named solutions
-- Favour **behavioural patterns** for algorithm variation:
-  Strategy, Command, Observer, Template Method
-- Favour **structural patterns** for object composition:
-  Adapter, Decorator, Facade, Proxy
-- Use **creational patterns** to decouple object creation:
-  Factory Method, Abstract Factory, Builder
+- Use an established pattern where it fits the problem; never invent an
+  ad-hoc solution to a problem that has a named one
 - Use **Singleton** only for stateless services or infrastructure objects
   (logger, config) — never for mutable shared state
 - Name the pattern in code when you use one: a class named
   `OrderExportStrategy` communicates intent; a class named `OrderHelper`
   does not
 
-## Aspect-Oriented Programming (AOP)
+## Cross-cutting concerns
 [ID: base-oop-aop]
 
-- **Do not use AOP frameworks** — hidden cross-cutting behaviour (method
-  interception, bytecode weaving, runtime proxies) makes code hard to read,
-  debug, and test
-- Implement cross-cutting concerns explicitly:
-  - Logging: call the logger directly in the function
-  - Auth: explicit middleware or guard in the call chain
-  - Transactions: explicit context manager or decorator with visible
-    call site
-  - Validation: explicit call at the boundary
-- Transparent decorators (a decorator that wraps and clearly delegates) are
-  acceptable; opaque interceptors that inject hidden behaviour are not
+- Keep cross-cutting behaviour visible at its call site: a logger call, an
+  auth middleware or guard, a transaction context manager, a validation
+  call at the boundary
+- Never inject behaviour through method interception, bytecode weaving or
+  an opaque runtime proxy — it is hard to read, debug and test
+- Use a decorator only when it wraps and visibly delegates
