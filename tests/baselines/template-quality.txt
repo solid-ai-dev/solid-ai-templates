@@ -11,13 +11,12 @@ templates/backend/edge.md 89.7
 templates/backend/errors.md 91.7
 templates/backend/features.md 92.2
 templates/backend/grpc.md 96.1
-templates/backend/http.md 96.4
+templates/backend/http.md 97.8
 templates/backend/jobs.md 97.2
 templates/backend/messaging.md 96.8
 templates/backend/microservices.md 93.5
 templates/backend/monitoring.md 98.5
 templates/backend/observability.md 96.6
-templates/backend/quality.md 98.3
 templates/backend/webhooks.md 86.9
 templates/core/agents.md 100.0
 templates/core/config.md 99.3
@@ -38,7 +37,7 @@ templates/frontend/content.md 90.7
 templates/frontend/quality.md 93.5
 templates/frontend/ux.md 94.3
 templates/infra/cicd.md 95.7
-templates/infra/containers.md 90.8
-templates/infra/deployment.md 95.4
+templates/infra/containers.md 95.2
+templates/infra/deployment.md 99.4
 templates/security/devsecops.md 100.0
 templates/security/security.md 96.1

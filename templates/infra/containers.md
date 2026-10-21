@@ -22,7 +22,8 @@
   at runtime from a secret vault
 
 ## Resource management
-- MUST define CPU and memory requests and limits for every container
+- MUST define CPU and memory limits for every container, and requests
+  where the orchestrator schedules by them
 - Set requests to the typical workload; set limits to the safe maximum
 - Never set memory limit lower than memory request
 - Monitor resource usage and adjust limits based on observed behaviour —
@@ -41,12 +42,9 @@
 
 ## Runtime version coherence
 
-Pinning the base image (above), the CI runtime, the type-checker target,
-and the packaging floor are four separate loci for the SAME runtime
-version. Pin them independently and a base-image-only bump — often a
-lone dependency-bot PR — ships an image on the new runtime while every
-gate still validates the old one: the gates go green and an untested
-runtime ships.
+The base image, the CI runtime, the type-checker target and the packaging
+floor each pin the same runtime version; a bump to one alone ships a
+runtime no gate tested.
 
 - The language / runtime version MUST be identical across the container
   base image tag or digest, every CI job that sets up the runtime, the
@@ -57,10 +55,9 @@ runtime ships.
 
 ## Docker Compose (if applicable)
 
-Use a `docker-compose.yml` (Compose file) when a single image is not
-enough: more than one service (app plus datastore or cache), or an
-isolated build/run environment for a toolchain impractical to install
-on the host. Not every project needs Compose — keep it to those cases.
+Use a Compose file when one image is not enough: several services, such
+as an app with its datastore, or a toolchain impractical to install on the
+host.
 
 - Define each service, its image or build context, ports, and
   dependencies (`depends_on`) in the Compose file; keep it at the repo
@@ -71,16 +68,11 @@ on the host. Not every project needs Compose — keep it to those cases.
 - Bind-mount the source for local dev so edits are live without a
   rebuild; do NOT bind-mount in CI or production — there the image is
   the artifact, and a mount would shadow it with host files
-- Compose orchestrates local and single-host multi-service dev;
-  production multi-service orchestration is Kubernetes (below)
+- Compose orchestrates local and single-host multi-service dev; the
+  production orchestrator is the project's choice
 
-## Orchestration (Kubernetes)
-- Define all Kubernetes resources as code — no `kubectl apply` from a local
-  machine in production
-- Use namespaces to separate environments and teams
-- MUST run at least two replicas of every service in staging and production
-- Use liveness and readiness probes — readiness probe MUST pass before a pod
-  receives traffic
-- Use `PodDisruptionBudget` to guarantee availability during rolling updates
-- Never store configuration or secrets in ConfigMaps as plain text — use
-  secret management integration (e.g. external secrets operator)
+## Orchestration (if applicable)
+
+- Define the orchestrator's resources as code; never apply them by hand in
+  production
+- Route traffic to a container only after its readiness check passes (MUST)
