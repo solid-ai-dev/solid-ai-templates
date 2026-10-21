@@ -109,6 +109,10 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- Rules the rewrites made mandatory are SHOULD or MAY again, as before
+  ([#2078])
+- Four rules that contradicted others in the same chain now agree
+  ([#2078])
 - Two shipped checks render as code again ([#2034])
 - Long dependency lines are split to fit the line width ([#2034])
 - A fork's core addition with an invalid dependency is refused ([#1990])
@@ -163,6 +167,7 @@ Releases up to 2.63.0 are listed in
 [#2074]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2074
 [#2075]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2075
 [#2076]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2076
+[#2078]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2078
 
 ## [2.90.0] - 2026-09-12
 
