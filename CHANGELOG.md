@@ -36,6 +36,8 @@ Releases up to 2.63.0 are listed in
   gate ([#2074])
 - The devsecops template drops its GitHub and Python specifics for neutral
   rules ([#2075])
+- The devsecops template drops penetration testing and its IaC example list
+  ([#2076])
 
 ### Added
 
@@ -97,6 +99,8 @@ Releases up to 2.63.0 are listed in
   placeholders ([#2074])
 - The devsecops rules are short, topic-headed lists; the SBOM check is five
   lines of jq ([#2075])
+- Fixable critical or high image findings block; DAST completes before a
+  build is promoted ([#2076])
 
 ### Deprecated
 
@@ -158,6 +162,7 @@ Releases up to 2.63.0 are listed in
 [#2073]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2073
 [#2074]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2074
 [#2075]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2075
+[#2076]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2076
 
 ## [2.90.0] - 2026-09-12
 
