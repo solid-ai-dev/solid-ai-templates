@@ -15,7 +15,8 @@ Approving a licence does not discharge the obligation that attaches when the
 dependency is redistributed inside an artifact handed to users; a permissive
 or weak-copyleft dependency shipped that way carries an attribution duty of
 its own. Hand-maintained attribution rots, which is why the notice is
-derived from the manifest under test.
+derived from the manifest under test. A dependency's licence can change in
+a later release, which a check made only when it was added never sees.
 
 ## Secret detection
 
@@ -30,11 +31,6 @@ false positive without a written reason is indistinguishable from an
 ignored true one.
 
 ## SCA
-
-A licence problem merged is a legal exposure shipped; it is cheapest to
-refuse at the pull request.
-
-## Scan by actionability
 
 The block-or-inform decision turns on one question: can the finding be
 fixed before release? A vulnerable dependency you own has a fix you can
@@ -70,4 +66,6 @@ undo one.
 ## DAST
 
 Dynamic testing exercises a running system, so it needs one; production is
-not a test target.
+not a test target. A scan started after a staging deployment can still be
+running when the build is promoted, with no critical finding reported yet,
+so the rule is that it completes first.

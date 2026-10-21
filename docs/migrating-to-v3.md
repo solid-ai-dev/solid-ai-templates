@@ -45,6 +45,7 @@ receives nothing (ADR-051).
 | GitHub-specific SBOM upload and Actions pinning, Python SBOM tools, per-platform tool choice | `base-devsecops` | removed; neutral rules remain |
 | Where a licence notice sits inside an image | `base-devsecops` | `base-containers` |
 | Penetration testing, a periodic engagement rather than a pipeline step | `base-devsecops` | removed; a fork's process template can carry it |
+| The list of IaC misconfigurations to detect, and the "widely adopted" dependency preference | `base-devsecops` | removed; the scanner's configured policy covers the first |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
