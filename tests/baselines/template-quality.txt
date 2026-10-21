@@ -1,7 +1,8 @@
 # Template quality scores, recorded by `py tools/score_templates.py --update`.
-# `--check` fails a template scoring below its row here, a template with no
-# row scoring below the new-file floor, and a row naming no template. Raise
-# a row by improving the template and re-recording; never lower one by hand.
+# `--check` fails a template scoring below its row here, an upstream template
+# below 95, a template with no row below the new-file floor, and a row naming
+# no template. Raise a row by improving the template and re-recording; never
+# lower one by hand.
 templates/backend/api.md 94.9
 templates/backend/auth.md 98.4
 templates/backend/caching.md 100.0
