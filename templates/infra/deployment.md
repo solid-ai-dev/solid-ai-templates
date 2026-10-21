@@ -27,7 +27,7 @@ template.
 ## Load balancing and reverse proxy
 [ID: base-deployment-lb]
 
-- Expose a service only through a load balancer or reverse proxy that
+- Route public ingress through a load balancer or reverse proxy that
   health-checks its backends; never make an instance directly
   internet-routable
 - Prefer application-layer (L7) load balancing for HTTP services — it
