@@ -7,8 +7,10 @@ Store configuration in the environment, not in code, after the
 
 ## Sources
 
-- Read every value that varies by deployment, and every secret, from the
-  environment; keep defaults in code only for optional settings
+- Supply every value that varies by deployment through a source the
+  precedence below lists; keep defaults in code only for optional settings
+- Read every secret from the environment or a secrets manager, never from a
+  committed file or a command-line flag (MUST)
 - Never hardcode a secret, API key or credential (MUST NOT)
 - Commit `.env.example` with placeholder values, and list `.env` in
   `.gitignore`

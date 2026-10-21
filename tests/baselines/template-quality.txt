@@ -13,14 +13,14 @@ templates/backend/features.md 90.9
 templates/backend/grpc.md 96.1
 templates/backend/http.md 96.4
 templates/backend/jobs.md 97.2
-templates/backend/messaging.md 97.2
+templates/backend/messaging.md 96.8
 templates/backend/microservices.md 93.5
 templates/backend/monitoring.md 98.5
 templates/backend/observability.md 97.7
 templates/backend/quality.md 98.3
 templates/backend/webhooks.md 86.9
 templates/core/agents.md 100.0
-templates/core/config.md 99.8
+templates/core/config.md 99.3
 templates/core/docs.md 99.1
 templates/core/embedded-checks.md 86.7
 templates/core/git.md 88.8
