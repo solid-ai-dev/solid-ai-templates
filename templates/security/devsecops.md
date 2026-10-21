@@ -20,7 +20,7 @@ build, review and release, never after deployment.
 - Run SCA on every deployment to QA, staging and production (MUST)
 - Never merge a dependency whose licence is unacceptable (MUST NOT)
 
-### SBOM
+## SBOM
 
 - Generate a software bill of materials per release (MUST)
 - Describe what a consumer installs, not what CI built with: install the
@@ -36,6 +36,7 @@ build, review and release, never after deployment.
   SBOM, so a scan failure never blocks or erases the release
 
 ```bash
+set -e -o pipefail
 SBOM=<sbom.json>
 count=$(jq '(.components // []) | length' "$SBOM")
 echo "components: $count"
@@ -46,7 +47,7 @@ jq -r '(.components // [])[].name' "$SBOM" | sort
 Pass condition: the listed names equal the declared runtime dependency
 closure, the library alone where it has none. A count of zero exits
 non-zero: the document carries no components, not a product without
-dependencies.
+dependencies. A document jq cannot parse or read exits non-zero too.
 
 ## Scan by actionability
 
