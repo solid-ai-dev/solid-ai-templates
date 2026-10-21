@@ -42,6 +42,8 @@ receives nothing (ADR-051).
 | Port binding | `base-config` | `backend-http` |
 | The in-process config model and the interlocked-dependency updater rule | `base-config` | removed |
 | Reading and bumping a vendored pin, and the chain-list gate | `base-agents` | this repository's playbook, "Vendor the templates in a project" |
+| GitHub-specific SBOM upload and Actions pinning, Python SBOM tools, per-platform tool choice | `base-devsecops` | removed; neutral rules remain |
+| Where a licence notice sits inside an image | `base-devsecops` | `base-containers` |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

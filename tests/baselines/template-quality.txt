@@ -39,7 +39,7 @@ templates/frontend/quality.md 88.2
 templates/frontend/static-site.md 84.0
 templates/frontend/ux.md 93.5
 templates/infra/cicd.md 86.8
-templates/infra/containers.md 86.9
+templates/infra/containers.md 87.2
 templates/infra/deployment.md 95.4
-templates/security/devsecops.md 79.7
+templates/security/devsecops.md 99.6
 templates/security/security.md 96.2

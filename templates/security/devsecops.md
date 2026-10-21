@@ -2,189 +2,119 @@
 
 [ID: base-devsecops]
 
-## Principle
+Surface vulnerabilities and legal exposure during development, in every
+build, review and release, never after deployment.
 
-Security is not a phase — it is part of every build, review, and release.
-Vulnerabilities and legal exposure MUST be surfaced during development —
-not after deployment.
+## SAST
 
-## Patterns
+- Run a static security analysis step in every pipeline run (MUST)
+- Stop the build on a failed scan until each finding is fixed or formally
+  accepted as a false positive (MUST)
+- Document every accepted false positive with a written justification
+  (MUST)
 
-- Use break-the-build gate, vulnerability triage, SBOM generation,
-  secret rotation, dependency update workflow, security smoke test,
-  pre-merge security gate, and incident-to-hardening loop patterns
-  where appropriate
+## SCA
 
-## Tool selection
+- Track every dependency for known vulnerabilities and licence risks
+  (MUST)
+- Run SCA on every deployment to QA, staging and production (MUST)
+- Never merge a dependency whose licence is unacceptable (MUST NOT)
 
-- Specific SAST and secret detection tools are defined per platform
-  (CodeQL for GitHub, Semgrep for GitLab)
+## SBOM
 
-## SAST (Static Application Security Testing)
-
-- Every pipeline run MUST include a static security analysis step
-- A failed scan MUST stop the build — the branch MUST NOT progress until
-  findings are resolved or formally accepted as false positives
-- Accepted false positives MUST be documented with a written justification
-
-## SCA (Software Composition Analysis)
-
-- All dependencies MUST be tracked for known vulnerabilities and license risks
-- SCA MUST run on every deployment to QA, staging, and production
-- A SBOM (Software Bill of Materials) MUST be generated per release
-- The SBOM MUST describe what a consumer installs, not what CI built
-  with. Every generator's most convenient mode reads an environment
-  (`cyclonedx-py environment`, `pip-audit` against the active venv,
-  `syft` on a directory), and in CI the environment at hand is the build
-  environment — the one that just ran the tests. Install the artifact
-  into a clean environment and scan that. The shape is not
-  Python-specific: a `node_modules` tree after an install carries
-  devDependencies, and a Go build cache carries test-only modules
-- A misdirected SBOM is worse than shipping none. It is schema-valid and
-  passes every check, so a consumer scanning artifacts gets a
-  machine-readable answer naming components their install will never
-  contain, and a CVE in a lint tool reads as a CVE in the product
-- Assert the component set before attaching it — the check is below. A
-  generator pointed at the wrong environment succeeds, so the check is
-  on content: the set MUST match the declared runtime dependency
-  closure, and a library with no runtime dependencies MUST list exactly
-  one component. The tell is size — on one zero-dependency library the
-  correct SBOM held one component and the build-environment one held 93
-- Generate it reproducibly where the tool supports it
-  (`cyclonedx-py --output-reproducible`, which drops the time- and
-  random-based values), so the SBOM for a tag can be regenerated and
-  compared byte for byte by anyone rebuilding it. That is a stronger
-  provenance property than an embedded timestamp, which the release
-  record already carries
-- Attach the SBOM to the per-tag release record as a durable,
-  per-version asset — a CI build artifact expires with run retention.
-  Once the pipeline creates a release record on a tag, upload the SBOM
-  from the advisory scan job (`gh release upload "$TAG" <sbom>
-  --clobber`). Guard the upload (missing release or SBOM → exit 0) and
-  mark the job `continue-on-error` so a scan hiccup never blocks or
-  erases the release — the scan job reaches forward to the release,
-  never the reverse. Needs `contents: write` at job scope
-- Dependencies with unacceptable licenses MUST NOT be merged
-
-The component-set check, run from the repository root against the
-generated document. It is left flush with the margin rather than indented
-under the bullet: an indented heredoc terminator does not close the
-heredoc, so a reader copying it verbatim gets a shell that never returns.
+- Generate a software bill of materials per release (MUST)
+- Describe what a consumer installs, not what CI built with: install the
+  artifact into a clean environment and scan that (MUST)
+- Assert the component set before attaching the SBOM: it matches the
+  declared runtime dependency closure, and a library with no runtime
+  dependencies lists exactly one component (MUST)
+- Generate it reproducibly where the tool supports it, so anyone can
+  rebuild the SBOM for a tag and compare it byte for byte
+- Attach it to the per-tag release record, never only to a CI artifact
+  that expires
+- Upload it from a non-blocking job that tolerates a missing release or
+  SBOM, so a scan failure never blocks or erases the release
 
 ```bash
-py - <<'EOF'
-import json, sys
-
-sys.stdout.reconfigure(encoding="utf-8")
-
-doc = json.load(open("sbom.json", encoding="utf-8"))
-names = sorted(c["name"] for c in doc.get("components", []))
-
-print("components: %d" % len(names))
-for name in names:
-    print("  %s" % name)
-
-# The names are a reading for whoever compares them against the declared
-# closure. The empty set is not: it means the document carries no
-# `components` key, which the status has to say.
-raise SystemExit(0 if names else 1)
-EOF
+set -e -o pipefail
+SBOM=<sbom.json>
+count=$(jq '(.components // []) | length' "$SBOM")
+echo "components: $count"
+jq -r '(.components // [])[].name' "$SBOM" | sort
+[ "$count" -gt 0 ]
 ```
 
-Pass condition: the printed set equals the declared runtime dependency
-closure, and for a library with no runtime dependencies it is the library
-alone. A count of zero is a failure rather than a clean result — it means
-the document carries no `components` key, not that the product has no
-dependencies.
+Pass condition: the listed names equal the declared runtime dependency
+closure, the library alone where it has none. A count of zero exits
+non-zero: the document carries no components, not a product without
+dependencies. A document jq cannot parse or read exits non-zero too.
 
 ## Scan by actionability
 
-The block-vs-inform decision turns on one question: can I fix this
-before release? A finding you own has a fix you can apply; a finding in
-a base layer you do not control does not.
-
-- **Gate (blocking) on findings you own** — SCA over your own
-  dependencies (`pip-audit`, `npm audit`, `govulncheck`). A vulnerable
-  dependency has a fix you can apply, so it MUST block the merge
-- **Inform (advisory) on findings you cannot fix at will** — image and
-  base-layer scans (Trivy, Grype). Run them and publish the report plus
-  an SBOM, but do not fail the build on an unfixable upstream CVE
-  (`continue-on-error` plus a non-failing exit code)
-- **Advisory by construction for release-gated scans** — a scan that
-  runs only on a tag or release job cannot be dry-run on a PR, so a
-  hard fail first surfaces mid-release. Keep such scans advisory and
-  OFF the deploy dependency path, so an image hiccup cannot block the
-  deploy or erase the release record
-- **Make the fixable-base case a PR, not a standing advisory** — track
-  the base image with a dependency bot (docker ecosystem) so an
-  available base bump arrives as a reviewable PR, not a perpetual
-  scan finding
+- Block the merge on findings you own: SCA over your own dependencies,
+  such as `pip-audit`, `npm audit` or `govulncheck` (MUST)
+- Report, without blocking, findings you cannot fix at will: image and
+  base-layer scans such as Trivy or Grype, published with an SBOM
+- Keep a scan that runs only on a tag or release job advisory, and off the
+  deploy's dependency path
+- Track the base image with a dependency bot, so an available base update
+  arrives as a pull request rather than a standing finding
 
 ## Secret detection
 
-- Secret detection MUST run in CI — any commit containing credentials, tokens,
-  or API keys MUST be rejected automatically
-- The scan MUST cover the full git history, not just the current tip: a
-  secret committed and later deleted still lives in old commits, so a
-  shallow checkout gives a false sense of safety. Check out full-depth
-  before the scan (`actions/checkout` with `fetch-depth: 0`)
-- Run the scanner both in CI (full history) and as a pre-commit hook
-  (catch it before it is ever committed) — defense in depth
-- Sensitive values MUST NOT appear in any artefact that enters source control —
-  this includes commit messages, issue comments, and documentation files
-- Runtime secrets MUST be fetched from a dedicated vault at startup — MUST NOT
-  be written to disk or committed in any form
+- Run secret detection in CI, and reject any commit carrying credentials,
+  tokens or API keys automatically (MUST)
+- Scan the full history from a full-depth checkout, not only the tip
+  (MUST)
+- Run the scanner as a pre-commit hook as well as in CI
+- Never put a sensitive value in anything committed, including commit
+  messages, issue comments and documentation (MUST NOT)
+- Fetch runtime secrets from a vault at startup; never write them to disk
+  or commit them (MUST NOT)
 
-## License compliance
+## Licence compliance
 
-- Before adding a dependency, verify its license is acceptable
-- Copyleft licenses (GPL, AGPL) require explicit approval before use
-- Document and justify any dependency with a non-standard or ambiguous license
-- Approving a license does not discharge the obligation that attaches
-  when the dependency is **redistributed** inside a built artifact
-  handed to users (container image, bundle, installer, fat jar). A
-  permissive or weak-copyleft (LGPL, MPL) dependency shipped that way
-  carries an attribution obligation of its own
-- Ship a third-party notice file inside the artifact, at a stable path
-  a runtime bind mount cannot shadow (e.g. `/licenses/`), placed after
-  the dependency-install layer so editing it does not bust the build
-  cache
-- Guard the notice with a test that derives the required entries from
-  the dependency manifest, so a newly added redistributed dependency
-  fails the build until it is documented. Hand-maintained attribution
-  rots
+- Verify a dependency's licence before adding it
+- Get explicit approval before using a copyleft licence such as GPL or
+  AGPL
+- Document and justify every dependency with a non-standard or ambiguous
+  licence
+- Ship a third-party notice file inside every artifact that redistributes
+  dependencies, such as an image, bundle, installer or fat jar
+- Guard the notice with a test that derives the required entries from the
+  dependency manifest
 
-## DAST (Dynamic Application Security Testing)
+## DAST
 
-- DAST MUST run against the staging/QA environment after every deployment
-- Never run DAST against production
-- Automated DAST scans MUST complete before any production release
-- Critical findings MUST block the release and be treated as incidents
-- Lower-severity findings MUST be tracked and resolved within a defined
-  timeframe
+- Run DAST against staging or QA after every deployment (MUST)
+- Never run DAST against production (MUST NOT)
+- Complete the automated DAST scans before any production release (MUST)
+- Block the release on a critical finding, and treat it as an incident
+  (MUST)
+- Track lower-severity findings to resolution within a defined timeframe
+  (MUST)
 
-## IaC scanning (Infrastructure-as-Code)
+## IaC scanning
 
-- All infrastructure code (Terraform, Dockerfiles, Helm charts, Kubernetes
-  manifests) MUST be scanned for security misconfigurations in CI
-- A failed IaC scan MUST fail the build — the same rule as SAST
-- Common issues to detect: overprivileged roles, exposed ports, unencrypted
-  storage, hardcoded values, use of `latest` image tags
-- IaC scan results MUST be reviewed in the same PR that introduces the change
+- Scan all infrastructure code (Terraform, Dockerfiles, Helm charts,
+  Kubernetes manifests) for misconfigurations in CI (MUST)
+- Fail the build on a failed IaC scan, as for SAST (MUST)
+- Detect overprivileged roles, exposed ports, unencrypted storage,
+  hardcoded values and `latest` image tags
+- Review IaC findings in the pull request that introduces the change
+  (MUST)
 
 ## Penetration testing
 
 - Schedule regular penetration testing by a qualified party
-- Critical findings (severity A) MUST be treated as incidents and resolved
-  immediately
-- Lower-severity findings MUST be tracked and resolved within a defined
-  timeframe
+- Treat a critical finding as an incident and resolve it immediately
+  (MUST)
+- Track lower-severity findings to resolution within a defined timeframe
+  (MUST)
 
 ## Dependency hygiene
 
-- Keep dependencies up to date — unpatched dependencies are a security risk
-- Remove unused dependencies promptly
-- Prefer dependencies that are actively maintained and widely adopted
-- Pin third-party GitHub Actions to a full commit SHA, not a mutable
-  tag, with the version in a trailing comment so Dependabot still bumps
-  them — a moved tag is a supply-chain attack vector
+- Keep dependencies up to date, and remove unused ones promptly
+- Prefer actively maintained, widely adopted dependencies
+- Pin third-party CI steps to an immutable reference such as a commit SHA,
+  with the version in a comment so the update bot still bumps them

@@ -36,6 +36,8 @@
 - Tag images with the git commit SHA or release version — never rely on
   mutable tags in staging or production
 - Remove unused images from the registry regularly
+- Put a redistributed dependency's licence notice at a stable path a bind
+  mount cannot shadow, such as `/licenses/`, after the dependency layer
 
 ## Runtime version coherence
 
