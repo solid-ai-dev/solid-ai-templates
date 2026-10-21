@@ -15,8 +15,9 @@ Prefer these patterns for backend concerns:
 
 - **Repository** — abstract all data access behind a repository interface;
   the service layer never constructs queries directly
-- **Service layer** — encapsulate business logic in stateless service objects;
-  one service per domain aggregate
+- **Service layer** — encapsulate business logic in service objects that
+  hold their injected collaborators and no request state; one service per
+  domain aggregate
 - **Unit of Work** — coordinate multiple repository operations in a single
   transaction; commit or roll back as one atomic unit
 - **Factory / Factory Method** — centralise object construction, especially

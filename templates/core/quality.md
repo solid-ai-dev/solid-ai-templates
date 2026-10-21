@@ -75,7 +75,7 @@ How code is designed, kept clean, swept and checked.
   that owns its import and names the install command when it is missing
 - Import the package without that extra in one CI leg (MUST)
 - Declare a directional import ban where one part of the tree must not
-  import another, and check it
+  import another (MAY), and check every ban declared
 
 ```bash
 pre-commit run find-import-bans --all-files --verbose
@@ -130,9 +130,9 @@ declared.
 
 ## Module structure
 
-- Build an internal module ready for extraction: inject host values as
-  constructor parameters, and give it its own public API, README, tests and
-  requirements (MUST)
+- Build an internal module ready for extraction where it is reused or an
+  extraction is planned: inject host values as constructor parameters, and
+  give it its own public API, README, tests and requirements (SHOULD)
 - Wrap a library in a thin CLI; never make the CLI the product
 - Split an oversized module into a package behind its existing import path,
   re-exporting through `__init__`, and leave the test suite untouched as
@@ -187,7 +187,8 @@ means the project tracks none.
 - Commit an `.editorconfig` and a `.gitattributes` with `* text=auto`,
   adding `eol=lf` for hard LF
 - Mark a text path exempt from LF with `-text` in `.gitattributes`
-- Let a linter format on save; keep manual style rules to a minimum
+- Let a linter format on save, and keep manual style rules to a minimum
+  (SHOULD)
 
 ```bash
 git ls-files --eol | awk -F'\t' '

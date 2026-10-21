@@ -275,9 +275,9 @@ developer's environment passes there and fails on a laptop.
 
 [ID: quality-gates-retrofit-ratchet]
 
-- Make a red gate green by exempting failing instances, never by narrowing
-  what it evaluates: removing a compared field, disabling a strict sub-flag
-  or loosening a matcher
+- Never make a red gate green by narrowing what it evaluates: removing a
+  compared field, disabling a strict sub-flag or loosening a matcher
+  (MUST NOT); exempting the failing instances is allowed (MAY)
 - Retire an exemption whose remedy is known by applying the remedy
 - Fix a genuine defect when the fix is small, instead of narrowing the check
 - Clear a finding by changing the condition it describes, never the input
@@ -399,7 +399,7 @@ Tests are both the standard and files a change may edit. Strengthening
 them needs no ceremony; weakening them redefines correct, and takes a
 person.
 
-- Strengthen the specification freely: add a test or tighten an assertion
+- Strengthen the specification freely (MAY): add a test or tighten an assertion
   without escalation
 - State why when a change deletes, loosens or rewrites an existing test
 - Never merge such a change on a green suite alone

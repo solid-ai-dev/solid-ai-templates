@@ -29,6 +29,7 @@ tool drives it.
   request and full regression on each release candidate; automate smoke and
   quick fully
 - Turn every defect exploratory testing finds into a regression test
+  (SHOULD)
 
 ## Coverage
 
@@ -40,17 +41,18 @@ tool drives it.
 - Never let coverage regress between releases
 - Run every automated test from CI, with no human step
 - Name a test so the name alone states the unit, the input and the expected
-  outcome
+  outcome (SHOULD)
 - Run a unit that reads a structured external artifact against real
   production data once before calling its suite complete, and add a
   regression test for each gap it shows
 
 ## Testability
 
-- Keep business logic in pure functions; push I/O to thin adapters at the
-  edges
-- Inject dependencies; never let code under test construct its own
-- Split a function that needs more than two mocks to test
+- Keep business logic in pure functions, and push I/O to thin adapters at
+  the edges (SHOULD)
+- Inject dependencies rather than construct them in the code under test
+  (SHOULD)
+- Split a function that needs more than two mocks to test (SHOULD)
 - Treat code that is hard to test as a design problem
 
 ## Isolation
@@ -140,7 +142,7 @@ never consulted.
 - Fail on that comparison; never print a count for a reader to notice
 - Report every occurrence, not the first per line or per file
 - Fail an "every item holds" assertion when the set shrinks unexpectedly
-- Give the coverage assertion its own test and its own message
+- Give the coverage assertion its own test and its own message (SHOULD)
 - Assert that each item declares its own value where a permissive default
   exists; prefer a default that is not a legal value
 
@@ -230,7 +232,7 @@ never consulted.
 
 - Verify a visual change on its rendered output, read headless off the
   pixels or the resolved DOM, never off the source (MUST)
-- Capture the render before the change as well as after it
+- Capture the render before the change as well as after it (SHOULD)
 - Confirm the build is fresh before re-editing a change that still looks
   wrong
 
@@ -260,7 +262,7 @@ never consulted.
 [ID: testing-in-process-server]
 
 - Serve the real app in a thread on port 0 and drive it over real HTTP,
-  where a framework test client bypasses the server stack
+  where a framework test client bypasses the server stack (SHOULD)
 - Derive the base URL from the assigned port, and stop the server in a
   `finally`
 - Share one serving helper between scripts and browser tests

@@ -48,9 +48,12 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 
 - Design all consumers to be **idempotent** — at-least-once delivery is the
   default; the same message will arrive more than once under failure conditions
-- ACK only after the message has been fully processed — never ACK at receipt
-- On processing failure: NACK or leave unacknowledged so the broker requeues
-  or routes to the dead-letter queue (DLQ); never silently discard
+- ACK only after the message has been fully processed, or durably handed
+  off to a queue or job record that then owns its retries and terminal
+  failures — never ACK at receipt
+- On a failure before that point: NACK or leave unacknowledged so the
+  broker requeues or routes to the dead-letter queue (DLQ); never silently
+  discard
 - Apply exponential backoff on retries — tight retry loops amplify downstream
   failures
 - Move messages to the DLQ after a configurable maximum retry count —
@@ -62,8 +65,8 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 
 ## Load and backpressure
 
-- Decouple receive from process under load: acknowledge or enqueue the
-  message fast, then do the work in a worker you pace — never run heavy
+- Decouple receive from process under load: hand the message off durably,
+  acknowledge it, and do the work in a worker you pace — never run heavy
   processing inline on the receive path
 - Coalesce bursts: debounce repeated events for the same resource into a
   single unit of work after a short quiet period, instead of processing
