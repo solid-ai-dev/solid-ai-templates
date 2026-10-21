@@ -14,7 +14,7 @@ templates/backend/grpc.md 96.1
 templates/backend/http.md 97.8
 templates/backend/jobs.md 97.2
 templates/backend/messaging.md 96.8
-templates/backend/microservices.md 93.5
+templates/backend/microservices.md 100.0
 templates/backend/monitoring.md 98.5
 templates/backend/observability.md 96.6
 templates/backend/webhooks.md 86.9
