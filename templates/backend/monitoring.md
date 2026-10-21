@@ -22,8 +22,6 @@ Add custom metrics for business-critical operations specific to the service
   be set to arbitrary round numbers without a measurement baseline
 - Every P1 and P2 failure scenario MUST have a corresponding alert defined
   before the service is promoted to production
-- Every post-incident review MUST produce at least one new alert that would
-  have detected the issue earlier
 - Alerts MUST be actionable — every alert must have a clear response procedure
 
 ### Example thresholds
@@ -54,4 +52,7 @@ Add custom metrics for business-critical operations specific to the service
 ## Incident response
 - P1/P2 incidents MUST have a post-mortem documented after resolution
 - Post-mortem MUST include: timeline, root cause, impact, corrective actions
+- Record whether alerting detected the incident in time; where it did not,
+  add or tune an alert as a corrective action — a review that found no
+  detection gap adds none
 - Corrective actions MUST be tracked to completion — not just documented
