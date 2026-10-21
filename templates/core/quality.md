@@ -73,7 +73,8 @@ How code is designed, kept clean, swept and checked.
 - Talk only to direct dependencies, and keep together what changes together
 - Reach a heavy, native or platform-limited dependency through one module
   that owns its import and names the install command when it is missing
-- Import the package without that extra in one CI leg (MUST)
+- Run one CI leg without the optional dependency installed, importing the
+  package (MUST)
 - Declare a directional import ban where one part of the tree must not
   import another (MAY), and check every ban declared
 
@@ -97,8 +98,6 @@ declared.
 - Where that checker is frozen, keep a contract test walking every
   concrete class: each override keeps its member kind and first parameter,
   only appends parameters, and declares no variadic
-- Read each override through `inspect.getattr_static`, unwrapping
-  `staticmethod` and `classmethod` by hand
 
 ## Errors
 
@@ -135,10 +134,10 @@ declared.
   give it its own public API, README, tests and requirements (SHOULD)
 - Wrap a library in a thin CLI; never make the CLI the product
 - Split an oversized module into a package behind its existing import path,
-  re-exporting through `__init__`, and leave the test suite untouched as
-  the regression oracle
+  re-exporting from the package's entry module, and leave the test suite
+  untouched as the regression oracle
 - Split along a cohesive seam, each submodule importing only earlier
-  stages and never the package `__init__`
+  stages and never the package's entry module
 - Keep constants beside the functions that use them
 - Reshape first, then split mechanically, where a split would change a
   signature
@@ -148,12 +147,8 @@ declared.
 - Prove a split neutral with the untouched suite and a byte-identical
   output diff
 
-## Ports and variants
+## Variants
 
-- Port a function into another language byte for byte: the same operation
-  order, character classes and edge cases, citing the original
-- Decompose a ported procedural script into small modules an orchestrator
-  dispatches on a declared type
 - Prefer a per-configuration flag with a safe default to a global
   auto-detect, unless inputs partition cleanly on a measurable signal
 
@@ -306,32 +301,6 @@ zero and `unreferenced` is zero. `--dir` names the directory;
 - Read every hit as a suspected instance of the same defect, not a style
   question
 
-## Exemption docs
-
-[ID: quality-exemption-doc-duty]
-
-- Treat changing what a check exempts as a documentation edit: sweep the
-  documents for the check's name and re-read every hit
-- Sweep for the name a document would use, not only the source identifier
-- Point prose at the exemption constant rather than enumerate it (SHOULD)
-- Write an enumeration without a cardinal in front of it
-
-```bash
-# The check whose exemptions are changing, named as a document would
-# refer to it.
-module="<check-name>"
-
-scanned=$(git ls-files '*.md')
-echo "documents scanned: $(echo "$scanned" | grep -c .)"
-naming=$(echo "$scanned" | xargs grep -l "$module")
-echo "documents naming ${module}: $(echo "$naming" | grep -c .)"
-echo "$naming"
-```
-
-Pass condition: the scanned count is above zero, and every listed document
-is read against the new exemption set. A naming count of zero is a real
-answer.
-
 ## New constraints
 
 [ID: quality-constraint-corpus-sweep]
@@ -343,9 +312,6 @@ answer.
 - Name what a partial sweep left out (MUST)
 - State whether the violations were fixed or frozen; a freeze names each
   instance, gates new work and reports an instance that stops violating
-- Run and record the sweep on an immutable corpus too, such as decision
-  records or released changelog sections, and state the boundary the
-  constraint binds forward from
 - Record a constraint shipped without a check as such, with the instances
   already known
 
@@ -395,11 +361,6 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 
 ### Verdicts and readings
 
-- Report what a judgement check inspected and found, in the record a
-  person reads (MUST)
-- Report that a check tied to a moment does not apply, with exit status 3,
-  when the moment is not in progress; detect the moment, never the empty
-  input (MUST)
 - Refuse, as a finding and never as exit 3, when the command that should
   yield a comparison baseline yields none, and print the baseline on its
   own line (MUST)
@@ -409,15 +370,10 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
   of its output (MUST)
 - Say which counts carry the verdict and which are for a reader, where a
   check carries both (MUST)
-- Record beside each judgement disposition what takes a person (MUST)
 - Report what a check saw whatever its verdict (MUST)
 - Carry a shipped check's verdict in its exit status, and prove the status
   separates a planted violation from a clean tree (MUST)
 - Say beside a check whose verdict takes a person what that judgement is
-- Keep exit 3, the check answering this run, apart from a skip a person
-  records in advance
-- Separate readings, verdicts and not-applicable answers in a run's summary
-  (MUST)
 - Never wire a governance signal as a build gate where the project's own
   rules oblige the change that trips it (MUST NOT)
 - Never weaken the rule behind a check to make it green or quiet
