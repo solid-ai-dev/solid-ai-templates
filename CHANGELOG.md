@@ -48,6 +48,8 @@ Releases up to 2.63.0 are listed in
   check-harness rules ([#2082])
 - The git template drops its submodule, numbered-document and base64 rules
   and the .vscode allowlist ([#2093])
+- Object-oriented design rules leave the core tier; declare base-oop in Extras to
+  keep them ([#2104])
 
 ### Added
 
@@ -197,6 +199,7 @@ Releases up to 2.63.0 are listed in
 [#2096]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2096
 [#2097]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2097
 [#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
+[#2104]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2104
 
 ## [2.90.0] - 2026-09-12
 
