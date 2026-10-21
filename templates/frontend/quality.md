@@ -86,8 +86,8 @@ Rules:
 ## Theme persistence (if applicable)
 [ID: static-site-theme]
 
-- Apply a persisted theme from a blocking script in `<head>`, before any
-  content renders (MUST)
+- Apply a persisted theme before first paint (MUST): render it on the
+  server, or set it from a blocking `<head>` script if the browser stores it
 - Never set the theme from a body or deferred script (MUST NOT); the page
   flashes the wrong theme on every load
 
