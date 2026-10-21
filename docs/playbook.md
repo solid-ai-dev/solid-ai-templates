@@ -458,8 +458,12 @@ skipped.
    - the strength count, which step 6 compares against:
 
      ```bash
-     grep -oE '\bSHOULD( NOT)?\b|\bMAY\b' <file> | wc -l
+     f=<file>
+     { grep -oE '\bSHOULD( NOT)?\b|\bMAY\b' "$f" || [ $? -eq 1 ]; } | wc -l
      ```
+
+     A file with no SHOULD or MAY counts zero and exits zero; an unreadable
+     file still exits non-zero
 
    - every fenced check over 15 lines, which becomes a hook or a short block
    - each section ID's references: `git grep -n '<id>'`, and its
@@ -494,8 +498,9 @@ skipped.
    each control under `bash -e -o pipefail` and plain `bash`, with a
    malformed input as well as an empty one. State a command only inside a
    fence; the unfenced-check hook flags one typed into a sentence
-9. **Ship.** Commit before running conformance, then `py tools/sync_docs.py`
-   after the last edit. Push only through the ratchet, chained with `&&`:
+9. **Ship.** After the last edit, run `py tools/sync_docs.py`, commit the
+   sources and the regenerated files together, then run conformance; several
+   checks read commits. Push only through the ratchet, chained with `&&`:
 
    ```bash
    py tools/score_templates.py --check && git push
