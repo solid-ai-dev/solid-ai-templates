@@ -126,6 +126,37 @@ it.
 - Change the pattern, not the prose; rewriting the text fixes one instance
   and leaves every later rendering unmatched
 
+**A length gate's exemptions are discovered, not derived.** The list grows
+while the corpus does.
+
+- Exempt a case only when something other than the author sets the count:
+  a licence text, one label per line of code, a banner ruled top and
+  bottom, a table of a published specification's fields
+- Express the exemption as the shape that makes the count external, never
+  as the file or directory that holds it
+- Adopt in slices
+
+**A check proves its fix where the tree can fail.**
+
+- Ship a check against a synthetic subject when its fix has no observable
+  effect on the current tree
+- Demonstrate the defect on the fixing branch where the tree can be put in
+  the failing state
+- Control a check that alters its own subject with a single fresh
+  invocation until it is fixed to inspect without mutating; a second run
+  reads what the first one wrote
+
+**A backslash in an embedded check is built, not typed.** An agent's shell
+tool can strip or double a backslash on its way into a heredoc, so a
+pattern that works when typed breaks when written through the tool:
+
+| Instead of | Write |
+|------------|-------|
+| `\d` | `[0-9]` |
+| `\w` | `[A-Za-z0-9_]` |
+| `\b` at each end | `(?<![A-Za-z0-9])` and `(?![A-Za-z0-9])` |
+| a literal backslash | `chr(92)` |
+
 ---
 
 ## Drain a downstream lesson into a template

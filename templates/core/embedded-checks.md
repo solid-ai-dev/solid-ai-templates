@@ -18,16 +18,21 @@ and runs it, so it has to survive the copy.
 - Confirm that a line continuation survived into the committed file
 - Fold a command onto one line, or bind its parts to shell variables,
   rather than continue it (SHOULD)
-- Build an exact backslash in quoted text with `chr(92)` rather than
-  transcribing it
-- Write patterns without backslash escapes:
+- Extract a check from the committed file and run it before merging the
+  rule that states it
+- Report how many checks a tool could not see, not only how many it ran
 
-  | Instead of | Write |
-  |------------|-------|
-  | `\d` | `[0-9]` |
-  | `\w` | `[A-Za-z0-9_]` |
-  | `\b` at each end | `(?<![A-Za-z0-9])` and `(?![A-Za-z0-9])` |
-  | a literal backslash | `chr(92)` |
+Find a check stated outside a fence. It matches over the paragraph, not
+the line, because prose wraps:
+
+```bash
+pre-commit run find-unfenced-checks --all-files --verbose
+```
+
+Pass condition: the paragraph count is above zero and the
+`checks stated outside a fence` count is zero. Give the hook a `--root`
+argument for each directory holding rule documents; a paragraph count of
+zero means the roots named nothing, not that the tree is clean.
 
 Every embedded check MUST compile when extracted the way a reader extracts
 it:
