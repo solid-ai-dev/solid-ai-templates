@@ -447,6 +447,73 @@ applies.
 
 ---
 
+## Review a template
+
+Run this to review, rewrite or cut a template, one file or one related
+group per pull request. Each step names what went wrong when it was
+skipped.
+
+1. **Measure.** Record, before any edit:
+   - the score and its subscores: `py tools/score_templates.py <file>`
+   - the strength count, which step 6 compares against:
+
+     ```bash
+     set -o pipefail
+     f=<file>
+     { grep -oE '\bSHOULD( NOT)?\b|\bMAY\b' "$f" || [ $? -eq 1 ]; } | wc -l
+     ```
+
+     A file with no SHOULD or MAY counts zero and exits zero; an unreadable
+     file still exits non-zero
+
+   - every fenced check over 15 lines, which becomes a hook or a short block
+   - each section ID's references: `git grep -n '<id>'`, and its
+     dispositions in `tests/conformance/dispositions.py`
+2. **Classify every rule.** Put each in one group: counters an agent habit
+   (keep), a reminder an agent knows but skips (keep it short), default
+   practice (cut it to a line or drop it). Then mark what serves this
+   repository (REPO), one language or tool (STACK) or a narrow class of
+   project (NICHE), and give each a destination: the playbook, an opt-in
+   template, a fork, or deletion. A rule countering an agent habit stays
+   even when it looks niche
+3. **Check the chain.** Before placing a rule, measure the chain reach of
+   each file it could live in (`py tools/resolve_chain.py --roots`), and
+   put it in the wider one. Read it against the other rules in those
+   chains; two rules an agent cannot both follow are a conflict (#2077)
+4. **Propose.** Show the owner a findings table (lead-ins restating a
+   bullet, duplicates, cuts, moves, new hook IDs) before editing. A shipped
+   hook ID is frozen, so the owner approves each one
+5. **Rewrite.** One instruction per bullet, with its reason in
+   `docs/rationale/<name>.md` under the same heading. Use topic headings of
+   one to four words, as the top-scoring templates do, and order sections
+   by when the rule applies. Leave no horizontal rule
+6. **Keep the strength.** A plain imperative reads as MUST, so rewriting a
+   SHOULD or MAY rule as an imperative raises it silently. Carry every
+   SHOULD, MAY, "(if applicable)" and "where appropriate" onto the new
+   bullet, and compare the step 1 count afterwards: a fall is a rule that
+   left or a rule that got stronger, and the diff says which
+7. **Fix both sides.** A contradiction fix edits every rule in the pair; a
+   fix to one side leaves the other still contradicting it. When shortening
+   an assertion, keep what it accepts, not only what it rejects
+8. **Harden the checks.** Shorten a check before shipping it as a hook. Run
+   each control under `bash -e -o pipefail` and plain `bash`, with a
+   malformed input as well as an empty one. State a command only inside a
+   fence; the unfenced-check hook flags one typed into a sentence
+9. **Ship.** After the last edit, run `py tools/sync_docs.py`, commit the
+   sources and the regenerated files together, then run conformance; several
+   checks read commits. Push only through the ratchet, chained with `&&`:
+
+   ```bash
+   py tools/score_templates.py --check && git push
+   ```
+
+   Re-record a lower row only when the added words are the fix (a restored
+   qualifier, the second side of a conflict) and say so in the pull
+   request. Add a migration-guide row for each move or removal, and the
+   CHANGELOG line once the pull request has its number
+
+---
+
 ## Score template quality
 
 `tools/score_templates.py` scores each template's form against the
@@ -467,7 +534,8 @@ planted cases first and refuses a run that scored no template.
 
 1. Before opening a template PR, score the files it changes. A drop below
    the baseline fails CI; shorten the rule or move its reason to prose docs
-   rather than re-recording a lower row
+   rather than re-recording a lower row, except as "Review a template",
+   step 9, allows
 2. After improving a template, run `--update` and commit the raised rows
    with the change. Never lower a row by hand
 3. A new template scores 70 or above, or CI fails it until it is rewritten
