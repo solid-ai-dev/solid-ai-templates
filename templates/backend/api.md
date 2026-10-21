@@ -3,13 +3,11 @@
 [DEPENDS ON: templates/backend/http.md]
 
 ## API-first
-- Software MUST be designed API-first — the public contract MUST be agreed
-  upon and documented before implementation begins
-- Any deviation from API-first design MUST be recorded in an Architecture
-  Decision Record (ADR) with a stated justification
-- Benefits: client teams (web, mobile, third-party) can work in parallel,
-  the API is testable independently of any frontend, and the contract becomes
-  a product in its own right
+- Design API-first (MUST): agree and document the public contract before
+  implementation begins (MUST), so client teams work in parallel and the
+  API is testable without a frontend
+- Record any deviation from API-first in a decision record with its
+  justification (MUST)
 
 ## Protocol selection
 [ID: backend-api-protocols]
@@ -22,57 +20,44 @@
 | WebSocket | Real-time push, bidirectional streams where HTTP polling is not viable                              |
 | Messaging | Async, fire-and-forget, event-driven                                                                        |
 
-- Start with REST — only deviate with a stated reason in an ADR
-- REST + gRPC is valid: REST for external/ops endpoints, gRPC for internal hot
-  paths
+- Start with REST; deviate only with a reason in a decision record
+- Combine REST for external and ops endpoints with gRPC for internal hot
+  paths (MAY)
 - Never use gRPC as the primary interface for browser clients
-- GraphQL and REST in the same service require strong justification — dual
-  surfaces double the maintenance burden
-- SOAP and other legacy protocols require a per-case ADR
+- Justify GraphQL and REST in one service strongly; two surfaces double the
+  maintenance
+- Record a per-case decision for SOAP or another legacy protocol
 
 ## OpenAPI specification
-- Every API MUST have an OpenAPI specification
-- The spec MUST be kept up to date — a stale spec is worse than no spec
-- Include: all resources, methods, parameters, response schemas, error
-  responses,
-  and authentication requirements
-- Provide a changelog documenting API changes across versions
-- Prefer design-first: hand-author the spec as the single source of
-  truth and serve it verbatim — the published spec is the same file the
-  team edits, not one generated from code annotations
-- Pin the spec to code: assert that enums, routes, and error codes in
-  code match the spec so any drift fails a test, not a consumer
-- Contract-test the running API against the spec — generate cases from
-  the spec and run them against a live instance (e.g. Schemathesis) so
-  the implementation provably conforms to the published contract
-- The spec document's own version field (OpenAPI `info.version`) is a
-  separate axis from the package / release version — maintain it on its
-  own cadence and do NOT bump it on a routine package release that does
-  not change the contract
+- Give every API an OpenAPI specification (MUST), and keep it current
+  (MUST); a stale spec is worse than none
+- Cover every resource, method, parameter, response schema, error response
+  and authentication requirement in it
+- Keep a changelog of API changes across versions
+- Prefer design-first: hand-author the spec and serve that file verbatim,
+  never one generated from code annotations
+- Assert that the enums, routes and error codes in code match the spec, so
+  drift fails a test, not a consumer
+- Contract-test a live instance against cases generated from the spec
+  (e.g. Schemathesis)
+- Version the spec's `info.version` apart from the package version; never
+  bump it for a release that leaves the contract unchanged
 
 ## Versioning
-- APIs in a given version MUST maintain backward compatibility
+- Keep every API version backward compatible (MUST)
 - Version the API in the URI path prefix: `/v1/`, `/v2/`
-- Start versioning from `v1`; introduce `v2` only when breaking changes are
-  unavoidable
-- Alternatively, use a custom request header: `Api-Version: 2`
-- MUST NOT use media type to control API versions
+- Start at `v1`; introduce `v2` only when a breaking change is unavoidable
+- Use a custom request header (`Api-Version: 2`) where a path prefix does
+  not fit
+- Never version through the media type (MUST NOT)
 
 ## Backward compatibility
-A new major version is required whenever a breaking change is introduced.
-
-**Breaking changes** — any of the following constitutes a break:
-- Removing or renaming a response field or object
-- Changing the type of an existing field
-- Switching the authentication scheme
-- Modifying an existing HTTP verb or URI path
-- Changing the wire protocol or Content-Type
-- Altering business logic in a way that changes observable results
-
-**Non-breaking changes** — these MUST NOT require a version bump:
-- Adding a new optional field or object to a response
-- Adding a new endpoint or HTTP verb
-- Adding new optional query parameters
+- Release a new major version for every breaking change: a removed or
+  renamed response field, a changed field type, a new auth scheme
+- Treat as breaking, too, a changed verb or path, wire protocol or
+  Content-Type, and business logic that changes observable results
+- Never bump the version for an additive change (MUST NOT): a new optional
+  field, endpoint, verb or query parameter
 
 ## Deprecation strategy
 When a breaking change is introduced:
@@ -93,13 +78,13 @@ Sunset: <HTTP-date>
 
 ## Statelessness
 [ID: backend-api-statelessness]
-- APIs MUST be stateless — no client context stored on the server between
-  requests
-- All information needed to process a request MUST be in the request itself
-- Session state belongs in the client or a dedicated session store, not in the
-  API service
+- Keep APIs stateless (MUST): store no client context on the server
+  between requests
+- Carry everything a request needs in the request itself (MUST)
+- Keep session state in the client or a dedicated session store, never in
+  the API service
 
 ## Pagination
-- Collection endpoints MUST be paginated — never return unbounded lists
+- Paginate every collection endpoint (MUST); never return an unbounded list
 - Use `limit` and `offset` (or cursor-based) pagination
 - Include navigation links (`next`, `prev`) in the response per HATEOAS

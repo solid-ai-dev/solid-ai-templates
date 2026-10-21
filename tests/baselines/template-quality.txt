@@ -2,7 +2,7 @@
 # `--check` fails a template scoring below its row here, a template with no
 # row scoring below the new-file floor, and a row naming no template. Raise
 # a row by improving the template and re-recording; never lower one by hand.
-templates/backend/api.md 94.9
+templates/backend/api.md 100.0
 templates/backend/auth.md 98.4
 templates/backend/caching.md 100.0
 templates/backend/concurrency.md 94.8
