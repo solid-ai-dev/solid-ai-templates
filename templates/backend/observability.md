@@ -24,16 +24,8 @@ Use the correct level — do not elevate debug information to INFO:
   human-readable in development
 - Every log entry MUST include: timestamp, level, message, properties
 - Include a request ID in all log entries for a given request lifecycle
-- Minimum JSON structure:
-  ```json
-  {
-    "Timestamp": "2024-01-15T12:34:56.789Z",
-    "Level": "Information",
-    "MessageTemplate": "Order ({orderId}) accepted.",
-    "Message": "Order (ORD-78901) accepted.",
-    "Properties": { "orderId": "ORD-78901" }
-  }
-  ```
+- Keep the message template beside the rendered message, and its values
+  as structured properties, so entries can be grouped by template
 
 ### Rules
 - Log errors once — at the top of the call stack, not at every level
@@ -71,24 +63,3 @@ Use the correct level — do not elevate debug information to INFO:
 - Distinguish between client errors (4xx) and server errors (5xx) in logs
 - Include correlation/request IDs in error responses to enable log tracing
 - Never expose internal state, stack traces, or file paths in error responses
-
-## Pipeline diagnosability
-
-Multi-stage pipelines (ETL, data/image extraction, compiler passes, build
-tools) hide their failures: when a stage produces wrong output, the only
-visible artifacts are the input and the final result, so every "this
-looks wrong" becomes a probe session reconstructing intermediate state.
-
-- Accept an optional diagnostic sink (a `DiagnosticSink` Protocol or
-  interface) as a pipeline parameter; each stage calls
-  `sink.record_<stage>(artifact)` only when a sink is supplied
-- Provide a `FileDiagnosticSink` that writes one named artifact per stage
-  (image, mask, table, AST, JSON) to a known directory for inspection
-- Contract: pipeline output MUST be byte-identical with or without a sink
-  — the diagnostic concern lives outside the core path, never alters it
-- Diagnostic artifacts are gitignored — on-demand debugging output, not
-  committed state
-- Reach for this when stages have named, inspectable intermediate
-  artifacts, failure reports describe symptoms rather than stages, and a
-  change can break one stage silently while the final output still looks
-  plausible

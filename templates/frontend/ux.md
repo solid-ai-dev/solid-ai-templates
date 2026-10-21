@@ -74,39 +74,15 @@ A feature is not complete until:
 - [ ] Keyboard navigation verified manually
 - [ ] Screen reader walkthrough completed for new interactive elements
 
-## Sortable tables
-
-- Boolean columns SHOULD sort descending (true first) on first click —
-  users click a boolean column to find items that have a feature, not
-  items that lack it; ascending puts `false` first, which looks
-  identical to unsorted and appears broken
-
-## Responsive breakpoints
-
-- Tablet: max-width 1024px
-- Mobile: max-width 768px
-- Small mobile: max-width 480px
-
 ## Design system
 
 - Use a design system if one exists for the project — never design ad-hoc
   components that duplicate established patterns
-- Design tokens (colours, spacing, typography, radii) MUST come from the
-  design system — never hardcode visual values
+- Design tokens (colours, spacing, typography, radii, breakpoints) MUST
+  come from the design system — never hardcode visual values
 - Component-driven development: build UI as a hierarchy of reusable,
   self-contained components; avoid monolithic views
 - New components SHOULD be documented with usage examples before shipping
-
-## Graded variant bake-off
-[ID: frontend-ux-bakeoff]
-
-When several UX approaches are plausible, do not pick by fiat:
-
-1. Build N minimal variants (e.g. three editor designs).
-2. Grade each on weighted criteria — at least implementation effort and
-   UX quality — by exercising them on a dev server, not on paper.
-3. Pick the best score-per-effort; record the runners-up and why they
-   lost, so the discarded variants document the design space.
 
 ## Browser support
 

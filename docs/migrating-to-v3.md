@@ -50,6 +50,11 @@ receives nothing (ADR-051).
 | Python editable installs under Compose, `run --rm` write loss, the linter target-version exception | `base-containers` | removed |
 | Figure cropping, the research scrape cache, the lens-catalogue examples | `base-data-quality` | removed; neutral rules remain |
 | MySQL online-DDL tool names; the host MIME-registry example | `base-data-migration`, `base-security` | neutral rules remain |
+| React hooks and render props, the CSS line-width note, the no-consent-banner choice | `frontend-quality` | removed |
+| Cloudflare crawl control, SEO audit thresholds, AEO measurement, the FAQPage fact; answer-engine crawlers now MAY | `frontend-content` | removed or relaxed |
+| `public/` paths, ESLint and Prettier file names, the homepage-sections note | `frontend-content`, `frontend-static-site` | neutral rules remain |
+| Sortable boolean columns, fixed breakpoints, `frontend-ux-bakeoff` | `frontend-ux` | removed; breakpoints come from the design system |
+| Pipeline diagnosability, the Serilog log shape, the OpenAPI drift-test detail | `backend-observability`, `backend-api` | removed or neutral |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

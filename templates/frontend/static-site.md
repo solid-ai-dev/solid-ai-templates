@@ -40,7 +40,7 @@ Edit here                    Deployed here
 
 | Page     | Path    | Notes             |
 |----------|---------|-------------------|
-| Homepage | `/`     | All main sections |
+| Homepage | `/`     | The site's entry page |
 | 404      | `/404`  | Custom error page |
 
 ---
@@ -48,10 +48,10 @@ Edit here                    Deployed here
 ## Code conventions
 [ID: static-site-code]
 
-- **ESLint** for any JS/TS code — configured in `eslint.config.js`, run on save
-- **Prettier** owns all formatting — commit `.prettierrc`; no style debates
-  in code review
-- If no JS/TS is present in the project, skip ESLint
+- Lint any JS/TS code with the stack's linter, configured in the repository
+  and run on save; skip it where the project has no JS/TS
+- Let one formatter own all formatting, with its configuration committed;
+  no style debates in code review
 
 ---
 
@@ -74,7 +74,8 @@ Edit here                    Deployed here
   --font-text: system-ui, -apple-system, sans-serif;
   --font-code: ui-monospace, "Cascadia Code", "Fira Code", monospace;
   ```
-- If web fonts are required, self-host them as woff2 files in `public/fonts/`
+- If web fonts are required, self-host them as woff2 files in the directory
+  the build serves statically
   and declare `@font-face` in CSS — never depend on external CDNs at runtime
 - Use `font-display: block` for self-hosted fonts to prevent layout shift
 

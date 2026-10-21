@@ -27,9 +27,9 @@ to change.
 ## Assets
 [ID: static-site-assets]
 
-- Images: `public/images/` — reference as `/images/filename.ext`
-- Documents: `public/docs/` — reference as `/docs/filename.ext`
-- No assets outside `public/` — only files in `public/` are served statically
+- Keep images and documents in the directory the build serves statically,
+  and reference them by root-relative paths
+- Serve no asset from outside that directory
 
 ---
 
@@ -46,11 +46,9 @@ to change.
   should I click this?"
 - JSON-LD structured data SHOULD be present on content pages (Article,
   Course, or appropriate schema type)
-- `robots.txt` MUST allow answer-engine crawlers (OAI-SearchBot,
-  ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot)
-- Behind Cloudflare, AI-crawler access MUST be verified in AI Crawl
-  Control — new domains block AI bots by default (since 2025-07-01),
-  which overrides `robots.txt`
+- `robots.txt` MAY allow answer-engine crawlers (OAI-SearchBot,
+  ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot);
+  decide it deliberately, and verify no edge setting overrides the file
 - MUST pick a trailing slash convention (with or without) and enforce it
   across all internal links, canonical URLs, and sitemap entries — redirect
   chains waste crawl budget, split link equity, and can prevent indexing
@@ -66,21 +64,6 @@ to change.
   `apple-touch-icon` for iOS home-screen bookmarks
 - Answer engines retrieve passages, not whole pages — lead each section
   with a direct answer and keep paragraphs self-contained
-- Measure answer-engine (AEO) visibility as citation frequency across a
-  fixed prompt set over time, not as a single rank — generative output is
-  non-deterministic
-
-### SEO strategy (structure audit)
-
-- **Title-intent alignment** — page titles SHOULD match the queries users
-  actually type (check GSC or keyword research); include the primary
-  keyword, not just abbreviations or internal jargon; 50–60 characters
-- **Internal linking** — related pages SHOULD link to each other (topical
-  clusters); no orphan pages (every page reachable within 3 clicks from
-  the homepage); content pages SHOULD average 3+ internal links
-- **Content depth** — pages intended for indexing SHOULD exceed ~150 words;
-  pages below threshold are either enriched or noindexed; no
-  duplicate/near-duplicate thin pages
 
 ---
 
@@ -93,6 +76,3 @@ to change.
   implies commerce, `priceValidUntil` implies a store)
 - Review schema choice when site role differs from template examples —
   e-commerce examples applied to editorial sites produce misleading markup
-- `FAQPage` markup SHOULD NOT be expected to render a Google rich result
-  (gov/health only since 2023) — it still aids machine parsing for answer
-  engines
