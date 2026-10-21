@@ -75,7 +75,7 @@ How code is designed, kept clean, swept and checked.
   that owns its import and names the install command when it is missing
 - Import the package without that extra in one CI leg (MUST)
 - Declare a directional import ban where one part of the tree must not
-  import another, and check it
+  import another (MAY), and check every ban declared
 
 ```bash
 pre-commit run find-import-bans --all-files --verbose
@@ -187,7 +187,8 @@ means the project tracks none.
 - Commit an `.editorconfig` and a `.gitattributes` with `* text=auto`,
   adding `eol=lf` for hard LF
 - Mark a text path exempt from LF with `-text` in `.gitattributes`
-- Let a linter format on save; keep manual style rules to a minimum
+- Let a linter format on save, and keep manual style rules to a minimum
+  (SHOULD)
 
 ```bash
 git ls-files --eol | awk -F'\t' '
