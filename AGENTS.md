@@ -129,6 +129,8 @@ labels are terminal, applied when closing without action: `duplicate`
 - Write a directive's name in prose, never its bracket form — a parser
   scanning for the form finds it in the sentence describing it
 - No HTML — Markdown only
+- No horizontal rule in any Markdown file — headings separate sections;
+  `tools/check_horizontal_rules.py` gates it as a local pre-commit hook
 - A mechanically-checkable output constraint MUST name its
   agent-runnable check (command + pass condition); subjective
   constraints stay declarative (see `quality-gates-pair-check`)

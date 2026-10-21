@@ -4,8 +4,6 @@
 Cross-cutting rules for asynchronous messaging in backend services.
 Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 
----
-
 ## When to use async messaging
 
 - Use messaging when the producer does not need an immediate response
@@ -27,8 +25,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 | **SQS** | AWS-native workloads, simple queues, no broker management overhead |
 | **SQS + SNS** | Fan-out from one publisher to multiple independent consumers |
 
----
-
 ## Producer rules
 
 - Validate message schema before publishing — the producer is responsible for
@@ -41,8 +37,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   pattern — a commit/publish race will cause lost or phantom messages
 - Outbox pattern: write the message to an `outbox` table in the same transaction
   as the domain write; a relay process publishes from the outbox asynchronously
-
----
 
 ## Consumer rules
 
@@ -60,8 +54,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   the DLQ is the primary alerting surface for consumer failures
 - Keep consumer handlers thin — delegate logic to a service function, exactly
   as HTTP handlers delegate to services
-
----
 
 ## Load and backpressure
 
@@ -82,8 +74,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   idempotency, retry/backoff, and the DLQ are covered in Consumer rules
   above
 
----
-
 ## Schema and contracts
 
 - Define message schemas explicitly — JSON Schema, Avro, or Protobuf
@@ -93,8 +83,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   for Kafka-based systems — prevents schema drift across teams
 - Version the schema on breaking changes: encode the version in the topic name
   (`orders.v2`) or as a `schema_version` field in the payload
-
----
 
 ## Observability
 
@@ -109,8 +97,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   - Consumer lag grows continuously for > N minutes
   - DLQ depth exceeds a threshold
   - Consumer processing time exceeds the defined SLA
-
----
 
 ## Testing
 [EXTEND: base-testing]

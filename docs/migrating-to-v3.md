@@ -14,8 +14,6 @@ ADR-050). This guide covers the move for the two kinds of reader:
 `CHANGELOG.md` lists every change v3.0 makes. After `v2.90.0`, 2.x
 receives nothing (ADR-051).
 
----
-
 ## What moved
 
 | Content | 2.x | 3.0 |
@@ -68,8 +66,6 @@ The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
 project's own; `templates/core/agents.md` offers a default.
 
----
-
 ## Projects
 
 A project pins the templates it was generated from, usually as a
@@ -102,8 +98,6 @@ fork.
 
 No guide document a project carries is renamed — see
 [Guide documents](#guide-documents).
-
----
 
 ## Forks made before v3.0
 
@@ -142,8 +136,6 @@ into `CONTRIBUTING.md`, and replaces `docs/SPEC.md` with `docs/spec.md` and
 | The changelog-deletion check on a merge | It reads upstream's bullet as one the fork deleted | Run it on `--first-parent` |
 | A tag-triggered workflow never registered | `gh run list --workflow release-gates.yml` returns 404 | Register it (below) |
 
----
-
 ## Starting a fork
 
 Fork the repository on GitHub, then set it up once:
@@ -168,8 +160,6 @@ Then add the fork's own content:
   document they go to
 - Procedures in fork-owned documents beside upstream's, so upstream's
   `docs/` merge cleanly
-
----
 
 ## Guide documents
 

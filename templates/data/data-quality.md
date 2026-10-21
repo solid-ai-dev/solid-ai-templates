@@ -6,8 +6,6 @@ Rules for projects where content or data accuracy matters as much as
 code quality. Applies to catalogues, reference datasets, published
 content, and any project that declares data as a first-class concern.
 
----
-
 ## Data sourcing
 [ID: data-quality-sourcing]
 
@@ -18,8 +16,6 @@ content, and any project that declares data as a first-class concern.
 - When multiple sources conflict, document the conflict and the chosen
   value with rationale
 - Never fabricate or estimate values without marking them as estimates
-
----
 
 ## Completeness tracking
 [ID: data-quality-completeness]
@@ -33,8 +29,6 @@ content, and any project that declares data as a first-class concern.
 - Entries below the threshold MAY exist in the database but MUST NOT
   appear in user-facing views
 
----
-
 ## Freshness
 [ID: data-quality-freshness]
 
@@ -46,8 +40,6 @@ content, and any project that declares data as a first-class concern.
   price; never show one without it (MUST)
 - Discontinued or unavailable items MUST be marked, not deleted
 
----
-
 ## Exact vs estimated values
 [ID: data-quality-precision]
 
@@ -57,8 +49,6 @@ content, and any project that declares data as a first-class concern.
   `weightEstimated: true` or `~` prefix in display)
 - Default to realistic/pessimistic estimates — never optimistic
 - Document the estimation method when not obvious
-
----
 
 ## Explicit absence over invented values
 [ID: data-quality-explicit-absence]
@@ -72,8 +62,6 @@ fixtures, and mock data. An extrapolated value looks like data but is not
 — a verification step treats it as a real target, so a fabricated value
 can cost far more (mis-tuned thresholds, false verdicts) than the single
 missing comparison that marking absence costs.
-
----
 
 ## Data research workflow
 [ID: data-quality-research]
@@ -112,8 +100,6 @@ images, and caching fetched content.
   drift in the rest of the record; a full-record audit catches
   the drift
 
----
-
 ## Scoring and derived fields
 [ID: data-quality-scoring]
 
@@ -124,8 +110,6 @@ images, and caching fetched content.
 - Define the scoring scale once (e.g. 1–5, step 0.5) and use it
   consistently
 - Keep boolean attributes used as filters separate from scoring inputs
-
----
 
 ## Data changelog
 [ID: data-quality-changelog]
@@ -138,8 +122,6 @@ images, and caching fetched content.
   entry or one field correction per commit
 - For bulk imports or migrations, document the source and method in
   the commit message
-
----
 
 ## Identity and deduplication
 [ID: data-quality-identity]
@@ -154,8 +136,6 @@ images, and caching fetched content.
 - Discontinued items that are replaced by a successor SHOULD link
   to the successor via a `replacedBy` field
 
----
-
 ## Validation
 [ID: data-quality-validation]
 
@@ -167,8 +147,6 @@ images, and caching fetched content.
 - Enum checks for constrained fields (e.g. mount type, category)
 - Build-time validation is acceptable for static sites — runtime
   validation for APIs
-
----
 
 ## Agent-assisted ground-truth validation
 [ID: data-quality-hitl]

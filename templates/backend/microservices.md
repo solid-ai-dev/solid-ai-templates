@@ -5,8 +5,6 @@
 Rules for projects explicitly built as a microservices architecture.
 Do not apply this template to a monolith or a single-service project.
 
----
-
 ## When to use microservices
 
 - Start with a **modular monolith** — well-separated modules within a single
@@ -20,8 +18,6 @@ Do not apply this template to a monolith or a single-service project.
   distributed monolith waiting to happen; apply these rules only when
   the architecture is intentionally service-oriented
 
----
-
 ## Service boundaries
 
 - Model service boundaries on **bounded contexts** (Domain-Driven Design) —
@@ -33,8 +29,6 @@ Do not apply this template to a monolith or a single-service project.
 - Shared libraries between services MUST contain only cross-cutting
   infrastructure (logging, tracing, HTTP client config) — never domain logic
 - If two services frequently change together, they are probably one service
-
----
 
 ## Inter-service communication
 
@@ -52,8 +46,6 @@ Choose the communication style based on the interaction type:
 - Never chain more than two synchronous service calls in a single request path
   — each hop multiplies latency and failure probability
 
----
-
 ## Data management
 
 - **Database per service** — each service has its own schema and storage;
@@ -65,8 +57,6 @@ Choose the communication style based on the interaction type:
   joining across service databases
 - Use the **Outbox pattern** to guarantee that database writes and event
   publishing are atomic
-
----
 
 ## Distributed transactions
 
@@ -82,8 +72,6 @@ Choose the communication style based on the interaction type:
 - Every saga step MUST have a defined **compensating action** (rollback
   equivalent) — document it alongside the forward action
 
----
-
 ## API gateway
 
 - Expose a single entry point to external clients via an API gateway —
@@ -94,8 +82,6 @@ Choose the communication style based on the interaction type:
 - Internal service-to-service calls bypass the gateway — use a service mesh
   or direct calls with mutual TLS
 
----
-
 ## Service discovery
 
 - Use a service registry or platform-native discovery (Kubernetes DNS,
@@ -105,8 +91,6 @@ Choose the communication style based on the interaction type:
   traffic only
   to healthy instances
 
----
-
 ## Contract testing
 
 - Define and test the contract between each producer and consumer using
@@ -114,8 +98,6 @@ Choose the communication style based on the interaction type:
 - The producer MUST NOT break a published contract without a versioned
   migration path — a failing contract test blocks the producer's deployment
 - Contract tests run in CI on both the producer and the consumer side
-
----
 
 ## Backward compatibility
 
@@ -126,8 +108,6 @@ Choose the communication style based on the interaction type:
 - Add fields; never remove or rename them without a major version bump
 - Event schemas follow the same rules — a schema registry (e.g. Confluent
   Schema Registry) SHOULD enforce compatibility on publish
-
----
 
 ## Observability
 

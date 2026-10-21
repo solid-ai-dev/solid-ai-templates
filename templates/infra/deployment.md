@@ -5,8 +5,6 @@ Cross-cutting deployment rules. Covers deployment targets, certificates, load
 balancing, service discovery, registries, secrets, and network assumptions.
 Applies to every service regardless of language or framework.
 
----
-
 ## Deployment targets
 [ID: base-deployment-targets]
 
@@ -21,8 +19,6 @@ All other rules in this document are qualified by target.
 
 A project may support more than one target. List all that apply and note
 which sections of configuration differ per target.
-
----
 
 ## Certificates and PKI
 [ID: base-deployment-certs]
@@ -51,8 +47,6 @@ which sections of configuration differ per target.
   management before first deployment
 - Certificate revocation via internal CRL or OCSP responder — no external OCSP
 
----
-
 ## Load balancing and reverse proxy
 [ID: base-deployment-lb]
 
@@ -79,8 +73,6 @@ which sections of configuration differ per target.
 - Kubernetes bare-metal: use MetalLB for `LoadBalancer` service type;
   configure address pools from the local IP range
 
----
-
 ## Service discovery and DNS
 [ID: base-deployment-dns]
 
@@ -103,8 +95,6 @@ which sections of configuration differ per target.
 - Dynamic service discovery: Consul or etcd running on internal infrastructure
 - NTP: sync all nodes from an internal time server — clock skew causes
   certificate validation failures and distributed system bugs
-
----
 
 ## Container and artifact registries
 [ID: base-deployment-registries]
@@ -134,8 +124,6 @@ which sections of configuration differ per target.
 - Scan and approve all dependencies at the boundary before mirroring —
   treat the mirror as a trusted internal supply chain artefact
 
----
-
 ## Secrets management
 [ID: base-deployment-secrets]
 
@@ -158,8 +146,6 @@ which sections of configuration differ per target.
   sharing with a defined key custodian process, or an internal HSM for
   auto-unseal
 - Establish a documented break-glass procedure for Vault recovery
-
----
 
 ## Network assumptions
 [ID: base-deployment-network]

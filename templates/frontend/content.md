@@ -7,8 +7,6 @@ assets, SEO and structured data — whatever builds and serves it. Extended
 by a layer that builds the site, or picked alone by a project whose content
 another system builds and serves.
 
----
-
 ## Content structure
 [ID: static-site-content]
 [EXTEND: base-docs]
@@ -22,16 +20,12 @@ to change.
 | `[data path]/site.[ext]` | Nav links, hero text, contact links, footer |
 | `[data path]/[section].[ext]` | [what it controls] |
 
----
-
 ## Assets
 [ID: static-site-assets]
 
 - Keep images and documents in the directory the build serves statically,
   and reference them by root-relative paths
 - Serve no asset from outside that directory
-
----
 
 ## SEO
 [ID: static-site-seo]
@@ -64,8 +58,6 @@ to change.
   `apple-touch-icon` for iOS home-screen bookmarks
 - Answer engines retrieve passages, not whole pages — lead each section
   with a direct answer and keep paragraphs self-contained
-
----
 
 ## Structured data (if applicable)
 [ID: frontend-content-structured-data]

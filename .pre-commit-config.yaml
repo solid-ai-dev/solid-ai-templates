@@ -24,6 +24,15 @@ repos:
         pass_filenames: false
         always_run: true
 
+      # Headings separate the sections, so a horizontal rule is noise every
+      # chain loading the file pays for.
+      - id: check-horizontal-rules
+        name: check-horizontal-rules
+        entry: python tools/check_horizontal_rules.py
+        language: python
+        pass_filenames: false
+        always_run: true
+
       # The documents here with a numbered structure that concurrent
       # branches edit; the playbook, "Submit a pull request", says why. The
       # shipped hook runs from its source, which this repository does not

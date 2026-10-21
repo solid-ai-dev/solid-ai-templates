@@ -8,8 +8,6 @@ Error response format and logging rules are defined in
 propagation,
 and recovery.
 
----
-
 ## Error classification
 
 Classify every error before handling it — the class determines the response,
@@ -31,8 +29,6 @@ the log level, and the recovery strategy:
 - Never map a validation error to a 5xx — the caller must know the request
   was rejected, not that the server failed
 
----
-
 ## Propagation through layers
 
 - **Repository layer**: raise typed, domain-agnostic errors
@@ -45,8 +41,6 @@ the log level, and the recovery strategy:
   central error mapper — no ad-hoc `try/except` per route
 - Log once, at the handler or middleware boundary — never log the same error
   at multiple layers
-
----
 
 ## Recovery and graceful degradation
 
@@ -62,8 +56,6 @@ the log level, and the recovery strategy:
   consistent state — use transactions or compensating actions; never leave
   partial writes uncommitted
 
----
-
 ## External service failures
 
 - Never surface a third-party error message directly to the caller — translate
@@ -74,8 +66,6 @@ the log level, and the recovery strategy:
   only a safe, generic message to the caller
 - Implement retry with exponential backoff and jitter for transient external
   failures — do not retry on 4xx responses from the external service
-
----
 
 ## Unexpected errors
 

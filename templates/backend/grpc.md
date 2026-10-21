@@ -6,8 +6,6 @@ Cross-cutting rules for gRPC services backed by Protocol Buffers. Applies
 regardless of implementation language. Language-specific stacks extend this
 file with runtime conventions, project structure, and tooling.
 
----
-
 ## When to use gRPC
 
 - Use gRPC for synchronous service-to-service communication where performance,
@@ -16,8 +14,6 @@ file with runtime conventions, project structure, and tooling.
   preferable to maintaining multiple OpenAPI specs
 - Do NOT use gRPC as the primary API for browser clients — use REST or GraphQL
   at the edge and gRPC internally
-
----
 
 ## Proto design
 [ID: grpc-proto]
@@ -32,8 +28,6 @@ file with runtime conventions, project structure, and tooling.
   `[deprecated = true]` and reserve the number: `reserved 4;`
 - Breaking changes require a new package version (`v2`) — serve the old
   version until all consumers have migrated
-
----
 
 ## Service implementation
 [ID: grpc-implementation]
@@ -56,8 +50,6 @@ file with runtime conventions, project structure, and tooling.
 | Transient infrastructure error | `UNAVAILABLE` |
 | Unexpected error | `INTERNAL` |
 
----
-
 ## Interceptors
 [ID: grpc-interceptors]
 
@@ -71,8 +63,6 @@ file with runtime conventions, project structure, and tooling.
   never crash the server process
 - Register all interceptors as a chain at server startup — not inside handlers
 
----
-
 ## Authentication
 [EXTEND: backend-auth]
 
@@ -82,8 +72,6 @@ file with runtime conventions, project structure, and tooling.
 - Mutual TLS (mTLS) for service-to-service calls in production — certificate
   rotation managed at the infrastructure layer (cert-manager, Vault)
 - Plaintext only in local development — never in staging or production
-
----
 
 ## Observability
 [EXTEND: backend-observability]
@@ -95,8 +83,6 @@ file with runtime conventions, project structure, and tooling.
   (`grpc.health.v1.Health`) — required for Kubernetes probes
 - Propagate trace context through gRPC metadata for distributed tracing
 
----
-
 ## Testing
 [ID: grpc-testing]
 [EXTEND: base-testing]
@@ -107,8 +93,6 @@ file with runtime conventions, project structure, and tooling.
   real client — test each method for success, invalid argument, and auth failure
 - Test naming: `<MethodName>_<state>_<expected>`
   e.g. `GetUser_UserNotFound_ReturnsNotFoundStatus`
-
----
 
 ## Proto tooling
 [ID: grpc-tooling]

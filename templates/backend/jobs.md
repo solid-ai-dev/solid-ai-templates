@@ -4,8 +4,6 @@
 Rules for background job processing, task queues, and scheduled work.
 Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
 
----
-
 ## When to use background jobs
 
 - Offload any work that does not need to complete within the HTTP request cycle
@@ -16,8 +14,6 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
 - Do NOT use jobs to paper over a slow synchronous path — fix the root cause
   first
 
----
-
 ## Idempotency
 
 - Every job MUST be idempotent — safe to execute more than once with the
@@ -26,8 +22,6 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
   duplicate executions
 - Design for at-least-once delivery — the queue may deliver a message more
   than once, especially after a worker crash
-
----
 
 ## Retry and failure handling
 
@@ -38,8 +32,6 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
 - Alert on DLQ depth — a growing DLQ is a silent production incident
 - Log the job ID, attempt number, and error on every failure
 
----
-
 ## Separation of concerns
 
 - Job handlers MUST be thin — delegate all business logic to service functions
@@ -48,8 +40,6 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
 - No direct database access in job handlers — go through the service layer
 - No HTTP calls in job handlers unless the job's explicit purpose is an
   outbound webhook
-
----
 
 ## Scheduling
 
@@ -60,8 +50,6 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
 - Ensure only one instance of a scheduled job runs at a time —
   use a distributed lock or a leader-election mechanism
 
----
-
 ## Observability
 
 - Emit a structured log entry at job start (INFO) and job completion (INFO)
@@ -69,8 +57,6 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, etc.).
   error message, stack trace)
 - Track job duration, queue depth, and failure rate as metrics
 - Alert if queue depth exceeds a threshold that indicates worker starvation
-
----
 
 ## Testing
 [EXTEND: base-testing]

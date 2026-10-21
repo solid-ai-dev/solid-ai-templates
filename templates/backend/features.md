@@ -14,8 +14,6 @@ disabled; the flag controls when and for whom it activates. Use them for:
 Do not use feature flags as a permanent configuration system — they are a
 temporary release mechanism.
 
----
-
 ## Rules
 
 - Every flag has an owner and a removal date set at creation time — flags
@@ -30,8 +28,6 @@ temporary release mechanism.
   for longer than one request lifecycle unless the evaluation cost is measured
   and justified
 
----
-
 ## Flag types
 
 | Type | Controls | Example |
@@ -40,8 +36,6 @@ temporary release mechanism.
 | **Experiment** | Which variant a user sees | Button colour A vs B |
 | **Ops / kill switch** | Emergency disable of a subsystem | Disable background sync |
 | **Permission** | Access for a specific user, role, or tenant | Beta access for select accounts |
-
----
 
 ## Targeting and rollout strategy
 
@@ -53,8 +47,6 @@ temporary release mechanism.
 - Stick users to their assigned variant for the duration of an experiment —
   use a consistent hash on user ID, not a random value per request
 
----
-
 ## Evaluation
 
 - Evaluate flags at the entry point of the feature — handler or service layer,
@@ -64,8 +56,6 @@ temporary release mechanism.
 - Treat the flag-off path as the production default until the rollout is
   complete and the flag is removed
 
----
-
 ## Observability
 
 - Log which variant was evaluated for every flagged request — include the
@@ -74,8 +64,6 @@ temporary release mechanism.
   for each variant to detect regressions introduced by the new path
 - Alert if flag evaluation fails — a broken flag service must not silently
   default to the wrong variant; fail to the safe default and alert
-
----
 
 ## Tooling
 

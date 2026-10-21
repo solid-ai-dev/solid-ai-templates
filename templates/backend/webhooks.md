@@ -11,8 +11,6 @@ The generic resilience substrate — idempotency, retry/backoff, DLQ,
 debounce/coalesce, backpressure, fairness — is inherited from
 messaging.md; this template adds only the HTTP-ingestion-specific surface.
 
----
-
 ## Intake
 
 - Expose a distinct intake URL per provider or connection — never
@@ -42,8 +40,6 @@ messaging.md; this template adds only the HTTP-ingestion-specific surface.
   irrelevant); reserve 5xx strictly for failures where redelivery is wanted
 - Deduplicate on the provider's event ID — at-least-once delivery means
   the same event will arrive more than once
-
----
 
 ## Testing
 [EXTEND: base-testing]

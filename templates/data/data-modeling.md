@@ -5,8 +5,6 @@ Rules for schema design, naming, normalization, and relationships.
 Applies to relational databases, document stores, and static data
 files alike.
 
----
-
 ## Naming conventions
 [ID: data-modeling-naming]
 
@@ -23,8 +21,6 @@ files alike.
 - Index names MUST follow `ix_<table>_<columns>`; unique index
   `ux_<table>_<columns>`
 
----
-
 ## Normalization
 [ID: data-modeling-normalization]
 
@@ -37,8 +33,6 @@ files alike.
 - Repeated groups of columns (e.g. `phone1`, `phone2`, `phone3`)
   signal a missing child table
 - Document the rationale when intentionally denormalizing
-
----
 
 ## Relationships
 [ID: data-modeling-relationships]
@@ -54,8 +48,6 @@ files alike.
 - Self-referencing relationships (e.g. `parent_id`) MUST document
   maximum depth and cycle prevention strategy
 
----
-
 ## Schema evolution
 [ID: data-modeling-evolution]
 
@@ -67,8 +59,6 @@ files alike.
 - Every migration MUST be reversible — include both up and down
   steps
 - Test migrations against a production-like dataset before deploying
-
----
 
 ## Data types
 [ID: data-modeling-types]

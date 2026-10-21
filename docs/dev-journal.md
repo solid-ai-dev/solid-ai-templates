@@ -8,8 +8,6 @@
 - Key insight: skills (dynamic, on-demand actions) complement static
   context files (CLAUDE.md/AGENTS.md) — they don't replace them
 
----
-
 ## 2026-04-28 — 360 analysis, labels, ADRs, license
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
@@ -43,8 +41,6 @@
   (GitHub-specific)
 - Severity stays in bug body text, not as label — solo project, priority
   drives triage order
-
----
 
 ## 2026-04-30 — v1.0.0 release, repo transfer, CI hardening
 
@@ -88,8 +84,6 @@
 - Label colors updated for accessibility (task, epic were too dark)
 - pytest adoption deferred — hand-rolled runners are sufficient
 
----
-
 ## 2026-05-01 — Session protocol hardening (superseded)
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
@@ -114,8 +108,6 @@
 - Startup block is only required for reference/hybrid modes — inline
   models are self-contained and exempt
 - Examples use anonymized fictional projects to avoid maintenance burden
-
----
 
 ## 2026-05-01 — Convention hardening sweep
 
@@ -143,8 +135,6 @@
 
 **Also:** fixed 3 issue titles (removed commit-style prefixes), added
 missing priority labels to #104, #105, #106
-
----
 
 ## 2026-05-04 — Composition over inheritance
 
@@ -191,8 +181,6 @@ recorded in ADR-004.
 - Build-time resolution, not runtime
 - No profiles, no auto-convention, no pattern resolution logic
 
----
-
 ## 2026-05-04 — Pattern templates and quick wins batch
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
@@ -236,8 +224,6 @@ recorded in ADR-004.
 - Architecture spikes created for composition-over-inheritance
   (#151), pattern resolution (#149), agent-side resolution (#150)
 
----
-
 ## 2026-05-04 — Composition model, folder restructuring, roadmap removal
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
@@ -273,8 +259,6 @@ recorded in ADR-004.
   the template system)
 - Pattern files are human reference docs, not agent context
 
----
-
 ## 2026-05-04 — Release v2.0.0
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
@@ -306,8 +290,6 @@ recorded in ADR-004.
   6-section format alignment
 - Discovery (D+) identified as project bottleneck — needs launch
   post, social card, community presence before v3
-
----
 
 ## 2026-05-04 — v2.1.0 Polish + Quality sprint
 
@@ -365,8 +347,6 @@ recorded in ADR-004.
 - Milestones map 1:1 to minor releases (v2.1, v2.2, etc.)
 - No-build projects skip chore PR, use tag + GitHub Releases
 
----
-
 ## 2026-05-04 — v2.2 milestone closure
 
 - PR #232: made end-of-session audit steps explicit in CLAUDE.md §6.3
@@ -378,8 +358,6 @@ recorded in ADR-004.
   Content)
 - Created #233 (spike: naming conventions for issues and PRs) in v2.5
 - v2.2 — Quality milestone fully closed
-
----
 
 ## 2026-05-05 — E2E provider infrastructure and product clarity
 
@@ -466,8 +444,6 @@ recorded in ADR-004.
 - Merged PR #269
 - Swapped milestones: v2.4 is now Templates & Content, v2.5 is now Discovery
 
----
-
 ## 2026-05-06 — Template quality cleanup batch
 
 **Tool:** Claude Code (Opus 4.6, 1M context)
@@ -488,8 +464,6 @@ recorded in ADR-004.
 **Issues closed:** #265, #266, #267, #271, #273, #274, #277
 **PRs merged:** #261, #262, #263, #278, #279, #280
 **Epic updated:** #264 (8 of 11 sub-issues complete)
-
----
 
 ## 2026-05-06 — v2.4 milestone completion
 
@@ -515,8 +489,6 @@ recorded in ADR-004.
 **Issues closed:** #104, #131, #203, #224, #233, #255, #264, #272, #275, #276,
  #283, #284, #285
 **Smoke checks:** 11 → 13 (TPL-06, TPL-07)
-
----
 
 ## 2026-05-07 — v2.5 coverage and scope
 
@@ -741,8 +713,6 @@ was the right move when content actually accumulated.
 
 **v2.6 closeout: 8/8 done.**
 
----
-
 ## 2026-06-02 — README clarify + dogfood generated-file convention
 
 **Tool:** Claude Code (Opus 4.7, 1M context)
@@ -889,8 +859,6 @@ as #424 follow-up
 **Release:** v2.9.0
 (<https://github.com/braboj/solid-ai-templates/releases/tag/v2.9.0>)
 
----
-
 ## 2026-06-24 — v2.10 data-quality finish & generator discipline
 
 **Tool:** Claude Code (Opus 4.8, 1M context)
@@ -936,8 +904,6 @@ applied to #431's suggested `ai-workflow.md` home.
 
 **Release:** v2.10.0
 (<https://github.com/braboj/solid-ai-templates/releases/tag/v2.10.0>)
-
----
 
 ## 2026-06-24 — v2.11 docs & ADR conventions
 
@@ -987,8 +953,6 @@ the #500 schema it documents.
 ai-workflow probe/verify-before-acting sweep I; #482 closed as a
 duplicate of #477. Not yet started.
 
----
-
 ## 2026-06-24 — v2.12 probe-first workflow lessons
 
 **Tool:** Claude Code (Opus 4.8, 1M context)
@@ -1034,8 +998,6 @@ stated self-contained instead.
 
 **Next:** v3.0 — Restructure (13 issues) — inline-to-reference eval,
 slim stacks.
-
----
 
 ## 2026-06-25 — Maintenance: dependency bump + branch prune
 
@@ -2337,8 +2299,6 @@ downstream evidence — reusable upstream content, which is what this repo is.
  #856, #858, #859, #861, #863, #864, #865, #881, #882. Opened #900; reopened #883.
 Journal PR carries no milestone.
 
----
-
 ## 2026-08-02 — Milestone lanes retired, then v2.38 and v2.39
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -2476,8 +2436,6 @@ configures this repo's own editor tooling and travels nowhere.
 **Issues closed:** #916, #917, #900, #848, #834, #826, #817, #821. Journal PR
 carries no milestone.
 
----
-
 ## 2026-08-02 — v2.41 Python & API conventions
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -2533,8 +2491,6 @@ changes in this milestone.
 **Issues closed:** #938, #939, #840, #862, #838, #908, #837, #819. Journal
 PR carries no milestone.
 
----
-
 ## 2026-08-02 — v2.42 Documentation, licence & tracker
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -2582,8 +2538,6 @@ this repository itself; #907 and #839 from `page-fetcher` and `corrosim`.
 
 **Issues closed:** #883, #952, #913, #907, #927, #839. Journal PR carries
 no milestone.
-
----
 
 ## 2026-08-02 — P4 retired: priority is severity only
 
@@ -2741,8 +2695,6 @@ so it is unreleased on main and belongs to the next cut.
 **PRs merged:** #966, #967, #968, #972
 
 **Issues closed:** #923, #919, #963, #951.
-
----
 
 ## 2026-08-03 — v2.44 Consumer reconciliation
 
@@ -3651,8 +3603,6 @@ release it describes.
 **Issues opened:** #1147, for the two community health files this
 repository now owes itself.
 
----
-
 ## 2026-08-26 -- What a passing test proves
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -3727,8 +3677,6 @@ outside the release it describes.
  #1047, #1076
 
 **Issues opened:** none.
-
----
 
 ## 2026-08-28 -- What the rule does not say
 
@@ -3910,8 +3858,6 @@ outside the release it describes.
 **Issues opened:** #1174, for `c-embedded` having no quality-gates
 section and C no language file -- the only stack family left without one
 after this cut.
-
----
 
 ## 2026-08-28 -- What the check measures
 
@@ -4293,8 +4239,6 @@ unmilestoned. #1242 records that the groom procedure and the sweep are
 both reusable and belong in `base/workflow/issues.md`, not only in this
 repository's PLAYBOOK.
 
----
-
 ## 2026-08-28 -- The instruction its own text cannot show is incomplete
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -4402,8 +4346,6 @@ claim: #1233 counts 25 trailing comments rather than 31, #1226's dangling set is
 `resolve.py --check` does not exist. ADR-028 was written after the tag,
 so v2.62.0 carries the rule and not its record.
 
----
-
 ## 2026-08-28 -- The question a resolved chain leaves unsettled
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -4504,8 +4446,6 @@ shell working directory persisted across a check run and produced a
 false-negative, which is the trap this repository's own session protocol
 warns about, met while validating a check about traps.
 
----
-
 ## 2026-08-28 -- Session close-out after v2.63.0
 
 **Tool:** Claude Code (Opus 5 [1M]).
@@ -4558,8 +4498,6 @@ README.md, docs/ONBOARDING.md or templates/manifest.yaml -- no command,
 prerequisite or template registration changed across either cut -- and that
 CLAUDE.md 6.3 and the rewritten PLAYBOOK step 7 now agree on when the
 journal is written.
-
----
 
 ## 2026-08-29 -- The rules turned on their author
 
@@ -4846,8 +4784,6 @@ session runs the checklist twice -- did not arise: the release wrote no
 entry, the audit ran once, and this entry is written last, after the items
 that filed #1285, #1287 and ADR-031.
 
----
-
 ## 2026-08-30 — A rename measured before it was agreed to
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -5021,8 +4957,6 @@ still gates #1292 and #1295. Backlog closed at 59 open issues, label
 conformance empty, smoke 26 of 26, sync clean, conformance 10 passed with
 12 awaiting a reading and all twelve read.
 
----
-
 ## 2026-08-31 — The finding a reader learns to dismiss
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -5134,8 +5068,6 @@ Backlog closed at 57 open issues, label conformance empty, smoke 26 of
 26, sync clean, conformance 10 passed with 12 awaiting a reading and all
 twelve read.
 
----
-
 ## 2026-08-31 — The right diagnosis and the wrong remedy
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -5239,8 +5171,6 @@ Backlog closed at 54 open issues, label conformance empty, smoke 26 of 26,
 sync clean, conformance 10 passed with 12 awaiting a reading and all
 twelve read.
 
----
-
 ## 2026-08-31 — The wrap-up audit that followed the cut
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -5307,8 +5237,6 @@ state unreachable and about what a loosened gate leaves behind. Neither
 cluster is groomed. Backlog closed at 57 open issues, label conformance
 empty, smoke 26 of 26, sync clean, conformance 10 passed with 12 awaiting
 a reading and all twelve read.
-
----
 
 ## 2026-09-01 — The contract is in the pass condition, not the output
 
@@ -5399,8 +5327,6 @@ ready and unmerged, the Unreleased section holds three entries against
 five commits where the three journal and documentation commits are
 deliberately not notable, the continuation locator finds none, and one
 workflow run is recorded against the head commit.
-
----
 
 ## 2026-09-01 — The release quiets the check that verifies it
 
@@ -6565,8 +6491,6 @@ open pull requests, no stale branches of mine, label conformance `[]`. The
 shared checkout sits on the parallel session's branch with two of its
 worktrees and one stash outstanding, none of it mine to remove.
 
----
-
 ## 2026-09-06 — What the gates cannot see
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -6643,8 +6567,6 @@ gated-figure check stops at `docs/`)
 - Writing a template check through a shell heredoc turned `\b` into a literal
   backspace character inside the committed Markdown. Invisible in every
   rendering, and the regex silently stopped matching word boundaries
-
----
 
 ## 2026-09-06 — The fix on one enumerator, and the audit that found the other two
 
@@ -6727,8 +6649,6 @@ not filed. `CLAUDE.md`'s test inventory was the one repaired here.
 redundancy 0 exact, conformance 14 passed and 0 failed, 0 open pull requests,
 no stale branches, label conformance `[]`, 74 open issues. `v2.80.0` is tagged,
 published and verified.
-
----
 
 ## 2026-09-06 — Every gate was green over the defect
 
@@ -6824,8 +6744,6 @@ and 0 failed, 0 open pull requests, no stale branches, label conformance
 budgeted because HEAD is the tag and the branch-scoped checks answer that
 they do not apply. `v2.82.0` is tagged, published and verified.
 
----
-
 ## 2026-09-07 — Everything needed to catch it was already in the tree
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -6910,7 +6828,6 @@ exist), #1574 (seven control rules govern this repository and one ships)
   release cut could have named. The ordering that puts the journal last
   held: this entry names both
 
----
 ## 2026-09-07 — Retiring a freeze, and four detectors blind to their subject
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -7076,8 +6993,6 @@ the project's own style rules produce)
   intervening words matched arbitrary prose, and spelled numerals from `two`
   matched five times more noise than signal
 
----
-
 ## 2026-09-07 — The ADR threshold, and the copies that outlived it
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -7134,8 +7049,6 @@ decisions argue past it)
   to the chain's audit and then appended a nine-item paraphrase of it —
   which `agents.md` forbids in terms. The delegation above read as current
   while the paraphrase below held every stale item
-
----
 
 ## 2026-09-07 — Rule parity between what the repository applies and what it ships
 
@@ -7210,8 +7123,6 @@ number the convention puts in its subject)
   was no for the new tier and no for the security tier that has been
   enforced since it shipped
 
----
-
 ## 2026-09-07 — The review that was paced by the release, not by the project
 
 **Tool:** Claude Code (Opus 5, 1M context)
@@ -7272,8 +7183,6 @@ closed at 15/15, release-gates green on the tag push.
   Milestone-coverage named one unmilestoned issue per run, so three
   offenders cost three runs and the scale of the problem was visible only
   after it was fixed (#1628)
-
----
 
 ## 2026-09-07 — A result that reports less than the run knows
 
@@ -9293,8 +9202,6 @@ to #2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
   `--forbid`. Validate every argument and plant each bad spelling
 - The comment-layout hook flagged two of this session's own files on its
   first runs here
-
----
 
 ## 2026-10-21 — Core rewrites finished, repo-specific rules out, a review runbook
 
