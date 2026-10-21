@@ -170,10 +170,6 @@ backend:
     file: templates/backend/monitoring.md
     description: Key metrics, thresholds, alerts, dashboards, incidents
     depends_on: [backend-observability]
-  - id: backend-quality
-    file: templates/backend/quality.md
-    description: Layered architecture, security, performance, API stability
-    depends_on: [base-quality, base-oop, base-security, base-containers]
 stacks:
   - id: stack-fixture
     file: templates/fixture/stack.md

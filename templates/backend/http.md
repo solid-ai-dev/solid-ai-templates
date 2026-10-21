@@ -9,10 +9,29 @@
 - Use a well-known default in development, and the port the platform
   assigns in production
 
+## Process lifecycle
+- Start fast — keep initialisation short (MUST)
+- Shut down gracefully on `SIGTERM`: finish in-flight work, release
+  resources, then exit (MUST)
+- Force-exit when a graceful shutdown passes its deadline
+- Recover cleanly when a process is killed without warning (`SIGKILL`,
+  power loss) (MUST)
+- Keep no state in the process; use external stores, so any instance can
+  be replaced
+
+## Admin processes
+- Run one-off tasks (migrations, data fixes, REPL sessions) with the
+  application's code, config and dependencies (MUST)
+- Commit admin scripts to the repository; never run them as ad-hoc shell
+  commands (MUST)
+- Prefer idempotent scripts — safe to re-run
+- Never run an admin task against production without a tested rollback plan
+
 ## Handler design
 - Handlers are thin: decode request → call service → encode response
 - No business logic in handlers — delegate to a service layer
 - Validate all incoming request data before processing
+- Set a timeout on every outbound call (HTTP clients, database queries)
 
 ## URI design
 - Path segments MUST be lowercase with hyphens as word separators —
@@ -105,3 +124,5 @@
   authorisation
 - Internal API endpoints SHOULD require authentication at minimum
 - Write endpoints MUST NOT be accessible without a valid authenticated identity
+- Apply authentication and authorisation before any business logic runs
+- Rate-limit public endpoints — never expose an unbounded write operation
