@@ -135,6 +135,27 @@ pre-split text after `-s ours`; the Imbra fork moved its own procedures to
 into `CONTRIBUTING.md`, and replaces `docs/SPEC.md` with `docs/spec.md` and
 `docs/architecture/`; a fork takes all three with the merge.
 
+### Renames the merge meets
+
+Git carries upstream's own files through each rename. The fork's files
+that name an old path do not follow, so edit them in the merge:
+
+| Upstream change | Fork action |
+| --------------- | ----------- |
+| Tools named verb-first: `resolve.py`, `sync.py`, `release_check.py`, `template_quality.py` become `resolve_chain.py`, `sync_docs.py`, `check_release.py`, `score_templates.py` ([#2052]) | Update every call and mention in `tests/fork_checks.py`, `tests/fork_dispositions.py`, `tests/cases.py`, `tests/run_e2e.py` and `tools/fork_examples.py` |
+| `tests/lib.py` becomes `tests/testkit/` ([#2053], [#2055]) | `from lib import` becomes `from testkit import` |
+| One wrapper runs every suite: `py tests/run.py <suite>` ([#2055]) | Move `tests/run_e2e.py` to `tests/e2e/run.py`; replace `py tests/run_smoke.py` with `py tests/run.py smoke` |
+| Specs move from `tests/specs/` to `docs/tests/specs/` ([#2053]) | Move the fork's own specs there |
+| The lint config moves from the root to `.github/linters/` ([#2049]) | Keep the fork's `.markdownlint.json`; its checks read the `prose` and `decision_layout` keys |
+
+`tests/fork_checks.py` and `tests/fork_dispositions.py` stay where they
+are: the smoke and conformance runners import them from `tests/`.
+
+[#2049]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2049
+[#2052]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2052
+[#2053]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2053
+[#2055]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2055
+
 ### Traps
 
 | Trap | What happens | Fix |
