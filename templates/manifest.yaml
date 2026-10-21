@@ -47,7 +47,7 @@ base:
     description: Application security rules — input, output, injection, auth, sessions, TLS, headers
   - id: base-cicd
     file: templates/infra/cicd.md
-    description: Pipeline stages, triggers, environments, IaC, deployment
+    description: Pipeline gates, environments, IaC, deployment, release record
   - id: base-containers
     file: templates/infra/containers.md
     description: Dockerfile, runtime security, resource limits, Kubernetes

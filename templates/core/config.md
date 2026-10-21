@@ -14,8 +14,8 @@ Store configuration in the environment, not in code, after the
 - Never hardcode a secret, API key or credential (MUST NOT)
 - Commit `.env.example` with placeholder values, and list `.env` in
   `.gitignore`
-- Keep separate configuration per environment: development, testing,
-  staging, production
+- Keep separate configuration for each environment the project runs, such
+  as development, testing, staging and production
 - Pass configuration to components explicitly; never read a global config
   object from arbitrary places
 

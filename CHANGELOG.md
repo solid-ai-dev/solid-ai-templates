@@ -119,6 +119,8 @@ Releases up to 2.63.0 are listed in
   incident ([#2096])
 - Feature flags may come from reloadable configuration; no flag service
   is required at startup ([#2097])
+- The CI/CD template keeps the delivery gates and drops the fixed stages and
+  environments ([#2098])
 
 ### Deprecated
 
@@ -194,6 +196,7 @@ Releases up to 2.63.0 are listed in
 [#2095]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2095
 [#2096]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2096
 [#2097]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2097
+[#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
 
 ## [2.90.0] - 2026-09-12
 

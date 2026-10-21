@@ -9,7 +9,7 @@ merged PR and a deployed artifact — humans approve, machines execute.
 
 ## Quality gates
 
-- Stages 2–4 (lint, test, security scan) run the project's own gates.
+- The lint, test and security-scan stages run the project's own gates.
   Which gates run, and at which thresholds, is the project's choice
 - Each gate reports what it inspected, and fails on an empty or
   implausibly small input rather than passing over nothing
@@ -23,31 +23,19 @@ merged PR and a deployed artifact — humans approve, machines execute.
 
 ## Pipeline stages
 
-A pipeline MUST include, in order:
-
-1. **Build** — compile or package the application
-2. **Lint / format check** — fail on style violations
-3. **Test** — run unit and integration tests; fail on any failure
-4. **Security scan** — SAST, secret detection, SCA
-5. **Package** — build the deployable artifact (container image, binary,
-   package)
-6. **Deploy to staging** — automated deployment to a staging/QA environment
-7. **DAST** — automated security scan against the running staging environment
-8. **Deploy to production** — triggered manually or on a release tag
-
-Each stage MUST fail fast — a failed stage stops the pipeline immediately.
-
-## Triggers
-
-- Every push to a feature branch: run stages 1–4
-- Every merge to `main`: run all stages through staging deployment
-- Every release tag: run full pipeline through production deployment
+- Build, lint, test and security-scan (SAST, secret detection, SCA) every
+  change before it merges (MUST)
+- Package the deployable artifact once, after those stages pass; every
+  later stage uses that artifact
+- Fail fast: a failed stage stops the pipeline (MUST)
+- Scan the running application (DAST) before a build reaches production
+- Deploy to production only from a revision that passed every stage
+- The stage count, their order beyond these and the deploy trigger are the
+  project's choice
 
 ## Environment separation
 
-- MUST maintain at least three environments: development, staging, production
-- Never test against production — staging MUST mirror production as closely
-  as possible
+- Never test against production; test in an environment that mirrors it
 - Environment-specific configuration injected via environment variables —
   never baked into the artifact
 - Promote the same artifact through environments — never rebuild per environment
@@ -66,12 +54,8 @@ Each stage MUST fail fast — a failed stage stops the pipeline immediately.
 - Health check endpoint MUST return healthy before traffic is routed to a
   new instance
 - Deploy small and often — large infrequent deployments increase risk
-- Trigger deploys with a post-publish hook — after the artifact is
-  published, the pipeline SHOULD trigger the deploy by sending the
-  artifact's immutable reference (image digest or tag) to the deploy
-  target, never rebuilding in the deploy step. This guarantees the
-  deployed artifact is the exact one that passed the gates (see
-  "Promote the same artifact" under Environment separation)
+- Deploy the artifact by its immutable reference, an image digest or tag
+  (SHOULD); never rebuild it in the deploy step
 - A deploy step whose secret (a deploy-hook URL or token) is absent on
   forks or contributor branches MUST skip and still succeed, keeping the
   workflow green rather than hard-failing
