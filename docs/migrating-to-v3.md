@@ -59,6 +59,7 @@ receives nothing (ADR-051).
 | `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
 | Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral |
 | The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once, DAST before production and artifact promotion remain |
+| Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file; relational rules say so |
 | The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | this repository's playbook; the `check-heading-numbers` hook still ships |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | removed; a neutral editor-settings rule remains |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |
