@@ -76,10 +76,20 @@ Rules:
 ## Performance
 
 - Preload critical above-the-fold assets
+- Render pages at build or on the server by default; render on the client
+  only where a page needs client-side state
 - Keep client-side JS minimal — every dependency adds to bundle size
 - Avoid unnecessary dependencies
 - Defer non-critical scripts
 - Monitor Core Web Vitals (LCP, CLS, INP) — treat regressions as bugs
+
+## Theme persistence (if applicable)
+[ID: static-site-theme]
+
+- Apply a persisted theme from a blocking script in `<head>`, before any
+  content renders (MUST)
+- Never set the theme from a body or deferred script (MUST NOT); the page
+  flashes the wrong theme on every load
 
 ## Analytics (if applicable)
 
