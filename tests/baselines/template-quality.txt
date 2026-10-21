@@ -25,7 +25,7 @@ templates/core/docs.md 99.1
 templates/core/embedded-checks.md 83.6
 templates/core/git.md 89.4
 templates/core/measurement.md 95.2
-templates/core/oop.md 82.8
+templates/core/oop.md 96.0
 templates/core/quality-gates.md 92.5
 templates/core/quality.md 98.7
 templates/core/review.md 100.0
