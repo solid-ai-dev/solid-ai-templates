@@ -50,13 +50,13 @@ base:
     description: Pipeline gates, environments, IaC, deployment, release record
   - id: base-containers
     file: templates/infra/containers.md
-    description: Dockerfile, runtime security, resource limits, Kubernetes
+    description: Dockerfile, runtime security, resource limits, image hygiene, Compose
   - id: base-config
     file: templates/core/config.md
     description: Env vars, secrets, fail-fast validation
   - id: base-deployment
     file: templates/infra/deployment.md
-    description: Deployment targets (cloud/hybrid/offline), certs, LB, registries, secrets
+    description: Deployment targets, certs, load balancing, DNS, registries, secrets, network
   - id: base-data-quality
     file: templates/data/data-quality.md
     description: Data sourcing, completeness, freshness, research, scoring — data-heavy projects
@@ -101,17 +101,12 @@ frontend:
     depends_on: [base-quality]
   - id: frontend-quality
     file: templates/frontend/quality.md
-    description: CSS conventions, performance, analytics
+    description: CSS conventions, performance, theme persistence, analytics
     depends_on: [base-quality]
   - id: frontend-content
     file: templates/frontend/content.md
     description: Build-agnostic content rules — content, assets, SEO, structured data
     depends_on: [base-docs, base-quality]
-  - id: frontend-static-site
-    file: templates/frontend/static-site.md
-    description: Abstract SSG rules — build, serving, CSS, typography, theme, performance
-    depends_on:
-      [base-git, base-security, frontend-content, frontend-ux, frontend-quality]
 
 backend:
   - id: backend-http
@@ -170,10 +165,6 @@ backend:
     file: templates/backend/monitoring.md
     description: Key metrics, thresholds, alerts, dashboards, incidents
     depends_on: [backend-observability]
-  - id: backend-quality
-    file: templates/backend/quality.md
-    description: Layered architecture, security, performance, API stability
-    depends_on: [base-quality, base-oop, base-security, base-containers]
 stacks:
   - id: stack-fixture
     file: templates/fixture/stack.md

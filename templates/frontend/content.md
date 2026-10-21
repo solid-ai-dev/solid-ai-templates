@@ -4,7 +4,7 @@
 
 Abstract rules for authored web content — content and code separation,
 assets, SEO and structured data — whatever builds and serves it. Extended
-by a layer that builds the site, or picked alone by a project whose content
+by a stack that builds the site, or picked alone by a project whose content
 another system builds and serves.
 
 ## Content structure
@@ -58,6 +58,16 @@ to change.
   `apple-touch-icon` for iOS home-screen bookmarks
 - Answer engines retrieve passages, not whole pages — lead each section
   with a direct answer and keep paragraphs self-contained
+- Serve a custom 404 page that links back into the site
+
+## Trailing slash
+[ID: static-site-trailing-slash]
+
+- MUST verify the trailing slash convention matches the hosting platform's
+  behavior (e.g. GitHub Pages forces trailing slashes, Netlify and Vercel
+  are configurable)
+- SHOULD add a CI check that scans built HTML output for internal hrefs
+  violating the convention
 
 ## Structured data (if applicable)
 [ID: frontend-content-structured-data]

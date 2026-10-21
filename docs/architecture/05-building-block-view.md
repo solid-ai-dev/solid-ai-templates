@@ -61,8 +61,8 @@ The core tier, as the manifest states it today:
 - `templates/core/testing.md`
 - `templates/core/review.md`
 
-Measured: 10 `[DEPENDS ON]` tokens across 7 templates name one of these
-files, and 7 manifest entries name a core id in `depends_on`. Declaring one
+Measured: 8 `[DEPENDS ON]` tokens across 5 templates name one of these
+files, and 5 manifest entries name a core id in `depends_on`. Declaring one
 is redundant rather than forbidden — the seeding reaches the file either
 way, and the directive documents a dependency a reader would otherwise
 infer. Reached by the seeding alone: `base-review`. A chain assembled by

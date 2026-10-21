@@ -48,6 +48,10 @@ Releases up to 2.63.0 are listed in
   check-harness rules ([#2082])
 - The git template drops its submodule, numbered-document and base64 rules
   and the .vscode allowlist ([#2093])
+- The backend-quality template is retired; its general rules move to the HTTP
+  template ([#2102])
+- The frontend-static-site template is retired; its theme, trailing-slash and
+  404 rules move to frontend-quality and frontend-content ([#2103])
 - Object-oriented design rules leave the core tier; declare base-oop in Extras to
   keep them ([#2104])
 
@@ -123,6 +127,12 @@ Releases up to 2.63.0 are listed in
   is required at startup ([#2097])
 - The CI/CD template keeps the delivery gates and drops the fixed stages and
   environments ([#2098])
+- The containers template drops its Kubernetes policy; orchestration rules are
+  orchestrator-neutral ([#2099])
+- The data-modeling template asks for one naming convention per store and marks
+  its relational rules ([#2100])
+- The deployment template keeps target-neutral rules and drops its per-target
+  product choices ([#2101])
 
 ### Deprecated
 
@@ -199,6 +209,11 @@ Releases up to 2.63.0 are listed in
 [#2096]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2096
 [#2097]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2097
 [#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
+[#2099]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2099
+[#2100]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2100
+[#2101]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2101
+[#2102]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2102
+[#2103]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2103
 [#2104]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2104
 
 ## [2.90.0] - 2026-09-12
