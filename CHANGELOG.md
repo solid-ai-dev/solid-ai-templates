@@ -121,6 +121,8 @@ Releases up to 2.63.0 are listed in
   is required at startup ([#2097])
 - The CI/CD template keeps the delivery gates and drops the fixed stages and
   environments ([#2098])
+- The containers template drops its Kubernetes policy; orchestration rules are
+  orchestrator-neutral ([#2099])
 
 ### Deprecated
 
@@ -197,6 +199,7 @@ Releases up to 2.63.0 are listed in
 [#2096]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2096
 [#2097]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2097
 [#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
+[#2099]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2099
 
 ## [2.90.0] - 2026-09-12
 
