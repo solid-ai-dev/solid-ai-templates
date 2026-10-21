@@ -9293,3 +9293,56 @@ to #2001, #2019; moved to the fork: #1823, #1900 (fork #56, #57).
   `--forbid`. Validate every argument and plant each bad spelling
 - The comment-layout hook flagged two of this session's own files on its
   first runs here
+
+---
+
+## 2026-10-21 — Core rewrites finished, repo-specific rules out, a review runbook
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- The last five core templates rewritten as topic-headed rule lists, each
+  with a rationale doc: `testing` 30.6 to 100 (#2069), `docs` 40.9 to 99.1
+  (#2071), `review` 54.7 to 100 (#2072), `config` 60.0 to 99.8 (#2073),
+  `agents` 69.1 to 100 (#2074); `security/devsecops` 79.7 to 100 (#2075,
+  #2076)
+- No template carries a fenced check over 15 lines; the SBOM check became
+  a short `jq` block and the line-width script gave way to markdownlint
+- #2068 lists the repo-specific, stack-specific and niche rules across all
+  templates; all rows but `core/git.md`'s moved to the playbook, an opt-in
+  template or a fork, or were removed (#2079 to #2082)
+- The documentation-figure check became this repository's own tool,
+  `tools/check_doc_figures.py`, run as a local pre-commit hook (#2071)
+- Rules the rewrites had made mandatory regained their SHOULD or MAY, and
+  four rules contradicting others in their chain were reconciled (#2078)
+- The playbook gained "Review a template", a nine-step runbook, and
+  sections for picking up an issue, vendoring the templates, retiring a
+  document and writing a check (#2069 to #2083)
+
+**Pull requests merged:** #2069 to #2076, #2078 to #2083; #2070 carried
+the previous two journal entries.
+
+**Issues closed:** #2024, #1006.
+
+**Issues created:** #2068, #2077.
+
+**ADRs:** none; every move went to an existing template, the playbook or a
+fork.
+
+**Gaps flagged:**
+- #2068 keeps its `core/git.md` rows; #2059 and #2057 also gate the v3.0.0
+  tag (#1927)
+- `compile-embedded-checks` has no embedded check left to compile here, so
+  conformance reports it not applicable; SYS-23's plants still exercise it
+
+**Lessons:**
+- A plain imperative reads as MUST, so rewriting a SHOULD or MAY rule as an
+  imperative raises it silently; count SHOULD and MAY before and after
+- A contradiction fix edits both rules of the pair, and a shortened
+  assertion keeps what it accepts as well as what it rejects
+- A check is controlled under plain `bash` and under `bash -e -o pipefail`,
+  with malformed input; each review round here found one mode untested
+- A push goes through the score ratchet with `&&`; twice a review fix
+  lengthened a rule and the push landed a failing score check
+- Outside review of the whole template set found what per-file review did
+  not: conflicts between rules in one resolved chain
