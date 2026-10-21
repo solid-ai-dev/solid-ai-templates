@@ -103,6 +103,8 @@ labels are terminal, applied when closing without action: `duplicate`
   `core:`, `base:`, `backend:` or `frontend:` (spec, chapter 8.6)
 - A new base or layer template follows the playbook, "Add a new base or
   layer template"
+- A review, rewrite or cut of a template follows the playbook, "Review a
+  template"
 - Every template file has an entry in `templates/manifest.yaml`; IDs are
   unique across all layers, and `depends_on` names only valid IDs
 - Base entries go under `base:`, layer entries under `backend:` or
