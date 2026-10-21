@@ -62,8 +62,8 @@ temporary release mechanism.
   flag name and variant in the structured log properties
 - Emit a metric per flag variant — track error rate and latency separately
   for each variant to detect regressions introduced by the new path
-- Alert if flag evaluation fails — a broken provider must not silently
-  default to the wrong variant; fail to the safe default and alert
+- Alert if flag evaluation fails, and apply the flag's declared failure
+  policy — never fall silently to a variant the policy does not name
 
 ## Tooling
 
@@ -71,5 +71,6 @@ temporary release mechanism.
   application reloads at runtime; never from the application database
 - Keep a flag's targeting rules in one place, never split across
   environment variables and code
-- Define each flag's value when its provider is down: the safe default, or
-  refusing traffic where the provider is a deliberate required dependency
+- Declare each flag's failure policy for a provider outage: the safe
+  default, or refusing traffic where the provider is a deliberate required
+  dependency
