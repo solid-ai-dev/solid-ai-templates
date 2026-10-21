@@ -46,6 +46,10 @@ receives nothing (ADR-051).
 | Where a licence notice sits inside an image | `base-devsecops` | `base-containers` |
 | Penetration testing, a periodic engagement rather than a pipeline step | `base-devsecops` | removed; a fork's process template can carry it |
 | The list of IaC misconfigurations to detect, and the "widely adopted" dependency preference | `base-devsecops` | removed; the scanner's configured policy covers the first |
+| GitHub Actions specifics of the release record and the deploy skip; the hand-built side image | `base-cicd` | neutral rules remain |
+| Python editable installs under Compose, `run --rm` write loss, the linter target-version exception | `base-containers` | removed |
+| Figure cropping, the research scrape cache, the lens-catalogue examples | `base-data-quality` | removed; neutral rules remain |
+| MySQL online-DDL tool names; the host MIME-registry example | `base-data-migration`, `base-security` | neutral rules remain |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

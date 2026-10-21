@@ -11,20 +11,14 @@ merged PR and a deployed artifact — humans approve, machines execute.
 
 - Stages 2–4 (lint, test, security scan) run the project's own gates.
   Which gates run, and at which thresholds, is the project's choice
-- How a gate's check is built is in `templates/core/quality-gates.md`
+- Each gate reports what it inspected, and fails on an empty or
+  implausibly small input rather than passing over nothing
 
 ## Patterns
 
 - Use gate job, path filtering, fan-out/fan-in, artifact promotion,
   caching, matrix builds, auto-merge, and deploy preview patterns
-  where appropriate
-- An image built by hand rather than by the pipeline drifts silently —
-  its heavy dependencies often live only in the container, so the main
-  test suite never exercises it and nothing forces a rebuild. Rebuild
-  it and smoke-test its import in a job path-gated to the files that
-  define the image contract: the Dockerfile, the packaging manifest,
-  and the Compose file. This keeps the check off the hot path of every
-  PR while denying the image a way to drift unnoticed
+- Build every image the project ships in the pipeline, never by hand
 
 ## Pipeline stages
 
@@ -78,29 +72,20 @@ Each stage MUST fail fast — a failed stage stops the pipeline immediately.
   deployed artifact is the exact one that passed the gates (see
   "Promote the same artifact" under Environment separation)
 - A deploy step whose secret (a deploy-hook URL or token) is absent on
-  forks or contributor branches MUST skip and still succeed
-  (`if: ${{ secrets.DEPLOY_URL != '' }}`), keeping the workflow green
-  rather than hard-failing — forks do not receive repository secrets
+  forks or contributor branches MUST skip and still succeed, keeping the
+  workflow green rather than hard-failing
 
 ## Release record
 
-On a release tag, the pipeline MUST create a durable release record
-(e.g. a GitHub Release), not only publish artifacts — this gives a
-per-version changelog page at near-zero cost. The release job:
+On a release tag, the pipeline MUST create a durable release record on
+the forge, not only publish artifacts. The release job:
 
-- runs only on tag pushes
-  (`if: startsWith(github.ref, 'refs/tags/v')`), so a manual run on a
-  branch is skipped
+- runs only on tag pushes, so a manual run on a branch is skipped
 - is **independent** of the publish/deploy jobs — the record captures
   the source at the tag; an artifact hiccup MUST NOT erase it
 - is **idempotent** — skip if the record already exists, so a re-run
   is safe
-- holds write permission (`contents: write`) at **job** scope only
-- uses the preinstalled CLI, no third-party action:
-  `gh release create "$TAG" --generate-notes`
-
-Backfill an existing repo by running `gh release create` over each
-historical tag with `--notes-start-tag`.
+- holds write permission at **job** scope only
 
 ## Pipeline as code
 

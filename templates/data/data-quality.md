@@ -3,9 +3,8 @@
 [DEPENDS ON: templates/data/data-modeling.md]
 
 Rules for projects where content or data accuracy matters as much as
-code quality. Applies to lens databases, product catalogs, tutorial
-content, wiki entries, and any project that declares data as a
-first-class concern.
+code quality. Applies to catalogues, reference datasets, published
+content, and any project that declares data as a first-class concern.
 
 ---
 
@@ -43,8 +42,8 @@ first-class concern.
 - Define a freshness window per collection (e.g. prices: 30 days,
   specs: 12 months)
 - Entries beyond their freshness window SHOULD be flagged for review
-- Price data MUST include a `priceDate` field — never show a price
-  without indicating when it was captured
+- Record the capture date beside every time-sensitive value, such as a
+  price; never show one without it (MUST)
 - Discontinued or unavailable items MUST be marked, not deleted
 
 ---
@@ -113,40 +112,6 @@ images, and caching fetched content.
   drift in the rest of the record; a full-record audit catches
   the drift
 
-### Content-aware figure cropping
-
-- When extracting a figure from a composite image (marketing
-  layout, manual page, dashboard screenshot), detect the content
-  bounding box programmatically — e.g. corner-median background
-  subtraction — rather than hand-guessing crop coordinates
-- Hand-picked coordinates silently truncate or off-center the
-  artifact; the error is caught only by a human eyeballing the
-  output
-- Keep automated edge-touch checks advisory (a tight axis box or
-  wide subject legitimately reaches the margin) and always have
-  a human review the crop before publishing
-
-### Cache validity: content checks, not blind TTL
-
-- For a research-time fetch/scrape cache (NOT the live request
-  path), decide cache validity by the content of a cached
-  response, not its age
-- Never cache non-content responses — bot/throttle interstitials,
-  4xx/gone error pages, implausibly short stubs. Detect and skip
-  them on write
-- Self-heal on read: if a cached body is recognizably junk
-  (bot/404/empty), ignore and re-fetch rather than re-serving the
-  bad cache
-- Refresh deliberately via an explicit `--no-cache` / force flag,
-  NOT on a timer
-- Add a time-based TTL only when there is evidence that content
-  goes stale in a way the content checks do not catch — a timer
-  cannot distinguish a value change from a resource removal (the
-  latter surfaces as 4xx and is handled above), and it slows every
-  session re-fetching unchanged data
-- Live request-path caches (Cache-Control, CDN, browser cache)
-  are out of scope — those have their own TTL semantics
-
 ---
 
 ## Scoring and derived fields
@@ -158,8 +123,7 @@ images, and caching fetched content.
   output
 - Define the scoring scale once (e.g. 1–5, step 0.5) and use it
   consistently
-- Features (boolean attributes like "weather sealed") are UI filter
-  badges, not scoring inputs — keep them separate
+- Keep boolean attributes used as filters separate from scoring inputs
 
 ---
 
