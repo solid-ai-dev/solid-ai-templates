@@ -64,8 +64,8 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
   drop old
 - Never add a NOT NULL column without a default — it locks the
   table and breaks existing inserts
-- Use online DDL tools (pt-online-schema-change, gh-ost) for
-  large table alterations in MySQL/MariaDB
+- Use the database's online schema-change tooling for large table
+  alterations
 
 ---
 

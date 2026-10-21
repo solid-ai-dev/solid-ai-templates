@@ -54,9 +54,6 @@ runtime ships.
   (`requires-python`, `engines`, equivalent)
 - Move it in one coordinated change; reject an isolated base-image bump
   that leaves the gates behind — what is tested MUST be what ships
-- One exception, documented inline: a formatter or linter `target-version`
-  MAY trail one minor as a style floor when the newer target introduces
-  a confusing auto-rewrite
 
 ## Docker Compose (if applicable)
 
@@ -74,40 +71,6 @@ on the host. Not every project needs Compose — keep it to those cases.
 - Bind-mount the source for local dev so edits are live without a
   rebuild; do NOT bind-mount in CI or production — there the image is
   the artifact, and a mount would shadow it with host files
-- An image that installs the project's own package in editable mode
-  bakes an absolute package path at build time. When the source is
-  bind-mounted over the workdir, a later layout change — a flat to
-  `src/` migration — leaves that baked path pointing at a directory
-  that no longer exists, so the import fails while the live code sits
-  under the mount. Resolve the package by an explicit source path
-  instead of the baked finder, and assert the import at build time so
-  a broken layout fails the build rather than every run:
-
-```dockerfile
-RUN pip install -e ".[accel,dev]"
-
-# Resolve by the live location, not the path the editable finder baked
-ENV PYTHONPATH=/app/src
-
-# Fail the build, not the run
-RUN python -c "import pkg, heavy_dep"
-```
-
-- A write inside a `--rm` container is discarded on exit, and a write
-  to data baked into the image at build time never reaches the host or
-  a later build. Document where a state-mutating command's write lands
-  and route the reader to a boundary that persists. A quickstart that
-  shows such a command under `run --rm` misleads silently: the reader
-  runs it, sees it succeed, and the state reverts on the next run. For
-  a one-off, prefer the alternative that needs no write at all — pass
-  the value inline:
-
-```text
-run --rm (ephemeral)   bind-mount host path   edit source + rebuild
-write -> top layer     write -> host file     write -> next image
-gone on exit           persists               persists (shipped)
-```
-
 - Compose orchestrates local and single-host multi-service dev;
   production multi-service orchestration is Kubernetes (below)
 
