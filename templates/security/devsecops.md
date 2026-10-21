@@ -104,14 +104,6 @@ dependencies. A document jq cannot parse or read exits non-zero too.
 - Review IaC findings in the pull request that introduces the change
   (MUST)
 
-## Penetration testing
-
-- Schedule regular penetration testing by a qualified party
-- Treat a critical finding as an incident and resolve it immediately
-  (MUST)
-- Track lower-severity findings to resolution within a defined timeframe
-  (MUST)
-
 ## Dependency hygiene
 
 - Keep dependencies up to date, and remove unused ones promptly
