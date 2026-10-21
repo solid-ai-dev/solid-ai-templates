@@ -48,9 +48,7 @@
 - The spec document's own version field (OpenAPI `info.version`) is a
   separate axis from the package / release version — maintain it on its
   own cadence and do NOT bump it on a routine package release that does
-  not change the contract. Where a drift test guards it, assert the
-  field is PRESENT (the spec requires it), not that it equals the
-  package version
+  not change the contract
 
 ## Versioning
 - APIs in a given version MUST maintain backward compatibility

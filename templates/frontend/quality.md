@@ -16,14 +16,9 @@ Prefer these patterns for frontend concerns:
 - **Container / Presentational** — separate data-fetching and state logic
   (container) from rendering (presentational); presentational components
   receive only props, have no side effects, and are easy to test in isolation
-- **Custom Hook** — extract reusable stateful logic into a named hook
-  (`use[Name]`); hooks are the frontend equivalent of a service or strategy
 - **Compound Component** — expose a set of related sub-components that share
-  implicit state via context (e.g. `<Tabs>`, `<Tab>`, `<TabPanel>`);
-  prefer over deeply nested prop drilling
-- **Render Props / Slot** — pass render logic as a prop or slot to invert
-  control over what is rendered; use sparingly — prefer custom hooks where
-  possible
+  implicit state (e.g. `<Tabs>`, `<Tab>`, `<TabPanel>`); prefer over deeply
+  nested prop drilling
 - **Observer** — subscribe to external state changes (store, event bus,
   WebSocket) via a single subscription point; unsubscribe on component unmount
 - **Facade** — wrap third-party libraries (analytics, maps, payment SDKs)
@@ -77,10 +72,6 @@ Rules:
 - No hardcoded colour or spacing values — always use CSS custom properties
   from `:root` or design tokens
 - Consistent naming convention (e.g. BEM-like `.component-element`)
-- Maximum line length follows the formatter's configuration, declared
-  once for the project — do not restate the number in a rule. Prose
-  strings and third-party URLs cannot be broken and stay exempt at
-  any width
 
 ## Performance
 
@@ -92,5 +83,4 @@ Rules:
 
 ## Analytics (if applicable)
 
-- Privacy-friendly analytics only — no consent banner required
 - No third-party tracking scripts without explicit user consent
