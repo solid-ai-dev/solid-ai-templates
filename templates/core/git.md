@@ -15,27 +15,22 @@ How changes are committed, reviewed, verified and merged.
   value in source or history
 - Keep a `.gitignore` (MUST) covering dependencies, build output, secrets,
   editor state, OS files and coverage output
-- Share the editor config that mirrors the CI gates through an allowlist:
-  ignore `.vscode/*`, then re-include `!settings.json` and
-  `!extensions.json`
+- Track the shared editor settings that mirror the CI gates; ignore the
+  rest of the editor's state
 - Commit lockfiles (MUST)
 
 ## Pull requests
 
 - Keep a pull request to one concern
 - Test locally before committing
-- Review the diff against the base before merging, in the order
-  `templates/core/review.md` sets: security, correctness, clarity,
-  conventions
+- Review the diff against the base before merging, in the order security,
+  correctness, clarity, conventions
 - Merge only after the review passes and CI is green
 
 ## CI evidence
 
 - Read the CI run for the push before describing a change as good; a local
   run is evidence about one platform
-- Read the first CI run of a check whose subject is the change under review,
-  and require a verdict there; a check reporting it does not apply on its
-  own change has failed
 - Treat a pull request with no registered check as not passed: wait until
   one registers, then watch every check to completion
 
@@ -109,43 +104,8 @@ An empty diff marks the change as noise; `git checkout -- <file>` drops it.
   tool, and confirm it tracks its source
 - Regenerate a known-current control artifact first; a non-zero diff there
   means the environment disagrees with the committed files
-- Mask the parts of a bundle that change every run, such as an embedded
-  base64 blob or a timestamp, then diff the rest:
-
-```bash
-mask() { sed -E 's/base64,[A-Za-z0-9+/=]+/base64,#/g' "$1"; }
-diff <(mask old.html) <(mask new.html) | grep -v 'generated '
-```
-
 - Pair a spot-check of three to five representative artifacts with one
   metric across the whole population
-
-## Ordered documents
-
-- Verify the merged numbering of a document with an ordered structure when
-  two or more open pull requests edit it; the second to merge owns the
-  check (MUST)
-- Run the check after merging the base in, never before (MUST)
-- Treat numbered sections, ordered procedures, lettered clauses and indexed
-  table rows alike
-
-```bash
-pre-commit run check-heading-numbers --all-files --verbose
-```
-
-Pass condition: the documents-inspected and ordinals-inspected counts are
-above zero and `numbering problems` is zero. Each document is a `--path`
-argument; a document with no ordinal is a finding, because the pattern
-drifted from its convention.
-
-## Submodules
-
-- Run `git submodule update --init --recursive` after pulling a merged pin
-  bump, before reading anything under the submodule path (MUST)
-- Read a `+` in `git submodule status` as a tree the pull did not move
-- End a bump procedure at the updated tree, not at the merge (MUST)
-- Set `submodule.recurse` to `true` so `pull` and `checkout` move the tree
-  (MAY); the update rule still holds for clones without it
 
 ## Off-limits paths
 

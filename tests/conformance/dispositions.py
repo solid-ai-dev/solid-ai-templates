@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 6
+SKIP_BUDGET = 5
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -99,37 +99,11 @@ CHECKS = [
                "regenerated; a committed tree holds no pending change to "
                "classify."},
 
-    {"file": "core/git.md", "find": "mask() {",
-     "title": "Volatile parts of a binary artifact are masked before diffing",
-     "do": SKIP,
-     "reason": "Needs the paths of two generated bundles to compare. This "
-               "repository commits no binary artifact."},
-
     {"file": "core/git.md", "find": "checks not passing",
      "title": "A pull request with no registered check has not passed CI",
      "do": SKIP,
      "reason": "Takes the pull request about to merge as `<N>`. Run per "
                "merge, before `gh pr merge`, not against a tree."},
-
-    # The documents here with a numbered structure that concurrent branches
-    # edit. Run on every pass, the check holds them consistent whichever
-    # branch merged last.
-    {"file": "core/git.md", "find": "check-heading-numbers",
-     "title": "Numbered headings stay consistent across concurrent edits",
-     "do": RUN, "expect": ["nonzero", "nonzero", "zero"],
-     "args": [arg for path in (
-         "AGENTS.md",
-         "docs/playbook.md",
-         "docs/architecture/01-introduction-and-goals.md",
-         "docs/architecture/02-constraints.md",
-         "docs/architecture/03-context-and-scope.md",
-         "docs/architecture/04-solution-strategy.md",
-         "docs/architecture/05-building-block-view.md",
-         "docs/architecture/06-runtime-view.md",
-         "docs/architecture/08-crosscutting-concepts.md",
-         "docs/architecture/10-quality-requirements.md",
-         "docs/architecture/11-risks-and-technical-debt.md",
-         "docs/architecture/12-glossary.md") for arg in ("--path", path)]},
 
     {"file": "core/git.md", "find": "report-off-limits-paths",
      "title": "A diff touching an off-limits path says so", "do": RUN,
