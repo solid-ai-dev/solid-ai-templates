@@ -61,6 +61,7 @@ receives nothing (ADR-051).
 | The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once, DAST before production and artifact promotion remain |
 | Kubernetes: namespaces, two replicas per service, probes, PodDisruptionBudget, ConfigMap secrets | `base-containers` | removed; resources as code and the readiness gate remain, orchestrator-neutral |
 | Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file; relational rules say so |
+| Per-target product choices: managed CAs, `step-ca`, F5 and MetalLB, Route 53 and Consul, Harbor and Athens, Vault topologies | `base-deployment` | removed; each section keeps its ID and the rules that hold on any target |
 | The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | this repository's playbook; the `check-heading-numbers` hook still ships |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | removed; a neutral editor-settings rule remains |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |

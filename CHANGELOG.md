@@ -125,6 +125,8 @@ Releases up to 2.63.0 are listed in
   orchestrator-neutral ([#2099])
 - The data-modeling template asks for one naming convention per store and marks
   its relational rules ([#2100])
+- The deployment template keeps target-neutral rules and drops its per-target
+  product choices ([#2101])
 
 ### Deprecated
 
@@ -203,6 +205,7 @@ Releases up to 2.63.0 are listed in
 [#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
 [#2099]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2099
 [#2100]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2100
+[#2101]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2101
 
 ## [2.90.0] - 2026-09-12
 
