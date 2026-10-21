@@ -101,17 +101,12 @@ frontend:
     depends_on: [base-quality]
   - id: frontend-quality
     file: templates/frontend/quality.md
-    description: CSS conventions, performance, analytics
+    description: CSS conventions, performance, theme persistence, analytics
     depends_on: [base-quality]
   - id: frontend-content
     file: templates/frontend/content.md
     description: Build-agnostic content rules — content, assets, SEO, structured data
     depends_on: [base-docs, base-quality]
-  - id: frontend-static-site
-    file: templates/frontend/static-site.md
-    description: Abstract SSG rules — build, serving, CSS, typography, theme, performance
-    depends_on:
-      [base-git, base-security, frontend-content, frontend-ux, frontend-quality]
 
 backend:
   - id: backend-http

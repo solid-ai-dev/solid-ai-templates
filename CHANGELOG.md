@@ -50,6 +50,8 @@ Releases up to 2.63.0 are listed in
   and the .vscode allowlist ([#2093])
 - The backend-quality template is retired; its general rules move to the HTTP
   template ([#2102])
+- The frontend-static-site template is retired; its theme, trailing-slash and
+  404 rules move to frontend-quality and frontend-content ([#2103])
 
 ### Added
 
@@ -209,6 +211,7 @@ Releases up to 2.63.0 are listed in
 [#2100]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2100
 [#2101]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2101
 [#2102]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2102
+[#2103]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2103
 
 ## [2.90.0] - 2026-09-12
 
