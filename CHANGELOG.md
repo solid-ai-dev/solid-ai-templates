@@ -48,6 +48,8 @@ Releases up to 2.63.0 are listed in
   check-harness rules ([#2082])
 - The git template drops its submodule, numbered-document and base64 rules
   and the .vscode allowlist ([#2093])
+- The backend-quality template is retired; its general rules move to the HTTP
+  template ([#2102])
 
 ### Added
 
@@ -197,6 +199,7 @@ Releases up to 2.63.0 are listed in
 [#2096]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2096
 [#2097]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2097
 [#2098]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2098
+[#2102]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2102
 
 ## [2.90.0] - 2026-09-12
 
