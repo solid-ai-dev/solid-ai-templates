@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 8
+SKIP_BUDGET = 7
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -216,14 +216,6 @@ CHECKS = [
      "expect": [],
      "substitute": {"80": "88", "FILE": "tools/*.py tests/*.py"}},
 
-    {"file": "core/quality-gates.md",
-     "find": "family: $FAMILY",
-     "title": "Sizing one frozen rule family", "do": SKIP,
-     "reason": "Names a rule family and a source root as placeholders, and "
-               "runs `ruff` against a project that has adopted a freeze. "
-               "This repository has no linter freeze and no `src/`, so "
-               "there is no family to size."},
-
     # The hooks scan the tracked tree. The Markdown ones take --root, which
     # here is the templates: the docs quote checks in prose on purpose, as
     # history and as worked examples of the defects the hooks find.
@@ -240,7 +232,7 @@ CHECKS = [
                "itself a test edit, so scoring it would fail each "
                "conforming change on arrival."},
 
-    {"file": "core/quality-gates.md",
+    {"file": "core/embedded-checks.md",
      "find": "find-unfenced-checks",
      "title": "Every stated check is in a form a tool can extract",
      "do": RUN, "args": ["--root", "templates"],

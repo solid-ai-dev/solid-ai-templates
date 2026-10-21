@@ -23,7 +23,6 @@ that risk furthest.
 - Put the command in a fenced block; prose carries the pass condition
   beside it
 - Write the command first; a sentence describing an action is not a check
-- Report how many checks a tool could not see, not only how many it ran
 - Keep a subjective constraint declarative, and never invent a brittle
   check for it
 - Wire a check guarding a committed generated artifact into CI as a
@@ -38,18 +37,6 @@ awk 'length > 80' FILE
 ```
 
 Pass condition: no output. Any line printed is longer than the limit.
-
-Find a check stated outside a fence. It matches over the paragraph, not
-the line, because prose wraps:
-
-```bash
-pre-commit run find-unfenced-checks --all-files --verbose
-```
-
-Pass condition: the paragraph count is above zero and the
-`checks stated outside a fence` count is zero. Give the hook a `--root`
-argument for each directory holding rule documents; a paragraph count of
-zero means the roots named nothing, not that the tree is clean.
 
 ## Conventions as tests
 
@@ -112,8 +99,7 @@ informally.
 
 ### Reporting
 
-- Run a check in the form it ships before merging the rule: extract it
-  from the committed file and execute it
+- Run a check in the form it ships before merging the rule
 - Run a check whose subject is the change under review in the environment
   that builds its tree; `base-git` states what that run has to show
 - Report what a check inspected, not only what it found; the test-suite
@@ -142,10 +128,6 @@ informally.
 - Name the mutated entity in the landing assertion, and compare its value
   on both sides
 - Stage or commit before running a control that mutates the tree
-- Ship a check against a synthetic subject with a fix that has no
-  observable effect on the current tree
-- Demonstrate the defect on the fixing branch where the tree can be put in
-  the failing state
 
 ### Shipped checks
 
@@ -172,7 +154,6 @@ informally.
 - Where the check's subject is committed history, run it after committing,
   not after editing
 - Fix a check that alters its own subject to inspect without mutating
-- Until then, control it with a single fresh invocation
 - State the moment in the pass condition beside the command
 - List "the change is not in the subject yet" among the causes of an empty
   result
@@ -327,34 +308,6 @@ The table is the backlog, and shrinking it is the migration.
 - Size one rule family by running the linter past its configuration with
   the family named; never edit the freeze to measure it
 - Name the family: an unfiltered bypass measures the tool's defaults
-
-```bash
-# Sizes one rule family against the project's own gate without editing the
-# freeze. The equivalents are `flake8 --isolated --select`, `eslint
-# --no-eslintrc --rule`, `golangci-lint run --no-config --enable` and
-# `pylint --rcfile=/dev/null --disable=all --enable`.
-FAMILY="N802,N803"
-ROOT="src"
-
-if [ -z "$FAMILY" ]; then
-  echo "FAIL: no rule family named -- an unfiltered bypass measures the"
-  echo "tool's defaults, not this project's gate"
-  exit 1
-fi
-
-echo "family: $FAMILY"
-ruff check --isolated --select "$FAMILY" --statistics "$ROOT"
-```
-
-Pass condition: it prints the family, then a per-rule count. Zero means the
-family is clear and every entry naming it is dead. It refuses an omitted
-family, because both runs below exit clean:
-
-```
-ruff check --isolated --select N802,N803 src/   ->    0 findings, family clear
-ruff check --isolated src/                      ->  366 findings, ruff defaults
-```
-
 - Where retiring an entry changes what code catches, accepts or returns,
   name the test that fails if the change goes too far
 - Never count a suite that passed before the slice as that test
@@ -378,18 +331,6 @@ Pass condition: the files-scanned count is above zero and
 `bare (naming no rule)` is zero. Zero files scanned means the hook's
 suffixes miss the project's languages. Confirm a found count of zero
 rather than accept it.
-
-## Length-gate exemptions
-
-[ID: quality-gates-length-bound-exemptions]
-
-- Treat a length gate's exemption list as discovered, not derived
-- Exempt a case only when something other than the author sets the count:
-  a licence text, one label per line of code, a banner ruled top and
-  bottom, a table of a published specification's fields
-- Express the exemption as the shape that makes the count external, never
-  as the file or directory that holds it
-- Adopt in slices, and expect the list to grow while the corpus does
 
 ## Test edits
 

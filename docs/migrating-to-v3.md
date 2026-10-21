@@ -55,6 +55,9 @@ receives nothing (ADR-051).
 | `public/` paths, ESLint and Prettier file names, the homepage-sections note | `frontend-content`, `frontend-static-site` | neutral rules remain |
 | Sortable boolean columns, fixed breakpoints, `frontend-ux-bakeoff` | `frontend-ux` | removed; breakpoints come from the design system |
 | Pipeline diagnosability, the Serilog log shape, the OpenAPI drift-test detail | `backend-observability`, `backend-api` | removed or neutral |
+| The unfenced-check hook and extraction rules | `base-quality-gates` | `base-embedded-checks` |
+| `quality-gates-length-bound-exemptions`, synthetic-subject and fixing-branch controls, the backslash table | `base-quality-gates`, `base-embedded-checks` | this repository's playbook |
+| The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

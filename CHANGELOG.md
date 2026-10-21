@@ -42,6 +42,8 @@ Releases up to 2.63.0 are listed in
   specifics ([#2079])
 - The backend and frontend templates drop React, Serilog, Cloudflare and
   one-site rules ([#2080])
+- The quality-gates template drops its length-gate exemptions and ruff block
+  ([#2081])
 
 ### Added
 
@@ -85,6 +87,8 @@ Releases up to 2.63.0 are listed in
   moves to a rationale doc ([#2060])
 - Rules for writing a check into Markdown move to an opt-in template,
   embedded-checks ([#2062])
+- The unfenced-check hook moves from quality-gates to embedded-checks
+  ([#2081])
 - The quality rules are short, topic-headed lists, and four of their checks
   ship as hooks ([#2063])
 - Rules for numerical routines, calibration and source silence move to an
@@ -174,6 +178,7 @@ Releases up to 2.63.0 are listed in
 [#2078]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2078
 [#2079]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2079
 [#2080]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2080
+[#2081]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2081
 
 ## [2.90.0] - 2026-09-12
 

@@ -257,22 +257,6 @@ the file suppresses the check for every other assertion in it.
 
 ---
 
-## quality-gates-length-bound-exemptions
-
-A freeze table is generatable because a gate that finds instances can list
-them on adoption day. A gate bounding a length cannot: its exemptions surface
-one slice at a time, and a list that stopped growing while the corpus grows is
-a finding. A path-scoped exemption absorbs every future violation in that
-neighbourhood, which is what the freeze exists to avoid.
-
-Measured on a downstream project of about a hundred source files, adopting a
-two-line comment bound and a ten-line docstring bound: four exemptions surfaced
-across two slices, a licence header, comments trailing consecutive lines of
-code, a ruled banner and a wire-layout table. In all four something other than
-the author sets the count.
-
----
-
 ## quality-gates-test-edit-boundary
 
 Where tests are the source of truth, a merge-on-green policy cannot see a
