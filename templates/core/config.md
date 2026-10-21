@@ -7,8 +7,8 @@ Store configuration in the environment, not in code, after the
 
 ## Sources
 
-- Read all configuration from the environment; never hardcode a value in
-  source
+- Read every value that varies by deployment, and every secret, from the
+  environment; keep defaults in code only for optional settings
 - Never hardcode a secret, API key or credential (MUST NOT)
 - Commit `.env.example` with placeholder values, and list `.env` in
   `.gitignore`

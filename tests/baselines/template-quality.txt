@@ -13,7 +13,7 @@ templates/backend/features.md 90.9
 templates/backend/grpc.md 96.1
 templates/backend/http.md 96.4
 templates/backend/jobs.md 97.2
-templates/backend/messaging.md 97.5
+templates/backend/messaging.md 97.2
 templates/backend/microservices.md 93.5
 templates/backend/monitoring.md 98.5
 templates/backend/observability.md 97.7

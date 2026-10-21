@@ -62,9 +62,10 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 
 ## Load and backpressure
 
-- Decouple receive from process under load: acknowledge or enqueue the
-  message fast, then do the work in a worker you pace — never run heavy
-  processing inline on the receive path
+- Decouple receive from process under load: hand the message off durably
+  (a persisted queue or job record), acknowledge it only then, and do the
+  work in a worker you pace — never run heavy processing inline on the
+  receive path
 - Coalesce bursts: debounce repeated events for the same resource into a
   single unit of work after a short quiet period, instead of processing
   every duplicate

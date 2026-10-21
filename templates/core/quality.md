@@ -130,9 +130,9 @@ declared.
 
 ## Module structure
 
-- Build an internal module ready for extraction: inject host values as
-  constructor parameters, and give it its own public API, README, tests and
-  requirements (MUST)
+- Build an internal module ready for extraction where it is reused or an
+  extraction is planned: inject host values as constructor parameters, and
+  give it its own public API, README, tests and requirements (SHOULD)
 - Wrap a library in a thin CLI; never make the CLI the product
 - Split an oversized module into a package behind its existing import path,
   re-exporting through `__init__`, and leave the test suite untouched as
