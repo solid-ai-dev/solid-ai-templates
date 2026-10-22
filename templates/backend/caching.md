@@ -45,10 +45,11 @@ cache technology (Redis, Memcached, in-process).
 
 - Invalidate cache entries on write, not only on TTL expiry
 - State the stale window each cached key tolerates
-- Expect no atomic invalidation across a separate cache and database
-- Bound the window with outbox or pub/sub invalidation; both deliver after
-  the commit
-- Measure the invalidation delay against the stated window
+- Set the key's TTL no longer than that window; the TTL is the bound
+- Expect no atomic invalidation across a separate cache and database: an
+  outbox consumer can lag, and a pub/sub subscriber can miss a message
+- Invalidate through an outbox or pub/sub to cut typical staleness, never
+  as the bound
 - Bypass the cache for data that tolerates no stale window
 - Prefer targeted invalidation (`DEL users:profile:42`) over broad flush
   (`FLUSHDB`) — a cache flush is an outage in disguise

@@ -168,8 +168,9 @@ and server-side request forgery.
 
 [ID: security-logging]
 
-- Never log secrets, tokens, passwords, or personally identifiable
-  information (PII)
+- Never log secrets, tokens or passwords
+- Never log personally identifiable information (PII), except the client
+  IP in the security log below
 - Sanitize log output — user-supplied data in logs can enable
   log injection attacks
 - Log security-relevant events: authentication attempts, access

@@ -29,7 +29,8 @@ Use the correct level — do not elevate debug information to INFO:
 
 ### Rules
 - Log errors once — at the top of the call stack, not at every level
-- Never log sensitive data: passwords, tokens, API keys, PII
+- Never log sensitive data: passwords, tokens, API keys, PII; the one
+  exception is the client IP, in the security log only
 - Client errors (4xx) — log at INFO; authentication and authorisation
   failures at WARN
 - Server errors (5xx) — log at ERROR
