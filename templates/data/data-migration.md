@@ -54,8 +54,9 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
      have switched
 - Never rename a column in a single step — add new, migrate,
   drop old
-- Never add a NOT NULL column without a default — it locks the
-  table and breaks existing inserts
+- Never add a NOT NULL column without a default to a table in use
+  — it fails on existing rows and breaks inserts from code that
+  does not set it; add it nullable, backfill, then constrain it
 - Use the database's online schema-change tooling for large table
   alterations
 
