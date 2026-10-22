@@ -118,6 +118,9 @@ labels are terminal, applied when closing without action: `duplicate`
 - A rule MAY carry a short reason in the same bullet. Never put an
   explanatory paragraph between two items of one rule list — context
   goes in a lead-in paragraph above the list
+- Keep a rule's condition and main exception; shorten it by splitting,
+  never by dropping either. The score gate measures form, not whether a
+  rule still applies correctly
 - Give a section an `[ID: ...]` when something references it: another
   template EXTENDs or OVERRIDEs it, or a rule names it. Never remove or
   rename an existing ID — shipped IDs are frozen surface (ADR-051)
