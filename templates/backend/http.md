@@ -58,10 +58,12 @@
   client error into a successful default-valued 200
 
 ## Request headers
-- Write header names in Hyphenated-Pascal-Case: `Api-Correlation-Id`,
-  `Accept-Language`
-- Read every header name case-insensitively (MUST); HTTP/2 and HTTP/3 send
-  them lowercase (RFC 9110)
+- Spell a header name in Hyphenated-Pascal-Case in specs and docs, such as
+  `Api-Correlation-Id`
+- Leave a header's case on the wire to the HTTP library; HTTP/2 and HTTP/3
+  require lowercase (RFC 9113)
+- Read every header name case-insensitively (MUST), as RFC 9110 defines
+  them
 - Custom headers SHOULD NOT use the `X-` prefix — this convention was
   deprecated by RFC 6648; use a vendor or application-specific prefix instead
 
