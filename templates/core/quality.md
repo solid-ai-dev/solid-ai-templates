@@ -13,6 +13,9 @@ How code is designed, kept clean, swept and checked.
 - Choose the simplest solution a stated requirement justifies (KISS)
 - Build what is needed now, never for a hypothetical requirement (YAGNI)
 - Record beside every deferral the concrete condition that reopens it
+- Record missing evidence as the finding of a spike that cannot clear its
+  bar
+- Never lower a spike's bar to ship an answer
 - Delete a path once evidence shows it unreachable or obsolete: no caller,
   or a retired input
 - Treat a real-data probe that never reaches a path as a lead, not proof;
@@ -370,6 +373,8 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 
 ### Verdicts and readings
 
+- Verify a measurement against an independent check before tuning a gate
+  or budget threshold it disagrees with
 - Refuse, as a finding and never as exit 3, when the command that should
   yield a comparison baseline yields none, and print the baseline on its
   own line (MUST)

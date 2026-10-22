@@ -20,8 +20,9 @@ answer rather than an error.
   cheapest first, then raise an error naming what did not converge
 - Fire the escalation only on non-convergence, so a converging path is
   untouched
-- Keep each stabilisation step a small function, testable with a stub
-  that scripts convergence per attempt
+- Keep each stabilisation step a small function, and the escalation
+  driver pure orchestration
+- Exercise every rung with a stub that scripts convergence per attempt
 
 ### Approximations
 
@@ -54,7 +55,8 @@ answer rather than an error.
 ### Ground truth
 
 - Confirm that committed data used as ground truth was not produced by an
-  earlier version of the same pipeline; if it was, it is not ground truth
+  earlier version of the same pipeline with known or suspected bugs; if it
+  was, it is not ground truth
 - Build the calibration set from raw artifacts, recording the verified
   value beside each entry
 - Prefer a small hand-built set from raw artifacts to a large one carried
@@ -89,8 +91,6 @@ answer rather than an error.
 
 ### Thresholds
 
-- Verify a measurement against an independent check before tuning the
-  threshold it disagrees with
 - Tune the threshold once the measurement is sound; change the
   measurement only when neither step resolves the disagreement
 - Treat a threshold never validated against data as a guess
@@ -120,13 +120,11 @@ answer rather than an error.
   verdict destroys, not only on its false-positive rate (MUST)
 - Ask whether a positive verdict discards or holds the cheap result, and
   what the system returns when the fallback cannot run
-- Preserve the cheap result, so an unavailable fallback degrades to a
-  result plus a warning
+- Prefer preserving the cheap result, so an unavailable fallback degrades
+  to a result plus a warning
 
 ### Spikes
 
-- Record the missing corpus as the finding when a spike cannot clear its
-  bar; never lower the bar to ship an answer
 - Count as evidence only the cases captured independently of the rule
 - State that "here is what would have to be captured" is the deliverable
 
