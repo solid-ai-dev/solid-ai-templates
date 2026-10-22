@@ -9253,3 +9253,56 @@ fork.
   lengthened a rule and the push landed a failing score check
 - Outside review of the whole template set found what per-file review did
   not: conflicts between rules in one resolved chain
+
+## 2026-10-22 — Template quality for the v3.0 announcement
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- #2068 finished with `core/git.md`: ordered documents and the first-CI-run
+  rule moved to the playbook, submodules and the base64 mask left; the
+  numbering gate became a local pre-commit hook (#2093)
+- Every horizontal rule left the tracked Markdown, and
+  `tools/check_horizontal_rules.py` gates their return as a local
+  pre-commit hook (#2095)
+- Nine template-quality tickets landed before the tag: incident reviews
+  add an alert only for a detection gap (#2096), flags need no dedicated
+  service (#2097), CI/CD keeps its gates and drops one pipeline layout
+  (#2098), containers drop Kubernetes (#2099), data modeling asks for one
+  naming convention (#2100), deployment keeps target-neutral rules (#2101)
+- `backend-quality` (#2102) and `frontend-static-site` (#2103) retired, their
+  general rules moved to `backend-http`, `frontend-quality` and
+  `frontend-content`; `base-oop` left the core tier (#2104, ADR-057)
+- The migration guide lists the renames a fork's sync merge meets (#2105)
+- Fifteen templates under 95 rewritten to 97.9 or above, one instruction
+  per rule, pass conditions stated as rules beside their commands (#2107 to
+  #2121); a floor of 95 for every upstream template follows in the PR that
+  closes #2106
+
+**Pull requests merged:** #2093 to #2105, and #2107 onward as the merge run
+completes; #2094 carried the previous journal entry.
+
+**Issues closed:** #2068, #2059, #2057, #2084 to #2092.
+
+**Issues created:** #2106; Imbra-Ltd/imbra-ai-templates #58 to #64, the
+fork side of #2084 to #2090.
+
+**ADRs:** ADR-057, object-oriented guidance is opt-in, superseding ADR-046.
+
+**Gaps flagged:**
+- #2107's squash subject names #2106, which it does not close; the
+  merged-work sweep reads it until the floor PR closes #2106
+- The fork companion issues are open; the owner set them aside for v3.0
+- `core/config.md` lists feature flags as build-time while `backend/features`
+  evaluates them at runtime; recorded on #2077
+
+**Lessons:**
+- A plain imperative raises a permission to a MUST: "REST plus gRPC is
+  valid" and "consider an audit log" became explicit MAYs
+- A pass condition written as rules beside its command keeps its counts
+  and refusals and stops reading as narrative to the scorer; changing the
+  scorer to pass one file was the wrong fix
+- A three-way merge of a sorted baseline by concatenating both sides keeps
+  the stale row beside the new one; resolve it per path
+- Two agents reviewing the same template agreed on its value and differed
+  only on where it lives; the second view kept `embedded-checks` opt-in
