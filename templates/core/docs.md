@@ -45,8 +45,8 @@ Which documents a project keeps, and how they stay true.
   - `AGENTS.md` whenever `CLAUDE.md` changes, so the two agree
 - Write in present tense; past or future tense signals a stale document
 - Write as little as needed; a document that drifts is worse than none
-- Remove redundant, inconsistent or outdated text in the change that finds
-  it
+- Remove redundant, inconsistent or outdated text promptly (SHOULD), in
+  its own change when it is unrelated to the one that finds it
 
 ## Disagreements
 
@@ -67,8 +67,8 @@ Which documents a project keeps, and how they stay true.
 - Never let a template update create compliance work, tickets or decision
   records by itself (MUST NOT); a newer tag alone is no reason to move the
   pin
-- Record a declined candidate in at most one line, in the existing pull
-  request or discussion
+- Record a declined candidate in at most one line, if at all (MAY), in the
+  existing pull request or discussion
 - Keep adopted rules in force until the project changes them, and keep the
   operative selection in the project's context file
 - Inline this adoption boundary in a reference or hybrid context file
@@ -83,10 +83,12 @@ Which documents a project keeps, and how they stay true.
 - Declare the width as the line-length setting in the Markdown linter's
   configuration (MUST); the linter reads no other file, so a width set only
   in `.editorconfig` goes unenforced
+- Keep any second copy of the width, such as `.editorconfig` for editors,
+  equal to the linter's
 - Declare in the same place which of fenced blocks, table rows and headings
   are exempt
-- Exempt a line only where an unbreakable token, a bare URL or a Markdown
-  link, holds it over the width
+- Exempt a line only where it cannot wrap: an unbreakable token, a bare
+  URL, a Markdown link, or a single-line directive a parser reads whole
 - Enforce the width with the Markdown linter's line-length rule in CI
   (MUST), passing the configuration and the files to lint explicitly; a
   project that declares no width has no rule
@@ -122,7 +124,7 @@ either exits non-zero.
   or generated API docs, rather than restating it; document only what it
   cannot state itself
 - State a count about the tree only inside a block a generator writes and
-  gates; elsewhere name the thing without counting it
+  gates, or in a dated record; elsewhere name the thing without counting it
 
 ## Cold readers
 
@@ -147,6 +149,8 @@ either exits non-zero.
 - Never use proprietary formats such as Word, Illustrator or Affinity
   Designer
 - Use uniform node shapes, and split a diagram that serves two purposes
+- Never use `;` or a bare `<` inside a Mermaid note; both break rendering
+  silently
 
 ## Docs as code
 
@@ -162,8 +166,11 @@ either exits non-zero.
   (SHOULD)
 - Re-render to judge staleness; never rely on inspection, above all for a
   visual or binary output such as a diagram export
-- Exclude generated paths from formatters
+- Exclude generated paths from formatters (SHOULD)
 - Re-run the generator when its inputs change; never edit its output
+- Preserve human-entered content when refreshing a generated file, or fail
+  naming what would be discarded (MUST)
+- Make a bulk-emit `--check` failure report how many entries are stale
 - Derive a per-field generator's fields from the schema it renders, never
   from a hardcoded list (MUST)
 
