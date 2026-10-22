@@ -41,6 +41,10 @@ MOVED_BASELINES = {
 # file is recorded on purpose with --update, never by accident.
 NEW_FILE_FLOOR = 70
 
+# Every upstream template scores this or above, with or without a row. A
+# fork's templates answer to their own rows and the new-file floor only.
+UPSTREAM_FLOOR = 95
+
 # Scores are rounded to one decimal; a drop smaller than this is noise from
 # rounding, not a regression.
 TOLERANCE = 0.1
@@ -375,9 +379,10 @@ def write_baseline(path, rows, header):
 
 BASELINE_HEADER = """\
 # Template quality scores, recorded by `py tools/score_templates.py --update`.
-# `--check` fails a template scoring below its row here, a template with no
-# row scoring below the new-file floor, and a row naming no template. Raise
-# a row by improving the template and re-recording; never lower one by hand.
+# `--check` fails a template scoring below its row here, an upstream template
+# below 95, a template with no row below the new-file floor, and a row naming
+# no template. Raise a row by improving the template and re-recording; never
+# lower one by hand.
 """
 
 
@@ -387,11 +392,14 @@ def unmoved_baselines():
             for old, new in MOVED_BASELINES.items() if old.exists()]
 
 
-def check(scores, baseline, fork_baseline):
+def check(scores, baseline, fork_baseline, upstream=()):
     """Findings for the ratchet: each a line naming the file and why."""
     findings = []
     recorded = {**baseline, **fork_baseline}
     for name, value in sorted(scores.items()):
+        if name in upstream and value < UPSTREAM_FLOOR - TOLERANCE:
+            findings.append(f"{name}: {value:.1f} below the upstream floor "
+                            f"{UPSTREAM_FLOOR}")
         if name in recorded:
             if value < recorded[name] - TOLERANCE:
                 findings.append(f"{name}: {value:.1f} below its baseline "
@@ -489,6 +497,13 @@ def self_test():
     cases.append(("the ratchet fails a drop, a new file under the floor and "
                   "a stale row, and passes a rounding drift",
                   named == expect, sorted(named)))
+    floored = check({"up": 94.0, "edge": 94.95, "fork": 80.0},
+                    {"up": 94.0, "edge": 94.95}, {"fork": 80.0},
+                    upstream={"up", "edge"})
+    named = {f.split(":")[0] for f in floored}
+    cases.append(("the upstream floor fails an upstream file under 95 even "
+                  "at its row, and spares a fork's file and a rounding drift",
+                  named == {"up"}, sorted(named)))
     failed = 0
     for label, ok, value in cases:
         print(f"  {'PASS' if ok else 'FAIL'}  {label}  ({value})")
@@ -604,8 +619,10 @@ def main(args):
         if not scores:
             print("templates scored: 0 -- refusing: nothing was measured")
             return 1
+        manifest = (TEMPLATES / "manifest.yaml").read_text(encoding="utf-8")
         findings = check(scores, read_baseline(BASELINE),
-                         read_baseline(FORK_BASELINE))
+                         read_baseline(FORK_BASELINE),
+                         upstream_files(manifest))
         print(f"templates scored: {len(scores)}")
         print(f"findings: {len(findings)}")
         for finding in findings:
