@@ -2,18 +2,16 @@
 [ID: frontend-content]
 [DEPENDS ON: templates/core/docs.md, templates/core/quality.md]
 
-Abstract rules for authored web content — content and code separation,
-assets, SEO and structured data — whatever builds and serves it. Extended
-by a stack that builds the site, or picked alone by a project whose content
-another system builds and serves.
+Rules for authored web content, whatever builds and serves it: content and
+code separation, assets, SEO and structured data.
 
 ## Content structure
 [ID: static-site-content]
 [EXTEND: base-docs]
 
-All editable content lives in a data directory as structured files (JSON,
-YAML, or Markdown). Never hardcode content that a non-developer might want
-to change.
+- Keep all editable content in a data directory as structured files
+  (JSON, YAML or Markdown)
+- Never hardcode content a non-developer might want to change
 
 | File | Controls |
 |------|----------|
@@ -30,44 +28,42 @@ to change.
 ## SEO
 [ID: static-site-seo]
 
-- `robots.txt`, Open Graph, and Twitter Card meta tags required for
-  server-rendered and static pages
-- Canonical URLs required for publicly indexed pages
+- Add `robots.txt`, Open Graph and Twitter Card tags to server-rendered and
+  static pages
+- Give every publicly indexed page a canonical URL
 - Sitemap MUST be generated at build time and referenced in `robots.txt`
 - Every content page MUST have a unique `description` in frontmatter — used
   for `<meta name="description">`, OG description, and Twitter Card
 - Meta descriptions MUST read as a pitch, not a summary — answer "why
   should I click this?"
-- JSON-LD structured data SHOULD be present on content pages (Article,
-  Course, or appropriate schema type)
+- Add JSON-LD structured data to content pages, with the schema type that
+  matches the page (Article, Course) (SHOULD)
 - `robots.txt` MAY allow answer-engine crawlers (OAI-SearchBot,
   ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot);
   decide it deliberately, and verify no edge setting overrides the file
-- MUST pick a trailing slash convention (with or without) and enforce it
-  across all internal links, canonical URLs, and sitemap entries — redirect
-  chains waste crawl budget, split link equity, and can prevent indexing
-- If `og:image` is present, `twitter:image` MUST also be present —
-  Twitter/X does not reliably fall back to `og:image`. Include
-  `og:image:width`/`og:image:height` (recommended 1200×630) to avoid
-  render delays on social platforms
-- H1 keywords SHOULD appear in the page body — search and answer engines
-  use heading/body coherence as a relevance signal; H1 SHOULD be unique
-  per page and reflect its content
-- Provide a complete favicon set: an SVG favicon
-  (`<link rel="icon" type="image/svg+xml">`) and a 180×180
-  `apple-touch-icon` for iOS home-screen bookmarks
-- Answer engines retrieve passages, not whole pages — lead each section
-  with a direct answer and keep paragraphs self-contained
+- Add `twitter:image` wherever `og:image` is present (MUST); Twitter/X
+  does not reliably fall back to `og:image`
+- Add `og:image:width` and `og:image:height` (1200×630 recommended) to
+  avoid render delays on social platforms
+- Repeat H1 keywords in the page body (SHOULD); engines read heading and
+  body coherence as relevance
+- Keep each H1 unique to its page and true to its content (SHOULD)
+- Provide an SVG favicon (`<link rel="icon" type="image/svg+xml">`) and a
+  180×180 `apple-touch-icon` for iOS bookmarks
+- Lead each section with a direct answer in self-contained paragraphs;
+  answer engines retrieve passages, not pages
 - Serve a custom 404 page that links back into the site
 
 ## Trailing slash
 [ID: static-site-trailing-slash]
 
-- MUST verify the trailing slash convention matches the hosting platform's
-  behavior (e.g. GitHub Pages forces trailing slashes, Netlify and Vercel
-  are configurable)
-- SHOULD add a CI check that scans built HTML output for internal hrefs
-  violating the convention
+- Pick one convention, with or without, and enforce it across internal
+  links, canonical URLs and sitemap entries (MUST); redirect chains waste
+  crawl budget and can prevent indexing
+- Verify the convention matches the host's behaviour (MUST): GitHub Pages
+  forces trailing slashes; Netlify and Vercel are configurable
+- Add a CI check that scans built HTML for internal hrefs that break the
+  convention (SHOULD)
 
 ## Structured data (if applicable)
 [ID: frontend-content-structured-data]
