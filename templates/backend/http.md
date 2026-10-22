@@ -118,7 +118,8 @@
 - Use 4xx for client errors, 5xx for server errors — never use 200 for errors
 - Never return stack traces, internal paths, or implementation details to the
   client
-- Set explicit `Content-Type: application/json` on all JSON responses
+- Set an explicit `Content-Type` on every JSON response:
+  `application/problem+json` on an error, `application/json` otherwise
 
 ## Authentication and authorisation
 - All API traffic MUST be served over HTTPS — plain HTTP is not acceptable

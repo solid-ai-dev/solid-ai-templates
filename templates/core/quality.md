@@ -11,8 +11,10 @@ How code is designed, kept clean, swept and checked.
 - Choose the simplest solution a stated requirement justifies (KISS)
 - Build what is needed now, never for a hypothetical requirement (YAGNI)
 - Record beside every deferral the concrete condition that reopens it
-- Delete a path in the same commit when probing real data shows it never
-  fires; git history keeps it
+- Delete a path once evidence shows it unreachable or obsolete: no caller,
+  or a retired input
+- Treat a real-data probe that never reaches a path as a lead, not proof;
+  a sample misses rare cases
 
 ## Revisit triggers
 
@@ -132,7 +134,7 @@ declared.
 - Build an internal module ready for extraction where it is reused or an
   extraction is planned: inject host values as constructor parameters, and
   give it its own public API, README, tests and requirements (SHOULD)
-- Wrap a library in a thin CLI; never make the CLI the product
+- Keep a CLI a thin layer over a library that holds its logic
 - Split an oversized module into a package behind its existing import path,
   re-exporting from the package's entry module, and leave the test suite
   untouched as the regression oracle

@@ -168,14 +168,17 @@ and server-side request forgery.
 
 [ID: security-logging]
 
-- Never log secrets, tokens, passwords, or personally identifiable
-  information (PII)
+- Never log secrets, tokens or passwords
+- Never log personally identifiable information (PII), except the client
+  IP in the security log below
 - Sanitize log output — user-supplied data in logs can enable
   log injection attacks
 - Log security-relevant events: authentication attempts, access
   denials, privilege changes, configuration changes
-- Include enough context for investigation: timestamp, user ID,
-  IP, action, result
+- Include enough context for investigation: timestamp, an opaque
+  user ID, action, result; never a name, email or submitted username
+- Record the client IP only in the security log, access-restricted
+  and purged at the end of its retention period
 - Retain security logs for a defined period — compliance may
   require 90 days to 7 years
 
