@@ -13,8 +13,8 @@ log level and the recovery:
 | Class | Cause | HTTP range | Log level |
 |-------|-------|------------|-----------|
 | **Validation** | Invalid input from the caller | 400, 422 | INFO |
-| **Authentication** | Missing or invalid credentials | 401 | INFO |
-| **Authorization** | Valid credentials, insufficient permission | 403 | INFO |
+| **Authentication** | Missing or invalid credentials | 401 | WARN |
+| **Authorization** | Valid credentials, insufficient permission | 403 | WARN |
 | **Not found** | Resource does not exist | 404 | INFO |
 | **Conflict** | State violation (duplicate, stale write) | 409 | INFO |
 | **Infrastructure** | DB, cache, or queue unavailable | 503 | ERROR |

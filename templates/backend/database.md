@@ -7,7 +7,8 @@
 - Migrations are committed to source control
 - Never regenerate or modify a migration that is already merged
 - One migration per logical change — do not batch unrelated schema changes
-- Migrations must be reversible — provide a `down` migration for every `up`
+- Provide a `down` migration for every `up`; where reversal would lose
+  data, say so in the migration and get approval before applying it
 
 ## Queries
 

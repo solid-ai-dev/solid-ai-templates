@@ -54,9 +54,12 @@ Sources override in this order, highest last:
 
 ## Build time and run time
 
-- Separate build-time values, baked into the artifact (API base URLs,
-  feature flags, public keys), from runtime values read at start or per
-  request (secrets, database URLs, log levels)
+- Put into the artifact only values the same in every environment, such
+  as public keys
+- Read the rest at start or per request: API base URLs, feature flags,
+  secrets, database URLs, log levels
+- Give a browser bundle its per-environment values at runtime, from a
+  config file the server provides
 - Never put a secret in build-time config (MUST NOT); it ships inside the
   artifact
 - Document which variables are build-time and which are runtime
@@ -66,8 +69,7 @@ Sources override in this order, highest last:
 - Source production secrets from a secrets manager or the CI secret store,
   never from a flat `.env` file
 - Load secrets so they can rotate without a redeployment
-- Never log a configuration value; redact or omit secrets from logs and
-  diagnostics
+- Never log a secret; redact or omit it from logs and diagnostics
 - Reference a secret by name or path; never embed it in a config file
 
 | Environment | Purpose | Secrets source |

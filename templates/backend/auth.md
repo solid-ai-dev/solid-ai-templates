@@ -24,7 +24,8 @@ security template with backend-specific depth.
   with a separate refresh token (≤ 7 days, rotated on use)
 - Validate every JWT: signature, `exp`, `iss`, `aud` — reject tokens missing
   any required claim
-- Store refresh tokens server-side (database or cache) so they can be revoked —
+- Store refresh tokens server-side, in a database or a dedicated session
+  store, so they can be revoked —
   stateless refresh tokens cannot be invalidated before expiry
 
 ## Token transport
