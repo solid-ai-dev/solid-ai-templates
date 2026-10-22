@@ -41,12 +41,13 @@ Sources override in this order, highest last:
 - Never let a lower-priority source silently override a higher one
 - Treat a source that is present but empty as an error naming the accepted
   input, never as absent (MUST): an empty flag, environment variable or
-  config key falls back to nothing
+  config key never falls back to a lower-priority value
 
 ## Validation
 
-- Validate every required value's type, range and format at load time, and
-  fail fast on a missing or invalid one
+- Validate every value's type, range and format at load time, optional
+  ones included, never at first use
+- Fail fast on a missing required value or an invalid one
 - Read configuration through a typed object or schema; never scatter raw
   environment reads across the code
 - Give defaults only to optional, non-sensitive settings
