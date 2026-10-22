@@ -80,7 +80,7 @@ file with runtime conventions, project structure, and tooling.
   - `grpc_server_handled_total` — labelled by method and status code
   - `grpc_server_handling_seconds` — histogram, labelled by method
 - Implement the standard gRPC Health Checking Protocol
-  (`grpc.health.v1.Health`) — required for Kubernetes probes
+  (`grpc.health.v1.Health`) — orchestrators and load balancers probe it
 - Propagate trace context through gRPC metadata for distributed tracing
 
 ## Testing

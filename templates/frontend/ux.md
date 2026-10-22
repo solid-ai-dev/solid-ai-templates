@@ -29,8 +29,11 @@
 - Never convey meaning by colour alone
 - Give images descriptive `alt` text, and decorative ones `alt=""`
 - Use semantic HTML: landmark elements and a correct heading hierarchy
-- Give every interactive element an `aria-label` (buttons, icon links,
-  social links), and every icon-only or ambiguous link a descriptive one
+- Give an icon-only or ambiguous control, such as a social link, a
+  descriptive `aria-label`; never add one where visible text already names
+  the control
+- Make an accessible name contain the control's visible text, ideally at
+  its start (WCAG 2.5.3, Label in Name)
 - Close menus on Escape and restore focus
 
 ## Accessibility testing
