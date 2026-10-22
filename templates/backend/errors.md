@@ -2,16 +2,13 @@
 [ID: backend-errors]
 [DEPENDS ON: templates/backend/http.md, templates/backend/observability.md]
 
-Error response format and logging rules are defined in
-`templates/backend/http.md` and
-`templates/backend/observability.md`. This template covers classification,
-propagation,
-and recovery.
+Classification, propagation and recovery of errors; the response format
+and logging rules come from the HTTP and observability templates.
 
 ## Error classification
 
-Classify every error before handling it — the class determines the response,
-the log level, and the recovery strategy:
+Classify every error before handling it; the class sets the response, the
+log level and the recovery:
 
 | Class | Cause | HTTP range | Log level |
 |-------|-------|------------|-----------|
@@ -24,53 +21,45 @@ the log level, and the recovery strategy:
 | **External** | Third-party API or service failure | 502, 504 | ERROR |
 | **Unexpected** | Unhandled exception, programming error | 500 | ERROR |
 
-- Never map an infrastructure or unexpected error to a 4xx — that misleads
-  the caller about who is responsible
-- Never map a validation error to a 5xx — the caller must know the request
-  was rejected, not that the server failed
+- Never map an infrastructure or unexpected error to a 4xx; it blames the
+  caller
+- Never map a validation error to a 5xx; the caller must learn the request
+  was rejected
 
 ## Propagation through layers
 
-- **Repository layer**: raise typed, domain-agnostic errors
-  (e.g. `RecordNotFound`, `ConnectionError`) — never expose ORM or driver
-  exceptions to the layers above
-- **Service layer**: catch repository errors and re-raise as domain errors
-  (e.g. `OrderNotFound`, `PaymentServiceUnavailable`); add business context
-  before re-raising
-- **Handler layer**: catch domain errors, map them to HTTP responses using a
-  central error mapper — no ad-hoc `try/except` per route
-- Log once, at the handler or middleware boundary — never log the same error
-  at multiple layers
+- Raise typed errors from data-access code (`RecordNotFound`,
+  `ConnectionError`); never expose ORM or driver exceptions above it
+- Re-raise them as domain errors with business context (`OrderNotFound`,
+  `PaymentServiceUnavailable`)
+- Map domain errors to HTTP responses in one central mapper; no ad-hoc
+  `try/except` per route
+- Log an error once, at the handler or middleware boundary
 
 ## Recovery and graceful degradation
 
-- Wrap all outbound calls (HTTP, DB, cache, queue) in a timeout — never wait
-  indefinitely for an external response
-- Use the **Circuit Breaker** pattern for repeated calls to external services
-  — fail fast after a threshold of failures; recover automatically after a
-  cool-down period
-- Degrade gracefully when a non-critical dependency is unavailable — serve
-  a reduced response rather than failing the entire request
-  (e.g. return cached data if the live source is down)
-- Non-idempotent operations that fail mid-way MUST leave the system in a
-  consistent state — use transactions or compensating actions; never leave
-  partial writes uncommitted
+- Put a timeout on every outbound call (HTTP, DB, cache, queue)
+- Wrap repeated calls to an external service in a circuit breaker: fail
+  fast past a failure threshold, recover after a cool-down
+- Serve a reduced response when a non-critical dependency is down, such as
+  cached data, rather than fail the request
+- Leave the system consistent when a non-idempotent operation fails midway
+  (MUST): use transactions or compensating actions
 
 ## External service failures
 
-- Never surface a third-party error message directly to the caller — translate
-  it into a domain error with a message you control
-- Distinguish between a timeout (client waited too long) and a rejection
-  (external service actively refused) — use 504 for timeout, 502 for rejection
-- Log the full external error response at ERROR level for diagnosis; return
-  only a safe, generic message to the caller
-- Implement retry with exponential backoff and jitter for transient external
-  failures — do not retry on 4xx responses from the external service
+- Never pass a third-party error message to the caller; translate it into
+  a domain error with a message you control
+- Return 504 when an external call times out and 502 when it is refused
+- Log the full external error at ERROR level; return the caller only a
+  safe, generic message
+- Retry transient external failures with exponential backoff and jitter;
+  never retry an external 4xx
 
 ## Unexpected errors
 
-- All unhandled exceptions MUST be caught at the outermost middleware boundary
-  — no exception should escape to the framework's default handler
-- Return a generic 500 response with a trace ID — never return a stack trace,
-  internal path, or error message that reveals implementation details
+- Catch every unhandled exception at the outermost middleware (MUST); none
+  reaches the framework's default handler
+- Return a generic 500 with a trace ID; never a stack trace, internal path
+  or message that reveals implementation details
 - Treat every unexpected error as a bug — create a ticket, do not suppress
