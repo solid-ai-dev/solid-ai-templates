@@ -53,7 +53,7 @@ How a project's agent context files are structured and written.
   clause
 - Put explanations in the documents they belong to, not the context file
 - Point to a rule that is authoritative in a skill, ADR, README or template;
-  never restate it
+  never restate it unless the model below inlines it
 - State the override order near the top when more than one rule source
   governs the project
 - Name the check beside each mechanically checkable rule: the command in a
@@ -66,7 +66,8 @@ not a note.
 
 - [ ] Every line states a rule the agent applies next turn
 - [ ] Every qualifier a rule needs survives
-- [ ] No prose restates a rule authoritative elsewhere
+- [ ] No prose restates a rule authoritative elsewhere, beyond what the
+      model inlines
 - [ ] The precedence order is stated where several authorities govern
 - [ ] Every mechanically checkable constraint names its check
 - [ ] The project-structure section points to the README map, with no

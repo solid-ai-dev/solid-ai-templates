@@ -4,7 +4,7 @@
 # no template. Raise a row by improving the template and re-recording; never
 # lower one by hand.
 templates/backend/api.md 100.0
-templates/backend/auth.md 98.4
+templates/backend/auth.md 98.6
 templates/backend/caching.md 100.0
 templates/backend/concurrency.md 98.1
 templates/backend/database.md 100.0
@@ -41,4 +41,4 @@ templates/infra/cicd.md 95.7
 templates/infra/containers.md 95.2
 templates/infra/deployment.md 99.4
 templates/security/devsecops.md 100.0
-templates/security/security.md 96.2
+templates/security/security.md 96.3
