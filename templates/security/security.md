@@ -59,7 +59,8 @@ and server-side request forgery.
 
 - Hash passwords with a modern algorithm: bcrypt, scrypt, or
   Argon2 — never MD5, SHA-1, or plain SHA-256
-- Enforce minimum password complexity at the boundary
+- Require a minimum password length and reject known-breached passwords;
+  never impose composition rules (NIST SP 800-63B)
 - Use constant-time comparison for secrets and tokens — timing
   attacks leak information through response time
 - Support multi-factor authentication for privileged operations

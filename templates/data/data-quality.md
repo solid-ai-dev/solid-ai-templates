@@ -100,7 +100,7 @@ validation cannot detect.
 [ID: data-quality-changelog]
 
 - Changes to source data MUST be committed with a message explaining
-  what changed and why (e.g. "fix: update lens weight — manufacturer
+  what changed and why (e.g. "fix: update product weight — publisher
   corrected spec sheet")
 - When a scoring input changes, note that derived scores will change
 - Do not batch unrelated data changes into a single commit — one
@@ -126,10 +126,11 @@ validation cannot detect.
 
 - Validate data at ingest time — reject or flag entries that fail
   schema validation
-- Use typed schemas (Zod, JSON Schema, TypeScript interfaces) for all
-  data collections
+- Use runtime schemas (Zod, JSON Schema, Pydantic) for all data
+  collections; a static type, such as a TypeScript interface, validates
+  nothing at runtime
 - Range checks for numeric fields (e.g. weight > 0, price > 0)
-- Enum checks for constrained fields (e.g. mount type, category)
+- Enum checks for constrained fields (e.g. status, category)
 - Build-time validation is acceptable for static sites — runtime
   validation for APIs
 
