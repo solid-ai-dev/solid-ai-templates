@@ -9,10 +9,10 @@ templates/backend/caching.md 100.0
 templates/backend/concurrency.md 98.1
 templates/backend/database.md 100.0
 templates/backend/edge.md 97.9
-templates/backend/errors.md 98.3
+templates/backend/errors.md 99.3
 templates/backend/features.md 99.7
 templates/backend/grpc.md 96.1
-templates/backend/http.md 97.8
+templates/backend/http.md 97.9
 templates/backend/jobs.md 97.2
 templates/backend/messaging.md 96.8
 templates/backend/microservices.md 100.0
@@ -36,9 +36,9 @@ templates/data/data-modeling.md 100.0
 templates/data/data-quality.md 100.0
 templates/frontend/content.md 99.1
 templates/frontend/quality.md 98.3
-templates/frontend/ux.md 99.8
+templates/frontend/ux.md 100.0
 templates/infra/cicd.md 95.7
 templates/infra/containers.md 95.2
 templates/infra/deployment.md 99.4
 templates/security/devsecops.md 100.0
-templates/security/security.md 96.1
+templates/security/security.md 96.2
