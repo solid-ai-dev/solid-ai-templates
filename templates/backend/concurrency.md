@@ -1,9 +1,8 @@
 # Backend — Concurrency
 [ID: backend-concurrency]
 
-Universal rules for multi-threading, multi-processing, and async I/O.
-Language-specific rules belong in the stack template via [EXTEND:
-backend-concurrency].
+Rules for multi-threading, multi-processing and async I/O; a stack
+template extends this one with its language's rules.
 
 ## When to use what
 
@@ -39,24 +38,23 @@ CPU-bound work cannot be offloaded to a background job or worker process.
 
 ## Pitfalls
 
-- **Deadlock**: two threads each waiting for a lock the other holds —
-  always acquire locks in a consistent order
-- **Livelock**: threads repeatedly yielding to each other without making
-  progress — add backoff or a tiebreaker
-- **Race condition**: outcome depends on scheduling order —
-  use a race detector during testing (e.g. `go test -race`, ThreadSanitizer)
-- **Starvation**: low-priority work never gets scheduled —
-  bound queue sizes and use fair scheduling where possible
-- **Thread-local state leakage**: in thread-pool or async contexts,
-  context (e.g. request ID, user identity) must be explicitly passed,
-  not stored in thread-locals
+- Acquire locks in one consistent order, so no two threads deadlock
+  waiting on each other
+- Add backoff or a tiebreaker where threads can livelock, yielding to each
+  other without progress
+- Run a race detector in tests (e.g. `go test -race`, ThreadSanitizer) to
+  catch outcomes that depend on scheduling
+- Bound queue sizes and schedule fairly where the runtime allows, so
+  low-priority work never starves
+- Pass request context (request ID, user identity) explicitly in pools
+  and async code; never store it in thread-locals
 
 ## Observability
 
 - Log the concurrency model in use at service startup (thread pool size,
   event loop policy, worker count)
-- Track thread/goroutine/task count as a metric — an unbounded growth
-  indicates a leak
+- Track the thread, goroutine or task count as a metric; unbounded growth
+  is a leak
 - Alert on deadlock symptoms: requests timing out uniformly across all
   endpoints with no error in logs
 
