@@ -4,17 +4,15 @@
 [DEPENDS ON: templates/core/quality.md, templates/core/git.md]
 [DEPENDS ON: templates/core/testing.md, templates/core/config.md]
 
-What to gate, how to build the check, how to adopt a gate on existing
-code, and how to read and change one afterwards. When gates run, and
-against which thresholds, is the project's choice.
+What to gate, how to build, adopt, read and change a gate. When gates run,
+and at which thresholds, is the project's choice.
 
 ## Paired checks
 
 [ID: quality-gates-pair-check]
 
 A stated constraint without its check is decorative: a violating artifact
-looks like a clean one. A constraint a generated project inherits carries
-that risk furthest.
+looks like a clean one.
 
 - Name the agent-runnable check of an output constraint that is
   mechanically checkable: the command to run and the pass condition (MUST)
@@ -162,8 +160,8 @@ informally.
 
 [ID: quality-gates-check-selection]
 
-A check can exit zero and report on the wrong thing. The change that breaks
-it usually lives in another file, so its reviewer has no reason to look.
+A check can exit zero while reporting on the wrong thing, broken by a
+change in another file whose reviewer has no reason to look.
 
 - Select a check's subject by what is under test — the commit, the ref,
   the artifact name — never by recency or position
@@ -177,9 +175,8 @@ it usually lives in another file, so its reviewer has no reason to look.
 
 [ID: quality-gates-scope-agreement]
 
-In a polyglot repo, or one holding captured fixtures, a gate breaks
-silently three ways: the formatter walks the wrong files, the PR gate skips
-work, and an aggregate job passes on skipped checks.
+A gate breaks silently three ways: the formatter walks the wrong files,
+the PR gate skips work, an aggregate job passes on skipped checks.
 
 ### Ignore lists and path filters
 
@@ -216,8 +213,8 @@ three MUST hold:
 
 ### Scope coverage
 
-A gate that ran green over almost nothing looks like a real pass. Its scope
-parameter is separate from the check, and review usually reads the check:
+A gate green over almost nothing looks like a pass; review reads the
+check, not its separate scope parameter:
 
 | Gate | Scope parameter | Collapsed scope still exits zero |
 |------|-----------------|----------------------------------|
@@ -235,13 +232,10 @@ parameter is separate from the check, and review usually reads the check:
   examines
 - Never accept a green run as evidence that a scope change took effect
 
-`security/devsecops.md` requires full history for the secret scan; that is
-one instance of this rule.
-
 ### Environment independence
 
-CI runs one clean environment. A check whose input depends on the
-developer's environment passes there and fails on a laptop.
+A check whose input depends on the developer's environment passes in CI's
+clean one and fails on a laptop.
 
 - Enumerate tracked files (`git ls-tree`, explicit imports), never the
   working-tree filesystem
@@ -321,24 +315,22 @@ The table is the backlog, and shrinking it is the migration.
 - Name the rule in every suppression, such as `# noqa: B017` or
   `//nolint:errcheck`, and put the reason directly above the line
 
-Scan for a bare suppression:
+- Scan for a bare suppression:
 
 ```bash
 pre-commit run find-bare-suppressions --all-files --verbose
 ```
 
-Pass condition: the files-scanned count is above zero and
-`bare (naming no rule)` is zero. Zero files scanned means the hook's
-suffixes miss the project's languages. Confirm a found count of zero
-rather than accept it.
+- Require files scanned above zero and `bare (naming no rule)` zero
+- Read zero files scanned as the hook's suffixes missing the project's
+  languages; confirm a found count of zero rather than accept it
 
 ## Test edits
 
 [ID: quality-gates-test-edit-boundary]
 
-Tests are both the standard and files a change may edit. Strengthening
-them needs no ceremony; weakening them redefines correct, and takes a
-person.
+Strengthening a test needs no ceremony; weakening one redefines correct,
+and takes a person.
 
 - Strengthen the specification freely (MAY): add a test or tighten an assertion
   without escalation
@@ -354,23 +346,22 @@ person.
 - Fetch the base before classifying a change; a base that does not resolve
   fails the classification
 
-Classify a change against the project's test root, after committing it:
+- Classify a change against the project's test root, after committing it:
 
 ```bash
 pre-commit run report-test-edits --hook-stage manual --all-files --verbose
 ```
 
-Pass condition: the not-pure-additions count MUST be zero for the change
-to keep the lenient path; each line after the counts names an edited test
-file. `--base`, by default `origin/main`, and `--tests` set the ref and
-the test root.
-
-On the base with a clean tree it prints `not applicable`: no change is
-under review. On the base with uncommitted work it asks for a commit.
-
-The line counts are a reading, not a verdict. More lines removed than added
-under the test root is the shape of a weakening shipped without its
-replacement. A range total of zero means the check inspected nothing.
+- Require the not-pure-additions count to be zero for the change to keep
+  the lenient path (MUST); each line after the counts names an edited test
+- Set the ref with `--base`, by default `origin/main`, and the test root
+  with `--tests`
+- Read `not applicable` on a clean base as no change under review; on the
+  base with uncommitted work it asks for a commit
+- Read the line counts as a reading, not a verdict: more lines removed
+  than added under the test root is a weakening shipped without its
+  replacement
+- Read a range total of zero as a check that inspected nothing
 
 ## Verdict reading
 
