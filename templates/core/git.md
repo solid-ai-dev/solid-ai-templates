@@ -51,14 +51,12 @@ echo "checks not passing: $failing"
 [ "$watched" -eq 0 ] && [ "$failing" -eq 0 ]
 ```
 
-Pass condition: `checks registered` is above zero, `checks not passing` is
-zero, and the block exits zero. No check registered after five minutes, or
-any failing or cancelled check, exits non-zero and the pull request does not
-merge.
-
-- Re-run a verification a pull request body claims, rather than reading
-  it, whenever the base has advanced since the body was written; above all
-  a proof of absence
+- Require `checks registered` above zero, `checks not passing` zero and a
+  zero exit
+- Never merge on a non-zero exit: no check registered within five minutes,
+  or a failing or cancelled check
+- Re-run a verification a pull request body claims once the base has moved
+  since it was written; above all a proof of absence
 
 ## Updating a branch
 
@@ -81,27 +79,28 @@ merge.
 git diff --exit-code --stat -- <artifact-path>
 ```
 
-Pass condition: no diff, on a zero status. Any output means the committed
-artifact does not match its sources. A regenerator that is not idempotent
-fails this on a current artifact, which is a generator defect.
-
-- Put a before-and-after summary of the visible impact in the pull request
-  body: a verdict matrix, a delta table, a screenshot diff
-- Open a tracked follow-up and state the stale files, by name or glob,
-  where regeneration is too expensive to bundle (MUST)
+- Require no diff and a zero status; any output means the committed
+  artifact does not match its sources
+- Treat a regenerator that fails this on a current artifact as defective:
+  it is not idempotent
+- Summarise the visible impact before and after in the pull request body:
+  a verdict matrix, a delta table, a screenshot diff
+- Open a tracked follow-up naming the stale files, by name or glob, where
+  regeneration is too expensive to bundle (MUST)
 - Never regenerate a bidirectional artifact, one an ingest or `--apply`
-  step reads back into the source, from the pipeline it feeds; refresh it
-  through the step a person owns, and flag it stale
+  step reads back into its source, from the pipeline it feeds
+- Refresh such an artifact through the step a person owns, and flag it
+  stale
 - Drop a regenerated file whose diff is whitespace or line endings only:
 
 ```bash
 git diff --ignore-all-space <file>
 ```
 
-An empty diff marks the change as noise; `git checkout -- <file>` drops it.
-
-- Open every regenerated binary artifact in a viewer, or an image-read
-  tool, and confirm it tracks its source
+- Read an empty diff as noise, and drop the file with
+  `git checkout -- <file>`
+- Open every regenerated binary artifact in a viewer or an image-read tool,
+  and confirm it tracks its source
 - Regenerate a known-current control artifact first; a non-zero diff there
   means the environment disagrees with the committed files
 - Pair a spot-check of three to five representative artifacts with one
@@ -112,13 +111,13 @@ An empty diff marks the change as noise; `git checkout -- <file>` drops it.
 - Declare an Off-limits section in the project's context file, listing the
   paths that MUST NOT change without explicit approval (MUST)
 - Offer this default set for the project to cut down: auth and session
-  code, payment code, database migrations, `.env*` and secret handling,
-  CI/CD workflows, and the pointer to a vendored rules submodule
+  code, payment code, migrations, `.env*` and secrets, CI/CD workflows,
+  and a vendored rules submodule's pointer
 - Propose a change inside an off-limits path before making it, with a
   rollback strategy and the tests that would catch a regression (MUST)
 - Apply the restriction to executable content: steps, commands, flags,
-  permissions, triggers, pins and a vendored pointer's revision; a diff
-  confined to prose is ordinary work
+  permissions, triggers, pins, a vendored pointer's revision
+- Treat a diff confined to prose as ordinary work
 - Treat a comment a tool reads as executable: `# noqa`, `# nosec`, a
   linter disable, a coverage pragma
 - Classify by the diff: it is prose only when removing every comment line
@@ -130,9 +129,10 @@ An empty diff marks the change as noise; `git checkout -- <file>` drops it.
 pre-commit run report-off-limits-paths --hook-stage manual --all-files --verbose
 ```
 
-Pass condition: the paths-declared and files-changed counts are above zero.
-Each path is a `--path` argument, kept beside the declared list; `--base`
-defaults to `origin/main`. Every off-limits line is an escalation to state
-in the summary, not a failure. Run it after committing: on the base with a
-clean tree it prints `not applicable`, and a base that does not resolve
-fails it.
+- Require the paths-declared and files-changed counts above zero
+- Pass each path as a `--path` argument, kept beside the declared list;
+  `--base` defaults to `origin/main`
+- State every off-limits line in the summary as an escalation; it is not
+  a failure
+- Run it after committing: on the base with a clean tree it prints
+  `not applicable`, and a base that does not resolve fails it
