@@ -7,6 +7,12 @@ Releases up to 2.63.0 are listed in
 
 ## [Unreleased]
 
+### Fixed
+
+- Two templates no longer state rules that contradict each other ([#2137])
+
+[#2137]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2137
+
 ## [3.0.0] - 2026-10-19
 
 ### Breaking changes
