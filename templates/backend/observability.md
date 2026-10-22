@@ -30,7 +30,8 @@ Use the correct level — do not elevate debug information to INFO:
 ### Rules
 - Log errors once — at the top of the call stack, not at every level
 - Never log sensitive data: passwords, tokens, API keys, PII
-- Client errors (4xx) — log at INFO
+- Client errors (4xx) — log at INFO; authentication and authorisation
+  failures at WARN
 - Server errors (5xx) — log at ERROR
 - All unhandled errors MUST be logged with enough context to reproduce the issue
 
@@ -48,7 +49,7 @@ Use the correct level — do not elevate debug information to INFO:
   cache operations, and background job execution
 - Span names MUST be low-cardinality — use route templates, not URLs with IDs
   (e.g. `GET /users/{id}`, not `GET /users/42`)
-- Return the trace ID in error responses (`X-Trace-Id` header) so clients
+- Return the trace ID in error responses (`Trace-Id` header) so clients
   can report it to support
 
 ## Health check

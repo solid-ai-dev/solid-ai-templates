@@ -50,8 +50,9 @@ relational databases, document stores and static data files alike.
 - Additive changes (new column, new table) are safe — prefer them
 - Destructive changes (drop column, rename) require a migration
   plan: add new → migrate data → drop old
-- Every migration MUST be reversible — include both up and down
-  steps
+- Include both up and down steps in every migration (MUST); where the
+  down step cannot restore the data, say so and get approval before
+  applying it
 - Test migrations against a production-like dataset before deploying
 
 ## Data types

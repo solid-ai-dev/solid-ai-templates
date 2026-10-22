@@ -22,8 +22,9 @@ and server-side request forgery.
   else
 - Reject invalid input with a clear error — do not silently coerce
   or strip fields
-- Internal code trusts validated data — do not re-validate in
-  service or repository layers
+- Do not repeat the boundary's schema validation in service or
+  repository layers; a function still asserts the preconditions it
+  relies on
 
 ## Output encoding (XSS)
 

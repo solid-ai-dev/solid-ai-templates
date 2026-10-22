@@ -51,8 +51,8 @@ counterweight.
 
 ## Design patterns
 
-- Use an established pattern where it fits the problem; never invent an
-  ad-hoc solution to a problem that has a named one
+- Use an established pattern once its problem is present, never before
+- Never invent an ad-hoc version of a named pattern
 - Use **Singleton** only for stateless services or infrastructure objects
   (logger, config) — never for mutable shared state
 - Name the pattern in code when you use one: a class named
