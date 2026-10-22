@@ -9276,13 +9276,13 @@ fork.
 - The migration guide lists the renames a fork's sync merge meets (#2105)
 - Fifteen templates under 95 rewritten to 97.9 or above, one instruction
   per rule, pass conditions stated as rules beside their commands (#2107 to
-  #2121); a floor of 95 for every upstream template follows in the PR that
-  closes #2106
+  #2121); `score_templates --check` now fails any upstream template under
+  95 (#2122)
 
-**Pull requests merged:** #2093 to #2105, and #2107 onward as the merge run
-completes; #2094 carried the previous journal entry.
+**Pull requests merged:** #2093 to #2105 and #2107 to #2122; #2094 carried
+the previous journal entry.
 
-**Issues closed:** #2068, #2059, #2057, #2084 to #2092.
+**Issues closed:** #2068, #2059, #2057, #2084 to #2092, #2106.
 
 **Issues created:** #2106; Imbra-Ltd/imbra-ai-templates #58 to #64, the
 fork side of #2084 to #2090.
@@ -9291,7 +9291,9 @@ fork side of #2084 to #2090.
 
 **Gaps flagged:**
 - #2107's squash subject names #2106, which it does not close; the
-  merged-work sweep reads it until the floor PR closes #2106
+  merged-work sweep read it until #2122 closed #2106
+- The line-width conformance check timed out at 120 seconds on #2110 and
+  #2112 while `npx` fetched markdownlint; reruns passed both
 - The fork companion issues are open; the owner set them aside for v3.0
 - `core/config.md` lists feature flags as build-time while `backend/features`
   evaluates them at runtime; recorded on #2077
