@@ -5,65 +5,59 @@
 
 ## UX principles
 
-- Mobile-first — design for small screens first, enhance for larger ones
-- Progressive disclosure — show only what the user needs at each step
-- No dark patterns — no misleading UI, no forced actions, no hidden costs
-- Consistency — same interaction patterns throughout the product
-- Performance is UX — slow interfaces are bad user experience
-- **Least Surprise**: components and interactions should behave as users
-  expect; if a pattern looks like a button it must act like a button
+- Design for small screens first, then enhance for larger ones
+- Show only what the user needs at each step
+- Never use a dark pattern: misleading UI, a forced action, a hidden cost
+- Use the same interaction pattern for the same task throughout
+- Treat a slow interface as a UX defect
+- Make every component behave as it looks: what looks like a button acts
+  like one
 
 ## Accessibility — WCAG 2.1 AA
 
-- Target standard: WCAG 2.1 AA
-- Minimum text contrast ratio: 4.5:1 (normal text), 3:1 (large text)
-- All interactive elements reachable and operable by keyboard
-- Any non-focusable element (`<th>`, `<div>`, `<span>`) with `onClick` MUST
-  contain a `<button>` — `onClick` alone does not add the element to the tab
-  order or provide keyboard activation
-- Use `:focus-visible` instead of `:focus` for focus indicators —
-  `:focus` shows outlines on mouse clicks (distracting), `:focus-visible`
-  shows them only for keyboard navigation
-- Focus indicators must be visible at all times during keyboard navigation
-- All `<a>` elements and nav links MUST have a visible `:focus-visible`
-  outline — links often lack focus styles even when buttons have them
-- No content that relies on colour alone to convey meaning
-- Images must have descriptive `alt` text; decorative images use `alt=""`
-- Semantic HTML: correct landmark elements and heading hierarchy
-- `aria-label` on all interactive elements (buttons, icon links, social links)
-- All `<a>` elements with icon-only or ambiguous text must have a descriptive
-  `aria-label`
-- Keyboard navigation: menus must close on Escape and restore focus
+- Meet WCAG 2.1 AA
+- Keep text contrast at 4.5:1 or more, 3:1 for large text
+- Make every interactive element reachable and operable by keyboard
+- Put a `<button>` inside any non-focusable element (`<th>`, `<div>`,
+  `<span>`) with an `onClick` (MUST); `onClick` alone adds no tab stop or
+  keyboard activation
+- Style focus with `:focus-visible`, not `:focus`, which also outlines
+  mouse clicks
+- Keep focus indicators visible throughout keyboard navigation
+- Give every `<a>` and nav link a visible `:focus-visible` outline (MUST);
+  links often lack one even where buttons have it
+- Never convey meaning by colour alone
+- Give images descriptive `alt` text, and decorative ones `alt=""`
+- Use semantic HTML: landmark elements and a correct heading hierarchy
+- Give every interactive element an `aria-label` (buttons, icon links,
+  social links), and every icon-only or ambiguous link a descriptive one
+- Close menus on Escape and restore focus
 
 ## Accessibility testing
 
-Meeting WCAG 2.1 AA requires both automated and manual testing — automated
-tools catch ~30–40% of issues; the rest require human judgment.
+Automated tools catch about 30–40% of WCAG issues, so AA takes manual
+testing too.
 
 ### Automated (run in CI)
 
-- **axe-core** — integrate via the framework adapter (`@axe-core/react`,
-  `@axe-core/vue`, `axe-playwright`, or `jest-axe`); zero violations
-  allowed before merge
-- **Lighthouse** — accessibility score ≥ 90 on all key pages; run in CI
-  via `lighthouse-ci`
-- **Linter a11y plugin** — catches missing `alt`, incorrect ARIA roles, and
-  missing form labels at write time; use the plugin for your framework
-  (`eslint-plugin-jsx-a11y` for React, `eslint-plugin-vuejs-accessibility`
-  for Vue; Svelte has built-in a11y warnings)
+- Run axe-core through the framework's adapter (`@axe-core/react`,
+  `@axe-core/vue`, `axe-playwright`, `jest-axe`); merge on zero violations
+- Hold every key page to a Lighthouse accessibility score of 90 or more,
+  in CI through `lighthouse-ci`
+- Lint for missing `alt`, wrong ARIA roles and missing form labels with
+  the framework's a11y plugin (`eslint-plugin-jsx-a11y`,
+  `eslint-plugin-vuejs-accessibility`; Svelte warns by default)
 
 ### Manual (run before shipping new interactive components)
 
-- **Keyboard-only navigation** — tab through the entire feature; every
-  action reachable without a mouse; focus order is logical; no focus traps
-  except intentional modal dialogs
-- **Screen reader** — test with at least one: NVDA + Chrome (Windows),
-  VoiceOver + Safari (macOS / iOS), or TalkBack (Android); verify that
-  all content and state changes are announced correctly
-- **Zoom to 200%** — no content clipped or overlapping at double zoom;
-  horizontal scroll must not appear on a 1280px viewport
-- **High contrast mode** — verify in Windows High Contrast or forced-colors
-  CSS media query; no information lost when colours are overridden
+- Tab through the whole feature without a mouse: every action reachable,
+  focus order logical, no focus trap but an intentional modal
+- Walk it with one screen reader (NVDA with Chrome, VoiceOver with Safari,
+  or TalkBack), and check every content and state change is announced
+- Zoom to 200%: nothing clipped or overlapping, and no horizontal scroll
+  at a 1280px viewport
+- Check Windows High Contrast or the forced-colors media query: no
+  information lost when colours are overridden
 
 ### Criteria for done
 
@@ -76,17 +70,18 @@ A feature is not complete until:
 
 ## Design system
 
-- Use a design system if one exists for the project — never design ad-hoc
-  components that duplicate established patterns
-- Design tokens (colours, spacing, typography, radii, breakpoints) MUST
-  come from the design system — never hardcode visual values
-- Component-driven development: build UI as a hierarchy of reusable,
-  self-contained components; avoid monolithic views
-- New components SHOULD be documented with usage examples before shipping
+- Use the project's design system where one exists; never build an ad-hoc
+  component that duplicates one of its patterns
+- Take design tokens (colours, spacing, typography, radii, breakpoints)
+  from the design system (MUST); never hardcode a visual value
+- Build UI as a hierarchy of reusable, self-contained components, never a
+  monolithic view
+- Document a new component with usage examples before shipping it (SHOULD)
 
 ## Browser support
 
 [ID: frontend-ux-browsers]
 
-- Default target: last 2 versions of Chrome, Firefox, Safari, and Edge
-- Progressive enhancement: graceful degradation for unsupported features
+- Support the last two versions of Chrome, Firefox, Safari and Edge by
+  default
+- Degrade gracefully where a browser lacks a feature

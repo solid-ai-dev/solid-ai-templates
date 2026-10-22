@@ -5,32 +5,26 @@
 
 ## Patterns
 
-- Use error boundary, skeleton loading, optimistic update, virtual
-  scroll, debounced search, form validation, responsive switch, and
-  URL state sync patterns where appropriate
+- Use the pattern each case names: an error boundary around a failing
+  subtree, a skeleton for loading, virtual scroll for long lists, a
+  debounce on search input, validation on form input, a responsive switch
+  at breakpoints, URL sync for shareable state
 
 ## Design patterns
 
-Prefer these patterns for frontend concerns:
-
-- **Container / Presentational** — separate data-fetching and state logic
-  (container) from rendering (presentational); presentational components
-  receive only props, have no side effects, and are easy to test in isolation
-- **Compound Component** — expose a set of related sub-components that share
-  implicit state (e.g. `<Tabs>`, `<Tab>`, `<TabPanel>`); prefer over deeply
-  nested prop drilling
-- **Observer** — subscribe to external state changes (store, event bus,
-  WebSocket) via a single subscription point; unsubscribe on component unmount
-- **Facade** — wrap third-party libraries (analytics, maps, payment SDKs)
-  behind a thin project-owned interface; never scatter SDK calls across
-  components
-- **Optimistic Update** — apply the expected result of a mutation immediately
-  in the UI and roll back on failure; document the rollback path
-
-Avoid:
-
-- **Mediator / Event Bus** between components — use shared state or lifting
-  state up instead; an event bus between components creates invisible coupling
+- Separate data fetching and state (container) from rendering
+  (presentational); give presentational components only props and no side
+  effects
+- Expose related sub-components that share implicit state as a compound
+  component (`<Tabs>`, `<Tab>`, `<TabPanel>`) rather than drill props
+- Subscribe to external state (store, event bus, WebSocket) through one
+  subscription point, and unsubscribe on unmount
+- Wrap a third-party library (analytics, maps, payment SDK) behind a thin
+  project-owned interface; never scatter its calls across components
+- Apply a mutation's expected result at once and roll back on failure;
+  document the rollback path
+- Never connect components through an event bus; share state or lift it
+  up instead
 
 ## State management
 
@@ -59,19 +53,19 @@ Rules:
 
 ## Linting and formatting
 
-- A linter MUST be configured for all JS/TS code
-- Linter and formatter SHOULD run on save in the IDE — never rely on CI
-  alone to catch style issues
-- No warnings or errors MUST appear in the browser console or test output
-  before a PR is merged — start every review on a clean slate
-- Lint error count SHOULD go down over time — never increase it
+- Configure a linter for all JS/TS code (MUST)
+- Run the linter and formatter on save in the IDE (SHOULD); never rely on
+  CI alone for style
+- Merge no PR with a warning or error in the browser console or test
+  output (MUST)
+- Lower the lint error count over time, never raise it (SHOULD)
 
 ## CSS
 
-- No inline styles except for dynamic/computed values
-- No hardcoded colour or spacing values — always use CSS custom properties
-  from `:root` or design tokens
-- Consistent naming convention (e.g. BEM-like `.component-element`)
+- Use no inline styles except dynamic or computed values
+- Use CSS custom properties from `:root` or design tokens for every colour
+  and spacing value; never hardcode one
+- Use one class-naming convention (e.g. BEM-like `.component-element`)
 
 ## Performance
 
@@ -93,4 +87,4 @@ Rules:
 
 ## Analytics (if applicable)
 
-- No third-party tracking scripts without explicit user consent
+- Load no third-party tracking script without explicit user consent
