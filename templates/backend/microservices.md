@@ -7,32 +7,28 @@ Do not apply this template to a monolith or a single-service project.
 
 ## When to use microservices
 
-- Start with a **modular monolith** — well-separated modules within a single
-  deployable unit; extract services only when you have a clear, proven reason
-- Valid reasons to extract a service: independent scaling requirement,
-  independent deployment cadence, different technology requirement,
-  organisational team boundary (Conway's Law)
-- Invalid reasons: "it feels cleaner", "microservices are modern",
-  premature optimisation — the operational cost is real and front-loaded
-- A system of two or three services is not microservices — it is a
-  distributed monolith waiting to happen; apply these rules only when
-  the architecture is intentionally service-oriented
+- Start with a modular monolith; extract a service only for a proven reason
+- Extract for independent scaling, independent deployment cadence, a
+  different technology, or a team boundary (Conway's Law)
+- Never extract because it feels cleaner or more modern; the operational
+  cost is real and front-loaded
+- Treat two or three services as a distributed monolith in waiting, and
+  apply these rules only to an intentionally service-oriented system
 
 ## Service boundaries
 
-- Model service boundaries on **bounded contexts** (Domain-Driven Design) —
-  each service owns one cohesive domain concept end-to-end
-- A service owns its domain: its data, its logic, its API — no other service
-  reaches into its internals
-- Services MUST NOT share a database — shared databases create invisible
-  coupling and make independent deployment impossible
-- Shared libraries between services MUST contain only cross-cutting
-  infrastructure (logging, tracing, HTTP client config) — never domain logic
-- If two services frequently change together, they are probably one service
+- Draw service boundaries on bounded contexts: each service owns one
+  domain concept end to end
+- Let a service own its data, logic and API; no other service reaches in
+- Never share a database between services (MUST NOT); it couples them and
+  blocks independent deployment
+- Limit shared libraries to cross-cutting infrastructure (logging,
+  tracing, HTTP client config) (MUST); never domain logic
+- Merge two services that keep changing together
 
 ## Inter-service communication
 
-Choose the communication style based on the interaction type:
+Choose the style by the interaction:
 
 | Interaction | Style | Example |
 |---|---|---|
@@ -40,83 +36,74 @@ Choose the communication style based on the interaction type:
 | Caller does not need to wait | Asynchronous (events/messages) | Order placed, user registered |
 | Streaming or bidirectional | gRPC streaming | Live feed, file upload |
 
-- Prefer **async messaging** for cross-service workflows — it decouples
-  availability and reduces cascade failures
-- For synchronous calls, always set a timeout and wrap with a Circuit Breaker
-- Never chain more than two synchronous service calls in a single request path
-  — each hop multiplies latency and failure probability
+- Prefer async messaging for cross-service workflows; it decouples
+  availability and limits cascades
+- Give every synchronous call a timeout and a circuit breaker
+- Never chain more than two synchronous calls in one request path; each hop
+  multiplies latency and failure
 
 ## Data management
 
-- **Database per service** — each service has its own schema and storage;
-  no direct cross-service database access, ever
-- Accept **eventual consistency** — distributed data cannot be both consistent
-  and highly available at the same time (CAP theorem); design UX and business
-  logic around it
-- Duplicate read-only data across service boundaries via events rather than
-  joining across service databases
-- Use the **Outbox pattern** to guarantee that database writes and event
-  publishing are atomic
+- Give each service its own schema and storage; never reach into another
+  service's database
+- Design UX and business logic for eventual consistency; distributed data
+  cannot be both consistent and highly available (CAP)
+- Copy read-only data across boundaries by events, never by joins across
+  service databases
+- Use the outbox pattern so a database write and its event publish are
+  atomic
 
 ## Distributed transactions
 
-- Avoid distributed transactions (two-phase commit) — they are fragile and
-  do not compose with async systems
-- Use the **Saga pattern** for multi-service workflows that must maintain
-  consistency:
-  - **Choreography saga**: each service listens for events and reacts —
-    simple to implement, harder to trace; suitable for short workflows
-  - **Orchestration saga**: a dedicated orchestrator service drives the
-    workflow and issues compensating actions on failure — preferred for
-    complex or long-running workflows
-- Every saga step MUST have a defined **compensating action** (rollback
-  equivalent) — document it alongside the forward action
+- Avoid two-phase commit; it is fragile and does not compose with async
+  systems
+- Use a saga for a multi-service workflow that must stay consistent:
+  - Choreography, each service reacting to events, for short workflows
+  - Orchestration, one orchestrator issuing compensations, for complex or
+    long-running ones
+- Define a compensating action for every saga step, beside its forward
+  action (MUST)
 
 ## API gateway
 
-- Expose a single entry point to external clients via an API gateway —
-  never expose internal service URLs directly
-- The gateway handles: routing, auth token validation, rate limiting,
-  TLS termination, and request logging
-- Do not put business logic in the gateway — it is infrastructure, not a service
-- Internal service-to-service calls bypass the gateway — use a service mesh
-  or direct calls with mutual TLS
+- Give external clients one entry point, an API gateway; never expose
+  internal service URLs
+- Route, validate auth tokens, rate-limit, terminate TLS and log requests
+  at the gateway
+- Keep business logic out of the gateway
+- Route internal calls around the gateway, through a mesh or direct mutual
+  TLS
 
 ## Service discovery
 
-- Use a service registry or platform-native discovery (Kubernetes DNS,
-  Consul, AWS Cloud Map) — never hardcode service URLs in configuration
-- Health checks MUST be implemented on every service (see
-  `templates/backend/observability.md`) — the registry uses them to route
-  traffic only
-  to healthy instances
+- Use a service registry or the platform's discovery; never hardcode
+  service URLs in configuration
+- Give every service a health check (MUST); the registry routes only to
+  healthy instances
 
 ## Contract testing
 
-- Define and test the contract between each producer and consumer using
-  **consumer-driven contract tests** (e.g. Pact)
-- The producer MUST NOT break a published contract without a versioned
-  migration path — a failing contract test blocks the producer's deployment
-- Contract tests run in CI on both the producer and the consumer side
+- Test each producer and consumer pair with consumer-driven contract tests
+  (e.g. Pact)
+- Never break a published contract without a versioned migration path
+  (MUST NOT); a failing contract test blocks the producer's deployment
+- Run contract tests in CI on both sides
 
 ## Backward compatibility
 
-- Treat every service API as a public API — apply the same versioning and
-  deprecation rules as `templates/backend/api.md`
-- Use **tolerant reader** pattern: consumers ignore unknown fields; producers
-  never remove fields without a deprecation period
-- Add fields; never remove or rename them without a major version bump
-- Event schemas follow the same rules — a schema registry (e.g. Confluent
-  Schema Registry) SHOULD enforce compatibility on publish
+- Version and deprecate every service API as a public API, by the API
+  template's rules
+- Read tolerantly: consumers ignore unknown fields
+- Add fields; never remove or rename one without a major version bump
+- Hold event schemas to the same rules; enforce compatibility on publish
+  with a schema registry (SHOULD)
 
 ## Observability
 
-- Distributed tracing is **mandatory** in a microservices system — every
-  service MUST propagate the `traceparent` header (see
-  `templates/backend/observability.md`)
-- Aggregate logs from all services into a single platform — searching
-  across services by trace ID must be possible in under 30 seconds
-- Each service exposes its own metrics; a central dashboard correlates
-  them across service boundaries
+- Propagate the `traceparent` header from every service (MUST);
+  distributed tracing is mandatory here
+- Aggregate every service's logs on one platform, searchable by trace ID
+  in under 30 seconds
+- Expose metrics per service, and correlate them on one central dashboard
 - Define an SLO for each public-facing service; alert on SLO burn rate,
   not just on errors

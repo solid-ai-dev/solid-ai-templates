@@ -3,30 +3,24 @@
 
 ## Purpose
 
-Feature flags decouple deployment from release. Code ships to production
-disabled; the flag controls when and for whom it activates. Use them for:
+A flag decouples deployment from release: code ships disabled, and the flag
+decides when and for whom it activates.
 
-- Rolling out a new feature progressively (canary, percentage, cohort)
-- Running A/B experiments without a separate deployment
-- Providing a kill switch for a risky change without a rollback
-- Hiding incomplete work that must be deployed incrementally
-
-Do not use feature flags as a permanent configuration system — they are a
-temporary release mechanism.
+- Use a flag for a progressive rollout, an A/B experiment, a kill switch
+  for a risky change, or incomplete work deployed in steps
+- Never use flags as permanent configuration; they are a temporary release
+  mechanism
 
 ## Rules
 
-- Every flag has an owner and a removal date set at creation time — flags
-  without a removal date are not allowed to merge
-- Remove the flag and its dead branch as soon as the rollout is complete —
-  stale flags are technical debt
-- Never nest feature flags — a flag that only activates when another flag
-  is also active creates untestable combinations
-- Keep the flagged code path as small as possible — wrap the decision point,
-  not the entire function
-- Flags are evaluated at runtime, not at startup — never cache a flag value
-  for longer than one request lifecycle unless the evaluation cost is measured
-  and justified
+- Give every flag an owner and a removal date at creation; never merge one
+  without a removal date
+- Remove the flag and its dead branch as soon as the rollout completes
+- Never nest flags; one gated on another creates untestable combinations
+- Keep the flagged path small: wrap the decision point, not the function
+- Evaluate flags at runtime, not at startup
+- Never cache a flag value beyond one request unless the evaluation cost is
+  measured and justified
 
 ## Flag types
 
@@ -39,29 +33,27 @@ temporary release mechanism.
 
 ## Targeting and rollout strategy
 
-- **Percentage rollout**: enable for N% of requests or users; increase
-  gradually while monitoring error rate and latency
-- **Cohort targeting**: enable for specific user IDs, tenant IDs, or roles
-  before a general rollout
-- **Canary**: enable for one instance or region before expanding
-- Stick users to their assigned variant for the duration of an experiment —
-  use a consistent hash on user ID, not a random value per request
+- Roll out by percentage of requests or users, raising it while watching
+  error rate and latency
+- Target cohorts (user IDs, tenant IDs, roles) before a general rollout
+- Enable a canary instance or region before expanding
+- Keep each user on one variant for an experiment's duration: hash the
+  user ID, never draw per request
 
 ## Evaluation
 
-- Evaluate flags at the entry point of the feature — handler or service layer,
-  never deep inside domain logic
-- Return the same response shape for both flag states — diverging response
-  shapes on a flag boundary creates API instability
+- Evaluate a flag at the feature's entry point, never deep inside domain
+  logic
+- Return the same response shape in both flag states
 - Treat the flag-off path as the production default until the rollout is
   complete and the flag is removed
 
 ## Observability
 
-- Log which variant was evaluated for every flagged request — include the
-  flag name and variant in the structured log properties
-- Emit a metric per flag variant — track error rate and latency separately
-  for each variant to detect regressions introduced by the new path
+- Log the flag name and evaluated variant on every flagged request, as
+  structured properties
+- Emit error rate and latency per variant, to catch a regression the new
+  path introduces
 - Alert if flag evaluation fails, and apply the flag's declared failure
   policy — never fall silently to a variant the policy does not name
 
