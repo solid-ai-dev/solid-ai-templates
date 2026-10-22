@@ -60,8 +60,10 @@ security template with backend-specific depth.
 
 ## Observability
 
-- Log authentication failures at WARN with IP, user agent, and username
-  (never the attempted password)
+- Log authentication failures at WARN to the security log, with IP and
+  user agent
+- Name the account by its opaque user ID when it exists; never log the
+  submitted username or password
 - Log authorization failures at WARN with user ID, resource, and action
 - Alert on a spike in auth failures — may indicate a credential stuffing attack
 - Never log tokens, passwords, or secrets — even at DEBUG level

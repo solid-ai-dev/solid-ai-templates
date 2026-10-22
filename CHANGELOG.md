@@ -12,10 +12,12 @@ Releases up to 2.63.0 are listed in
 - Seven template rules that were wrong or out of date are corrected ([#2136])
 - Two templates no longer state rules that contradict each other ([#2137])
 - Nine pairs of rules in different templates no longer contradict ([#2138])
+- Seven rules a second agent review found conflicting or over-broad are fixed ([#2140])
 
 [#2136]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2136
 [#2137]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2137
 [#2138]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2138
+[#2140]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2140
 
 ## [3.0.0] - 2026-10-19
 

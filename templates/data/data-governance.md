@@ -32,6 +32,8 @@ data, or regulated information.
   hard delete or anonymize, never just soft-delete PII
 - PII MUST NOT appear in application logs, error messages, or stack
   traces; the audit trail is a separate store, not a log
+- Keep the client IP, the one PII field a security log may hold, in that
+  log alone, access-restricted and purged when its retention ends
 - Mask or redact PII in non-production environments
 
 ## Retention
