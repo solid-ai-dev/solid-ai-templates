@@ -520,7 +520,12 @@ planted cases first and refuses a run that scored no template.
    step 9, allows
 2. After improving a template, run `--update` and commit the raised rows
    with the change. Never lower a row by hand
-3. A new template scores 70 or above, or CI fails it until it is rewritten
+3. Every upstream template scores 95 or above, row or no row; CI fails one
+   below it. A fork's template answers to its row, and a new one to the
+   new-file floor of 70
+4. Raise a template under 95 by its prose: one instruction per rule, short
+   lead-ins, and each pass condition stated as rules beside its command.
+   Never change the scorer to pass a file
 
 ## Run the test suite
 
