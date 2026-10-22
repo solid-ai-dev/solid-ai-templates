@@ -53,52 +53,37 @@ content, and any project that declares data as a first-class concern.
 ## Explicit absence over invented values
 [ID: data-quality-explicit-absence]
 
-When a source genuinely shows no value at the point being recorded, mark
-explicit absence (`null` / `None` / `?` / unread) — never extrapolate one
-from neighbouring values. The fail-safe "return absence when there is no
-signal" rule applies to every artifact a verification process consumes:
-extractor and sensor output, maintainer-curated ground truth, test
-fixtures, and mock data. An extrapolated value looks like data but is not
-— a verification step treats it as a real target, so a fabricated value
-can cost far more (mis-tuned thresholds, false verdicts) than the single
-missing comparison that marking absence costs.
+- Mark explicit absence (`null`, `None`, `?`, unread) where a source shows
+  no value; never extrapolate one from neighbouring values
+- Apply the rule to every artifact a verification step consumes: extractor
+  and sensor output, curated ground truth, test fixtures, mock data
+- Treat an invented value as a defect: a verification step takes it as a
+  real target, so it mis-tunes thresholds and produces false verdicts
 
 ## Data research workflow
 [ID: data-quality-research]
 
-When data enters the system from external sources (official pages,
-lab reviews, retailers, scraped documents, public APIs), the
-research workflow itself can introduce systematic errors that
-later validation cannot detect. The rules below cover gathering
-facts from multiple sources of differing authority, auditing whole
-records rather than spot fields, extracting figures from composite
-images, and caching fetched content.
+Gathering facts from external sources (official pages, lab reviews,
+retailers, scraped documents, public APIs) can introduce errors later
+validation cannot detect.
 
 ### Source-conflict resolution
 
-- The most-authoritative source (official publisher, manufacturer
-  spec sheet, primary documentation) wins on any contested field
-- If a secondary source is provably wrong on one verifiable field,
-  treat ALL its unverified fields for that record as suspect — it
-  is likely mis-cataloged or mismatched. Do NOT cherry-pick its
-  other figures
-- Prefer leaving a field unresolved-and-flagged over overwriting it
-  with a contradicted source — a known gap is more useful than a
-  confidently-wrong value
-- When two sources of equivalent authority disagree, record the
-  conflict, the chosen value, and the rationale alongside the
-  entry (see [ID: data-quality-sourcing])
+- Let the most authoritative source (official publisher, manufacturer
+  spec sheet, primary documentation) win on any contested field
+- Treat every unverified field of a record as suspect once a secondary
+  source is provably wrong on one; never cherry-pick its other figures
+- Leave a field unresolved and flagged rather than overwrite it with a
+  contradicted source — a known gap beats a confidently wrong value
+- Record the conflict, the chosen value and the rationale beside the
+  entry when two sources of equal authority disagree
 
 ### Full-record audit, not target-field audit
 
-- When verifying a record against a source, cross-check EVERY
-  field — not only the fields that prompted the verification
-- Copy-derived records frequently inherit stale values in fields
-  nobody re-checked (e.g. a "v2" entry retaining the v1 release
-  date or dimensions)
-- A spot-fix audit confirms the target field while leaving silent
-  drift in the rest of the record; a full-record audit catches
-  the drift
+- Cross-check every field when verifying a record against a source, not
+  only the fields that prompted the check
+- Expect copy-derived records to keep stale values in fields nobody
+  re-checked, such as a "v2" entry with the v1 release date
 
 ## Scoring and derived fields
 [ID: data-quality-scoring]
@@ -151,18 +136,15 @@ images, and caching fetched content.
 ## Agent-assisted ground-truth validation
 [ID: data-quality-hitl]
 
-When a project rule requires a human to validate each ground-truth value
-but the volume makes pure manual entry a bottleneck, do NOT let the agent
-write the authoritative values directly — that makes verification
-self-confirming (the agent grades its own output). Instead:
+Where a human must validate each ground-truth value but the volume makes
+manual entry a bottleneck:
 
-- The agent runs the extractor or model and emits a prediction file with
-  every value clearly labelled NOT GROUND TRUTH
-- The human scans each value against the source, accepts what is right,
-  and overwrites what is not
-- The agent transcribes only the human-validated values into the
-  ground-truth structure
-
-This keeps the human as the source of truth for every value while cutting
-the manual effort to a scan-and-correct pass, and it prevents the
-calibration set from silently becoming the agent's own predictions.
+- Never let the agent write authoritative values; it would grade its own
+  output
+- Have the agent run the extractor or model and emit a prediction file,
+  every value labelled NOT GROUND TRUTH
+- Have the human scan each value against the source, accept what is right
+  and overwrite what is not
+- Let the agent transcribe only the human-validated values into the
+  ground-truth structure, so the calibration set never becomes its own
+  predictions
