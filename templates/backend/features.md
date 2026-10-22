@@ -8,10 +8,9 @@ decides when and for whom it activates.
 
 - Use a flag for a progressive rollout, an A/B experiment, a kill switch
   for a risky change, or incomplete work deployed in steps
-- Never use flags as permanent configuration; they are a temporary release
-  mechanism
-- Keep an ops kill switch for as long as its subsystem runs; it is the one
-  permanent flag
+- Keep an ops kill switch for as long as its subsystem runs
+- Treat every other flag as a temporary release mechanism, never as
+  permanent configuration
 
 ## Rules
 
@@ -20,7 +19,8 @@ decides when and for whom it activates.
   without it
 - Give a kill switch a review date instead, and test that it still
   disables its subsystem
-- Remove the flag and its dead branch as soon as the rollout completes
+- Remove every flag but a kill switch, with its dead branch, as soon as
+  its rollout completes
 - Never nest flags; one gated on another creates untestable combinations
 - Keep the flagged path small: wrap the decision point, not the function
 - Evaluate flags at runtime, not at startup
@@ -50,8 +50,8 @@ decides when and for whom it activates.
 - Evaluate a flag at the feature's entry point, never deep inside domain
   logic
 - Return the same response shape in both flag states
-- Treat the flag-off path as the production default until the rollout is
-  complete and the flag is removed
+- Treat a rollout flag's off path as the production default until the
+  flag is removed
 
 ## Observability
 
