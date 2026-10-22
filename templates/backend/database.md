@@ -44,8 +44,9 @@
 - Use a connection pool — never open a new connection per request
 - Inject the database session/connection as a dependency — no global DB
   handles
-- Set explicit pool size limits appropriate to the deployment
-  (e.g. `pool_size=10`, `max_overflow=5` for a single-instance service)
+- Set explicit pool size limits from the instance count and the
+  database's connection cap (e.g. `pool_size=10`, `max_overflow=5` for one
+  instance)
 - Monitor pool exhaustion — alert when pool wait time exceeds threshold
 
 ## Soft deletes
@@ -54,7 +55,7 @@
   required; otherwise use hard deletes
 - If using soft deletes, add a partial index on `deleted_at IS NULL` and
   filter all queries by default — never return deleted rows to callers
-- Consider an append-only audit log table as an alternative to soft deletes
+- Keep an append-only audit log table instead of soft deletes (MAY)
 
 ## Testing
 [EXTEND: base-testing]
