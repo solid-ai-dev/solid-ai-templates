@@ -30,7 +30,8 @@ data, or regulated information.
 - Minimize PII collection — do not store what you do not need
 - Provide a mechanism for data deletion (right to erasure) —
   hard delete or anonymize, never just soft-delete PII
-- PII MUST NOT appear in logs, error messages, or stack traces
+- PII MUST NOT appear in application logs, error messages, or stack
+  traces; the audit trail is a separate store, not a log
 - Mask or redact PII in non-production environments
 
 ## Retention
@@ -62,6 +63,8 @@ data, or regulated information.
 
 - Changes to confidential and restricted data MUST be logged:
   who changed what, when, and the previous value
+- Keep the audit trail in its own store, never in application logs,
+  with access restricted to the tier of the data it records
 - Audit logs MUST be append-only — never editable or deletable
   by application code
 - Audit logs MUST be retained according to the retention policy

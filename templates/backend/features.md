@@ -10,11 +10,16 @@ decides when and for whom it activates.
   for a risky change, or incomplete work deployed in steps
 - Never use flags as permanent configuration; they are a temporary release
   mechanism
+- Keep an ops kill switch for as long as its subsystem runs; it is the one
+  permanent flag
 
 ## Rules
 
-- Give every flag an owner and a removal date at creation; never merge one
-  without a removal date
+- Give every flag an owner at creation
+- Give every flag but a kill switch a removal date; never merge one
+  without it
+- Give a kill switch a review date instead, and test that it still
+  disables its subsystem
 - Remove the flag and its dead branch as soon as the rollout completes
 - Never nest flags; one gated on another creates untestable combinations
 - Keep the flagged path small: wrap the decision point, not the function
