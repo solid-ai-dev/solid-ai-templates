@@ -24,7 +24,8 @@ Do not apply this template to a monolith or a single-service project.
   blocks independent deployment
 - Limit shared libraries to cross-cutting infrastructure (logging,
   tracing, HTTP client config) (MUST); never domain logic
-- Merge two services that keep changing together
+- Treat two services that keep changing together as likely one service,
+  and review whether to merge them
 
 ## Inter-service communication
 
@@ -50,8 +51,8 @@ Choose the style by the interaction:
   cannot be both consistent and highly available (CAP)
 - Copy read-only data across boundaries by events, never by joins across
   service databases
-- Use the outbox pattern so a database write and its event publish are
-  atomic
+- Use the outbox pattern so a database write and its event record commit
+  together; a relay publishes the event afterwards
 
 ## Distributed transactions
 
