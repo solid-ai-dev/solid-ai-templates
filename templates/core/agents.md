@@ -51,6 +51,8 @@ How a project's agent context files are structured and written.
   architecture notes or progress log
 - Keep every qualifier a rule needs; never compress away a load-bearing
   clause
+- Never treat a rule's length, shortened or lengthened, as a reason to
+  write a decision record
 - Put explanations in the documents they belong to, not the context file
 - Point to a rule that is authoritative in a skill, ADR, README or template;
   never restate it unless the model below inlines it
@@ -87,15 +89,15 @@ not a note.
   - How is work tracked?
   - What is a release?
 - Render an end-of-session checklist verbatim, or delegate it with an
-  order to read it and execute each item in sequence; never paraphrase it
-  into a shorter list (MUST NOT)
+  order to read it and execute each item in sequence, without summarizing
+  or skipping any; never paraphrase it into a shorter list (MUST NOT)
 
 ## Inline model
 
 - Inline every rule, so the file is self-contained
 - Add `Model: inline` to the overview
 - Number the headings so other documents can cite a rule, such as "see
-  section 2.3"
+  section 2.3" (SHOULD); a project MAY keep its own numbering
 
 ```markdown
 # [Project Name]
@@ -188,7 +190,8 @@ Key references:
 ## Formatting
 
 - Put every command and code sample in a fenced block with a language tag
-- Write rules as bullet lists; no prose paragraphs inside rule sections
+- Write rules as bullet lists; avoid prose paragraphs inside rule sections
+  (SHOULD)
 - Wrap at the width the project declares in its own configuration
 - Use Markdown only; no HTML
 
