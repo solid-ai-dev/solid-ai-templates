@@ -32,6 +32,8 @@ items 2 to 4.
 - [ ] Significant logic and architectural decisions are documented
 - [ ] Existing documentation matches the code after the change
 - [ ] Every changed section was re-read whole, not only the changed line
+- [ ] Every claim changed text makes about itself, such as a count or "all",
+      was checked by counting with a tool
 - [ ] URL parameters and query strings are validated as untrusted input
       before they are destructured, indexed or used as keys
 - [ ] A refactor preserves behaviour on every path: each case, direction and
@@ -77,8 +79,13 @@ items 2 to 4.
   against the tree before adopting it
 - Check the open pull requests and the decisions accepted since the filing
   date for work that already closes or moves it
+- Restate the scope before starting when it has moved since filing
+- Read what a cited sibling change shipped, not what it proposed
+- Resolve each cited version identifier against its source; a superseded
+  one still resolves
 - Treat a closed classification in the acceptance criteria as a claim:
-  sort every member yourself, and decide one that fits no branch separately
+  sort every member yourself before acting on any
+- Name each member that fits no branch, and the branch it fails
 
 ## Planning
 
@@ -109,6 +116,8 @@ items 2 to 4.
 - [ ] One flagged item was checked by hand
 - [ ] Each count carrying a finding was produced twice, by different means
 - [ ] A zero was checked by finding one positive by hand
+- [ ] The tool fails loudly on unsupported input rather than exiting clean
+      (SHOULD)
 
 ### From an extraction
 
@@ -138,6 +147,10 @@ items 2 to 4.
 - Reconcile a finding with a verified record it contradicts before
   changing anything: confirm both read the same artifact, prefer the more
   specific evidence, and record the outcome
+- Record a reversal of a documented decision, with its reason, in the
+  artifact that documented it
+- Give a verifying agent the existing record and ask it to reconcile, not
+  re-derive
 - Never delete a record because a check "could not confirm" it (MUST NOT)
 
 ## Deviations
