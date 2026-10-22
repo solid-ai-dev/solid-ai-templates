@@ -21,7 +21,7 @@ templates/backend/webhooks.md 86.9
 templates/core/agents.md 100.0
 templates/core/config.md 99.3
 templates/core/docs.md 99.1
-templates/core/embedded-checks.md 83.6
+templates/core/embedded-checks.md 100.0
 templates/core/git.md 89.4
 templates/core/measurement.md 95.2
 templates/core/oop.md 96.0
