@@ -19,13 +19,16 @@ file with runtime conventions, project structure, and tooling.
 [ID: grpc-proto]
 
 - Package all protos under a versioned namespace: `package [org].[service].v1`
-- One proto file per service — do not mix unrelated services in one file
-- Field names in `snake_case` — generated code adapts to each language's
+- Keep one proto file per service — do not mix unrelated services in one
+  file
+- Name fields in `snake_case` — generated code adapts to each language's
   conventions
 - Use `google.protobuf.Timestamp` for all timestamps — never raw integers
 - Use `google.protobuf.FieldMask` for partial update (patch) operations
-- Never remove or renumber existing fields — mark deprecated fields with
-  `[deprecated = true]` and reserve the number: `reserved 4;`
+- Never renumber a field, or reuse a removed field's number or name
+- Deprecate a field in place with `[deprecated = true]`, keeping its number
+- Remove only a deprecated field, and reserve its number and name:
+  `reserved 4; reserved "old_name";`
 - Breaking changes require a new package version (`v2`) — serve the old
   version until all consumers have migrated
 
@@ -37,8 +40,13 @@ file with runtime conventions, project structure, and tooling.
 - Domain service functions have no gRPC imports — independently testable
 - Validate request messages at the handler entry point; return
   `INVALID_ARGUMENT` for missing or malformed fields
+- Return every error as the gRPC status code that fits it, never as an
+  HTTP status or a problem JSON body; put structured detail in
+  `google.rpc.Status` details
 
 ### Status codes
+
+The common cases; take any other from the full gRPC status code list.
 
 | Situation | Code |
 |-----------|------|
@@ -47,6 +55,9 @@ file with runtime conventions, project structure, and tooling.
 | Caller not authenticated | `UNAUTHENTICATED` |
 | Caller lacks permission | `PERMISSION_DENIED` |
 | Conflicting state | `ALREADY_EXISTS` / `ABORTED` |
+| System not in the state the call needs | `FAILED_PRECONDITION` |
+| Quota or rate limit hit | `RESOURCE_EXHAUSTED` |
+| Deadline passed before completion | `DEADLINE_EXCEEDED` |
 | Transient infrastructure error | `UNAVAILABLE` |
 | Unexpected error | `INTERNAL` |
 

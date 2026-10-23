@@ -114,10 +114,15 @@
 
 ## Error responses
 - Use consistent error response shape across all endpoints
-- Follow RFC 9457 (`application/problem+json`) for error format
-- Use 4xx for client errors, 5xx for server errors — never use 200 for errors
 - Never return stack traces, internal paths, or implementation details to the
   client
+
+### REST and JSON errors
+These rules apply to a REST or JSON endpoint. A gRPC call carries its error
+in a gRPC status code, sent over HTTP 200.
+
+- Follow RFC 9457 (`application/problem+json`) for error format
+- Use 4xx for client errors, 5xx for server errors — never use 200 for errors
 - Set an explicit `Content-Type` on every JSON response:
   `application/problem+json` on an error, `application/json` otherwise
 
