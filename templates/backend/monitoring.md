@@ -3,7 +3,8 @@
 [DEPENDS ON: templates/backend/observability.md]
 
 ## Key metrics
-Every service MUST monitor at minimum:
+
+Monitor at minimum, in every service (MUST):
 
 | Metric | Why |
 |--------|-----|
@@ -18,41 +19,48 @@ Add custom metrics for business-critical operations specific to the service
 (e.g. orders processed, jobs queued, messages consumed).
 
 ## Thresholds and alerts
-- Thresholds MUST be derived from observed behaviour over time — MUST NOT
-  be set to arbitrary round numbers without a measurement baseline
-- Every P1 and P2 failure scenario MUST have a corresponding alert defined
-  before the service is promoted to production
-- Alerts MUST be actionable — every alert must have a clear response procedure
+
+- Derive thresholds from observed behaviour over time (MUST)
+- Never set thresholds to arbitrary round numbers without a measurement
+  baseline (MUST NOT)
+- Define a corresponding alert for every P1 and P2 failure scenario before
+  the service is promoted to production (MUST)
+- Make alerts actionable (MUST); give every alert a clear response procedure
 
 ### Example thresholds
+
 - CPU > 75% sustained for 10 minutes → alert
 - Response time p95 > 500ms sustained over 50 requests in 2 minutes → alert
 - Disk usage > 90% sustained for 15 minutes → alert
 - Error rate > 1% sustained for 2 minutes → alert
 
 ## Dashboards
-- Every service MUST have a service health dashboard
-- Dashboard MUST show at minimum: error rate, response time, throughput,
-  and resource usage
-- Dashboards MUST be defined as code — no manually created dashboards in
+
+- Give every service a service health dashboard (MUST)
+- Show on the dashboard at minimum: error rate, response time, throughput,
+  and resource usage (MUST)
+- Define dashboards as code (MUST) — no manually created dashboards in
   shared environments
-- Non-technical dashboards (business KPIs, MAU) are encouraged alongside
-  technical dashboards
+- Add non-technical dashboards (business KPIs, MAU) alongside technical
+  dashboards (SHOULD)
 
 ## Status page
+
 - Maintain a status page for user-facing services to communicate outages
   and planned maintenance
-- The status page MUST be hosted outside the primary infrastructure — it
-  must remain available during an infrastructure incident
+- Host the status page outside the primary infrastructure (MUST); it must
+  remain available during an infrastructure incident
 - Update the status page manually during incidents — automation is not
   recommended as it can mask or misreport the true state
 - Use the status page proactively to reduce duplicate incident reports from
   affected users
 
 ## Incident response
-- P1/P2 incidents MUST have a post-mortem documented after resolution
-- Post-mortem MUST include: timeline, root cause, impact, corrective actions
+
+- Document a post-mortem for every P1/P2 incident after resolution (MUST)
+- Include in every post-mortem: timeline, root cause, impact, corrective
+  actions (MUST)
 - Record whether alerting detected the incident in time; where it did not,
   add or tune an alert as a corrective action — a review that found no
   detection gap adds none
-- Corrective actions MUST be tracked to completion — not just documented
+- Track corrective actions to completion (MUST) — not just document them

@@ -29,15 +29,17 @@ file with runtime conventions, project structure, and tooling.
 - Deprecate a field in place with `[deprecated = true]`, keeping its number
 - Remove only a deprecated field, and reserve its number and name:
   `reserved 4; reserved "old_name";`
-- Breaking changes require a new package version (`v2`) — serve the old
+- Require a new package version (`v2`) for a breaking change; serve the old
   version until all consumers have migrated
 
 ## Service implementation
 [ID: grpc-implementation]
 
-- Service handlers are thin — decode the request, call a domain service
-  function, encode the response; no business logic in the handler
-- Domain service functions have no gRPC imports — independently testable
+- Keep service handlers thin — decode the request, call a domain service
+  function, encode the response
+- Never put business logic in the handler
+- Keep gRPC imports out of domain service functions, so they stay
+  independently testable
 - Validate request messages at the handler entry point; return
   `INVALID_ARGUMENT` for missing or malformed fields
 - Return every error as the gRPC status code that fits it, never as an
@@ -64,25 +66,26 @@ The common cases; take any other from the full gRPC status code list.
 ## Interceptors
 [ID: grpc-interceptors]
 
-- **Auth**: validate token on every call — reject with `UNAUTHENTICATED`
-  before the handler runs
-- **Logging**: log method name, request ID, caller identity, duration, and
-  status code for every call
-- **Tracing**: propagate W3C `traceparent` via gRPC metadata using
-  OpenTelemetry gRPC instrumentation
-- **Recovery**: catch unhandled panics or exceptions — return `INTERNAL`,
-  never crash the server process
+- Validate the token on every call in the **auth** interceptor — reject with
+  `UNAUTHENTICATED` before the handler runs
+- Log method name, request ID, caller identity, duration, and status code
+  for every call in the **logging** interceptor
+- Propagate W3C `traceparent` via gRPC metadata in the **tracing**
+  interceptor, using OpenTelemetry gRPC instrumentation
+- Catch unhandled panics or exceptions in the **recovery** interceptor —
+  return `INTERNAL`, never crash the server process
 - Register all interceptors as a chain at server startup — not inside handlers
 
 ## Authentication
 [EXTEND: backend-auth]
 
-- Pass credentials via gRPC metadata: key `authorization`, value `Bearer
-  <token>`
+- Pass credentials via gRPC metadata: key `authorization`, value
+  `Bearer <token>`
 - Validate in the auth interceptor — not in service handlers
-- Mutual TLS (mTLS) for service-to-service calls in production — certificate
-  rotation managed at the infrastructure layer (cert-manager, Vault)
-- Plaintext only in local development — never in staging or production
+- Use mutual TLS (mTLS) for service-to-service calls in production
+- Manage certificate rotation at the infrastructure layer (cert-manager,
+  Vault)
+- Use plaintext only in local development — never in staging or production
 
 ## Observability
 [EXTEND: backend-observability]
@@ -98,11 +101,13 @@ The common cases; take any other from the full gRPC status code list.
 [ID: grpc-testing]
 [EXTEND: base-testing]
 
-- Unit-test domain service functions independently of gRPC — pass plain
-  request structs/objects, assert plain response structs/objects
-- Integration tests: start an in-process gRPC server and call it with a
-  real client — test each method for success, invalid argument, and auth failure
-- Test naming: `<MethodName>_<state>_<expected>`
+- Test domain service functions in unit tests, independently of gRPC — pass
+  plain request structs/objects, assert plain response structs/objects
+- Start an in-process gRPC server for integration tests and call it with a
+  real client
+- Test each method in integration tests for success, invalid argument, and
+  auth failure
+- Name tests `<MethodName>_<state>_<expected>`,
   e.g. `GetUser_UserNotFound_ReturnsNotFoundStatus`
 
 ## Proto tooling
@@ -112,5 +117,6 @@ The common cases; take any other from the full gRPC status code list.
   style consistency
 - Detect breaking changes with `buf breaking --against` in CI — reject PRs
   that introduce wire-incompatible changes without a version bump
-- Generate stubs in CI — if generated code is committed, regenerate and commit
-  in the same PR as the proto change; never let protos and stubs diverge
+- Generate stubs in CI
+- Regenerate and commit stubs in the same PR as the proto change if generated
+  code is committed; never let protos and stubs diverge

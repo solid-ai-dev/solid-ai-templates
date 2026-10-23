@@ -3,19 +3,21 @@
 
 ## Schema changes
 
-- All schema changes via migrations — never edit the database manually
-- Migrations are committed to source control
+- Make every schema change through a migration — never edit the database
+  manually
+- Commit migrations to source control
 - Never regenerate or modify a migration that is already merged
-- One migration per logical change — do not batch unrelated schema changes
+- Write one migration per logical change — do not batch unrelated schema
+  changes
 - Provide a `down` migration for every `up`; where reversal would lose
   data, say so in the migration and get approval before applying it
 
 ## Queries
 
-- No raw SQL strings — use an ORM or query builder
+- Never write raw SQL strings — use an ORM or query builder
 - Use parameterised queries if raw SQL is unavoidable — never string
   interpolation
-- No unbounded queries — always apply a limit or filter
+- Never write an unbounded query — always apply a limit or filter
 - Avoid `SELECT *` — select only the columns actually needed
 - Detect and eliminate N+1 queries — use eager loading (`joinedload`,
   `preload`, `WITH` clauses, `DataLoader`) for related data fetched in a loop

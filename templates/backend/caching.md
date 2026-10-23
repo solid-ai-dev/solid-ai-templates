@@ -13,21 +13,22 @@ cache technology (Redis, Memcached, in-process).
 
 ## Patterns
 
-- **Cache-aside (lazy loading)**: read from cache first; on miss, load from
-  source,
-  populate cache, return result — default pattern for read-heavy workloads
-- **Write-through**: write to cache and source together on every update —
-  use to shorten the stale window when write latency is acceptable; the two
-  writes are not atomic, so it never closes the window
-- **Write-behind**: write to cache immediately, persist to source asynchronously
-  —
-  avoid unless throughput requirements justify the added complexity and risk
+- Use cache-aside (lazy loading) as the default pattern for read-heavy
+  workloads: read from cache first; on miss, load from source, populate
+  cache, return result
+- Use write-through, writing to cache and source together on every update,
+  to shorten the stale window when write latency is acceptable
+- Expect write-through never to close the stale window; the two writes are
+  not atomic
+- Avoid write-behind, writing to cache immediately and persisting to source
+  asynchronously, unless throughput requirements justify the added
+  complexity and risk
 - Never cache at more than one layer for the same data — multiple caches
   create inconsistency and make invalidation impossible to reason about
 
 ## Keys
 
-- Namespaced keys: `<service>:<entity>:<id>` — e.g. `users:profile:42`
+- Namespace keys as `<service>:<entity>:<id>` — e.g. `users:profile:42`
 - Include a version segment when the cached schema changes:
   `users:v2:profile:42`
 - Document the key schema — undocumented keys become orphaned entries
@@ -35,7 +36,7 @@ cache technology (Redis, Memcached, in-process).
 
 ## TTL and expiry
 
-- Every cached entry MUST have a TTL — no indefinite caching
+- Give every cached entry a TTL (MUST) — no indefinite caching
 - Set TTL based on acceptable staleness, not convenience
 - Use shorter TTLs (seconds–minutes) for frequently changing data;
   longer TTLs (hours–days) for reference data
@@ -58,8 +59,9 @@ cache technology (Redis, Memcached, in-process).
 
 ## Resilience
 
-- Cache failures MUST NOT crash the application — treat the cache as
-  an optional acceleration layer, not a required dependency
+- Never let a cache failure crash the application (MUST NOT)
+- Treat the cache as an optional acceleration layer, not a required
+  dependency
 - On cache miss or error, fall through to the source of truth
 - Use circuit breakers or timeouts on cache calls — a slow cache is
   worse than no cache
@@ -69,14 +71,14 @@ cache technology (Redis, Memcached, in-process).
 ## Observability
 
 - Instrument cache hit rate, miss rate, and eviction rate
-- Alert if hit rate drops significantly below baseline — indicates
+- Alert if hit rate drops significantly below baseline — the drop indicates
   misconfigured TTL or an invalidation bug
 - Log cache errors at WARN level; log stampede events at INFO
 
 ## Testing
 [EXTEND: base-testing]
 
-- Unit tests for cache key construction and TTL logic MAY use an
-  in-memory fake
+- Use an in-memory fake in unit tests for cache key construction and TTL
+  logic (MAY)
 - Test the fallback path: assert that a cache miss or error still
   returns correct data from the source
