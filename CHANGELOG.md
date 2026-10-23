@@ -131,6 +131,8 @@ Releases up to 2.63.0 are listed in
   its relational rules ([#2100])
 - The deployment template keeps target-neutral rules and drops its per-target
   product choices ([#2101])
+- HTTP path, query and link naming are defaults a project's style guide overrides
+  ([#2167])
 
 ### Deprecated
 
@@ -239,6 +241,7 @@ Releases up to 2.63.0 are listed in
 [#2162]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2162
 [#2163]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2163
 [#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
+[#2167]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2167
 
 ## [2.90.0] - 2026-09-12
 
