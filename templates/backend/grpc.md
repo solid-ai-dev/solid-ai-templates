@@ -37,11 +37,13 @@ file with runtime conventions, project structure, and tooling.
 - Domain service functions have no gRPC imports — independently testable
 - Validate request messages at the handler entry point; return
   `INVALID_ARGUMENT` for missing or malformed fields
-- Return every error as a status code from the table below, never as an
+- Return every error as the gRPC status code that fits it, never as an
   HTTP status or a problem JSON body; put structured detail in
   `google.rpc.Status` details
 
 ### Status codes
+
+The common cases; take any other from the full gRPC status code list.
 
 | Situation | Code |
 |-----------|------|
@@ -50,6 +52,9 @@ file with runtime conventions, project structure, and tooling.
 | Caller not authenticated | `UNAUTHENTICATED` |
 | Caller lacks permission | `PERMISSION_DENIED` |
 | Conflicting state | `ALREADY_EXISTS` / `ABORTED` |
+| System not in the state the call needs | `FAILED_PRECONDITION` |
+| Quota or rate limit hit | `RESOURCE_EXHAUSTED` |
+| Deadline passed before completion | `DEADLINE_EXCEEDED` |
 | Transient infrastructure error | `UNAVAILABLE` |
 | Unexpected error | `INTERNAL` |
 

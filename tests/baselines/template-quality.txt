@@ -41,4 +41,4 @@ templates/infra/cicd.md 95.7
 templates/infra/containers.md 95.2
 templates/infra/deployment.md 99.4
 templates/security/devsecops.md 100.0
-templates/security/security.md 96.3
+templates/security/security.md 97.8
