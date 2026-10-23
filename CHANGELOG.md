@@ -183,6 +183,8 @@ Releases up to 2.63.0 are listed in
   caching ([#2193])
 - Four rules state when they apply: raw SQL, query bounds, thresholds and event
   debouncing ([#2198])
+- The LF check honours exemptions, edge TLS covers every upstream, and real offers
+  are allowed ([#2203])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -271,6 +273,7 @@ Releases up to 2.63.0 are listed in
 [#2183]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2183
 [#2193]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2193
 [#2198]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2198
+[#2203]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2203
 
 ## [2.90.0] - 2026-09-12
 
