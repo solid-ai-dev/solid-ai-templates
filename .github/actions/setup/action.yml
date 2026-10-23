@@ -19,6 +19,15 @@ runs:
       shell: bash
       run: pip install pyyaml==6.0.3
 
+    # The line-width conformance check runs this linter under the runner's
+    # time limit, so it is fetched here, outside that limit, and the check
+    # reads it from the npm cache; a failed fetch leaves the check to
+    # download it. Keep the version equal to the one the check's
+    # disposition and the Markdown lint job pin.
+    - name: Fetch the Markdown linter
+      shell: bash
+      run: npx --yes markdownlint-cli2@0.23.3 --help > /dev/null || true
+
     # A fork's history holds upstream's commits, whose issue numbers belong
     # to another tracker, and SYS-20 needs upstream's manifest to compare
     # against. Upstream passes no repository and skips this.
