@@ -226,7 +226,10 @@ failures, and server-side request forgery.
 - Unwrap an IPv4-mapped IPv6 address (`::ffff:127.0.0.1`) to its IPv4
   form before classifying it
 - Classify with the language's address library, such as Python's
-  `ipaddress` (`is_global`) or Go's `netip`, never a hand-kept CIDR list
+  `ipaddress` or Go's `netip`, never a hand-kept CIDR list
+- Test each excluded category the library reports apart: Python's
+  `is_global` is true for multicast (`224.0.0.1`, `ff02::1`), so reject
+  `is_multicast` too
 - Resolve the hostname once, validate the IP, and connect only to that
   address; a client that resolves the name again can be rebound by DNS
 - Keep TLS verifying the certificate against the original hostname when
