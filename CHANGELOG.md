@@ -181,6 +181,8 @@ Releases up to 2.63.0 are listed in
   tracing ([#2183])
 - Six rules a fifth review found wrong or too absolute are corrected, from SSRF to
   caching ([#2193])
+- Four rules state when they apply: raw SQL, query bounds, thresholds and event
+  debouncing ([#2198])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -268,6 +270,7 @@ Releases up to 2.63.0 are listed in
 [#2174]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2174
 [#2183]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2183
 [#2193]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2193
+[#2198]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2198
 
 ## [2.90.0] - 2026-09-12
 

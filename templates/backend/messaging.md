@@ -60,9 +60,11 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 - Decouple receive from process under load: hand the message off durably,
   acknowledge it, and do the work in a worker you pace
 - Never run heavy processing inline on the receive path under load
-- Coalesce bursts: debounce repeated events for the same resource into a
-  single unit of work after a short quiet period, instead of processing
-  every duplicate
+- Coalesce bursts of events whose work reads current source state: debounce
+  repeated "refresh product 42" events into one refresh after a short
+  quiet period
+- Never coalesce events that each carry a change; two inventory
+  decrements for product 42 are two decrements, not a duplicate
 - Apply backpressure when the queue saturates: bound the queue and slow
   or shed intake so the system degrades gracefully — an unbounded intake
   amplifies a downstream slowdown into an outage
