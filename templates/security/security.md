@@ -159,7 +159,8 @@ and server-side request forgery.
 - Log full error details server-side for debugging
 - Use consistent error response formats — do not leak internal
   structure through varying error shapes
-- Return appropriate HTTP status codes — do not use 200 for errors
+- Return the error status the protocol defines: an HTTP 4xx or 5xx, never
+  200, or a gRPC status code, which travels over HTTP 200
 - Do not reveal whether a resource exists via error messages —
   login errors should say "invalid credentials", not "user not
   found" vs "wrong password"
