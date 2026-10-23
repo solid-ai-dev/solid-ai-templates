@@ -34,22 +34,24 @@
 - Set a timeout on every outbound call (HTTP clients, database queries)
 
 ## URI design
-- Path segments MUST be lowercase with hyphens as word separators —
-  underscores and camelCase are not permitted
-- Paths MUST use nouns, not verbs: `/orders` not `/getOrders`
-- Collection resources MUST use plural nouns: `/orders`, `/products`
-- Individual resources MUST be addressed under their collection:
-  `/orders/{orderId}`
-- Sub-resources MUST be nested under their parent: `/customers/{id}/orders`
-- A URI MUST NOT end with a trailing slash
-- Paths MUST use American English spelling with no abbreviations or acronyms
+A project's own API style guide governs naming; without one, use these
+defaults.
+
+- Name resources with nouns, never verbs: `/orders` not `/getOrders`
+- Use plural nouns for collections: `/orders`, `/products`
+- Address an individual resource under its collection: `/orders/{orderId}`
+- Nest a sub-resource under its parent: `/customers/{id}/orders`
+- Write path segments in lowercase with hyphens between words (SHOULD)
+- End no URI with a trailing slash (SHOULD)
+- Spell path words in full, in one variant of English (SHOULD)
 
 ## Query parameters
-- Query parameter names MUST use camelCase
-- Query parameters MUST be used for filtering, sorting, and pagination —
-  not for resource identity (use path segments for that)
-- The following names are reserved for framework-level use and MUST NOT
-  be repurposed: `limit`, `skip`, `offset`, `expand`, `sortedBy`
+- Name query parameters in one case across the API, camelCase by default
+  (SHOULD)
+- Use query parameters for filtering, sorting, and pagination — never for
+  resource identity (use path segments for that)
+- Reserve one set of names for pagination and expansion, such as `limit`,
+  `offset` and `expand`, and never repurpose them
 - Parse a typed query parameter explicitly so you can distinguish three
   states: absent (use the default), present-and-valid (use it), and
   present-but-invalid (raise 400). Do NOT rely on a framework's
@@ -98,8 +100,9 @@
   payloads with fields that are not consumed
 
 ## HATEOAS
-- Embed hyperlinks in responses to enable resource discovery
-- Use a `links` array with `href`, `rel`, `type`, and `media` fields:
+- Embed hyperlinks in responses to enable resource discovery (SHOULD)
+- Use the project's link format; without one, a `links` array with `href`,
+  `rel`, `type`, and `media` fields:
   ```json
   "links": [
     {
