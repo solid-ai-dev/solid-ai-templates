@@ -9349,3 +9349,53 @@ plus #2141, #2144 and #2145.
   receive the playbook
 - Every outside finding pasted this session held when checked against the
   tree; two of them corrected claims this session had made
+
+## 2026-10-23 — Three more agent reviews and a lean v3.0
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- The playbook's "Review a template" gained a per-rule audit step (#2149)
+- A third agent review's seven defects fixed one PR each: a whitespace-blind
+  diff, protobuf reservation, HTTP error rules reaching gRPC, error-type
+  assertions, write-through, assisted versus blind calibration, and a
+  runtime test matrix (#2158 to #2164); a follow-up scoped the security
+  status rule and opened the gRPC status table
+- The 3.0.0 changelog section folded back into Unreleased; the cut waits
+  for the tag (#2165)
+- The review's "narrow next" items for a lean v3.0: conditional content SEO
+  (#2166), HTTP house style as defaults (#2167), one MUST exception policy
+  (#2168), rare procedures out of the core tier with their IDs (#2169),
+  repeated rules stated once where reach allows (#2170), and examples
+  under compressed rules (#2171)
+- The scorer flags rules opening with a subject and broken wraps (#2172);
+  every cited section names its file and heading (#2173)
+- Seventeen declarative templates restated as imperatives in one PR, each
+  rewritten by one agent and audited rule by rule by another (#2174)
+- A fourth review's eight defects fixed in one PR, from check exit codes to
+  trace context and retry keys (#2183)
+
+**Pull requests merged:** #2147, #2149, #2158 to #2174, and #2183.
+
+**Issues closed:** #2124, #2128 to #2135, #2148, #2150 to #2157, and
+the eight from #2175 to #2182.
+
+**Issues created:** #2148, #2150 to #2157, #2175 to #2182, and #2184.
+
+**Gaps flagged:**
+- The manifest descriptions did not follow the core-tier move; fixed in a
+  separate PR at wrap-up
+- `score_templates.py` cannot score a file outside the repository (#2184)
+- #1927, the v3.0.0 cut, is the milestone's only open issue
+
+**Lessons:**
+- Splitting a bullet is where a rewrite loses meaning: a clause scoped by
+  its bullet ("under load", "when enabling nosniff", "with ABAC") widens
+  once it stands alone; an independent auditor per template found sixteen
+  such changes in ten of seventeen rewrites
+- Fork sync caught a real break: moving a section out of the core tier
+  strands any fork stack that overrides it, so container e2e stayed
+- A check's verdict belongs in its exit status even where this repo's
+  runner parses the output; a consumer copies the command into CI
+- An idempotency key makes a retry safe only when every attempt reuses it
+  and the destination honours it for the whole retry window
