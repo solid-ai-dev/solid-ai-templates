@@ -146,6 +146,9 @@ manual entry a bottleneck:
   every value labelled NOT GROUND TRUTH
 - Have the human scan each value against the source, accept what is right
   and overwrite what is not
+- Mark every value validated this way as assisted, not independent
+- Never calibrate the producing model against assisted values; capture
+  that reading blind, before any prediction is opened
 - Let the agent transcribe only the human-validated values into the
   ground-truth structure, so the calibration set never becomes its own
   predictions

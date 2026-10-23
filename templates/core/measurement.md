@@ -135,6 +135,8 @@ answer rather than an error.
 - Put the candidate output in a separate, distinctly named artifact,
   opened after the reading is captured
 - Leave comparison views opened after the reading out of scope
+- Never count a value a person accepted from a shown prediction as an
+  independent reading
 
 ## Source silence
 
