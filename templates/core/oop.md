@@ -38,6 +38,12 @@ Apply SOLID at the class, module and service level:
 
 - Never declare a variadic parameter (`*args`, `**kwargs`) on an abstract
   or overridable operation
+
+  ```
+  class Store:       def put(self, key, *args)   promises nothing
+  class Disk(Store): def put(self, key, path)    Store callers cannot call it
+  ```
+
 - Give a capability its own name where a class part-way down a hierarchy
   offers what its own subtypes must not; never widen the shared operation
 - Check overrides with a strict type checker's override rule, bound in
@@ -45,6 +51,12 @@ Apply SOLID at the class, module and service level:
 - Where that checker is frozen, keep a contract test walking every
   concrete class: each override keeps its member kind and first parameter,
   only appends parameters, and declares no variadic
+
+  ```
+  base   def load(self, path)
+  keeps  def load(self, path, cache=True)
+  fails  def load(self, url)     @staticmethod def load(path)
+  ```
 
 ## When not to reach for a class
 [ID: base-oop-restraint]
