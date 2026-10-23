@@ -74,10 +74,10 @@ base:
     depends_on: [base-data-modeling]
   - id: base-oop
     file: templates/core/oop.md
-    description: SOLID, object design, design patterns, cross-cutting concerns; opt-in
+    description: SOLID, object design, hierarchies, design patterns, cross-cutting concerns; opt-in
   - id: base-quality-gates
     file: templates/core/quality-gates.md
-    description: How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict
+    description: How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict; refactor and module-split safety
     depends_on: [base-quality, base-git, base-testing, base-config]
   - id: base-embedded-checks
     file: templates/core/embedded-checks.md
@@ -85,7 +85,7 @@ base:
     depends_on: [base-quality-gates]
   - id: base-measurement
     file: templates/core/measurement.md
-    description: Numerical routines, calibration against reference data, source silence
+    description: Numerical routines, calibration against reference data, source silence, citing the software
     depends_on: [base-quality]
 platform:
   - id: platform-fixture
@@ -101,7 +101,7 @@ frontend:
     depends_on: [base-quality]
   - id: frontend-quality
     file: templates/frontend/quality.md
-    description: CSS conventions, performance, theme persistence, analytics
+    description: CSS conventions, performance, theme persistence, analytics, in-process UI test server
     depends_on: [base-quality]
   - id: frontend-content
     file: templates/frontend/content.md
