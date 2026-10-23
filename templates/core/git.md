@@ -75,8 +75,9 @@ echo "checks not passing: $failing"
 ## Numbered documents
 
 - Check an ordered document's numbering after merging the base in,
-  whenever two open pull requests edit it: numbered sections, ordered
-  procedures, indexed table rows
+  whenever two open pull requests edit it
+- Read an indexed table's rows yourself; the hook below checks numbered
+  headings and ordered list items only
 
 ```bash
 pre-commit run check-heading-numbers --all-files --verbose
