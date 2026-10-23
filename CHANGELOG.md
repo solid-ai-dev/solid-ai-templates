@@ -7,8 +7,6 @@ Releases up to 2.63.0 are listed in
 
 ## [Unreleased]
 
-## [3.0.0] - 2026-10-19
-
 ### Breaking changes
 
 - The tools are named verb-first: resolve_chain, sync_docs, check_release
