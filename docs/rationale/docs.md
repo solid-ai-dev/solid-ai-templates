@@ -120,9 +120,3 @@ A banner looks like this:
 
 A generator with a hardcoded field list fails both ways at once: it renders
 dead columns for fields the data lacks, and silently omits fields it has.
-
-## Citing the software
-
-A repository URL or project domain can move, lapse or be rebranded, and
-every citation pointing at it rots. A persistent identifier resolves to an
-archived, immutable snapshot, so the domain stays free to change.

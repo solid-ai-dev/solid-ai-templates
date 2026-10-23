@@ -52,6 +52,7 @@ Releases up to 2.63.0 are listed in
   404 rules move to frontend-quality and frontend-content ([#2103])
 - Object-oriented design rules leave the core tier; declare base-oop in Extras to
   keep them ([#2104])
+- Rare procedures leave the core tier for the opt-in template each belongs to ([#2169])
 
 ### Added
 
@@ -247,6 +248,7 @@ Releases up to 2.63.0 are listed in
 [#2166]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2166
 [#2167]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2167
 [#2168]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2168
+[#2169]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2169
 
 ## [2.90.0] - 2026-09-12
 

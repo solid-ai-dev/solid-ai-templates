@@ -79,6 +79,18 @@ Rules:
 - Defer non-critical scripts
 - Monitor Core Web Vitals (LCP, CLS, INP) — treat regressions as bugs
 
+## In-process server
+
+[ID: testing-in-process-server]
+
+- Run browser-driven UI journeys against the real app, served in a thread
+  on port 0 and driven over real HTTP (SHOULD)
+- Derive the base URL from the assigned port, and stop the server in a
+  `finally`
+- Share one serving helper between scripts and browser tests
+- Reserve a container for tests that need the built image or sidecar
+  services
+
 ## Theme persistence (if applicable)
 [ID: static-site-theme]
 

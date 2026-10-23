@@ -75,56 +75,6 @@ A heavy or platform-limited dependency reached through one owning module
 fails with the command that fixes it, and the CI leg without the extra
 proves the package still imports.
 
-## Hierarchies
-
-A variadic in a base states no contract a subtype can honour or break: it
-guarantees only that the call compiles, so every subtype narrows what the
-base promised, and a caller holding the abstract type cannot call the
-operation without knowing the concrete class. This is the contravariance
-rule on parameters (Liskov and Wing, 1994); what a codebase lacks is the
-tell. Nothing reports it: a linter has no rule, review reads one class at a
-time, and tests instantiate concrete classes. In one project a type checker
-wired years later reported 122 of them in one module. Frozen variadic
-findings are the entries to shrink first: they are not missing annotations,
-they are the abstraction not holding.
-
-A subtype declining a differently-named method breaks nothing; a subtype
-declining a parameter its supertype promised breaks every caller holding the
-supertype.
-
-A plain `getattr` resolves a `staticmethod` or `classmethod` to its bound
-callable and hides its own signature, so the contract test reads the class's
-own descriptor. A sketch of that test:
-
-```python
-import inspect
-
-
-def unwrap(cls, name):
-    found = inspect.getattr_static(cls, name)
-    if isinstance(found, (staticmethod, classmethod)):
-        found = found.__func__
-    return found
-
-
-def override_findings(base, hierarchy):
-    ops = [n for n, v in vars(base).items()
-           if inspect.isfunction(v) or isinstance(v, (staticmethod, classmethod))]
-    findings = []
-    for name in ops:
-        kind = type(inspect.getattr_static(base, name))
-        want = list(inspect.signature(unwrap(base, name)).parameters)
-        for cls in hierarchy:
-            got = list(inspect.signature(unwrap(cls, name)).parameters.values())
-            if type(inspect.getattr_static(cls, name)) is not kind:
-                findings.append("%s.%s changes member kind" % (cls.__name__, name))
-            if [p.name for p in got[:len(want)]] != want:
-                findings.append("%s.%s narrows or reorders" % (cls.__name__, name))
-            if any(p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD) for p in got):
-                findings.append("%s.%s declares a variadic" % (cls.__name__, name))
-    return findings
-```
-
 ## Errors
 
 A wrong-but-plausible derived value, such as a 404 URL or a mismatched ID,
@@ -165,21 +115,8 @@ the files the retirement stripped.
 
 ## Module structure
 
-The unchanged suite is a split's regression oracle; rewriting its imports
-forfeits it, by touching the oracle in the change that restructures the code
-under test. The oracle certifies a move: same call graph, same signatures,
-new file boundaries. Where the seam runs through a class, the suite stays
-green over call paths it was never written to distinguish, and certifies a
-neutrality it cannot establish, most confidently where it is thinnest.
-
-The oracle also assumes nothing reads module identity. A helper filtering on
-the module a class reports, or a coverage gate enumerating submodules, reads
-an `__init__` that declares nothing after the split, and breaks by examining
-an empty set; a negative assertion among them passes vacuously.
-
 A central constants module orphans each constant's provenance from the code
-that uses it. The cheap static gates catch every mechanical split error at
-once, so the slow suite runs once.
+that uses it.
 
 ## Variants
 

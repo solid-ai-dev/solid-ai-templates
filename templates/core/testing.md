@@ -215,27 +215,6 @@ never consulted.
 - Never take passing unit tests, suites and staleness checks as proof that
   the fix fired
 
-## Refactors
-
-[ID: testing-characterization-fingerprint]
-
-- Hash the full-precision output before a behaviour-preserving refactor,
-  and compare the hash after it
-- Seed every nondeterministic source before taking the hash
-- Discard the hash once the refactor lands; commit invariant property tests
-  instead
-
-## Rewrites
-
-[ID: testing-ast-equivalence]
-
-- Compare syntax trees before and after a whole-tree rewrite, such as a
-  formatter adoption, with the language's own parser
-- State the normalisation applied before the comparison
-- Require the compared count to equal the number of files the rewrite
-  touched
-- Inspect and account for every file whose tree changed
-
 ## Rendered output
 
 [ID: testing-verify-the-render]
@@ -245,16 +224,6 @@ never consulted.
 - Capture the render before the change as well as after it (SHOULD)
 - Confirm the build is fresh before re-editing a change that still looks
   wrong
-
-## Contract tests
-
-[ID: testing-ast-contract]
-
-- Enforce the public-API contract with a test that parses each module: every
-  public parameter and return annotated, every public function documented
-- Report each failure as `file:line name(param)`
-- Roll the test out behind an allowlist, module by module, and flip the
-  global gate last
 
 ## Drift guards
 
@@ -267,18 +236,6 @@ never consulted.
 - Introspect the live artifact rather than hardcode the expected value
   (SHOULD)
 - Assert one direction: the derived copy matches the source of truth
-
-## In-process server
-
-[ID: testing-in-process-server]
-
-- Run browser-driven UI journeys against the real app, served in a thread
-  on port 0 and driven over real HTTP (SHOULD)
-- Derive the base URL from the assigned port, and stop the server in a
-  `finally`
-- Share one serving helper between scripts and browser tests
-- Reserve a container for tests that need the built image or sidecar
-  services
 
 ## Container e2e
 
