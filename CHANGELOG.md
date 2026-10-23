@@ -139,6 +139,7 @@ Releases up to 2.63.0 are listed in
   ([#2170])
 - The template scorer lowers rules that open with a subject and wraps broken mid-rule
   ([#2172])
+- A rule citing another section names its file and heading, not a bare ID ([#2173])
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
 
@@ -259,6 +260,7 @@ Releases up to 2.63.0 are listed in
 [#2170]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2170
 [#2171]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2171
 [#2172]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2172
+[#2173]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2173
 [#2174]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2174
 
 ## [2.90.0] - 2026-09-12

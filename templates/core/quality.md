@@ -58,7 +58,7 @@ How code is designed, kept clean, swept and checked.
 ## Complexity
 
 - Keep cognitive complexity at or under 15 per function, enforced by the
-  analyser `base-<language>-tooling` binds
+  analyser the project's language tooling binds
 - Nest at most three levels; use guard clauses and early returns
 - Prefer a positive condition (`if is_enabled`) to a negated one
 - Replace a boolean flag that selects behaviour with an enum or two named
