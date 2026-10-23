@@ -31,9 +31,11 @@ code separation, assets, SEO and structured data.
 - Add `robots.txt`, Open Graph and Twitter Card tags to server-rendered and
   static pages
 - Give every publicly indexed page a canonical URL
-- Sitemap MUST be generated at build time and referenced in `robots.txt`
-- Every content page MUST have a unique `description` in frontmatter — used
-  for `<meta name="description">`, OG description, and Twitter Card
+- Serve a sitemap and reference it in `robots.txt` (MUST)
+- Generate the sitemap at build time where a build step exists
+- Give every content page a unique description (MUST) — used for
+  `<meta name="description">`, OG description, and Twitter Card
+- Keep the description in frontmatter where pages are files that carry it
 - Meta descriptions MUST read as a pitch, not a summary — answer "why
   should I click this?"
 - Add JSON-LD structured data to content pages, with the schema type that
