@@ -237,6 +237,16 @@ never consulted.
   (SHOULD)
 - Assert one direction: the derived copy matches the source of truth
 
+## Container e2e
+
+[ID: testing-container-e2e]
+
+- Drive containers through a library that speaks the Docker API, so one
+  test runs on Docker or rootless Podman
+- Poll the health endpoint against a deadline; never sleep
+- Skip cleanly where the optional e2e dependency is not installed
+- Disable the resource reaper on rootless runtimes
+
 ## Test tiers
 
 [ID: testing-tier-by-directory]

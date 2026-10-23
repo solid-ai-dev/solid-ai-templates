@@ -69,7 +69,6 @@ receives nothing (ADR-051).
 | `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept |
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
 | The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | stays in `base-git`, with the `check-heading-numbers` hook; the playbook keeps this repository's own form |
-| Container e2e, `testing-container-e2e` | `base-testing` | `base-containers`, ID kept |
 | The in-process server, `testing-in-process-server` | `base-testing` | `frontend-quality`, ID kept |
 | The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | `base-quality-gates`, IDs kept |
 | The module-split procedure | `base-quality` | `base-quality-gates`; the general module rules stay |

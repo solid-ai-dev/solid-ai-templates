@@ -185,6 +185,13 @@ plain module and stays silent in `__init__.py`, where export lists live.
 Languages whose compiler sees the export (Rust `pub use`, Go capitalised
 names) need no guard.
 
+## testing-container-e2e
+
+Hardcoding Docker and a fixed sleep breaks on rootless Podman, in CI
+without Docker, and on a slow start. Ryuk and similar reapers assume a
+privileged Docker. Local multi-service composition belongs to
+`containers.md`.
+
 ## testing-tier-by-directory
 
 A hand-applied marker drifts from where the test lives; a tier derived from

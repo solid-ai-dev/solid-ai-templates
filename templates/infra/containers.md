@@ -55,16 +55,6 @@ ships a runtime no gate tested.
 - Move a version in one coordinated change; reject a base-image or floor
   bump that no CI job runs — what is tested MUST be what ships
 
-## Container e2e
-
-[ID: testing-container-e2e]
-
-- Drive containers through a library that speaks the Docker API, so one
-  test runs on Docker or rootless Podman
-- Poll the health endpoint against a deadline; never sleep
-- Skip cleanly where the optional e2e dependency is not installed
-- Disable the resource reaper on rootless runtimes
-
 ## Docker Compose (if applicable)
 
 Use a Compose file when one image is not enough: several services, such
