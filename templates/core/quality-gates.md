@@ -333,6 +333,52 @@ pre-commit run find-bare-suppressions --all-files --verbose
 - Read zero files scanned as the hook's suffixes missing the project's
   languages; confirm a found count of zero rather than accept it
 
+## Refactors
+
+[ID: testing-characterization-fingerprint]
+
+- Hash the full-precision output before a behaviour-preserving refactor,
+  and compare the hash after it
+- Seed every nondeterministic source before taking the hash
+- Discard the hash once the refactor lands; commit invariant property tests
+  instead
+
+## Rewrites
+
+[ID: testing-ast-equivalence]
+
+- Compare syntax trees before and after a whole-tree rewrite, such as a
+  formatter adoption, with the language's own parser
+- State the normalisation applied before the comparison
+- Require the compared count to equal the number of files the rewrite
+  touched
+- Inspect and account for every file whose tree changed
+
+## Contract tests
+
+[ID: testing-ast-contract]
+
+- Enforce the public-API contract with a test that parses each module: every
+  public parameter and return annotated, every public function documented
+- Report each failure as `file:line name(param)`
+- Roll the test out behind an allowlist, module by module, and flip the
+  global gate last
+
+## Module splits
+
+- Split an oversized module into a package behind its existing import path,
+  re-exporting from the package's entry module, and leave the test suite
+  untouched as the regression oracle
+- Split along a cohesive seam, each submodule importing only earlier
+  stages and never the package's entry module
+- Reshape first, then split mechanically, where a split would change a
+  signature
+- Search the suite for code that reads module identity before splitting
+- Run the static gates (undefined names, an import smoke check, test
+  collection) before the full suite
+- Prove a split neutral with the untouched suite and a byte-identical
+  output diff
+
 ## Test edits
 
 [ID: quality-gates-test-edit-boundary]
