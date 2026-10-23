@@ -187,7 +187,8 @@ Releases up to 2.63.0 are listed in
   are allowed ([#2203])
 - The CI poll survives strict Bash, large negative integers become strings, auth
   allows local HTTP ([#2207])
-- Hooks fail on Git errors, see both sides of a rename and read only real\n  comments ([#2229])
+- Hooks fail on Git errors, see both sides of a rename and read only real
+  comments ([#2229])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
