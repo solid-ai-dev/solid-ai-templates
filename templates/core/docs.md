@@ -12,8 +12,8 @@ Which documents a project keeps, and how they stay true.
 
 | Word | Meaning |
 | --- | --- |
-| MUST | Absolute requirement; no exception without stated rationale |
-| MUST NOT | Absolute prohibition |
+| MUST | Absolute requirement; a deviation needs an approver's sign-off |
+| MUST NOT | Absolute prohibition; a deviation needs an approver's sign-off |
 | SHOULD | Recommended; a deviation needs a justification |
 | SHOULD NOT | Not recommended; may be ignored with a justification |
 | MAY | Optional; the developer decides |
