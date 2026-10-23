@@ -71,6 +71,7 @@ Releases up to 2.63.0 are listed in
   ([#2016])
 - Long checks ship as pre-commit hooks, and templates name the hook to
   run ([#2062])
+- Rules that compress an incident into one line gain a short example ([#2171])
 
 ### Changed
 
@@ -239,6 +240,7 @@ Releases up to 2.63.0 are listed in
 [#2162]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2162
 [#2163]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2163
 [#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
+[#2171]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2171
 
 ## [2.90.0] - 2026-09-12
 
