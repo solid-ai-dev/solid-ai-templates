@@ -73,9 +73,12 @@ How code is designed, kept clean, swept and checked.
   ```
 
 - Name every magic number and magic string as a constant
-- Size a numeric threshold from the measured distribution of its quantity
-  (p95, p99, maximum legitimate), and name the data source in the
-  constant's docstring
+- Size a tuned threshold, such as a latency alert, from its measured
+  distribution (p95, p99, maximum legitimate); name the data source in
+  the constant's docstring
+- Take a limit a specification fixes, such as a protocol's maximum
+  message size, from that specification and name it, never from an
+  observed percentile
 
 ## Dependencies
 

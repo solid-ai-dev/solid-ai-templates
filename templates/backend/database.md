@@ -14,10 +14,14 @@
 
 ## Queries
 
-- Never write raw SQL strings — use an ORM or query builder
-- Use parameterised queries if raw SQL is unavoidable — never string
+- Use an ORM or query builder (SHOULD); write raw SQL where it is clearer
+  or the builder cannot express the query
+- Parameterise every query that takes a value; never build SQL by string
   interpolation
-- Never write an unbounded query — always apply a limit or filter
+- Bound every query an interactive request runs with a limit or
+  pagination; a filter alone is no bound, since `WHERE active = true` can
+  still return millions of rows
+- Stream or batch a deliberate export or batch scan, never load it whole
 - Avoid `SELECT *` — select only the columns actually needed
 - Detect and eliminate N+1 queries — use eager loading (`joinedload`,
   `preload`, `WITH` clauses, `DataLoader`) for related data fetched in a loop

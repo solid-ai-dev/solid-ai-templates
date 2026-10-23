@@ -46,18 +46,21 @@ Apply SOLID at the class, module and service level:
 
 - Give a capability its own name where a class part-way down a hierarchy
   offers what its own subtypes must not; never widen the shared operation
-- Check overrides with a strict type checker's override rule, bound in
-  the project's type-checker configuration, and shrink its variadic
-  findings first
-- Where that checker is frozen, keep a contract test walking every
-  concrete class: each override keeps its member kind and first parameter,
-  only appends parameters, and declares no variadic
+- Keep every override callable wherever its base is: the same member kind
+  and parameters, with new parameters only appended and given defaults
 
   ```
   base   def load(self, path)
   keeps  def load(self, path, cache=True)
   fails  def load(self, url)     @staticmethod def load(path)
   ```
+
+- Check overrides with a strict type checker's override rule, bound in
+  the project's type-checker configuration, and shrink its variadic
+  findings first (SHOULD)
+- Where that checker is frozen, keep a contract test walking every
+  concrete class against the override rule above, and declaring no
+  variadic (SHOULD)
 
 ## When not to reach for a class
 [ID: base-oop-restraint]
