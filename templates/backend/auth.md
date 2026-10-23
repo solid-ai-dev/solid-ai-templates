@@ -36,7 +36,8 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
   browser history
 - Store refresh tokens in `httpOnly`, `Secure`, `SameSite=Strict` cookies (MUST)
 - Never store refresh tokens in `localStorage` or JavaScript-accessible memory
-- Require HTTPS for all authenticated endpoints, with no exceptions
+- Require HTTPS for all authenticated endpoints outside local
+  development, with no exception in staging or production
 
 ## Authorization
 

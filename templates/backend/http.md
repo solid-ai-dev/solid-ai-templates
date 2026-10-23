@@ -99,8 +99,9 @@ defaults.
   - Language codes: ISO 639
   - Country codes: ISO 3166-1 alpha-2
   - Currency codes: ISO 4217
-- Serialise any integer that exceeds 2^53 − 1 (9007199254740991) as a
-  string (MUST); JavaScript cannot represent larger integers precisely
+- Serialise any integer outside ±(2^53 − 1), -9007199254740991 to
+  9007199254740991, as a string (MUST); JavaScript cannot represent one
+  beyond that range precisely, in either direction
 - Reject non-finite values in an endpoint that serialises computed floats
   (MUST); `NaN`/`Infinity` are not valid RFC 8259 JSON
 - Configure the encoder to reject them (e.g. `allow_nan=false`) so it
