@@ -476,25 +476,37 @@ skipped.
    SHOULD, MAY, "(if applicable)" and "where appropriate" onto the new
    bullet, and compare the step 1 count afterwards: a fall is a rule that
    left or a rule that got stronger, and the diff says which
-7. **Fix both sides.** A contradiction fix edits every rule in the pair; a
+7. **Audit each rule.** Pair every rule before the edit with the bullet or
+   bullets that replace it, and flag a pair that lost a condition or its
+   main exception, raised its strength, changed its meaning, or has no
+   successor. Count a rule moved to the playbook as lost; the playbook never
+   ships to consumers. The score rewrites dropped conditions and whole rules
+   while the scorer, smoke and conformance all passed (#2142, #2143)
+   - For a large rewrite, run one read-only subagent per file, quoting both
+     texts; one agent reading many files skims
+   - Spot-check one quote from each agent against the file; a paraphrase
+     passed off as a quote hides the loss it was meant to show
+   - When a restore lowers the score, split the rule before re-recording a
+     lower row
+8. **Fix both sides.** A contradiction fix edits every rule in the pair; a
    fix to one side leaves the other still contradicting it. When shortening
    an assertion, keep what it accepts, not only what it rejects
-8. **Harden the checks.** Shorten a check before shipping it as a hook. Run
+9. **Harden the checks.** Shorten a check before shipping it as a hook. Run
    each control under `bash -e -o pipefail` and plain `bash`, with a
    malformed input as well as an empty one. State a command only inside a
    fence; the unfenced-check hook flags one typed into a sentence
-9. **Ship.** After the last edit, run `py tools/sync_docs.py`, commit the
-   sources and the regenerated files together, then run conformance; several
-   checks read commits. Push only through the ratchet, chained with `&&`:
+10. **Ship.** After the last edit, run `py tools/sync_docs.py`, commit the
+    sources and the regenerated files together, then run conformance; several
+    checks read commits. Push only through the ratchet, chained with `&&`:
 
-   ```bash
-   py tools/score_templates.py --check && git push
-   ```
+    ```bash
+    py tools/score_templates.py --check && git push
+    ```
 
-   Re-record a lower row only when the added words are the fix (a restored
-   qualifier, the second side of a conflict) and say so in the pull
-   request. Add a migration-guide row for each move or removal, and the
-   CHANGELOG line once the pull request has its number
+    Re-record a lower row only when the added words are the fix (a restored
+    qualifier, the second side of a conflict) and say so in the pull
+    request. Add a migration-guide row for each move or removal, and the
+    CHANGELOG line once the pull request has its number
 
 ## Score template quality
 
@@ -517,7 +529,7 @@ planted cases first and refuses a run that scored no template.
 1. Before opening a template PR, score the files it changes. A drop below
    the baseline fails CI; shorten the rule or move its reason to prose docs
    rather than re-recording a lower row, except as "Review a template",
-   step 9, allows
+   step 10, allows
 2. After improving a template, run `--update` and commit the raised rows
    with the change. Never lower a row by hand
 3. Every upstream template scores 95 or above, row or no row; CI fails one
