@@ -53,7 +53,8 @@ log level and the recovery:
 - Return 504 when an external call times out and 502 when it is refused
 - Log the full external error at ERROR level; return the caller only a
   safe, generic message
-- Retry transient external failures with exponential backoff and jitter
+- Retry a transient external failure with exponential backoff and jitter,
+  only where the call is idempotent or carries an idempotency key
 - Never retry an external 4xx other than 408 or 429
 - Wait at least as long as a `Retry-After` header asks
 

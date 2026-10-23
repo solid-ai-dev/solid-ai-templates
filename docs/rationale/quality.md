@@ -89,7 +89,9 @@ expensive to diagnose.
 
 One error hierarchy lets a caller catch refusals and nothing else, so a bug
 inside the package surfaces as what it is. Deriving each type from the
-built-in its site raised before breaks no existing caller. A type per raise
+built-in its site raised before breaks no existing caller, in a language
+that lets an error type have two bases; where it does not, the package
+base alone carries the contract. A type per raise
 site re-encodes the messages as class names and serves the tests, not the
 callers: a missing URL scheme invites prepending one while an unsupported
 scheme is a refusal, so those separate; two encodings that both mean "retry

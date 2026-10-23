@@ -31,10 +31,11 @@ looks like a clean one.
 A line-length limit of 80, for example, pairs with:
 
 ```bash
-awk 'length > 80' FILE
+awk 'length > 80 { print; bad = 1 } END { exit bad }' FILE
 ```
 
-Pass condition: no output. Any line printed is longer than the limit.
+Pass condition: no output and exit zero. Any line printed is longer than
+the limit, and the check then exits non-zero.
 
 ## Conventions as tests
 
@@ -420,9 +421,10 @@ pre-commit run report-test-edits --hook-stage manual --all-files --verbose
   with `--tests`
 - Read `not applicable` on a clean base as no change under review; on the
   base with uncommitted work it asks for a commit
-- Read the line counts as a reading, not a verdict: more lines removed
-  than added under the test root is a weakening shipped without its
-  replacement
+- Read the line counts as a reading, not a verdict; fewer lines can be a
+  parameterized test that keeps every case
+- Review the assertions and cases each edited test keeps before accepting
+  the change
 - Read a range total of zero as a check that inspected nothing
 
 ## Verdict reading

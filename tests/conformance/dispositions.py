@@ -182,7 +182,7 @@ CHECKS = [
     # 88 .editorconfig declares for Python, and the Python is all this
     # repository holds that carries no exempt line: its Markdown keeps
     # table rows over the width, which its linter configuration exempts.
-    {"file": "core/quality-gates.md", "find": "awk 'length > 80' FILE",
+    {"file": "core/quality-gates.md", "find": "length > 80 { print; bad = 1 }",
      "title": "An output constraint is paired with its check", "do": RUN,
      "expect": [],
      "substitute": {"80": "88", "FILE": "tools/*.py tests/*.py"}},

@@ -41,7 +41,10 @@ Use the correct level — do not elevate debug information to INFO:
 
 ## Distributed tracing
 
-- Assign a unique **trace ID** to every inbound request at the service boundary
+- Keep the **trace ID** of a valid incoming W3C trace context at the service
+  boundary, and create a new span for each hop
+- Start a new trace only where the incoming context is absent, invalid or
+  deliberately rejected, such as at an untrusted public edge
 - Propagate the trace ID in all outbound calls (HTTP headers, message queue
   metadata) using the W3C `traceparent` header or OpenTelemetry context
 - Include the trace ID in every log entry for that request — use the same

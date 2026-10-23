@@ -73,9 +73,10 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 
 - Cover permission logic with unit tests for all role combinations,
   including edge cases (no role, multiple roles, deprecated role)
-- Assert in an integration test that protected endpoints return 401 for
-  unauthenticated requests and 403 for authenticated requests with
-  insufficient permissions
+- Assert in an integration test that protected endpoints return 401 (gRPC
+  `UNAUTHENTICATED`) for unauthenticated requests and 403 (gRPC
+  `PERMISSION_DENIED`) for authenticated requests with insufficient
+  permissions
 - Test token expiry: assert that an expired token is rejected
 - Test token revocation: assert that a revoked refresh token cannot obtain
   a new access token

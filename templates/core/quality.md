@@ -108,8 +108,9 @@ declared.
   missing; never fall back to a value derived from a slug, name or hash
 - Bound every wait on another thread, process or connection, report why it
   gave up, and check the worker's liveness as well as the deadline
-- Derive every deliberate raise from one package base, each type also from
-  the built-in its site raised before
+- Derive every deliberate raise from one package base
+- Derive each type also from the built-in its site raised before, where the
+  language lets an error type have two bases
 - Split an error type only where a caller could act differently
 - Keep a test that walks every raise in the package and fails on one
   outside the hierarchy
@@ -187,12 +188,14 @@ git ls-files --eol | awk -F'\t' '
     printf "text files inspected: %d\n", seen + 0
     printf "files not filed i/lf: %d\n", n + 0
     for (i = 1; i <= n; i++) print "  " bad[i]
+    exit (seen == 0 || n > 0)
   }'
 ```
 
-Pass condition: the inspected count is above zero and the count of files
-not filed `i/lf` is zero. It matches "not `i/lf`" so a file git filed as
-`i/-text` for a stray carriage return is caught too.
+Pass condition: exit zero, given only when the inspected count is above
+zero and the count of files not filed `i/lf` is zero. It matches "not
+`i/lf`" so a file git filed as `i/-text` for a stray carriage return is
+caught too.
 
 - Refresh a checkout older than `.gitattributes` by rewriting its files or
   re-cloning; the index being right does not make the checkout right
