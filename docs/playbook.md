@@ -512,8 +512,8 @@ skipped.
 
 `tools/score_templates.py` scores each template's form against the
 criteria in `docs/design/template-content-quality.md`, "Measured criteria":
-rule length, prose share, sentence length, instructions, hedges, history and
-section size, from 0 to 100.
+rule length, prose share, sentence length, instructions, verb-first rules,
+whole wraps, hedges, history and section size, from 0 to 100.
 
 ```bash
 py tools/score_templates.py              # every template, lowest first

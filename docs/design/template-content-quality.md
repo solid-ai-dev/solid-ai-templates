@@ -115,6 +115,8 @@ left out. A template rewritten to that form keeps its reasoning in
 | Plain sentences | Mean words per sentence | ≤ 15 | ≥ 22 | 1 | Long sentences hide the condition a rule depends on |
 | One statement per rule | Share of bullets with three or more sentences | ≤ 2 % | ≥ 20 % | 1.5 | The extra sentences are rationale, which belongs in prose docs |
 | Instructions | Share of top-level bullets opening with an imperative or carrying an obligation word | ≥ 75 % | ≤ 40 % | 1 | A bullet that only describes leaves the agent to infer the rule |
+| Verb first | Share of top-level bullets opening with a subject: a determiner first, an auxiliary second, or an unbracketed RFC key word within four words | 0 % | 100 % | 0.25 | "Handlers are thin" and "X MUST be" state a fact the agent must turn into an action |
+| Whole wraps | Continuation lines holding only a dash or one word, with more of the rule after them | 0 | ≥ 4 | 0.25 | A wrap broken mid-sentence reads as two fragments |
 | Decidable | Hedge words per 1,000 words ("appropriate", "where possible", "usually") | ≤ 1 | ≥ 5 | 1 | A hedge lets two agents read the same rule two ways |
 | Rules, not history | Dates, "measured in", "seen during" per 1,000 words | 0 | ≥ 1 | 0.5 | An anecdote is evidence for a rule, not a rule |
 | Retrievable sections | Prose lines in the longest section | ≤ 40 | ≥ 200 | 1 | A heading is a retrieval cue; a section too long to hold weakens it |
@@ -143,9 +145,12 @@ improves a template re-records its row with `--update`. A fork records its
 own templates in `tests/baselines/fork-template-quality.txt`, so recording
 them never edits the upstream file.
 
-The scores measure form, not correctness: a short, imperative, wrong rule
-scores well. They sit beside review and the efficacy benchmark, not in
-place of them.
+The scores measure form, not usefulness or correctness: a short,
+imperative, wrong rule scores well, and so does a rule shortened by dropping
+the condition it applies under or its main exception. Shorten a rule by
+splitting it, never by dropping either; the playbook's "Review a template"
+audits each rule before and after a rewrite for that reason. The scores sit
+beside review and the efficacy benchmark, not in place of them.
 
 ## Source material
 
