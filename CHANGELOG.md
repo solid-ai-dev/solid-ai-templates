@@ -15,6 +15,7 @@ Releases up to 2.63.0 are listed in
 - Seven rules a second agent review found conflicting or over-broad are fixed ([#2140])
 - Five rules shortened past their meaning get their conditions back ([#2144])
 - Core rules the v3 rewrites cut keep their conditions and return ([#2145])
+- Testing rules agree: assert error types the interface declares, not runtime ones ([#2161])
 
 [#2136]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2136
 [#2137]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2137
@@ -22,6 +23,7 @@ Releases up to 2.63.0 are listed in
 [#2140]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2140
 [#2144]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2144
 [#2145]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2145
+[#2161]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2161
 
 ## [3.0.0] - 2026-10-19
 
