@@ -162,6 +162,7 @@ Releases up to 2.63.0 are listed in
 - Testing rules agree to assert declared error types, not runtime ones ([#2161])
 - Write-through caching is described as shortening staleness, not removing it ([#2162])
 - Assisted ground-truth values are marked and never used for blind calibration ([#2163])
+- The containers runtime rule allows a CI matrix of supported versions ([#2164])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -237,6 +238,7 @@ Releases up to 2.63.0 are listed in
 [#2161]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2161
 [#2162]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2162
 [#2163]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2163
+[#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
 
 ## [2.90.0] - 2026-09-12
 

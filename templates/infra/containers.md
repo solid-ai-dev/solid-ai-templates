@@ -42,16 +42,18 @@
 
 ## Runtime version coherence
 
-The base image, the CI runtime, the type-checker target and the packaging
-floor each pin the same runtime version; a bump to one alone ships a
-runtime no gate tested.
+The base image pins the runtime version that ships, and the packaging
+floor declares the oldest one supported; a bump that no CI job follows
+ships a runtime no gate tested.
 
-- The language / runtime version MUST be identical across the container
-  base image tag or digest, every CI job that sets up the runtime, the
-  static type-checker's target version, and the packaging metadata floor
-  (`requires-python`, `engines`, equivalent)
-- Move it in one coordinated change; reject an isolated base-image bump
-  that leaves the gates behind — what is tested MUST be what ships
+- Run a CI job on the runtime version the base image tag or digest ships
+  (MUST)
+- Run a CI job on the packaging metadata floor (`requires-python`,
+  `engines`, equivalent) where it differs from the base image (MUST)
+- Set the static type-checker's target version to the packaging floor
+- Add jobs for other supported versions as a compatibility matrix (MAY)
+- Move a version in one coordinated change; reject a base-image or floor
+  bump that no CI job runs — what is tested MUST be what ships
 
 ## Docker Compose (if applicable)
 
