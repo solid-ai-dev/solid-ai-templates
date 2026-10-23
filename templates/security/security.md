@@ -106,8 +106,6 @@ and server-side request forgery.
 
 - Never hardcode secrets, API keys, tokens, or credentials in
   source files
-- Never commit secrets to version control — even in test files
-  or example configurations
 - Use `.env` files for local development — add to `.gitignore`
 - Provide `.env.example` with placeholder values — never real
   secrets

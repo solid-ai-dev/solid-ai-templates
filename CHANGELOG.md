@@ -52,6 +52,7 @@ Releases up to 2.63.0 are listed in
   404 rules move to frontend-quality and frontend-content ([#2103])
 - Object-oriented design rules leave the core tier; declare base-oop in Extras to
   keep them ([#2104])
+- Rare procedures leave the core tier for the opt-in template each belongs to ([#2169])
 
 ### Added
 
@@ -132,6 +133,10 @@ Releases up to 2.63.0 are listed in
   its relational rules ([#2100])
 - The deployment template keeps target-neutral rules and drops its per-target
   product choices ([#2101])
+- HTTP path, query and link naming are defaults a project's style guide overrides
+  ([#2167])
+- A rule repeated across templates is stated once wherever every chain still sees it
+  ([#2170])
 
 ### Deprecated
 
@@ -164,6 +169,9 @@ Releases up to 2.63.0 are listed in
 - Write-through caching is described as shortening staleness, not removing it ([#2162])
 - Assisted ground-truth values are marked and never used for blind calibration ([#2163])
 - The containers runtime rule allows a CI matrix of supported versions ([#2164])
+- Content SEO rules hold however a site is served, not only for static builds ([#2166])
+- MUST and MUST NOT share one exception policy: an approver's sign-off and a reason
+  ([#2168])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -240,6 +248,11 @@ Releases up to 2.63.0 are listed in
 [#2162]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2162
 [#2163]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2163
 [#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
+[#2166]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2166
+[#2167]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2167
+[#2168]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2168
+[#2169]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2169
+[#2170]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2170
 [#2171]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2171
 
 ## [2.90.0] - 2026-09-12

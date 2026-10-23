@@ -12,8 +12,8 @@ Which documents a project keeps, and how they stay true.
 
 | Word | Meaning |
 | --- | --- |
-| MUST | Absolute requirement; no exception without stated rationale |
-| MUST NOT | Absolute prohibition |
+| MUST | Absolute requirement; a deviation needs an approver's sign-off |
+| MUST NOT | Absolute prohibition; a deviation needs an approver's sign-off |
 | SHOULD | Recommended; a deviation needs a justification |
 | SHOULD NOT | Not recommended; may be ignored with a justification |
 | MAY | Optional; the developer decides |
@@ -173,17 +173,6 @@ either exits non-zero.
 - Make a bulk-emit `--check` failure report how many entries are stale
 - Derive a per-field generator's fields from the schema it renders, never
   from a hardcoded list (MUST)
-
-## Citing the software (if applicable)
-
-- Cite a persistent identifier as the citation of record, never a URL
-  (MUST)
-- Archive each release, mint an identifier, and cite the one that resolves
-  to the latest version (SHOULD)
-- Ship a machine-readable citation file at the repository root that records
-  the identifier (SHOULD)
-- Never present a project domain or vanity URL as the citation of record
-  (MUST NOT)
 
 ## Output file by agent
 

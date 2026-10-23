@@ -79,3 +79,9 @@ the same thing; treating them as equal floods the report with false
 mismatches that bury real errors. The stored-default convention and the
 verification semantics pull in opposite directions, and the naive
 implementation looks correct until it meets real data.
+
+## Citing the software
+
+A repository URL or project domain can move, lapse or be rebranded, and
+every citation pointing at it rots. A persistent identifier resolves to an
+archived, immutable snapshot, so the domain stays free to change.

@@ -101,18 +101,6 @@ zero and `import-ban violations` is zero. Each ban is a
 `--forbid IMPORTER:IMPORTED` argument; `not applicable` means none is
 declared.
 
-## Hierarchies
-
-- Never declare a variadic parameter (`*args`, `**kwargs`) on an abstract
-  or overridable operation
-- Give a capability its own name where a class part-way down a hierarchy
-  offers what its own subtypes must not; never widen the shared operation
-- Check overrides with a strict type checker's override rule, bound in
-  `base-<language>-tooling`, and shrink its variadic findings first
-- Where that checker is frozen, keep a contract test walking every
-  concrete class: each override keeps its member kind and first parameter,
-  only appends parameters, and declares no variadic
-
 ## Errors
 
 - Validate input at boundaries and fail at once on invalid state
@@ -149,19 +137,7 @@ declared.
 - Keep a CLI a thin layer over a library that holds its logic
 - Port a function to another language exactly: the same operation order,
   character classes and edge cases, citing the original
-- Split an oversized module into a package behind its existing import path,
-  re-exporting from the package's entry module, and leave the test suite
-  untouched as the regression oracle
-- Split along a cohesive seam, each submodule importing only earlier
-  stages and never the package's entry module
 - Keep constants beside the functions that use them
-- Reshape first, then split mechanically, where a split would change a
-  signature
-- Search the suite for code that reads module identity before splitting
-- Run the static gates (undefined names, an import smoke check, test
-  collection) before the full suite
-- Prove a split neutral with the untouched suite and a byte-identical
-  output diff
 
 ## Variants
 
