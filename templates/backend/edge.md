@@ -32,8 +32,7 @@ inside a service mesh follows the microservices rules instead.
 
 - Route by host and path to upstream pools; keep routing declarative,
   not code
-- Remove a failing instance from rotation by health check; add it back
-  only after it passes readiness
+- Remove a failing instance from rotation by health check
 - Balance across instances (round-robin or least-connections) and
   spread upstreams across availability zones
 - Drain connections on deploy — stop sending new requests to an

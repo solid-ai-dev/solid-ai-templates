@@ -9,8 +9,7 @@ code separation, assets, SEO and structured data.
 [ID: static-site-content]
 [EXTEND: base-docs]
 
-- Keep all editable content in a data directory as structured files
-  (JSON, YAML or Markdown)
+- Store editable content as structured files: JSON, YAML or Markdown
 - Never hardcode content a non-developer might want to change
 
 | File | Controls |

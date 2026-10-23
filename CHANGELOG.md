@@ -134,6 +134,8 @@ Releases up to 2.63.0 are listed in
   product choices ([#2101])
 - HTTP path, query and link naming are defaults a project's style guide overrides
   ([#2167])
+- A rule repeated across templates is stated once wherever every chain still sees it
+  ([#2170])
 
 ### Deprecated
 
@@ -249,6 +251,7 @@ Releases up to 2.63.0 are listed in
 [#2167]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2167
 [#2168]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2168
 [#2169]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2169
+[#2170]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2170
 
 ## [2.90.0] - 2026-09-12
 

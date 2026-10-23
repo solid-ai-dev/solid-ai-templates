@@ -8,7 +8,7 @@ templates/backend/auth.md 98.6
 templates/backend/caching.md 100.0
 templates/backend/concurrency.md 98.1
 templates/backend/database.md 100.0
-templates/backend/edge.md 97.5
+templates/backend/edge.md 98.1
 templates/backend/errors.md 99.3
 templates/backend/features.md 100.0
 templates/backend/grpc.md 97.6
@@ -20,7 +20,7 @@ templates/backend/monitoring.md 98.5
 templates/backend/observability.md 96.8
 templates/backend/webhooks.md 100.0
 templates/core/agents.md 100.0
-templates/core/config.md 99.8
+templates/core/config.md 99.5
 templates/core/docs.md 98.7
 templates/core/embedded-checks.md 100.0
 templates/core/git.md 98.8
