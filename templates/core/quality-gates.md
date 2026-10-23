@@ -312,7 +312,7 @@ The table is the backlog, and shrinking it is the migration.
   name the test that fails if the change goes too far
 - Never count a suite that passed before the slice as that test
 - Control the whole hierarchy: build every class with a value the
-  interface cannot carry, and assert the declared error type comes back
+  interface cannot carry, and assert the error type it declares comes back
 
 ### Site-local suppressions
 
