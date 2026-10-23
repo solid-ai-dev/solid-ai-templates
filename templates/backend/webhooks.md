@@ -22,7 +22,7 @@ messaging rules for idempotency, retries, DLQs and backpressure.
 ## Respond fast
 
 - Return 2xx within the provider's timeout: acknowledge, then process
-  asynchronously, never inline on the request path
+  asynchronously; never run heavy work inline on the request path
 - Persist or enqueue the event before responding so an acknowledged
   event is never lost
 

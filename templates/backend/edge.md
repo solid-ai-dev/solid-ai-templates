@@ -4,7 +4,8 @@
 
 Rules for the reverse proxy, load balancer or gateway in front of an
 application exposed to untrusted networks. The edge terminates TLS, routes
-and shields the application; keep business logic out of it.
+and shields the application; keep business logic out of it. A gateway
+inside a service mesh follows the microservices rules instead.
 
 ## TLS termination
 
