@@ -65,6 +65,12 @@ CASES = [
      {"app.js": "const s = \"// eslint-disable-next-line\";\n"}, [], 0, 0),
     ("find-bare-suppressions", "a suppression quoted in a Python string",
      {"app.py": "value = '%s noqa'\n" % HASH}, [], 0, 0),
+    ("find-bare-suppressions", "a bare suppression after a quote in a regex",
+     {"app.js": "const r = /\"/; // eslint-disable-next-line\nrun();\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a division before a quoted suppression",
+     {"app.js": "const x = a / b;\nconst s = \"// eslint-disable\";\n"},
+     [], 0, 0),
 
     # git prints `docs/rules.md`; a root written another way must still
     # reach it, and `.` means the whole tree.

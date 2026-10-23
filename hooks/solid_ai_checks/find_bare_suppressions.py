@@ -31,6 +31,52 @@ SLASH = (".js", ".ts", ".go", ".jsx", ".tsx")
 QUOTES = {".go": {'"': True, "'": True, "`": False}}
 JS_QUOTES = {'"': True, "'": True, "`": True}
 
+# A `/` opens a JavaScript regular expression where an expression can
+# start: after an operator, an opening bracket or one of these keywords,
+# or at the start of the file. After a name, a number or a closing bracket
+# it divides.
+REGEX_AFTER = set("(,=:[!&|?{};+-*%<>~^")
+REGEX_KEYWORDS = {"return", "typeof", "case", "do", "else", "in", "of",
+                  "new", "delete", "void", "throw", "yield", "await",
+                  "instanceof"}
+WORD_BEFORE = re.compile(r"[A-Za-z_$][\w$]*$")
+
+
+def opens_regex(text, i):
+    """Whether the `/` at `i` opens a regular expression literal."""
+    j = i - 1
+    while j >= 0 and text[j] in " \t\r\n":
+        j -= 1
+    if j < 0 or text[j] in REGEX_AFTER:
+        return True
+    word = WORD_BEFORE.search(text, max(0, j - 11), j + 1)
+    return bool(word) and word.group() in REGEX_KEYWORDS
+
+
+def regex_end(text, i):
+    """The index just past the regular expression opening at `i`.
+
+    A `/` inside a character class does not close it, and neither does an
+    escaped one; a literal left open ends at the line, as the parser's
+    error would.
+    """
+    i, in_class = i + 1, False
+    while i < len(text) and text[i] != "\n":
+        char = text[i]
+        if char == "\\":
+            i += 1
+        elif char == "[":
+            in_class = True
+        elif char == "]":
+            in_class = False
+        elif char == "/" and not in_class:
+            i += 1
+            break
+        i += 1
+    while i < len(text) and (text[i].isalnum() or text[i] == "_"):
+        i += 1
+    return i
+
 
 def python_comments(path):
     """(row, text) for each comment the Python tokenizer finds.
@@ -55,13 +101,15 @@ def hash_comments(path):
 def slash_comments(path):
     """(row, text) for each `//` and `/* */` comment outside a string.
 
-    The scan skips string and template literals, so a directive quoted in
-    code is not read as one. A block comment is reported on the row it
-    opens.
+    The scan skips string and template literals, and in JavaScript regular
+    expression literals, so a directive quoted in code is not read as one.
+    A block comment is reported on the row it opens.
     """
     with open(path, encoding="utf-8") as handle:
         text = handle.read()
-    quotes = QUOTES.get(path[path.rfind("."):], JS_QUOTES)
+    suffix = path[path.rfind("."):]
+    quotes = QUOTES.get(suffix, JS_QUOTES)
+    regexes = suffix != ".go"
     found = []
     row, counted, i, end = 1, 0, 0, len(text)
     while i < end:
@@ -79,6 +127,14 @@ def slash_comments(path):
                     break
                 i += 1
             i += 1
+            continue
+
+        # Skipped before its contents are read, since a quote inside a
+        # pattern such as /"/ would otherwise open a string that swallows
+        # the comment after it.
+        if regexes and char == "/" and text[i + 1:i + 2] not in ("/", "*") \
+                and opens_regex(text, i):
+            i = regex_end(text, i)
             continue
         if text.startswith("//", i):
             stop = text.find("\n", i)
