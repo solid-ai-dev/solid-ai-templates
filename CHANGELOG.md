@@ -157,6 +157,7 @@ Releases up to 2.63.0 are listed in
 - Five rules shortened past their meaning get their conditions back ([#2144])
 - Core rules the v3 rewrites cut keep their conditions and return ([#2145])
 - A regenerated file is dropped only when its diff is line endings only ([#2158])
+- The gRPC template no longer reserves the number of a field it still declares ([#2159])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -227,6 +228,7 @@ Releases up to 2.63.0 are listed in
 [#2144]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2144
 [#2145]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2145
 [#2158]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2158
+[#2159]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2159
 
 ## [2.90.0] - 2026-09-12
 

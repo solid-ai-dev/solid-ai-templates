@@ -24,8 +24,10 @@ file with runtime conventions, project structure, and tooling.
   conventions
 - Use `google.protobuf.Timestamp` for all timestamps — never raw integers
 - Use `google.protobuf.FieldMask` for partial update (patch) operations
-- Never remove or renumber existing fields — mark deprecated fields with
-  `[deprecated = true]` and reserve the number: `reserved 4;`
+- Never renumber a field, or reuse a removed field's number or name
+- Deprecate a field in place with `[deprecated = true]`, keeping its number
+- Remove only a deprecated field, and reserve its number and name:
+  `reserved 4; reserved "old_name";`
 - Breaking changes require a new package version (`v2`) — serve the old
   version until all consumers have migrated
 
