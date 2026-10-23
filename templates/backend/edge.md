@@ -10,7 +10,8 @@ inside a service mesh follows the microservices rules instead.
 ## TLS termination
 
 - Terminate TLS at the edge and redirect plain HTTP to HTTPS
-- Never let the application be reachable over cleartext (MUST NOT)
+- Never let the application be reachable over cleartext outside local
+  development (MUST NOT)
 - Serve only TLS 1.2+; disable legacy protocol and cipher versions
 - Set HSTS (`Strict-Transport-Security`) at the edge so browsers refuse
   to downgrade
