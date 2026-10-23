@@ -96,6 +96,22 @@ CITATION = re.compile(r"(?<![\w/&])#\d{2,}\b|\bADR[- ]?\d{2,}\b")
 
 SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z`*(\"'])")
 
+# A rule opening with a subject states a fact about the system, not an
+# instruction: "Handlers are thin", "Thresholds MUST be derived". It reads
+# as one when its first word is a determiner, an auxiliary is its second
+# word, or an RFC key word outside parentheses follows within four; a
+# trailing "(MUST)" marks an instruction's strength, not its subject.
+DETERMINERS = frozenset(
+    "A An The All Every Each Any Some This These Its Their".split())
+AUXILIARIES = frozenset(
+    "is are was were must should shall can may will has have".split()
+    + "MUST SHOULD SHALL MAY".split())
+SUBJECT_KEYWORD = frozenset("MUST SHOULD SHALL MAY".split())
+
+# A bold or code label before a colon or dash ("**Write-through**: write
+# ...") names the rule; the instruction starts after it.
+RULE_LABEL = re.compile(r"^(?:\*\*[^*]+\*\*|`[^`]+`)\s*(?::|—|-)\s+")
+
 DIRECTIVE_LINE = re.compile(r"^\[(?:ID|EXTEND|OVERRIDE|DEPENDS ON)\b")
 BULLET = re.compile(r"^(\s*)(?:[-*+]|\d+\.)\s+(.*)$")
 FENCE = re.compile(r"^\s*(```|~~~)")
@@ -129,6 +145,19 @@ class Item:
         match = re.match(r"[A-Za-z']+", lead)
         return bool(match) and match.group(0) in IMPERATIVES
 
+    def opens_with_subject(self):
+        if re.match(r"^\[[ xX]\]\s", self.text):
+            return False
+        lead = RULE_LABEL.sub("", self.text)
+        lead = re.sub(r"`[^`]*`", "X", re.sub(r"^[*_]+", "", lead))
+        lead = re.sub(r"\([^)]*\)", " ", lead)
+        words = re.findall(r"[A-Za-z'][\w'-]*", lead)
+        if not words or words[0] in IMPERATIVES:
+            return False
+        return (words[0] in DETERMINERS
+                or any(w in AUXILIARIES for w in words[1:2])
+                or any(w in SUBJECT_KEYWORD for w in words[1:5]))
+
 
 class Doc:
     """A template's prose, split into rules, paragraphs and sections."""
@@ -138,6 +167,7 @@ class Doc:
         self.paragraphs = []
         self.sections = []
         self.prose = []
+        self.broken_wraps = 0
         self._parse(text.splitlines())
 
     def _parse(self, lines):
@@ -147,8 +177,13 @@ class Doc:
         item = None
         para = []
 
+        # A continuation line holding only a dash or one word, with more of
+        # the rule after it, is a wrap broken mid-sentence.
+        short_line = False
+
         def close_item():
-            nonlocal item
+            nonlocal item, short_line
+            short_line = False
             if item is not None:
                 self.items.append(item)
                 item = None
@@ -189,6 +224,9 @@ class Doc:
                 self.prose.append(bullet.group(2))
                 continue
             if item is not None and line.startswith(" "):
+                self.broken_wraps += short_line
+                short_line = (stripped in ("—", "–", "-")
+                              or len(stripped.split()) == 1)
                 item.text += " " + stripped
                 self.prose.append(stripped)
                 continue
@@ -251,6 +289,9 @@ def metrics(doc):
                            / max(len(doc.items), 1)),
         "directive_share": (sum(i.is_directive() for i in rules)
                             / max(len(rules), 1)),
+        "subject_share": (sum(i.opens_with_subject() for i in rules)
+                          / max(len(rules), 1)),
+        "broken_wraps": doc.broken_wraps,
         "hedges": 1000 * len(HEDGES.findall(scan)) / prose_words,
         "narrative": 1000 * len(NARRATIVE.findall(scan)) / prose_words,
         "section_lines": max(section_lines),
@@ -272,6 +313,8 @@ CRITERIA = {
     "sentence_words":    {"good": 15,   "bad": 22,   "weight": 1.0},
     "multi_sentence":    {"good": 0.02, "bad": 0.20, "weight": 1.5},
     "directive_share":   {"good": 0.75, "bad": 0.40, "weight": 1.0},
+    "subject_share":     {"good": 0.0,  "bad": 1.0,  "weight": 0.25},
+    "broken_wraps":      {"good": 0,    "bad": 4,    "weight": 0.25},
     "hedges":            {"good": 1.0,  "bad": 5.0,  "weight": 1.0},
     "narrative":         {"good": 0.0,  "bad": 1.0,  "weight": 0.5},
     "section_lines":     {"good": 40,   "bad": 200,  "weight": 1.0},
@@ -470,6 +513,22 @@ def self_test():
         single = score(Doc(GOOD + quoted_form))
         cases.append((f"a single-quoted citation does not cap: "
                       f"{quoted_form.strip()}", not single[3], single[0]))
+    stated = score(Doc(GOOD + "- Handlers are thin\n- Thresholds MUST be derived\n"
+                       "- Every entry MUST have a TTL\n"))[0]
+    instructed = score(Doc(GOOD + "- Keep handlers thin\n- Derive thresholds\n"
+                           "- Give every entry a TTL\n"))[0]
+    cases.append(("a rule opening with a subject scores below its imperative",
+                  stated < instructed, (stated, instructed)))
+    strength = Doc("- Paginate every endpoint (MUST)\n").items[0]
+    cases.append(("a trailing (MUST) does not read as a subject",
+                  not strength.opens_with_subject(), strength.text))
+    broken = Doc(GOOD + "- Load from\n  source,\n  then return the result\n")
+    whole = Doc(GOOD + "- Load from source, then\n  return the result\n"
+                "- Commit the lockfile, always\n  (MUST)\n")
+    cases.append(("a one-word line mid-rule counts as a broken wrap, a "
+                  "closing one does not",
+                  broken.broken_wraps == 1 and whole.broken_wraps == 0,
+                  (broken.broken_wraps, whole.broken_wraps)))
     table = "\n| Key | Meaning |\n|---|---|\n" + "| a | b |\n" * 40
     tabled = score(Doc(GOOD + table))[0]
     cases.append(("a table does not move the score", tabled == good, tabled))
@@ -517,6 +576,7 @@ def self_test():
 SHORT = {"rule_words": "rule", "long_rules": "long", "paragraph_share": "para",
          "longest_paragraph": "maxP", "sentence_words": "sent",
          "multi_sentence": "multi", "directive_share": "dir",
+         "subject_share": "subj", "broken_wraps": "wrap",
          "hedges": "hedge", "narrative": "narr", "section_lines": "sect"}
 
 
