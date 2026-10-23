@@ -114,14 +114,17 @@ git diff --exit-code --stat -- <artifact-path>
   step reads back into its source, from the pipeline it feeds
 - Refresh such an artifact through the step a person owns, and flag it
   stale
-- Drop a regenerated file whose diff is whitespace or line endings only:
+- Drop a regenerated file whose diff is line endings only:
 
 ```bash
-git diff --ignore-all-space <file>
+git diff --ignore-cr-at-eol <file>
 ```
 
 - Read an empty diff as noise, and drop the file with
   `git checkout -- <file>`
+- Never drop a file on `--ignore-all-space`; it hides `"a b"` becoming
+  `"ab"`
+- Read any other whitespace-only diff before dropping it
 - Open every regenerated binary artifact in a viewer or an image-read tool,
   and confirm it tracks its source
 - Regenerate a known-current control artifact first; a non-zero diff there

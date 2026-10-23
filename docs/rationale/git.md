@@ -52,7 +52,12 @@ staleness is the failure mode when it is deferred. Regenerating a
 bidirectional artifact from the pipeline it feeds overwrites values a person
 verified.
 
-Whitespace-only diffs reappear as fake regressions on another OS. A binary
+Line-ending diffs reappear as fake regressions on another OS. A diff that
+ignores all whitespace goes further than line endings: it also ignores a
+space removed inside a line, so a JSON value changing from `"a b"` to `"ab"`
+shows no diff and would be dropped. Other whitespace changes are read
+before dropping because whitespace carries meaning in string values,
+indentation and Markdown. A binary
 artifact diffs as "Binary files differ", opaque to git and often to the
 tests. A zero diff on a known-current control proves the generator is
 deterministic here; a non-zero one means a mass rewrite would ship disguised
