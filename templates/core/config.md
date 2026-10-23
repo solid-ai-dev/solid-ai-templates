@@ -11,7 +11,6 @@ Store configuration in the environment, not in code, after the
   precedence below lists; keep defaults in code only for optional settings
 - Read every secret from the environment or a secrets manager, never from a
   committed file or a command-line flag (MUST)
-- Never hardcode a secret, API key or credential (MUST NOT)
 - Commit `.env.example` with placeholder values, and list `.env` in
   `.gitignore`
 - Keep separate configuration for each environment the project runs, such
@@ -84,7 +83,6 @@ Sources override in this order, highest last:
 
 - Declare every dependency in a manifest, such as `package.json`,
   `pyproject.toml`, `go.mod` or `Cargo.toml`
-- Commit the lockfile, which pins exact versions for reproducible builds
 - Run with only the declared dependencies installed; never rely on
   system-wide packages (MUST)
 - Separate production dependencies from development and test ones

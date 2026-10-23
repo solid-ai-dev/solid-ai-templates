@@ -22,12 +22,8 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 ## Migration structure
 [ID: data-migration-structure]
 
-- Each migration MUST contain both `up` (apply) and `down`
-  (rollback) steps
 - The `up` step describes the desired state change
-- The `down` step MUST reverse the `up` step exactly — if
-  reversal is impossible (e.g. dropping a column with data),
-  document this and require manual approval
+- The `down` step MUST reverse the `up` step exactly
 - Keep migrations small — one concern per migration
 - Separate schema migrations (DDL) from data migrations (DML)
   — they have different risk profiles and rollback strategies
