@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 from conformance import SKIP, MANUAL, READ
 from conformance.dispositions import CHECKS, SKIP_BUDGETS
@@ -239,10 +240,14 @@ def reading(result):
     """
     body = result.get("output") or []
     failures = ["- %s" % f for f in result.get("failures") or []]
+
+    # The time a check took is recorded, so a check creeping toward the
+    # runner's time limit shows in the report before it crosses it.
+    took = " (%.1fs)" % result["seconds"] if "seconds" in result else ""
     if not body and not failures:
-        return ["### %s  %s" % (result["status"], result["id"]), ""]
-    head = ["### %s  %s — %s" % (result["status"], result["id"],
-                                 result["title"]), ""]
+        return ["### %s  %s%s" % (result["status"], result["id"], took), ""]
+    head = ["### %s  %s — %s%s" % (result["status"], result["id"],
+                                   result["title"], took), ""]
     if failures:
         head += failures + [""]
     return head + (["```"] + body + ["```", ""] if body else [])
@@ -416,6 +421,7 @@ def main():
                 print("  %-5s %s (%s)" % (entry["do"], title, where))
                 continue
 
+            started = time.monotonic()
             try:
                 hook = hook_id(block[3])
                 if hook:
@@ -470,7 +476,8 @@ def main():
             results[status] += 1
             run_results.append({"id": where, "title": title,
                                 "status": status, "failures": failures,
-                                "error": "", "output": out})
+                                "error": "", "output": out,
+                                "seconds": time.monotonic() - started})
             if status == REVIEW:
                 reviewed.append(title)
     finally:
