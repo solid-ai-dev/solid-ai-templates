@@ -159,6 +159,7 @@ Releases up to 2.63.0 are listed in
 - A regenerated file is dropped only when its diff is line endings only ([#2158])
 - The gRPC template no longer reserves the number of a field it still declares ([#2159])
 - HTTP's problem-JSON error rules apply to REST endpoints only, not gRPC calls ([#2160])
+- Testing rules agree to assert declared error types, not runtime ones ([#2161])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -231,6 +232,7 @@ Releases up to 2.63.0 are listed in
 [#2158]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2158
 [#2159]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2159
 [#2160]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2160
+[#2161]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2161
 
 ## [2.90.0] - 2026-09-12
 
