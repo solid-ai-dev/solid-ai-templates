@@ -147,7 +147,8 @@ in a gRPC status code, sent over HTTP 200.
 
 ## Authentication and authorisation
 
-- Serve all API traffic over HTTPS (MUST); plain HTTP is not acceptable
+- Serve all API traffic over HTTPS outside local development (MUST);
+  plain HTTP is not acceptable in staging or production
 - Give access tokens a finite lifetime (MUST)
 - Use JWT or an equivalent short-lived token mechanism for access tokens
 - Enforce both authentication and authorisation on every external API

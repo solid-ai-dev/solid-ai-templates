@@ -73,9 +73,11 @@ code separation, assets, SEO and structured data.
 [ID: frontend-content-structured-data]
 
 - Match schema `@type` to the page's actual role (MUST)
-- Never use `Product` + `Offer` on informational pages that do not sell
-  anything
-- Never let fields imply capabilities the site lacks (MUST NOT); e.g.
-  `availability` implies commerce, `priceValidUntil` implies a store
+- Mark up an `Offer` only for a real offer the page shows accurately: the
+  site's own, or a named merchant's, as on a product review citing a
+  retailer's price
+- Never fabricate an offer, or let its fields imply capabilities the site
+  lacks (MUST NOT): an `availability` or `priceValidUntil` with no other
+  seller named claims the site itself sells the item
 - Review schema choice when site role differs from template examples —
   e-commerce examples applied to editorial sites produce misleading markup

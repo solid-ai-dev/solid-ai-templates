@@ -156,7 +156,7 @@ CHECKS = [
     {"file": "core/quality.md",
      "find": "ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts",
      "title": "No committed text file carries CRLF", "do": RUN,
-     "expect": ["nonzero", "zero"]},
+     "expect": ["nonzero", "any", "zero"]},
 
     {"file": "core/quality.md", "find": "eol() { git ls-files --eol",
      "title": "The checkout carries the line ending the index does",

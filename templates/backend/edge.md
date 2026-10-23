@@ -10,12 +10,15 @@ inside a service mesh follows the microservices rules instead.
 ## TLS termination
 
 - Terminate TLS at the edge and redirect plain HTTP to HTTPS
-- Never let the application be reachable over cleartext (MUST NOT)
+- Never let the application be reachable over cleartext outside local
+  development (MUST NOT)
 - Serve only TLS 1.2+; disable legacy protocol and cipher versions
 - Set HSTS (`Strict-Transport-Security`) at the edge so browsers refuse
   to downgrade
-- Re-encrypt to upstreams (mTLS or TLS) across an untrusted segment; send
-  plaintext only on a trusted private network
+- Re-encrypt to every upstream with TLS, or mTLS where the upstream
+  authenticates the edge; a private network is no exception
+- Send plaintext to an upstream only in local development, never in
+  staging or production
 
 ## Forwarded headers and client identity
 
