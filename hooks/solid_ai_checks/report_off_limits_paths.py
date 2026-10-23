@@ -7,13 +7,42 @@ where owed, the proposal are a person's to write.
 
 import argparse
 
-from .support.files import path_prefix
-from .support.history import git, open_change
+from .support.files import GitFailed, path_prefix, run_git
+from .support.history import open_change
 
 
 def touches(path, prefix):
     """Whether a path git printed falls under a normalised prefix."""
     return path.startswith(prefix) or ("/" + prefix) in path
+
+
+def changed_paths(span):
+    """Every path the range touches, in the order git lists them.
+
+    A rename touches both of its paths: moving a protected file out of
+    its directory changes that directory as much as editing it does. A
+    copy leaves its source as it was, so only the destination counts.
+    """
+
+    # -z prints each path raw and NUL-ended. The default output quotes a
+    # path holding a space or a non-ASCII byte, and the quoted spelling no
+    # longer starts with the prefix it falls under.
+    diff = run_git(["diff", "--name-status", "-z", span])
+    if diff.returncode != 0:
+        raise GitFailed("git diff exited %d: %s" % (
+            diff.returncode, diff.stderr.decode("utf-8", "replace").strip()))
+    fields = diff.stdout.decode("utf-8").split("\0")
+    paths, i = [], 0
+    while i < len(fields) and fields[i]:
+        status = fields[i]
+        if status[0] in "RC":
+            old, new = fields[i + 1], fields[i + 2]
+            paths += [old, new] if status[0] == "R" else [new]
+            i += 3
+        else:
+            paths.append(fields[i + 1])
+            i += 2
+    return list(dict.fromkeys(paths))
 
 
 def main(argv, report):
@@ -36,8 +65,7 @@ def main(argv, report):
     if span is None:
         return status
 
-    changed = [p for p in git("diff", "--name-only", span).splitlines() if p]
-    report.count("files changed", changed)
+    changed = report.count("files changed", changed_paths(span))
     for path in changed:
         for prefix in prefixes:
             if touches(path, prefix):
