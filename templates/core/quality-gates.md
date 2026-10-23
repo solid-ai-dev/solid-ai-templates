@@ -87,9 +87,9 @@ informally.
 - When a bug in an ungated case resists every quick fix, promote the case
   to the next-strictest tier before the deep fix
 - Land the deep fix against the metric the promotion created
-- Apply the same move elsewhere: a flaky integration test to a contract
-  test, a tutorial example to a CI-verified one, a manual smoke test to an
-  automated regression
+- Apply the same move elsewhere, the first time a case lets a defect
+  through: a flaky integration test to a contract test, a tutorial example
+  to a CI-verified one, a manual smoke test to an automated regression
 
 ## Running a check
 
@@ -102,6 +102,8 @@ informally.
   that builds its tree
 - Report what a check inspected, not only what it found; the test-suite
   form of this rule is `testing-negative-assertion-coverage`
+- Report how many checks a tool could not read beside how many it ran
+  (MUST)
 - Report every finding before exiting; where a check cannot continue past
   one, say so
 - Decide which counts carry the verdict as `quality-cross-validation`
@@ -126,6 +128,8 @@ informally.
 - Name the mutated entity in the landing assertion, and compare its value
   on both sides
 - Stage or commit before running a control that mutates the tree
+- Plant into a throwaway copy whose clean state is known, so the landing
+  check is a comparison (SHOULD)
 
 ### Shipped checks
 
@@ -237,8 +241,8 @@ check, not its separate scope parameter:
 A check whose input depends on the developer's environment passes in CI's
 clean one and fails on a laptop.
 
-- Enumerate tracked files (`git ls-tree`, explicit imports), never the
-  working-tree filesystem
+- Enumerate tracked files (`git ls-tree`, explicit imports) rather than
+  walk the working-tree filesystem (SHOULD)
 - Gate a directory on an explicit anchor file, so local-only artifacts are
   filtered out
 - Comment at the test any dependency on line endings, locale, timezone,
@@ -258,6 +262,8 @@ clean one and fails on a laptop.
 - Clear a finding by changing the condition it describes, never the input
   the gate reads
 - When a finding is false, fix the gate and record why in the same change
+- Treat a gate whose cheapest remedy is falsifying its input as defective,
+  and fix it in the same change (SHOULD)
 
 ### Linters
 
@@ -312,6 +318,8 @@ The table is the backlog, and shrinking it is the migration.
 
 - Suppress a finding that is wrong at one site at that site, never by
   adding the file to the freeze table
+- Disable a rule in configuration only for a tree-wide decision, never to
+  settle one site
 - Name the rule in every suppression, such as `# noqa: B017` or
   `//nolint:errcheck`, and put the reason directly above the line
 

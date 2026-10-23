@@ -18,8 +18,8 @@ tool drives it.
 | Exploratory | Any, unscripted | Unexpected behaviour |
 
 - Replace a unit's dependencies with doubles
-- Use the real dependency for the boundary an integration test covers;
-  double only the unrelated ones
+- Use the real dependency for the boundary an integration test covers; you
+  MAY double the unrelated ones
 - Run system tests against documented requirements, in an environment
   representative of production
 - Cover the critical user journeys with automated end-to-end tests
@@ -28,6 +28,10 @@ tool drives it.
 - Run smoke regression on every commit, quick regression on every merge
   request and full regression on each release candidate; automate smoke and
   quick fully
+- Keep smoke regression under 15 minutes and quick regression under 60
+  (SHOULD)
+- Automate full regression where it can be (SHOULD), and document every
+  manual step it keeps (MUST)
 - Turn every defect exploratory testing finds into a regression test
   (SHOULD)
 
@@ -39,9 +43,11 @@ tool drives it.
   response, timeout, degraded operation (SHOULD)
 - Meet the project's coverage threshold for new code before merging
 - Never let coverage regress between releases
-- Run every automated test from CI, with no human step
+- Run every unit test from CI, with no human step
 - Name a test so the name alone states the unit, the input and the expected
   outcome (SHOULD)
+- Name integration tests by a structured scheme that supports filtering and
+  traceability (SHOULD)
 - Run a unit that reads a structured external artifact against real
   production data once before calling its suite complete, and add a
   regression test for each gap it shows
@@ -165,7 +171,8 @@ never consulted.
   double (MUST)
 - Name the platform the evidence came from wherever a test clears a
   suspected component
-- Retest an exonerated suspect on the platforms that were not covered
+- Distrust a suspect cleared on one platform; retest it on the platforms
+  the evidence did not cover (SHOULD)
 
 ## Unique resources
 
@@ -200,6 +207,8 @@ never consulted.
 
 [ID: testing-fix-fires-on-real-data]
 
+- Drive a diagnostic view through the production entry point behind a
+  flag, never a separate command with its own setup
 - Run the real pipeline on the input a fix targets, and diff its output
   against the expected values
 - Never take passing unit tests, suites and staleness checks as proof that
@@ -254,15 +263,16 @@ never consulted.
   diverge: a documented limit and its constant, live routes and the API
   contract, the runtime version and the package metadata, an export list
   and the module's bindings
-- Introspect the live artifact; never hardcode the expected value
+- Introspect the live artifact rather than hardcode the expected value
+  (SHOULD)
 - Assert one direction: the derived copy matches the source of truth
 
 ## In-process server
 
 [ID: testing-in-process-server]
 
-- Serve the real app in a thread on port 0 and drive it over real HTTP,
-  where a framework test client bypasses the server stack (SHOULD)
+- Run browser-driven UI journeys against the real app, served in a thread
+  on port 0 and driven over real HTTP (SHOULD)
 - Derive the base URL from the assigned port, and stop the server in a
   `finally`
 - Share one serving helper between scripts and browser tests

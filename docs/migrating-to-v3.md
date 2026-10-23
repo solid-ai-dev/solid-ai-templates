@@ -30,10 +30,10 @@ receives nothing (ADR-051).
 | Rules for writing this repository's checks: control runs, prose detectors, refused preconditions, remedy references | `base-testing` | this repository's playbook |
 | Python and pytest test mechanics: tier import modes, `__all__`, worked fixtures | `base-testing` | a fork's stack |
 | The cohort check after a bulk migration, `base-testing-data-validation` | `base-testing` | `base-data-migration` |
-| Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed |
+| Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed; one diagnostic-view rule remains |
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
-| Mermaid parser quirks, bulk-emit and round-trip generator rules | `base-docs` | removed |
+| Mermaid parser quirks, bulk-emit and round-trip generator rules | `base-docs` | removed; one rule each on Mermaid notes, stale counts and refresh remains |
 | Verifying a filed issue in full, its shapes and checks; counting a text's self-claims | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
@@ -57,7 +57,7 @@ receives nothing (ADR-051).
 | `quality-gates-length-bound-exemptions`, synthetic-subject and fixing-branch controls, the backslash table | `base-quality-gates`, `base-embedded-checks` | this repository's playbook |
 | The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
 | `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
-| Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral |
+| Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral; one cross-language port rule remains |
 | The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once, DAST before production and artifact promotion remain |
 | Kubernetes: namespaces, two replicas per service, probes, PodDisruptionBudget, ConfigMap secrets | `base-containers` | removed; resources as code and the readiness gate remain, orchestrator-neutral |
 | Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file; relational rules say so |
@@ -68,8 +68,8 @@ receives nothing (ADR-051).
 | `frontend-static-site`: one stylesheet, BEM naming, system fonts, the `localStorage` theme snippet, the page table, lint and format files | `frontend-static-site` | removed with the template; a fork's static-site stack carries its choices |
 | `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept |
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
-| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | this repository's playbook; the `check-heading-numbers` hook still ships |
-| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | removed; a neutral editor-settings rule remains |
+| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | stays in `base-git`, with the `check-heading-numbers` hook; the playbook keeps this repository's own form |
+| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | mask and allowlist removed; the submodule update and a neutral editor-settings rule remain |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and

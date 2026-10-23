@@ -6,8 +6,9 @@ How changes are committed, reviewed, verified and merged.
 
 ## Commits
 
-- Commit under your full name and one consistent work email; never change
+- Commit under your full name and one consistent email; never change
   identity mid-project
+- Use a work email in a work repository, never a personal one
 - Work on a branch; never commit directly to `main`
 - Never commit build output, dependency directories or secrets
 - Commit a generated file only when the project tracks it on purpose, under
@@ -22,7 +23,7 @@ How changes are committed, reviewed, verified and merged.
 
 ## Pull requests
 
-- Keep a pull request to one concern
+- Keep a pull request to one concern (SHOULD)
 - Test locally before committing
 - Review the diff against the base before merging, in the order security,
   correctness, clarity, conventions
@@ -58,6 +59,8 @@ echo "checks not passing: $failing"
   or a failing or cancelled check
 - Re-run a verification a pull request body claims once the base has moved
   since it was written; above all a proof of absence
+- Read a new or changed workflow's first run in its real environment, and
+  require a verdict from it before trusting the workflow
 
 ## Updating a branch
 
@@ -66,14 +69,33 @@ echo "checks not passing: $failing"
   `gh pr update-branch <N>`; never rebase and force-push
 - Regenerate derived artifacts and re-run the staleness comparison after
   every such merge, and stage what they produce
+- Run `git submodule update --init --recursive` after pulling a change that
+  moves a submodule pointer; the checkout keeps the old revision otherwise
+
+## Numbered documents
+
+- Check an ordered document's numbering after merging the base in,
+  whenever two open pull requests edit it
+- Read an indexed table's rows yourself; the hook below checks numbered
+  headings and ordered list items only
+
+```bash
+pre-commit run check-heading-numbers --all-files --verbose
+```
+
+- Require the documents-inspected and ordinals-inspected counts above zero
+  and `numbering problems` zero
+- Pass each numbered document as a `--path` argument
 
 ## Regenerated artifacts
 
+- Apply these rules to a one-directional artifact, one never read back
+  into its source; a bidirectional one follows its own two rules below
 - Regenerate a derived artifact in the change that edits its source, and
   stage both together (MUST)
 - Name the regeneration trigger beside the sources it derives from (MUST)
-- Run the staleness comparison after the edit, and again after merging the
-  base in (MUST)
+- Run the staleness comparison after the edit, and again after any merge
+  that brings another branch's sources in (MUST)
 
 ```bash
 <regenerate-command>
@@ -104,8 +126,9 @@ git diff --ignore-all-space <file>
   and confirm it tracks its source
 - Regenerate a known-current control artifact first; a non-zero diff there
   means the environment disagrees with the committed files
+- Reconcile a non-zero control diff before committing anything regenerated
 - Pair a spot-check of three to five representative artifacts with one
-  metric across the whole population
+  population metric when a change regenerates many
 
 ## Off-limits paths
 
@@ -116,6 +139,7 @@ git diff --ignore-all-space <file>
   and a vendored rules submodule's pointer
 - Propose a change inside an off-limits path before making it, with a
   rollback strategy and the tests that would catch a regression (MUST)
+- Treat an approval as covering the proposed plan, never the whole path
 - Apply the restriction to executable content: steps, commands, flags,
   permissions, triggers, pins, a vendored pointer's revision
 - Treat a diff confined to prose as ordinary work

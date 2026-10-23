@@ -105,6 +105,11 @@ CHECKS = [
      "reason": "Takes the pull request about to merge as `<N>`. Run per "
                "merge, before `gh pr merge`, not against a tree."},
 
+    {"file": "core/git.md", "find": "check-heading-numbers",
+     "title": "An ordered document keeps its numbering", "do": RUN,
+     "args": ["--path", "AGENTS.md", "--path", "docs/playbook.md"],
+     "expect": ["nonzero", "nonzero", "zero"]},
+
     {"file": "core/git.md", "find": "report-off-limits-paths",
      "title": "A diff touching an off-limits path says so", "do": RUN,
      "args": ["--path", ".github/workflows/", "--path", ".env",

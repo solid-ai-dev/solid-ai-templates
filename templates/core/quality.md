@@ -8,9 +8,14 @@ How code is designed, kept clean, swept and checked.
 
 - Keep one authoritative representation of each piece of knowledge (DRY);
   the third copy is a bug
+- Extract shared logic only where substantial logic repeats; a few similar
+  lines inline are not duplication
 - Choose the simplest solution a stated requirement justifies (KISS)
 - Build what is needed now, never for a hypothetical requirement (YAGNI)
 - Record beside every deferral the concrete condition that reopens it
+- Record missing evidence as the finding of a spike that cannot clear its
+  bar
+- Never lower a spike's bar to ship an answer
 - Delete a path once evidence shows it unreachable or obsolete: no caller,
   or a retired input
 - Treat a real-data probe that never reaches a path as a lead, not proof;
@@ -73,6 +78,7 @@ How code is designed, kept clean, swept and checked.
 - Keep coupling shallow: a change inside one module MUST NOT require
   changes in unrelated modules
 - Talk only to direct dependencies, and keep together what changes together
+  (SHOULD)
 - Reach a heavy, native or platform-limited dependency through one module
   that owns its import and names the install command when it is missing
 - Run one CI leg without the optional dependency installed, importing the
@@ -135,6 +141,8 @@ declared.
   extraction is planned: inject host values as constructor parameters, and
   give it its own public API, README, tests and requirements (SHOULD)
 - Keep a CLI a thin layer over a library that holds its logic
+- Port a function to another language exactly: the same operation order,
+  character classes and edge cases, citing the original
 - Split an oversized module into a package behind its existing import path,
   re-exporting from the package's entry module, and leave the test suite
   untouched as the regression oracle
@@ -236,14 +244,16 @@ either failing exits non-zero.
   logic needs one (MAY)
 - Enforce the citation ban with a test that greps comments, docstrings and
   commented configuration for `#\d+` and `ADR\s*\d+`
-- Audit the citations to an item when closing or superseding it, and fix
-  each one left pointing at it
+- Audit the citations to an item when it closes without action or is
+  superseded, and fix each one still pointing at it; a citation to
+  completed work stands
 
 ```bash
 rg -n "#<number>\b"
 ```
 
-Pass condition: no line it prints still points at the closed item.
+Pass condition: no line it prints still points at the dropped or
+superseded item.
 
 - Place a block comment directly above the item it documents: never to
   the right of code, tool directives excepted, and never separated from the
@@ -277,8 +287,8 @@ person.
   before the commit that uses its findings (MUST)
 - Keep findings in source comments, decision records or docs, never in
   the probe
-- Use a probe for a uniform edit across many call sites; review the diff,
-  then delete the probe
+- Use a probe for one mechanical edit repeated across many identical call
+  sites (MAY); review the diff, then delete the probe
 
 ### Scripts directory
 
@@ -363,6 +373,8 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 
 ### Verdicts and readings
 
+- Verify a measurement against an independent check before tuning a gate
+  or budget threshold it disagrees with
 - Refuse, as a finding and never as exit 3, when the command that should
   yield a comparison baseline yields none, and print the baseline on its
   own line (MUST)
