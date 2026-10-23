@@ -9308,3 +9308,44 @@ fork side of #2084 to #2090.
   the stale row beside the new one; resolve it per path
 - Two agents reviewing the same template agreed on its value and differed
   only on where it lives; the second view kept `embedded-checks` opt-in
+
+## 2026-10-23 — Agent reviews and restoring what the rewrites cut
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- The fifteen score rewrites merged (#2107 to #2121) and the score floor
+  of 95 closed #2106 (#2122)
+- Two agent reviews of all 39 templates filed epic #2124; confirmed
+  defects fixed: wrong or outdated rules (#2136), conflicts inside one
+  template (#2137) and across two (#2138), and a second review's set,
+  including the PII log exception and the TTL as the staleness bound
+  (#2140)
+- AGENTS.md: shorten a rule by splitting it, never by dropping its
+  condition or main exception (#2141)
+- A per-rule audit of the score rewrites restored five conditions (#2144);
+  one subagent per core rewrite under #2024 found 56 more, restored with
+  twelve general rules that had moved to the playbook (#2145)
+
+**Pull requests merged:** #2107 to #2123, #2136 to #2138, and #2140,
+#2141, #2144 and #2145.
+
+**Issues closed:** #2106, #2125, #2126, #2127, #2139, #2142, #2143.
+
+**Issues created:** #2124 to #2135, #2139, #2142, #2143, #2146.
+
+**Gaps flagged:**
+- The line-width conformance check timed out on its `npx` download in CI
+  and passed on rerun; the Release gates run it on the tag (#2146)
+- The playbook, "Review a template", does not yet name the per-rule audit
+  of a rewrite's diff
+- #2077 stays open: the reviews read every template, not each root's chain
+
+**Lessons:**
+- A length-based score cannot see a dropped "when", "prefer" or
+  "probably", and here a plain imperative reads as MUST, so a shorter rule
+  can pass every gate while saying something stronger or wider
+- A rule "moved to the playbook" leaves consuming projects, which never
+  receive the playbook
+- Every outside finding pasted this session held when checked against the
+  tree; two of them corrected claims this session had made
