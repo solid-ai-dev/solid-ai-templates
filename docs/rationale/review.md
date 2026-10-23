@@ -80,5 +80,7 @@ found before, and where, surfaces a genuine change.
 ## Deviations
 
 A SHOULD admits a justified exception, and the pull request is where the
-justification is read. A MUST does not, so lifting one is a decision for an
-approver, not the author.
+justification is read. A MUST or MUST NOT does not, so lifting one is a
+decision for an approver, not the author, and an agent meeting one it
+cannot satisfy stops and asks rather than writing its own rationale. The
+recorded reason lets the next reader see why the rule did not hold.
