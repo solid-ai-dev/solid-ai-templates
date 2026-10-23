@@ -166,6 +166,8 @@ Releases up to 2.63.0 are listed in
 - Assisted ground-truth values are marked and never used for blind calibration ([#2163])
 - The containers runtime rule allows a CI matrix of supported versions ([#2164])
 - Content SEO rules hold however a site is served, not only for static builds ([#2166])
+- MUST and MUST NOT share one exception policy: an approver's sign-off and a reason
+  ([#2168])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -244,6 +246,7 @@ Releases up to 2.63.0 are listed in
 [#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
 [#2166]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2166
 [#2167]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2167
+[#2168]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2168
 
 ## [2.90.0] - 2026-09-12
 
