@@ -14,17 +14,19 @@
 
 - Separate data fetching and state (container) from rendering
   (presentational); give presentational components only props and no side
-  effects
+  effects (SHOULD)
 - Expose related sub-components that share implicit state as a compound
   component (`<Tabs>`, `<Tab>`, `<TabPanel>`) rather than drill props
+  (SHOULD)
 - Subscribe to external state (store, event bus, WebSocket) through one
-  subscription point, and unsubscribe on unmount
+  subscription point, and unsubscribe on unmount (SHOULD)
 - Wrap a third-party library (analytics, maps, payment SDK) behind a thin
   project-owned interface; never scatter its calls across components
+  (SHOULD)
 - Apply a mutation's expected result at once and roll back on failure;
-  document the rollback path
-- Never connect components through an event bus; share state or lift it
-  up instead
+  document the rollback path (SHOULD)
+- Avoid connecting components through an event bus; share state or lift
+  it up instead (SHOULD NOT)
 
 ## State management
 

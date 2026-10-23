@@ -53,7 +53,7 @@
 
 ## Backward compatibility
 - Release a new major version for every breaking change: a removed or
-  renamed response field, a changed field type, a new auth scheme
+  renamed response field, a changed field type, a switched auth scheme
 - Treat as breaking, too, a changed verb or path, wire protocol or
   Content-Type, and business logic that changes observable results
 - Never bump the version for an additive change (MUST NOT): a new optional
