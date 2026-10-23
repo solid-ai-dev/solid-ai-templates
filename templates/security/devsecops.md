@@ -88,9 +88,10 @@ build, review and release, never after deployment.
 set -e -o pipefail
 SBOM=<sbom.json>
 # CycloneDX records the delivered package in metadata.component; a tool that
-# also lists it under components is counted once.
+# also lists it under components is counted once. Identity keeps the group,
+# so @alpha/client and @beta/client stay two packages.
 listed='[.metadata.component // empty, (.components // [])[]]
-  | map("\(.name) \(.version // "-")") | unique'
+  | map("\(.group // "" | if . == "" then "" else . + "/" end)\(.name) \(.version // "-")") | unique'
 count=$(jq "$listed | length" "$SBOM")
 echo "components: $count"
 jq -r "$listed | .[]" "$SBOM"

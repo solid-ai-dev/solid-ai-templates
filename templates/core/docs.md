@@ -98,7 +98,7 @@ Which documents a project keeps, and how they stay true.
 CONFIG=<markdownlint-config>
 lint() { npx --yes markdownlint-cli2 --config "$@" 2>&1; }
 probe=$(mktemp -d) && printf 'word %.0s' $(seq 200) > "$probe/probe.md"
-width=$(cd "$probe" && lint "$OLDPWD/$CONFIG" probe.md |
+width=$(cfg=$(realpath "$CONFIG") && cd "$probe" && lint "$cfg" probe.md |
   sed -n 's/^probe\.md:.* MD013.*Expected: \([0-9][0-9]*\);.*/\1/p') || true
 rm -rf "$probe"
 key="^[[:space:]]*\"?line_length\"?[[:space:]]*:[[:space:]]*${width:--}([^0-9]|\$)"
