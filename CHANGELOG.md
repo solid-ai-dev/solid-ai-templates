@@ -137,6 +137,8 @@ Releases up to 2.63.0 are listed in
   ([#2167])
 - A rule repeated across templates is stated once wherever every chain still sees it
   ([#2170])
+- The template scorer lowers rules that open with a subject and wraps broken mid-rule
+  ([#2172])
 
 ### Deprecated
 
@@ -254,6 +256,7 @@ Releases up to 2.63.0 are listed in
 [#2169]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2169
 [#2170]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2170
 [#2171]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2171
+[#2172]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2172
 
 ## [2.90.0] - 2026-09-12
 
