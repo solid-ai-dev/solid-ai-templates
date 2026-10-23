@@ -108,7 +108,11 @@ declared.
   missing; never fall back to a value derived from a slug, name or hash
 - Bound every wait on another thread, process or connection, report why it
   gave up, and check the worker's liveness as well as the deadline
-- Derive every deliberate raise from one package base
+- Group every deliberate raise under one package error type: a common base
+  where the language allows it, or an interface, trait or error code where
+  a base would conflict
+- Never break a public catch contract: a raise callers catch by a built-in
+  type keeps that type
 - Derive each type also from the built-in its site raised before, where the
   language lets an error type have two bases
 - Split an error type only where a caller could act differently

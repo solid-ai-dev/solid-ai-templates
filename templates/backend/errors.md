@@ -54,7 +54,10 @@ log level and the recovery:
 - Log the full external error at ERROR level; return the caller only a
   safe, generic message
 - Retry a transient external failure with exponential backoff and jitter,
-  only where the call is idempotent or carries an idempotency key
+  only where repeating the call is safe
+- Treat a call as safe to repeat when it is idempotent, or when every
+  attempt reuses one idempotency key the destination honours for the
+  whole retry window
 - Never retry an external 4xx other than 408 or 429
 - Wait at least as long as a `Retry-After` header asks
 
