@@ -74,8 +74,10 @@ tool drives it.
   (MUST NOT)
 - Never mutate host state outside the working directory: the process
   table, system services, the registry, the user's applications (MUST NOT)
-- Stub every seam through which the code under test reaches the host, even
-  when its subject is already faked
+- Stub every seam through which the code under test reaches a host
+  resource the test does not own, even when its subject is already faked
+- Keep the dependency an integration test covers real, isolated to that
+  test, such as a throwaway container or a temporary database
 - Investigate a failing test before anything else; never skip or suppress
   one without a documented reason
 - Check the test's own logic first when it behaves unexpectedly

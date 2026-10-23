@@ -23,8 +23,11 @@ cache technology (Redis, Memcached, in-process).
 - Avoid write-behind, writing to cache immediately and persisting to source
   asynchronously, unless throughput requirements justify the added
   complexity and risk
-- Never cache at more than one layer for the same data — multiple caches
-  create inconsistency and make invalidation impossible to reason about
+- Cache the same data at one layer (SHOULD); several caches drift apart
+  and make invalidation hard to reason about
+- Where a second layer earns its place, such as a CDN in front of an
+  application cache, let one layer own invalidation and give the others
+  short TTLs
 
 ## Keys
 
