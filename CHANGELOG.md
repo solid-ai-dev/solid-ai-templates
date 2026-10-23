@@ -187,6 +187,8 @@ Releases up to 2.63.0 are listed in
   are allowed ([#2203])
 - The CI poll survives strict Bash, large negative integers become strings, auth
   allows local HTTP ([#2207])
+- Four shipped checks read what they claim: SBOM root, line endings, width and
+  env presence ([#2228])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -277,6 +279,7 @@ Releases up to 2.63.0 are listed in
 [#2198]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2198
 [#2203]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2203
 [#2207]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2207
+[#2228]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2228
 
 ## [2.90.0] - 2026-09-12
 
