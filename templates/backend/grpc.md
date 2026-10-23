@@ -19,8 +19,9 @@ file with runtime conventions, project structure, and tooling.
 [ID: grpc-proto]
 
 - Package all protos under a versioned namespace: `package [org].[service].v1`
-- One proto file per service — do not mix unrelated services in one file
-- Field names in `snake_case` — generated code adapts to each language's
+- Keep one proto file per service — do not mix unrelated services in one
+  file
+- Name fields in `snake_case` — generated code adapts to each language's
   conventions
 - Use `google.protobuf.Timestamp` for all timestamps — never raw integers
 - Use `google.protobuf.FieldMask` for partial update (patch) operations
