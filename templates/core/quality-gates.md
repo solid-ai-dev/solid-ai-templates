@@ -24,9 +24,9 @@ looks like a clean one.
 - Keep a subjective constraint declarative, and never invent a brittle
   check for it
 - Wire a check guarding a committed generated artifact into CI as a
-  required status check (see `quality-gates-staleness`)
-- Test a pattern check against its own source, as
-  `quality-cross-validation` states
+  required status check (see "Generated-file staleness" below)
+- Test a pattern check against its own source, as `core/quality.md`,
+  "Check trust", states
 
 A line-length limit of 80, for example, pairs with:
 
@@ -50,8 +50,8 @@ Pass condition: no output. Any line printed is longer than the limit.
 Committed generated artifacts — rendered docs, configs, resolved chains,
 schema output — drift silently without a gate.
 
-- Wire the `--check` invocation from `base-docs` into CI as a required
-  status check on the relevant paths
+- Wire the `--check` invocation from `core/docs.md`, "Generated files",
+  into CI as a required status check on the relevant paths
 - Generate hand-written content that reproduces tool output behind a
   marker, so the gate covers it
 - Enumerate the derivable blocks inside each artifact, not only the
@@ -61,7 +61,7 @@ schema output — drift silently without a gate.
 - Treat a banner naming the regenerate command as decorative without the
   gate
 - Run the gate on the relevant paths; passing because skipped is not
-  passing (see `quality-gates-scope-agreement`)
+  passing (see "Gate scope" below)
 - Make the path filter enumerate all three inputs: the generator code, the
   source assets the render consumes, and the committed artifacts
 - Never scope the filter to the generator alone
@@ -101,13 +101,14 @@ informally.
 - Run a check whose subject is the change under review in the environment
   that builds its tree
 - Report what a check inspected, not only what it found; the test-suite
-  form of this rule is `testing-negative-assertion-coverage`
+  form of this rule is `core/testing.md`, "Empty results"
 - Report how many checks a tool could not read beside how many it ran
   (MUST)
 - Report every finding before exiting; where a check cannot continue past
   one, say so
-- Decide which counts carry the verdict as `quality-cross-validation`
-  states, from the pass condition rather than a sample of the output
+- Decide which counts carry the verdict as `core/quality.md`,
+  "Check trust", states, from the pass condition rather than a sample of
+  the output
 - Report an empty result as a failure where emptiness means drift
 - Emit ASCII only, and print an offending character's code point, never
   the character
@@ -202,7 +203,7 @@ three MUST hold:
 - List the emitted path in the formatter's ignore list
   (`.prettierignore`, black `force-exclude`, or equivalent)
 - Run a CI staleness gate (`<generator> --check`) on the same paths (see
-  `quality-gates-staleness`)
+  "Generated-file staleness" above)
 - Land both in the same pull request
 
 ### Skipped jobs

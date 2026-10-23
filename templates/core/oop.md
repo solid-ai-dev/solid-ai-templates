@@ -47,7 +47,8 @@ Apply SOLID at the class, module and service level:
 - Give a capability its own name where a class part-way down a hierarchy
   offers what its own subtypes must not; never widen the shared operation
 - Check overrides with a strict type checker's override rule, bound in
-  `base-<language>-tooling`, and shrink its variadic findings first
+  the project's type-checker configuration, and shrink its variadic
+  findings first
 - Where that checker is frozen, keep a contract test walking every
   concrete class: each override keeps its member kind and first parameter,
   only appends parameters, and declares no variadic
