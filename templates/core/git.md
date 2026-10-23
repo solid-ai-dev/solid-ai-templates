@@ -40,14 +40,14 @@ How changes are committed, reviewed, verified and merged.
 PR=<N>
 count=0
 for _ in $(seq 1 60); do
-  count=$(gh pr checks "$PR" --json name --jq 'length' 2>/dev/null)
+  count=$(gh pr checks "$PR" --json name --jq 'length' 2>/dev/null || true)
   [ "${count:-0}" -gt 0 ] && break
   sleep 5
 done
 echo "checks registered: ${count:-0}"
 [ "${count:-0}" -gt 0 ] || exit 1
-gh pr checks "$PR" --watch > /dev/null
-watched=$?
+watched=0
+gh pr checks "$PR" --watch > /dev/null || watched=$?
 failing=$(gh pr checks "$PR" --json bucket --jq '[.[] | select(.bucket != "pass" and .bucket != "skipping")] | length')
 echo "checks not passing: $failing"
 [ "$watched" -eq 0 ] && [ "$failing" -eq 0 ]
