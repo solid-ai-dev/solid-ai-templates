@@ -189,10 +189,12 @@ means the project tracks none.
 git ls-files --eol | awk -F'\t' '
   $2 ~ /\.(md|py|ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts)$/ {
     seen++
-    if ($1 !~ /^i\/lf/) { bad[++n] = $0 }
+    if (($1 " ") ~ /attr\/(.* )?-text /) { exempt++; next }
+    if ($1 !~ /^i\/(lf|none) /) { bad[++n] = $0 }
   }
   END {
     printf "text files inspected: %d\n", seen + 0
+    printf "exempt by -text: %d\n", exempt + 0
     printf "files not filed i/lf: %d\n", n + 0
     for (i = 1; i <= n; i++) print "  " bad[i]
     exit (seen == 0 || n > 0)
@@ -200,9 +202,9 @@ git ls-files --eol | awk -F'\t' '
 ```
 
 Pass condition: exit zero, given only when the inspected count is above
-zero and the count of files not filed `i/lf` is zero. It matches "not
-`i/lf`" so a file git filed as `i/-text` for a stray carriage return is
-caught too.
+zero and the not-`i/lf` count is zero. A `-text` file is exempt and an
+empty `i/none` file passes; a stray carriage return, filed `i/-text`,
+still fails.
 
 - Refresh a checkout older than `.gitattributes` by rewriting its files or
   re-cloning; the index being right does not make the checkout right

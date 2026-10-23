@@ -8,7 +8,7 @@ templates/backend/auth.md 100.0
 templates/backend/caching.md 100.0
 templates/backend/concurrency.md 98.1
 templates/backend/database.md 100.0
-templates/backend/edge.md 98.1
+templates/backend/edge.md 98.3
 templates/backend/errors.md 98.6
 templates/backend/features.md 100.0
 templates/backend/grpc.md 100.0
@@ -27,7 +27,7 @@ templates/core/git.md 98.7
 templates/core/measurement.md 96.3
 templates/core/oop.md 96.1
 templates/core/quality-gates.md 98.1
-templates/core/quality.md 97.6
+templates/core/quality.md 97.8
 templates/core/review.md 100.0
 templates/core/testing.md 99.7
 templates/data/data-governance.md 100.0
