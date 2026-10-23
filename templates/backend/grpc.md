@@ -37,6 +37,9 @@ file with runtime conventions, project structure, and tooling.
 - Domain service functions have no gRPC imports — independently testable
 - Validate request messages at the handler entry point; return
   `INVALID_ARGUMENT` for missing or malformed fields
+- Return every error as a status code from the table below, never as an
+  HTTP status or a problem JSON body; put structured detail in
+  `google.rpc.Status` details
 
 ### Status codes
 

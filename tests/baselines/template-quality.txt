@@ -11,7 +11,7 @@ templates/backend/database.md 100.0
 templates/backend/edge.md 97.5
 templates/backend/errors.md 99.3
 templates/backend/features.md 100.0
-templates/backend/grpc.md 96.1
+templates/backend/grpc.md 96.4
 templates/backend/http.md 98.0
 templates/backend/jobs.md 97.2
 templates/backend/messaging.md 96.8
