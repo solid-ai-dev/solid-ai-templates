@@ -147,3 +147,14 @@ answer rather than an error.
   source silence skips the comparison (MUST)
 - Keep stored-default conventions (`absent = false`, `null = unknown`)
   intact
+
+## Citing the software (if applicable)
+
+- Cite a persistent identifier as the citation of record, never a URL
+  (MUST)
+- Archive each release, mint an identifier, and cite the one that resolves
+  to the latest version (SHOULD)
+- Ship a machine-readable citation file at the repository root that records
+  the identifier (SHOULD)
+- Never present a project domain or vanity URL as the citation of record
+  (MUST NOT)

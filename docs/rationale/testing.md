@@ -168,22 +168,6 @@ regressed, staleness checks pass because no artifact changed. The new code
 can still never fire on the real case, because the real input lacks the
 shape the fix assumed.
 
-## testing-characterization-fingerprint
-
-A reordered dict, a one-ULP float shift or a changed RNG draw order
-perturbs a large output that unit tests check only in the small. A
-committed platform-dependent hash goes flaky across machines, so the
-fingerprint proves the refactor and invariant tests guard the future.
-
-## testing-ast-equivalence
-
-An output fingerprint cannot prove a formatter's rewrite was mechanical,
-because it assumes what is in question. Syntax trees answer it directly,
-and every mainstream language exposes them. One adoption rewrote nearly every
-file and reported a single differing tree, which had lost a redundant
-`u""` prefix. The normalisation decides which differences are declared
-invisible, so it is stated before the result is read.
-
 ## testing-verify-the-render
 
 A design token can resolve unexpectedly, a more specific rule can win the
@@ -191,14 +175,6 @@ cascade, a deploy can lag its source, a cache can serve an old copy. The
 before-capture confirms the problem exists at all. Golden-output tests pin
 structure and text but cannot say whether something is black, centred or on
 screen.
-
-## testing-ast-contract
-
-A blanket annotation lint forces `Any` onto private helpers that take
-unstubbed third-party objects. Splitting the rule lets the linter own format
-and complexity while a test owns presence on the public surface only. The
-same traversal can enforce adjacent rules no linter has, such as a trailing
-comment or a ticket number in a comment.
 
 ## testing-drift-guard
 
@@ -208,20 +184,6 @@ holds strings, so an entry can name nothing; ruff `F822` reports that in a
 plain module and stays silent in `__init__.py`, where export lists live.
 Languages whose compiler sees the export (Rust `pub use`, Go capitalised
 names) need no guard.
-
-## testing-in-process-server
-
-A framework test client bypasses the real server, its headers and its
-static-file content types; a container is slow and needs a runtime. Port 0
-never collides across parallel tests. Python `make_server(..., 0, ...)`,
-Node `server.listen(0)` and Go `httptest.Server` all expose the primitive.
-
-## testing-container-e2e
-
-Hardcoding Docker and a fixed sleep breaks on rootless Podman, in CI
-without Docker, and on a slow start. Ryuk and similar reapers assume a
-privileged Docker. Local multi-service composition belongs to
-`containers.md`.
 
 ## testing-tier-by-directory
 
