@@ -7,26 +7,6 @@ Releases up to 2.63.0 are listed in
 
 ## [Unreleased]
 
-### Fixed
-
-- Seven template rules that were wrong or out of date are corrected ([#2136])
-- Two templates no longer state rules that contradict each other ([#2137])
-- Nine pairs of rules in different templates no longer contradict ([#2138])
-- Seven rules a second agent review found conflicting or over-broad are fixed ([#2140])
-- Five rules shortened past their meaning get their conditions back ([#2144])
-- Core rules the v3 rewrites cut keep their conditions and return ([#2145])
-- The containers runtime rule allows a CI matrix of supported versions ([#2164])
-
-[#2136]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2136
-[#2137]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2137
-[#2138]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2138
-[#2140]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2140
-[#2144]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2144
-[#2145]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2145
-[#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
-
-## [3.0.0] - 2026-10-19
-
 ### Breaking changes
 
 - The tools are named verb-first: resolve_chain, sync_docs, check_release
@@ -170,6 +150,19 @@ Releases up to 2.63.0 are listed in
   ([#2017])
 - The agents template states a rule instead of citing a record ([#2017])
 - A duplicate template ID stops the resolver ([#2010])
+- Seven template rules that were wrong or out of date are corrected ([#2136])
+- Two templates no longer state rules that contradict each other ([#2137])
+- Nine pairs of rules in different templates no longer contradict ([#2138])
+- Seven rules a second agent review found conflicting or over-broad are fixed ([#2140])
+- Five rules shortened past their meaning get their conditions back ([#2144])
+- Core rules the v3 rewrites cut keep their conditions and return ([#2145])
+- A regenerated file is dropped only when its diff is line endings only ([#2158])
+- The gRPC template no longer reserves the number of a field it still declares ([#2159])
+- HTTP's problem-JSON error rules apply to REST endpoints only, not gRPC calls ([#2160])
+- Testing rules agree to assert declared error types, not runtime ones ([#2161])
+- Write-through caching is described as shortening staleness, not removing it ([#2162])
+- Assisted ground-truth values are marked and never used for blind calibration ([#2163])
+- The containers runtime rule allows a CI matrix of supported versions ([#2164])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -233,6 +226,19 @@ Releases up to 2.63.0 are listed in
 [#2102]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2102
 [#2103]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2103
 [#2104]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2104
+[#2136]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2136
+[#2137]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2137
+[#2138]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2138
+[#2140]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2140
+[#2144]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2144
+[#2145]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2145
+[#2158]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2158
+[#2159]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2159
+[#2160]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2160
+[#2161]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2161
+[#2162]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2162
+[#2163]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2163
+[#2164]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2164
 
 ## [2.90.0] - 2026-09-12
 

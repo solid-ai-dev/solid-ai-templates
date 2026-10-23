@@ -67,7 +67,10 @@ not measured against it. "The evidence does not exist yet" reads as a
 non-answer unless stated as the deliverable.
 
 Showing the candidate output beside a reading task biases the reading toward
-the candidate and turns calibration into a self-confirming loop.
+the candidate and turns calibration into a self-confirming loop. Assisted
+annotation, where a person corrects predictions they are shown, is a fair
+way to build ground truth at volume, but its accepted values carry the same
+bias, so they never stand in for an independent reading of that predictor.
 
 ## measurement-source-silence
 

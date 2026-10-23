@@ -91,8 +91,8 @@ CHECKS = [
                     PYTHON + " tools/sync_docs.py > /dev/null || exit 1",
                     "<artifact-path>": "."}},
 
-    {"file": "core/git.md", "find": "--ignore-all-space <file>",
-     "title": "A whitespace-only regeneration diff is dropped before staging",
+    {"file": "core/git.md", "find": "--ignore-cr-at-eol <file>",
+     "title": "A line-ending-only regeneration diff is dropped before staging",
      "do": SKIP,
      "reason": "Classifies one file's pending change, between regenerating "
                "and staging it. It is run per change on the file just "
