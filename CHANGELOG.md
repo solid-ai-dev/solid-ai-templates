@@ -187,7 +187,8 @@ Releases up to 2.63.0 are listed in
   are allowed ([#2203])
 - The CI poll survives strict Bash, large negative integers become strings, auth
   allows local HTTP ([#2207])
-- Hooks parse every Markdown fence, resolve Python imports and follow script\n  references ([#2230])
+- Hooks parse every Markdown fence, resolve Python imports and follow script
+  references ([#2230])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
