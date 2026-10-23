@@ -9327,8 +9327,8 @@ fork side of #2084 to #2090.
   one subagent per core rewrite under #2024 found 56 more, restored with
   twelve general rules that had moved to the playbook (#2145)
 
-**Pull requests merged:** #2107 to #2123, #2136 to #2138, and #2140,
-#2141, #2144 and #2145.
+**Pull requests merged:** #2107 to #2123, #2136 to #2138, #2140,
+plus #2141, #2144 and #2145.
 
 **Issues closed:** #2106, #2125, #2126, #2127, #2139, #2142, #2143.
 
