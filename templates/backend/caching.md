@@ -47,7 +47,11 @@ cache technology (Redis, Memcached, in-process).
 
 - Invalidate cache entries on write, not only on TTL expiry
 - State the stale window each cached key tolerates
-- Set the key's TTL no longer than that window; the TTL is the bound
+- Set the key's TTL no longer than that window; the TTL bounds an entry's
+  age, not how stale its value was when cached
+- Populate the cache from the source of truth, never a lagging replica
+- Guard a write-back on a miss against a concurrent invalidation, such as
+  with a version check, or count that race in the stale window
 - Expect no atomic invalidation across a separate cache and database: an
   outbox consumer can lag, and a pub/sub subscriber can miss a message
 - Invalidate through an outbox or pub/sub to cut typical staleness, never

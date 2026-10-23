@@ -177,6 +177,8 @@ Releases up to 2.63.0 are listed in
 - Content SEO rules hold however a site is served, not only for static builds ([#2166])
 - MUST and MUST NOT share one exception policy: an approver's sign-off and a reason
   ([#2168])
+- Eight rules an agent review found wrong are corrected, from check exit codes to
+  tracing ([#2183])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -262,6 +264,7 @@ Releases up to 2.63.0 are listed in
 [#2172]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2172
 [#2173]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2173
 [#2174]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2174
+[#2183]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2183
 
 ## [2.90.0] - 2026-09-12
 
