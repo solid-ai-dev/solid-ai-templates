@@ -252,8 +252,9 @@ failures, and server-side request forgery.
 - Never read, print, or cat files that may contain secrets (MUST NOT):
   `.env`, `credentials.json`, `*-key*`, `*.pem`, `*.key`,
   `serviceaccount.json`, `secrets.yaml`
-- Never echo, log, or display environment variable values (MUST NOT); use
-  `printenv | grep -c KEY` to check presence without revealing the value
+- Never echo, log, or display environment variable values (MUST NOT); check
+  presence by exact name with `test -n "${KEY:-}" && echo present`, which
+  prints no value and treats a set but empty variable as absent
 - Never include secret values in commit messages, PR descriptions, or
   conversation output (MUST NOT)
 - Warn the user (MUST) before committing files that commonly contain

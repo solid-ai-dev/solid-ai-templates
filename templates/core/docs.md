@@ -83,6 +83,7 @@ Which documents a project keeps, and how they stay true.
 - Declare the width as the line-length setting in the Markdown linter's
   configuration (MUST); the linter reads no other file, so a width set only
   in `.editorconfig` goes unenforced
+- Write that setting on a line of its own, so the check below can read it
 - Keep any second copy of the width, such as `.editorconfig` for editors,
   equal to the linter's
 - Declare in the same place which of fenced blocks, table rows and headings
@@ -95,21 +96,26 @@ Which documents a project keeps, and how they stay true.
 
 ```bash
 CONFIG=<markdownlint-config>
-widths=$(grep -c 'line_length' "$CONFIG" || true)
+lint() { npx --yes markdownlint-cli2 --config "$@" 2>&1; }
+probe=$(mktemp -d) && printf 'word %.0s' $(seq 200) > "$probe/probe.md"
+width=$(cd "$probe" && lint "$OLDPWD/$CONFIG" probe.md |
+  sed -n 's/^probe\.md:.* MD013.*Expected: \([0-9][0-9]*\);.*/\1/p') || true
+rm -rf "$probe"
+key="^[[:space:]]*\"?line_length\"?[[:space:]]*:[[:space:]]*${width:--}([^0-9]|\$)"
+widths=$(grep -Ec "$key" "$CONFIG" || true)
+echo "width the line-length rule enforces: ${width:-0}"
 echo "width settings in $CONFIG: $widths"
-status=0
-out=$(npx --yes markdownlint-cli2 --config "$CONFIG" "**/*.md" 2>&1) || status=$?
+out=$(lint "$CONFIG" "**/*.md") && status=0 || status=$?
 files=$(echo "$out" | sed -n 's/^Linting: \([0-9]*\) file.*/\1/p')
 echo "files linted: ${files:-0}"
 echo "$out" | grep -E ' MD[0-9]{3}' || true
-[ "$widths" -gt 0 ] && [ "${files:-0}" -gt 0 ] && exit "$status"
-exit 1
+[ "$widths" -gt 0 ] && [ "${files:-0}" -gt 0 ] && exit "$status" || exit 1
 ```
 
-Pass condition: both counts are non-zero, nothing follows them, and the
-block exits zero. A zero width count means the linter falls back to its
-default width, a zero file count means the globs reached nothing, and
-either exits non-zero.
+Pass condition: all three counts are non-zero, nothing follows them, and
+the block exits zero. A disabled width rule zeroes the first, a width
+only in a comment or by default the second, and globs reaching nothing
+the third.
 
 ## Writing style
 

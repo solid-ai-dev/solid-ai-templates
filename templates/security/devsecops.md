@@ -73,9 +73,10 @@ build, review and release, never after deployment.
 - Generate a software bill of materials per release (MUST)
 - Describe what a consumer installs, not what CI built with: install the
   artifact into a clean environment and scan that (MUST)
-- Match each SBOM package and version to the expected runtime dependency
-  set before attaching it (MUST)
-- List exactly one component for a library with no runtime dependencies
+- Match each SBOM package and version to the delivered package and its
+  expected runtime dependency set before attaching it (MUST)
+- List exactly one component for a library with no runtime dependencies,
+  whether in `metadata.component` or under `components`
 - Generate it reproducibly where the tool supports it, so anyone can
   rebuild the SBOM for a tag and compare it byte for byte
 - Attach it to the per-tag release record, never only to a CI artifact
@@ -86,15 +87,20 @@ build, review and release, never after deployment.
 ```bash
 set -e -o pipefail
 SBOM=<sbom.json>
-count=$(jq '(.components // []) | length' "$SBOM")
+# CycloneDX records the delivered package in metadata.component; a tool that
+# also lists it under components is counted once.
+listed='[.metadata.component // empty, (.components // [])[]]
+  | map("\(.name) \(.version // "-")") | unique'
+count=$(jq "$listed | length" "$SBOM")
 echo "components: $count"
-jq -r '(.components // [])[] | "\(.name) \(.version // "-")"' "$SBOM" | sort
+jq -r "$listed | .[]" "$SBOM"
 [ "$count" -gt 0 ]
 ```
 
-Pass condition: the listed packages and versions equal the expected
-runtime dependency set. A zero count exits non-zero, since it means no
-components were recorded, and so does a document jq cannot read.
+Pass condition: the listed packages and versions equal the delivered
+package plus its expected runtime dependency set. A zero count exits
+non-zero, since it means no components were recorded, and so does a
+document jq cannot read.
 
 ## DAST
 
