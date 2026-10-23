@@ -222,10 +222,12 @@ failures, and server-side request forgery.
 - Block requests to internal networks (`127.0.0.0/8`, `10.0.0.0/8`,
   `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16`, `::1`, `fc00::/7`),
   even after DNS resolution
-- Resolve the hostname and validate the IP before making the request; this
-  prevents DNS rebinding attacks
-- Disable HTTP redirects in server-side HTTP clients, or re-validate the
-  destination after each redirect
+- Resolve the hostname once, validate the IP, and connect only to that
+  address; a client that resolves the name again can be rebound by DNS
+- Keep TLS verifying the certificate against the original hostname when
+  the connection is pinned to the validated address
+- Disable HTTP redirects in server-side HTTP clients, or resolve and
+  validate each redirect's destination the same way
 - Limit response size and timeout for outbound requests to prevent
   resource exhaustion
 

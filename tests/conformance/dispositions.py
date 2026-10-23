@@ -88,7 +88,7 @@ CHECKS = [
      "title": "Regenerated artifact matches its sources", "do": RUN,
      "expect": [],
      "substitute": {"<regenerate-command>":
-                    PYTHON + " tools/sync_docs.py > /dev/null || exit 1",
+                    PYTHON + " tools/sync_docs.py > /dev/null",
                     "<artifact-path>": "."}},
 
     {"file": "core/git.md", "find": "--ignore-cr-at-eol <file>",

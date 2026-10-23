@@ -98,12 +98,16 @@ pre-commit run check-heading-numbers --all-files --verbose
   that brings another branch's sources in (MUST)
 
 ```bash
-<regenerate-command>
+<regenerate-command> || exit 1
+git ls-files --error-unmatch -- <artifact-path> > /dev/null || exit 1
 git diff --exit-code --stat -- <artifact-path>
 ```
 
-- Require no diff and a zero status; any output means the committed
-  artifact does not match its sources
+- Read the staged copy as the baseline: the comparison runs before the
+  commit, and in a clean checkout, such as CI's, the index is the commit
+- Require a zero status; a failed regenerator, an artifact that is not
+  staged and any diff each fail it
+- Treat any diff as a staged artifact that does not match its sources
 - Treat a regenerator that fails this on a current artifact as defective:
   it is not idempotent
 - Summarise the visible impact before and after in the pull request body:

@@ -40,10 +40,11 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 
 ## Authorization
 
-- Use role-based access control (RBAC) as the baseline:
+- Use role-based access control (RBAC) as the baseline (SHOULD):
   assign permissions to roles, assign roles to users
 - Add attribute-based access control (ABAC) as a layer on top of RBAC for
-  fine-grained needs; never replace RBAC with ABAC entirely
+  fine-grained needs
+- Replace RBAC with ABAC only with a reason in a decision record
 - Enforce authorization at the service layer, not only at the route layer;
   a route that passes auth may call a service that operates on another
   user's data
