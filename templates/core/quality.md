@@ -66,6 +66,12 @@ How code is designed, kept clean, swept and checked.
 - Replace a flag that selects how many rules apply with an operation
   returning findings, each naming its rule, plus a guard that raises when
   the findings are not empty
+
+  ```
+  validate(cfg, strict=False)                 which rules ran? none named
+  errors = findings(cfg); require_none(errors)  each names its rule
+  ```
+
 - Name every magic number and magic string as a constant
 - Size a numeric threshold from the measured distribution of its quantity
   (p95, p99, maximum legitimate), and name the data source in the
@@ -366,6 +372,12 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 - Say beside a check whose verdict takes a person what that judgement is
 - Never wire a governance signal as a build gate where the project's own
   rules oblige the change that trips it (MUST NOT)
+
+  ```
+  rule: each new fenced block adds an entry to the dispositions file
+  gate: fail any change that edits a test file -> every conforming change fails
+  ```
+
 - Never weaken the rule behind a check to make it green or quiet
 
 ## Enforcement

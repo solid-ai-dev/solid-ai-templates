@@ -85,6 +85,12 @@ items 2 to 4.
   one still resolves
 - Treat a closed classification in the acceptance criteria as a claim:
   sort every member yourself before acting on any
+
+  ```
+  criteria: "each check runs on Linux or macOS"
+  sorted:   9 Linux, 2 macOS, 1 neither -- it runs only on Windows
+  ```
+
 - Name each member that fits no branch, and the branch it fails
 
 ## Planning

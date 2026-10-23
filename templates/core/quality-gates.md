@@ -299,6 +299,13 @@ The table is the backlog, and shrinking it is the migration.
   order; cheapest first is a fair heuristic
 - Retire a freeze whose findings are raised at the caller, such as a strict
   type checker's unannotated-call code, callees before callers
+
+  ```
+  api.py calls db.py; both frozen on the unannotated-call code
+  db.py first: api.py's calls into it stop counting, api.py untouched
+  api.py first: its count barely moves while db.py stays frozen
+  ```
+
 - Derive that order from the import graph before sizing the slices
 - State the retirement order when the freeze is created
 - Start a slice by emptying the entry and re-running the gate
