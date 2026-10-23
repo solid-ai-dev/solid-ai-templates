@@ -59,7 +59,8 @@ An assertion phrased against a runtime detail tests the runtime.
 entering the unconstructed class raises `AttributeError` on Python 3.10 and
 `TypeError` on 3.13; both assertions written to catch one defect varied by
 platform and version. Exercising the object (acquire, release, enter) does
-not.
+not. An error type the interface declares is different: it is part of the
+contract callers handle, so asserting it tests the code, not the runtime.
 
 ## testing-guard-is-used
 

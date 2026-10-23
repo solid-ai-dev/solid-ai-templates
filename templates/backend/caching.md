@@ -17,7 +17,8 @@ cache technology (Redis, Memcached, in-process).
   source,
   populate cache, return result — default pattern for read-heavy workloads
 - **Write-through**: write to cache and source together on every update —
-  use when stale reads are unacceptable and write latency is acceptable
+  use to shorten the stale window when write latency is acceptable; the two
+  writes are not atomic, so it never closes the window
 - **Write-behind**: write to cache immediately, persist to source asynchronously
   —
   avoid unless throughput requirements justify the added complexity and risk
