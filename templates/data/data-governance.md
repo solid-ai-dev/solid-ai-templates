@@ -17,21 +17,21 @@ data, or regulated information.
     records, API keys)
   - **Restricted** — highest sensitivity (passwords, payment card
     data, health records)
-- Classification MUST be documented in the schema or data dictionary
-- Access controls MUST match the classification tier — confidential
-  and restricted data require role-based access
+- Document the classification in the schema or data dictionary (MUST)
+- Match access controls to the classification tier (MUST)
+- Require role-based access for confidential and restricted data
 
 ## PII handling
 [ID: data-governance-pii]
 
 - Identify all personally identifiable information (PII) fields
   in the schema — name, email, phone, address, IP, device IDs
-- PII MUST be encrypted at rest and in transit
+- Encrypt PII at rest and in transit (MUST)
 - Minimize PII collection — do not store what you do not need
 - Provide a mechanism for data deletion (right to erasure) —
   hard delete or anonymize, never just soft-delete PII
-- PII MUST NOT appear in application logs, error messages, or stack
-  traces; the audit trail is a separate store, not a log
+- Never put PII in application logs, error messages, or stack traces
+  (MUST NOT); the audit trail is a separate store, not a log
 - Keep the client IP, the one PII field a security log may hold, in that
   log alone, access-restricted and purged when its retention ends
 - Mask or redact PII in non-production environments
@@ -41,34 +41,34 @@ data, or regulated information.
 
 - Define a retention policy for each data category — document
   how long data is kept and when it is purged
-- Retention periods MUST comply with applicable regulations
-  (GDPR, CCPA, HIPAA, industry-specific)
+- Comply with applicable regulations (GDPR, CCPA, HIPAA,
+  industry-specific) in every retention period (MUST)
 - Implement automated purging — do not rely on manual cleanup
-- Audit logs and backups are subject to retention policies too —
-  do not retain backups indefinitely
+- Apply retention policies to audit logs and backups too
+- Never retain backups indefinitely
 - Document the purge mechanism: soft delete → hard delete after
   N days, or direct hard delete
 
 ## Data ownership
 [ID: data-governance-ownership]
 
-- Every data domain (users, orders, inventory) MUST have a
-  designated owner — a team or individual accountable for quality,
-  access, and lifecycle
-- The data owner approves schema changes and access grants
-- Cross-domain data access MUST go through defined interfaces
-  (APIs, views) — not direct table access
+- Designate an owner for every data domain (users, orders, inventory)
+  (MUST) — a team or individual accountable for quality, access, and
+  lifecycle
+- Have the data owner approve schema changes and access grants
+- Route cross-domain data access through defined interfaces (APIs,
+  views), not direct table access (MUST)
 - Document data ownership in the schema or data dictionary
 
 ## Audit trail
 [ID: data-governance-audit]
 
-- Changes to confidential and restricted data MUST be logged:
+- Log every change to confidential and restricted data (MUST):
   who changed what, when, and the previous value
 - Keep the audit trail in its own store, never in application logs,
   with access restricted to the tier of the data it records
-- Audit logs MUST be append-only — never editable or deletable
-  by application code
-- Audit logs MUST be retained according to the retention policy
+- Make audit logs append-only (MUST); never let application code edit
+  or delete them
+- Retain audit logs according to the retention policy (MUST)
 - Include the actor (user ID or service identity), timestamp,
   action (create, update, delete), and affected record

@@ -2,6 +2,7 @@
 [ID: backend-http]
 
 ## Port binding
+
 - Bind the service to a port the process opens itself; never depend on a
   web server injected at runtime
 - Read the port from an environment variable such as `PORT`; never
@@ -10,6 +11,7 @@
   assigns in production
 
 ## Process lifecycle
+
 - Start fast — keep initialisation short (MUST)
 - Shut down gracefully on `SIGTERM`: finish in-flight work, release
   resources, then exit (MUST)
@@ -20,6 +22,7 @@
   be replaced
 
 ## Admin processes
+
 - Run one-off tasks (migrations, data fixes, REPL sessions) with the
   application's code, config and dependencies (MUST)
 - Commit admin scripts to the repository; never run them as ad-hoc shell
@@ -28,12 +31,14 @@
 - Never run an admin task against production without a tested rollback plan
 
 ## Handler design
-- Handlers are thin: decode request → call service → encode response
-- No business logic in handlers — delegate to a service layer
+
+- Keep handlers thin: decode request → call service → encode response
+- Never put business logic in a handler; delegate it to a service layer
 - Validate all incoming request data before processing
 - Set a timeout on every outbound call (HTTP clients, database queries)
 
 ## URI design
+
 A project's own API style guide governs naming; without one, use these
 defaults.
 
@@ -46,28 +51,34 @@ defaults.
 - Spell path words in full, in one variant of English (SHOULD)
 
 ## Query parameters
+
 - Name query parameters in one case across the API, camelCase by default
   (SHOULD)
-- Use query parameters for filtering, sorting, and pagination — never for
-  resource identity (use path segments for that)
+- Use query parameters for filtering, sorting, and pagination
+- Never use a query parameter for resource identity; use a path segment
+  for that
 - Reserve one set of names for pagination and expansion, such as `limit`,
   `offset` and `expand`, and never repurpose them
 - Parse a typed query parameter explicitly so you can distinguish three
   states: absent (use the default), present-and-valid (use it), and
-  present-but-invalid (raise 400). Do NOT rely on a framework's
-  type-coercing helper (e.g. Flask `request.args.get('n', type=int)`)
-  that returns the default on a malformed value — it silently turns a
-  client error into a successful default-valued 200
+  present-but-invalid (raise 400)
+- Never rely on a framework's type-coercing helper that returns the
+  default on a malformed value (e.g. Flask
+  `request.args.get('n', type=int)`); it silently turns a client error
+  into a successful default-valued 200
 
 ## Request headers
+
 - Spell a header name in Hyphenated-Pascal-Case in specs and docs, such as
   `Api-Correlation-Id`
 - Leave a header's case on the wire to the HTTP library; HTTP/2 and HTTP/3
   require lowercase (RFC 9113)
-- Read every header name case-insensitively (MUST), as RFC 9110 defines
-  them
-- Custom headers SHOULD NOT use the `X-` prefix — this convention was
-  deprecated by RFC 6648; use a vendor or application-specific prefix instead
+- Read every header name case-insensitively, as RFC 9110 defines them
+  (MUST)
+- Avoid the `X-` prefix on custom headers (SHOULD NOT); RFC 6648
+  deprecated this convention
+- Use a vendor or application-specific prefix on a custom header instead
+  (SHOULD)
 
 ## HTTP methods
 
@@ -80,26 +91,29 @@ defaults.
 | DELETE | Remove a resource | Yes |
 
 ## Resource representation
-- JSON MUST be the default serialisation format; XML MAY be used where
-  explicitly required by the consuming system
-- Field types MUST conform to the relevant ISO standard:
+
+- Use JSON as the default serialisation format (MUST)
+- Use XML where the consuming system explicitly requires it (MAY)
+- Make field types conform to the relevant ISO standard (MUST):
   - Date and time values: ISO 8601
   - Language codes: ISO 639
   - Country codes: ISO 3166-1 alpha-2
   - Currency codes: ISO 4217
-- Any integer that exceeds 2^53 − 1 (9007199254740991) MUST be serialised
-  as a string — JavaScript cannot represent larger integers precisely
-- Endpoints that serialise computed floats MUST reject non-finite values:
-  `NaN`/`Infinity` are not valid RFC 8259 JSON. Configure the encoder to
-  reject them (e.g. `allow_nan=false`) so it fails loud at the
-  serialisation boundary (a 500) instead of emitting a bare `NaN` token
-  that strict parsers reject; represent an undefined value as `null`
-  (normalised before serialisation) and document the field as nullable
-  in the contract
-- Responses MUST contain only the fields needed by the caller — do not pad
-  payloads with fields that are not consumed
+- Serialise any integer that exceeds 2^53 − 1 (9007199254740991) as a
+  string (MUST); JavaScript cannot represent larger integers precisely
+- Reject non-finite values in an endpoint that serialises computed floats
+  (MUST); `NaN`/`Infinity` are not valid RFC 8259 JSON
+- Configure the encoder to reject them (e.g. `allow_nan=false`) so it
+  fails loud at the serialisation boundary (a 500) instead of emitting a
+  bare `NaN` token that strict parsers reject
+- Represent an undefined computed float as `null`, normalised before
+  serialisation
+- Document such a field as nullable in the contract
+- Return only the fields the caller needs (MUST); never pad a payload
+  with fields that are not consumed
 
 ## HATEOAS
+
 - Embed hyperlinks in responses to enable resource discovery (SHOULD)
 - Use the project's link format; without one, a `links` array with `href`,
   `rel`, `type`, and `media` fields:
@@ -116,11 +130,13 @@ defaults.
 - Support at minimum: `self`, `next`, `prev` relations on paginated collections
 
 ## Error responses
+
 - Use consistent error response shape across all endpoints
 - Never return stack traces, internal paths, or implementation details to the
   client
 
 ### REST and JSON errors
+
 These rules apply to a REST or JSON endpoint. A gRPC call carries its error
 in a gRPC status code, sent over HTTP 200.
 
@@ -130,12 +146,14 @@ in a gRPC status code, sent over HTTP 200.
   `application/problem+json` on an error, `application/json` otherwise
 
 ## Authentication and authorisation
-- All API traffic MUST be served over HTTPS — plain HTTP is not acceptable
-- Access tokens MUST have a finite lifetime; use JWT or an equivalent
-  short-lived token mechanism
-- Every external API endpoint MUST enforce both authentication and
-  authorisation
-- Internal API endpoints SHOULD require authentication at minimum
-- Write endpoints MUST NOT be accessible without a valid authenticated identity
+
+- Serve all API traffic over HTTPS (MUST); plain HTTP is not acceptable
+- Give access tokens a finite lifetime (MUST)
+- Use JWT or an equivalent short-lived token mechanism for access tokens
+- Enforce both authentication and authorisation on every external API
+  endpoint (MUST)
+- Require authentication at minimum on internal API endpoints (SHOULD)
+- Never make a write endpoint accessible without a valid authenticated
+  identity (MUST NOT)
 - Apply authentication and authorisation before any business logic runs
 - Rate-limit public endpoints — never expose an unbounded write operation

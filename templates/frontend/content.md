@@ -36,13 +36,15 @@ code separation, assets, SEO and structured data.
 - Give every content page a unique description (MUST) — used for
   `<meta name="description">`, OG description, and Twitter Card
 - Keep the description in frontmatter where pages are files that carry it
-- Meta descriptions MUST read as a pitch, not a summary — answer "why
+- Write meta descriptions as a pitch, not a summary (MUST); answer "why
   should I click this?"
 - Add JSON-LD structured data to content pages, with the schema type that
   matches the page (Article, Course) (SHOULD)
-- `robots.txt` MAY allow answer-engine crawlers (OAI-SearchBot,
-  ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot);
-  decide it deliberately, and verify no edge setting overrides the file
+- Allow answer-engine crawlers in `robots.txt` (MAY): OAI-SearchBot,
+  ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot
+- Decide answer-engine crawler access in `robots.txt` deliberately
+- Verify no edge setting overrides the answer-engine crawler access set
+  in `robots.txt`
 - Add `twitter:image` wherever `og:image` is present (MUST); Twitter/X
   does not reliably fall back to `og:image`
 - Add `og:image:width` and `og:image:height` (1200×630 recommended) to
@@ -70,9 +72,10 @@ code separation, assets, SEO and structured data.
 ## Structured data (if applicable)
 [ID: frontend-content-structured-data]
 
-- Schema `@type` MUST match the page's actual role — do not use
-  `Product` + `Offer` on informational pages that do not sell anything
-- Fields MUST NOT imply capabilities the site lacks (e.g. `availability`
-  implies commerce, `priceValidUntil` implies a store)
+- Match schema `@type` to the page's actual role (MUST)
+- Never use `Product` + `Offer` on informational pages that do not sell
+  anything
+- Never let fields imply capabilities the site lacks (MUST NOT); e.g.
+  `availability` implies commerce, `priceValidUntil` implies a store
 - Review schema choice when site role differs from template examples —
   e-commerce examples applied to editorial sites produce misleading markup

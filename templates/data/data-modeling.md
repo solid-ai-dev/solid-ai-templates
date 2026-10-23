@@ -45,11 +45,11 @@ relational databases, document stores and static data files alike.
 ## Schema evolution
 [ID: data-modeling-evolution]
 
-- Schema changes MUST go through versioned migrations — never
+- Run every schema change through a versioned migration (MUST); never
   change a production schema by hand
-- Additive changes (new column, new table) are safe — prefer them
-- Destructive changes (drop column, rename) require a migration
-  plan: add new → migrate data → drop old
+- Prefer additive changes (new column, new table); they are safe
+- Give every destructive change (drop column, rename) a migration plan:
+  add new → migrate data → drop old (MUST)
 - Include both up and down steps in every migration (MUST); where the
   down step cannot restore the data, say so and get approval before
   applying it
@@ -66,5 +66,5 @@ relational databases, document stores and static data files alike.
   never floating point
 - Use `UUID` or `ULID` for distributed ID generation — auto-increment
   is acceptable for single-database systems
-- Text fields MUST have a documented maximum length — unbounded text
+- Document a maximum length for every text field (MUST); unbounded text
   invites abuse and complicates indexing

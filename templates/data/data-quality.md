@@ -9,12 +9,12 @@ content, and any project that declares data as a first-class concern.
 ## Data sourcing
 [ID: data-quality-sourcing]
 
-- Every data point MUST trace to a named source (URL, publication,
-  manufacturer spec sheet)
+- Trace every data point to a named source (URL, publication,
+  manufacturer spec sheet) (MUST)
 - Record the source alongside the data — not in a separate document
 - Prefer primary sources (manufacturer, official docs) over aggregators
-- When multiple sources conflict, document the conflict and the chosen
-  value with rationale
+- Document the conflict and the chosen value with rationale when
+  multiple sources conflict
 - Never fabricate or estimate values without marking them as estimates
 
 ## Completeness tracking
@@ -23,11 +23,11 @@ content, and any project that declares data as a first-class concern.
 - Define a completeness score for each entry: fields populated / total
   fields (e.g. `14/14`)
 - Track completeness at the entry level, not just the collection level
-- Incomplete entries MUST be queryable — add a `completeness` or
+- Make incomplete entries queryable (MUST): add a `completeness` or
   `dataStatus` field
 - Set a minimum completeness threshold for publishing (e.g. 80%)
-- Entries below the threshold MAY exist in the database but MUST NOT
-  appear in user-facing views
+- Never show entries below the threshold in user-facing views
+  (MUST NOT); they MAY exist in the database
 
 ## Freshness
 [ID: data-quality-freshness]
@@ -35,10 +35,10 @@ content, and any project that declares data as a first-class concern.
 - Record when each entry was last verified: `lastVerified` date field
 - Define a freshness window per collection (e.g. prices: 30 days,
   specs: 12 months)
-- Entries beyond their freshness window SHOULD be flagged for review
+- Flag entries beyond their freshness window for review (SHOULD)
 - Record the capture date beside every time-sensitive value, such as a
   price; never show one without it (MUST)
-- Discontinued or unavailable items MUST be marked, not deleted
+- Mark discontinued or unavailable items instead of deleting them (MUST)
 
 ## Exact vs estimated values
 [ID: data-quality-precision]
@@ -88,9 +88,9 @@ validation cannot detect.
 ## Scoring and derived fields
 [ID: data-quality-scoring]
 
-- Scoring formulas MUST be documented — not buried in code
-- All inputs to a score MUST be traceable to source data
-- Scores MUST be reproducible: same inputs always produce the same
+- Document scoring formulas (MUST) — never leave them buried in code
+- Keep every input to a score traceable to source data (MUST)
+- Make scores reproducible (MUST): same inputs always produce the same
   output
 - Define the scoring scale once (e.g. 1–5, step 0.5) and use it
   consistently
@@ -99,27 +99,27 @@ validation cannot detect.
 ## Data changelog
 [ID: data-quality-changelog]
 
-- Changes to source data MUST be committed with a message explaining
-  what changed and why (e.g. "fix: update product weight — publisher
-  corrected spec sheet")
+- Commit changes to source data with a message explaining what
+  changed and why (e.g. "fix: update product weight — publisher
+  corrected spec sheet") (MUST)
 - When a scoring input changes, note that derived scores will change
 - Do not batch unrelated data changes into a single commit — one
   entry or one field correction per commit
-- For bulk imports or migrations, document the source and method in
-  the commit message
+- Document the source and method in the commit message for bulk imports
+  or migrations
 
 ## Identity and deduplication
 [ID: data-quality-identity]
 
-- Every entry MUST have a stable unique identifier that does not
-  change when other fields are updated
-- Define what makes two entries "the same" — document the identity
-  key (e.g. manufacturer + model name + variant)
-- Near-duplicates (regional names, revised versions, bundles) MUST
-  be distinct entries with a relationship field linking them
-- Never merge near-duplicates silently — flag for manual review
-- Discontinued items that are replaced by a successor SHOULD link
-  to the successor via a `replacedBy` field
+- Give every entry a stable unique identifier that does not change when
+  other fields are updated (MUST)
+- Define what makes two entries "the same"
+- Document the identity key (e.g. manufacturer + model name + variant)
+- Keep near-duplicates (regional names, revised versions, bundles) as
+  distinct entries with a relationship field linking them (MUST)
+- Never merge near-duplicates silently; flag them for manual review
+- Link a discontinued item that is replaced by a successor to the
+  successor via a `replacedBy` field (SHOULD)
 
 ## Validation
 [ID: data-quality-validation]
@@ -129,10 +129,10 @@ validation cannot detect.
 - Use runtime schemas (Zod, JSON Schema, Pydantic) for all data
   collections; a static type, such as a TypeScript interface, validates
   nothing at runtime
-- Range checks for numeric fields (e.g. weight > 0, price > 0)
-- Enum checks for constrained fields (e.g. status, category)
-- Build-time validation is acceptable for static sites — runtime
-  validation for APIs
+- Apply range checks to numeric fields (e.g. weight > 0, price > 0)
+- Apply enum checks to constrained fields (e.g. status, category)
+- Validate static sites at build time instead of at runtime (MAY);
+  validate APIs at runtime
 
 ## Agent-assisted ground-truth validation
 [ID: data-quality-hitl]

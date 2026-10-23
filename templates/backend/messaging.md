@@ -8,8 +8,7 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 
 - Use messaging when the producer does not need an immediate response
 - Use messaging for workloads that must survive producer restarts —
-  fire-and-forget
-  with durability
+  fire-and-forget with durability
 - Use messaging to decouple services that scale independently
 - Do NOT use messaging when the caller needs a synchronous result — use HTTP or
   gRPC instead
@@ -29,14 +28,15 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 
 - Validate message schema before publishing — the producer is responsible for
   schema correctness; the consumer should not be the first line of defence
-- Every message MUST carry a correlation ID (trace ID or request ID) in its
-  headers so consumers can link it to the originating request
-- Use deterministic message IDs where the broker supports them — allows
+- Include a correlation ID (trace ID or request ID) in every message's headers
+  (MUST) so consumers can link it to the originating request
+- Use deterministic message IDs where the broker supports them — this allows
   broker-level deduplication on producer retry
 - Do not publish inside a database transaction without the transactional outbox
   pattern — a commit/publish race will cause lost or phantom messages
-- Outbox pattern: write the message to an `outbox` table in the same transaction
-  as the domain write; a relay process publishes from the outbox asynchronously
+- **Outbox pattern**: write the message to an `outbox` table in the same
+  transaction as the domain write; a relay process publishes from the outbox
+  asynchronously
 
 ## Consumer rules
 
@@ -45,9 +45,9 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 - ACK only after the message has been fully processed, or durably handed
   off to a queue or job record that then owns its retries and terminal
   failures — never ACK at receipt
-- On a failure before that point: NACK or leave unacknowledged so the
-  broker requeues or routes to the dead-letter queue (DLQ); never silently
-  discard
+- NACK or leave the message unacknowledged on a failure before that point, so
+  the broker requeues it or routes it to the dead-letter queue (DLQ)
+- Never silently discard a message that fails before that point
 - Apply exponential backoff on retries — tight retry loops amplify downstream
   failures
 - Move messages to the DLQ after a configurable maximum retry count —
@@ -58,8 +58,8 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 ## Load and backpressure
 
 - Decouple receive from process under load: hand the message off durably,
-  acknowledge it, and do the work in a worker you pace — never run heavy
-  processing inline on the receive path
+  acknowledge it, and do the work in a worker you pace
+- Never run heavy processing inline on the receive path under load
 - Coalesce bursts: debounce repeated events for the same resource into a
   single unit of work after a short quiet period, instead of processing
   every duplicate
@@ -70,17 +70,17 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   so one noisy producer cannot starve the rest (head-of-line blocking)
 - Load-test the consumer at volume: watch queue depth and consumer lag,
   not the receive endpoint's latency, to find the real saturation point
-- For bounded worker concurrency see `templates/backend/concurrency.md`;
+- See `templates/backend/concurrency.md` for bounded worker concurrency;
   idempotency, retry/backoff, and the DLQ are covered in Consumer rules
   above
 
 ## Schema and contracts
 
 - Define message schemas explicitly — JSON Schema, Avro, or Protobuf
-- Schema changes MUST be backward-compatible: add fields, never remove or
-  rename required fields without a versioning strategy
+- Keep schema changes backward-compatible (MUST): add fields, never remove
+  or rename required fields without a versioning strategy
 - Use a schema registry (Confluent Schema Registry, AWS Glue, or equivalent)
-  for Kafka-based systems — prevents schema drift across teams
+  for Kafka-based systems — this prevents schema drift across teams
 - Version the schema on breaking changes: encode the version in the topic name
   (`orders.v2`) or as a `schema_version` field in the payload
 
