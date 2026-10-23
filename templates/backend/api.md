@@ -29,13 +29,18 @@
 - Record a per-case decision for SOAP or another legacy protocol
 
 ## OpenAPI specification
+
+The first two rules apply to every API, the rest to an OpenAPI
+specification: a protobuf or GraphQL schema keeps its own conventions for
+coverage, testing and versioning.
+
 - Give every HTTP API an OpenAPI specification (MUST), and keep it
   current (MUST); a stale spec is worse than none
 - Give an API on another protocol the machine-readable contract of its
   kind instead: protobuf for gRPC, a GraphQL schema, a message schema for
   messaging (MUST)
 - Cover every resource, method, parameter, response schema, error response
-  and authentication requirement in it
+  and authentication requirement in the OpenAPI spec
 - Keep a changelog of API changes across versions
 - Prefer design-first: hand-author the spec and serve that file verbatim,
   never one generated from code annotations

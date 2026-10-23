@@ -13,8 +13,9 @@
 ## Process lifecycle
 
 - Start fast — keep initialisation short (MUST)
-- Shut down gracefully on `SIGTERM`: finish in-flight work, release
-  resources, then exit (MUST)
+- Shut down gracefully on `SIGTERM` in order: stop accepting new
+  requests, let in-flight ones finish until the shutdown deadline, cancel
+  what remains, release resources, then exit (MUST)
 - Force-exit when a graceful shutdown passes its deadline
 - Recover cleanly when a process is killed without warning (`SIGKILL`,
   power loss) (MUST)
@@ -92,6 +93,10 @@ defaults.
 
 ## Resource representation
 
+These rules apply to a REST endpoint. A gRPC call carries protobuf
+messages and a GraphQL request its own response format, each under its
+specification.
+
 - Use JSON as the default serialisation format (MUST)
 - Use XML where the consuming system explicitly requires it (MAY)
 - Make field types conform to the relevant ISO standard (MUST):
@@ -138,8 +143,9 @@ defaults.
 
 ### REST and JSON errors
 
-These rules apply to a REST or JSON endpoint. A gRPC call carries its error
-in a gRPC status code, sent over HTTP 200.
+These rules apply to a REST endpoint. A gRPC call carries its error
+in a gRPC status code, sent over HTTP 200; a GraphQL request carries it
+in the response's `errors` array, under GraphQL-over-HTTP's status rules.
 
 - Follow RFC 9457 (`application/problem+json`) for error format
 - Use 4xx for client errors, 5xx for server errors — never use 200 for errors
