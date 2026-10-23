@@ -185,6 +185,8 @@ Releases up to 2.63.0 are listed in
   debouncing ([#2198])
 - The LF check honours exemptions, edge TLS covers every upstream, and real offers
   are allowed ([#2203])
+- The CI poll survives strict Bash, large negative integers become strings, auth
+  allows local HTTP ([#2207])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -274,6 +276,7 @@ Releases up to 2.63.0 are listed in
 [#2193]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2193
 [#2198]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2198
 [#2203]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2203
+[#2207]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2207
 
 ## [2.90.0] - 2026-09-12
 
