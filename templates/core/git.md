@@ -21,6 +21,15 @@ How changes are committed, reviewed, verified and merged.
   rest of the editor's state
 - Commit lockfiles (MUST)
 
+## Existing changes
+
+- Inspect the working tree and the index before starting a task
+- Never discard, reset, stash or overwrite a change the task did not make
+  (MUST NOT)
+- Never clear the tree to obtain a clean test baseline; ask the owner
+- Stage only the files the task changed, by name; never stage everything
+- Report a pre-existing change that blocks the task rather than removing it
+
 ## Pull requests
 
 - Keep a pull request to one concern (SHOULD)

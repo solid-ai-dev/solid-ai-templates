@@ -159,7 +159,10 @@ in the response's `errors` array, under GraphQL-over-HTTP's status rules.
 - Give access tokens a finite lifetime (MUST)
 - Use JWT or an equivalent short-lived token mechanism for access tokens
 - Enforce both authentication and authorisation on every external API
-  endpoint (MUST)
+  endpoint (MUST), except a read endpoint the project declares public
+- Declare each public endpoint in the route definition and the API
+  contract, in the change that makes it public; a public catalogue stays
+  public, the account records beside it stay protected
 - Require authentication at minimum on internal API endpoints (SHOULD)
 - Never make a write endpoint accessible without a valid authenticated
   identity (MUST NOT)

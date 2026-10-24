@@ -50,7 +50,11 @@ Sources override in this order, highest last:
 - Read configuration through a typed object or schema; never scatter raw
   environment reads across the code
 - Give defaults only to optional, non-sensitive settings
-- Mark every secret as required, with no default
+- Never give a secret a default (MUST NOT)
+- Require a secret whenever the capability that uses it is enabled, and
+  only then: disabled mail delivery needs no provider key
+- Fail at startup when an enabled capability lacks its secret, naming both;
+  never fall back silently to running without the capability
 
 ## Build time and run time
 
@@ -91,10 +95,14 @@ Sources override in this order, highest last:
 
 ```text
 # Required
-API_BASE_URL=http://localhost:8000
-SECRET_KEY=change-me
+MYAPP_API_BASE_URL=http://localhost:8000
+MYAPP_SECRET_KEY=change-me
 
 # Optional, defaults shown
-LOG_LEVEL=info
-DEBUG=false
+MYAPP_LOG_LEVEL=info
+MYAPP_ENABLE_DEBUG=false
+
+# Required only while MYAPP_ENABLE_MAIL is true
+MYAPP_ENABLE_MAIL=false
+# MYAPP_MAIL_API_KEY=change-me
 ```
