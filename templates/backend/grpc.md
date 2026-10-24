@@ -68,12 +68,14 @@ The common cases; take any other from the full gRPC status code list.
 
 - Validate the token on every call in the **auth** interceptor — reject with
   `UNAUTHENTICATED` before the handler runs
-- Exempt only the `grpc.health.v1.Health` methods from it, which report
-  serving status and nothing else, and the sign-up, sign-in and
-  account-recovery methods the project declares public
+- Exempt the `grpc.health.v1.Health` methods from it; they report
+  serving status and nothing else
+- Exempt the account sign-up, sign-in and account-recovery methods the
+  project declares public
+- Exempt no other method from the auth interceptor
 - List each exempt method by its full name in the interceptor, never by a
   prefix or a whole service
-- Serve those methods on the same TLS listener as the business RPCs, and
+- Serve the Health methods on the same TLS listener as the business RPCs, and
   probe with a client that speaks TLS (such as `grpc_health_probe -tls`)
   rather than opening a plaintext port
 - Log method name, request ID, caller identity, duration, and status code
