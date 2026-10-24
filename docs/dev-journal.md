@@ -9399,3 +9399,40 @@ the eight from #2175 to #2182.
   runner parses the output; a consumer copies the command into CI
 - An idempotency key makes a retry safe only when every attempt reuses it
   and the destination honours it for the whole retry window
+
+## 2026-10-24 — Acting on the agent-perspective audit
+
+**Tool:** Claude Code (Opus 5.5)
+
+**Key changes:**
+- Codex's agent-perspective audit (#2231) checked against the templates:
+  six interpretation gaps confirmed, two overstated (health access,
+  estimates), the rest left as unverified proposals
+- Six rules now state their scope in one PR (#2238): declared public
+  endpoints, refresh tokens for user sessions only, secrets required only
+  for enabled capabilities, API version apart from contract revision,
+  inline model limited to adopted rules, and a new "Existing changes"
+  section in the git template
+- A review of #2238 found three defects, fixed before merge: file-level
+  staging swept in a user's prior edits, the new service-auth rule
+  excluded the file's own API keys, and the body carried no closing
+  references
+
+**Pull requests merged:** #2238.
+
+**Issues closed:** #2232 to #2237.
+
+**Issues created:** #2232 to #2237.
+
+**Gaps flagged:**
+- The audit's completion standard, approval model and applicability
+  rework stay unfiled until the benchmark shows a need
+
+**Lessons:**
+- Staging by file name carries a prior edit in the same file; preserving
+  work means staging by hunk and reading the staged diff
+- A narrowed rule is swept against its own file's other sections: naming
+  two allowed mechanisms excluded a third the file already prescribed
+- An issue table in a PR body closes nothing; closing keywords do
+- A parallel session moved the shared checkout to `main` mid-session; a
+  worktree kept the PR branch's fixes off it
