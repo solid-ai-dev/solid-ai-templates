@@ -26,73 +26,6 @@ SUPPRESSIONS = (
 HASH = (".py", ".sh", ".rb", ".yml", ".yaml")
 SLASH = (".js", ".ts", ".go", ".jsx", ".tsx")
 
-# The quotes that open a string literal in each slash language. Go's
-# backtick string is raw, so a backslash inside it escapes nothing.
-QUOTES = {".go": {'"': True, "'": True, "`": False}}
-JS_QUOTES = {'"': True, "'": True, "`": True}
-
-# A `/` opens a JavaScript regular expression where an expression can
-# start: after an operator, an opening bracket or one of these keywords,
-# or at the start of the file. After a name, a number, a closing bracket
-# or a postfix `++`/`--` it divides.
-REGEX_AFTER = set("(,=:[!&|?{};+-*%<>~^")
-REGEX_KEYWORDS = {"return", "typeof", "case", "do", "else", "in", "of",
-                  "new", "delete", "void", "throw", "yield", "await",
-                  "instanceof"}
-
-
-def before(text, j):
-    """The index of the last non-blank character at or before `j`, or -1."""
-    while j >= 0 and text[j] in " \t\r\n":
-        j -= 1
-    return j
-
-
-def opens_regex(text, i):
-    """Whether the `/` at `i` opens a regular expression literal."""
-    j = before(text, i - 1)
-    if j < 0:
-        return True
-
-    # A postfix operator ends an operand, so `a++ / b` divides.
-    if text[j] in "+-" and j > 0 and text[j - 1] == text[j]:
-        return False
-    if text[j] in REGEX_AFTER:
-        return True
-    start = j
-    while start > 0 and (text[start - 1].isalnum() or text[start - 1] in "_$"):
-        start -= 1
-    if text[start:j + 1] not in REGEX_KEYWORDS:
-        return False
-
-    # A keyword spelled as a property, as in `obj.return / b`, is a name.
-    return text[before(text, start - 1)] != "." if start > 0 else True
-
-
-def regex_end(text, i):
-    """The index just past the regular expression opening at `i`.
-
-    A `/` inside a character class does not close it, and neither does an
-    escaped one; a literal left open ends at the line, as the parser's
-    error would.
-    """
-    i, in_class = i + 1, False
-    while i < len(text) and text[i] != "\n":
-        char = text[i]
-        if char == "\\":
-            i += 1
-        elif char == "[":
-            in_class = True
-        elif char == "]":
-            in_class = False
-        elif char == "/" and not in_class:
-            i += 1
-            break
-        i += 1
-    while i < len(text) and (text[i].isalnum() or text[i] == "_"):
-        i += 1
-    return i
-
 
 def python_comments(path):
     """(row, text) for each comment the Python tokenizer finds.
@@ -115,57 +48,28 @@ def hash_comments(path):
 
 
 def slash_comments(path):
-    """(row, text) for each `//` and `/* */` comment outside a string.
+    """(row, text) of the comment part of each line, for the slash family.
 
-    The scan skips string and template literals, and in JavaScript regular
-    expression literals, so a directive quoted in code is not read as one.
-    A block comment is reported on the row it opens.
+    The text after a line's first `//` or `/*` is read, and a block comment
+    left open carries on into the lines below until `*/`. Reading lines,
+    not tokens, over-reports a directive quoted in a string rather than
+    hide a real one: telling a regular expression from a division, or a
+    template's `${...}` from its text, takes a parser.
     """
-    with open(path, encoding="utf-8") as handle:
-        text = handle.read()
-    suffix = path[path.rfind("."):]
-    quotes = QUOTES.get(suffix, JS_QUOTES)
-    regexes = suffix != ".go"
-    found = []
-    row, counted, i, end = 1, 0, 0, len(text)
-    while i < end:
-        char = text[i]
-        if char in quotes:
-            i += 1
-            while i < end and text[i] != char:
-                if quotes[char] and text[i] == "\\":
-                    i += 1
-
-                # Only a template or raw string spans lines; any other
-                # quote left open ends at the line, as the parser's error
-                # would, instead of swallowing the comments below it.
-                elif char != "`" and text[i] == "\n":
-                    break
-                i += 1
-            i += 1
+    src = read_lines(path)
+    found, in_block = [], False
+    for number, line in enumerate(src, 1):
+        if in_block:
+            found.append((number, line))
+            in_block = "*/" not in line
             continue
-
-        # Skipped before its contents are read, since a quote inside a
-        # pattern such as /"/ would otherwise open a string that swallows
-        # the comment after it.
-        if regexes and char == "/" and text[i + 1:i + 2] not in ("/", "*") \
-                and opens_regex(text, i):
-            i = regex_end(text, i)
+        opened = [k for k in (line.find("//"), line.find("/*")) if k >= 0]
+        if not opened:
             continue
-        if text.startswith("//", i):
-            stop = text.find("\n", i)
-            closer = 0
-        elif text.startswith("/*", i):
-            stop = text.find("*/", i + 2)
-            closer = 2
-        else:
-            i += 1
-            continue
-        stop = end if stop < 0 else stop
-        row, counted = row + text.count("\n", counted, i), i
-        found.append((row, text[i + 2:stop]))
-        i = stop + closer
-    return text.split("\n"), found
+        at = min(opened)
+        found.append((number, line[at + 2:]))
+        in_block = line.startswith("/*", at) and "*/" not in line[at + 2:]
+    return src, found
 
 
 def comments(path):
