@@ -539,6 +539,30 @@ planted cases first and refuses a run that scored no template.
    lead-ins, and each pass condition stated as rules beside its command.
    Never change the scorer to pass a file
 
+## Ask models to review the templates
+
+`tools/ask_reviewers.py` sends the templates, the README, the spec and the
+manifest to several models through the `claude` and `codex` CLIs. Each
+model scores the templates from 1 to 10 against the project goal:
+consistent agents across teams and sessions, policies that lift output
+from average to good enough, and little human effort.
+
+```bash
+py tools/ask_reviewers.py                         # the default models
+py tools/ask_reviewers.py --models claude-opus-5-5,gpt-6-astra
+py tools/ask_reviewers.py --dry-run               # the commands only
+```
+
+The report and the raw answers land in `tests/reports/`. The run exits
+zero when every model answered.
+
+1. Run it before a release or after a large rewrite. It spends
+   subscription quota, so it is not a CI check
+2. Read each model's findings on its own. A model is its own instrument,
+   so the report gives the median and range, never a mean
+3. File an issue for a recommendation only after checking it against the
+   tree. A model reads a snapshot and can be wrong about it
+
 ## Run the test suite
 
 ```bash
