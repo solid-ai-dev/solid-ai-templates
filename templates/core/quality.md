@@ -182,49 +182,55 @@ means the project tracks none.
 - Commit an `.editorconfig` and a `.gitattributes` with `* text=auto`,
   adding `eol=lf` for hard LF
 - Mark a text path exempt from LF with `-text` in `.gitattributes`
+- Check line endings on every tracked file, whatever its name, exempting a
+  `-text` file; count a file Git files `i/-text` as binary only when it
+  holds a NUL byte
 - Let a linter format on save, and keep manual style rules to a minimum
   (SHOULD)
 
 ```bash
-git ls-files --eol | awk -F'\t' '
-  $2 ~ /\.(md|py|ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts)$/ {
-    seen++
-    if (($1 " ") ~ /attr\/(.* )?-text /) { exempt++; next }
-    if ($1 !~ /^i\/(lf|none) /) { bad[++n] = $0 }
-  }
-  END {
-    printf "text files inspected: %d\n", seen + 0
-    printf "exempt by -text: %d\n", exempt + 0
-    printf "files not filed i/lf: %d\n", n + 0
-    for (i = 1; i <= n; i++) print "  " bad[i]
-    exit (seen == 0 || n > 0)
-  }'
+seen=0 exempt=0 binary=0 bad=()
+while IFS= read -r -d '' rec; do
+  info=${rec%%$'\t'*} path=${rec#*$'\t'} seen=$((seen + 1))
+  case " ${info#*attr/} " in *" -text "*) exempt=$((exempt + 1)); continue ;; esac
+  case $info in "i/ "* | i/lf* | i/none*) continue ;; esac
+  nuls=$(git cat-file blob ":0:$path" | tr -dc '\000' | wc -c)
+  [[ $info == i/-text* && $nuls -gt 0 ]] && binary=$((binary + 1)) && continue
+  bad+=("$path")
+done < <(git ls-files -z --eol)
+printf 'files inspected: %d\nexempt by -text: %d\n' "$seen" "$exempt"
+printf 'binary by content: %d\nfiles not filed i/lf: %d\n' "$binary" "${#bad[@]}"
+for f in "${bad[@]}"; do echo "  $f"; done
+[ "$seen" -gt 0 ] && [ "${#bad[@]}" -eq 0 ]
 ```
 
 Pass condition: exit zero, given only when the inspected count is above
-zero and the not-`i/lf` count is zero. A `-text` file is exempt and an
-empty `i/none` file passes; a stray carriage return, filed `i/-text`,
-still fails.
+zero and the not-`i/lf` count is zero. An empty `i/none` file passes; a
+stray carriage return, filed `i/-text` with no NUL byte, still fails.
 
 - Refresh a checkout older than `.gitattributes` by rewriting its files or
   re-cloning; the index being right does not make the checkout right
 
 ```bash
-eol() { git ls-files --eol | awk -F'\t' "$1"; }
-total=$(eol '$1 ~ /^i\/lf/' | wc -l)
-drifted=$(eol '$1 ~ /^i\/lf/ && $1 !~ /w\/lf/' | wc -l)
+total=0 drifted=()
+while IFS= read -r -d '' rec; do
+  info=${rec%%$'\t'*}
+  case " ${info#*attr/} " in *" -text "*) continue ;; esac
+  case $info in i/lf*) total=$((total + 1)) ;; *) continue ;; esac
+  case $info in *" w/lf "*) ;; *) drifted+=("${rec#*$'\t'}") ;; esac
+done < <(git ls-files -z --eol)
 echo "text files tracked: $total"
-echo "checked out against a different convention: $drifted"
-eol '$1 ~ /^i\/lf/ && $1 !~ /w\/lf/ { print "  " $2 }'
+echo "checked out against a different convention: ${#drifted[@]}"
+for f in "${drifted[@]}"; do echo "  $f"; done
 if [ "$total" -eq 0 ]; then
-  echo "no text file reached; the extension or index pattern drifted"
+  echo "no text file reached; the index listing came back empty"
   exit 1
 fi
-[ "$drifted" -eq 0 ] || exit 1
+[ "${#drifted[@]}" -eq 0 ]
 ```
 
 Pass condition: the first count is above zero and the second is zero;
-either failing exits non-zero.
+either failing exits non-zero. A `-text` file is exempt here too.
 
 ## Comments
 

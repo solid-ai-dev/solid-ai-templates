@@ -189,6 +189,8 @@ Releases up to 2.63.0 are listed in
   allows local HTTP ([#2207])
 - Seven rules a deep review found wrong are corrected, from SSRF to schema
   migrations ([#2227])
+- Four shipped checks read what they claim: SBOM root, line endings, width and
+  env presence ([#2228])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -280,6 +282,7 @@ Releases up to 2.63.0 are listed in
 [#2203]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2203
 [#2207]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2207
 [#2227]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2227
+[#2228]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2228
 
 ## [2.90.0] - 2026-09-12
 
