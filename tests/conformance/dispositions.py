@@ -75,7 +75,7 @@ CHECKS = [
     # from the npm cache, so a download cannot spend the runner's time limit.
     {"file": "core/docs.md", "find": "npx --yes markdownlint-cli2",
      "title": "Markdown holds to the declared line width",
-     "do": RUN, "expect": ["nonzero", "nonzero"],
+     "do": RUN, "expect": ["nonzero", "nonzero", "nonzero"],
      "substitute": {"CONFIG=<markdownlint-config>":
                     "CONFIG=.github/linters/.markdownlint-cli2.jsonc",
                     "npx --yes markdownlint-cli2":
@@ -153,12 +153,12 @@ CHECKS = [
      "title": "The scripts directory carries the rules it owes", "do": RUN,
      "args": ["--dir", "tools"], "expect": ["nonzero", "nonzero", "zero"]},
 
-    {"file": "core/quality.md",
-     "find": "ya?ml|json|txt|toml|cfg|ini|sh|sql|css|js|ts",
+    {"file": "core/quality.md", "find": "files not filed i/lf",
      "title": "No committed text file carries CRLF", "do": RUN,
-     "expect": ["nonzero", "any", "zero"]},
+     "expect": ["nonzero", "any", "any", "zero"]},
 
-    {"file": "core/quality.md", "find": "eol() { git ls-files --eol",
+    {"file": "core/quality.md",
+     "find": "checked out against a different convention",
      "title": "The checkout carries the line ending the index does",
      "do": RUN, "expect": ["nonzero", "zero"]},
 

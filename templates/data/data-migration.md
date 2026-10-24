@@ -46,9 +46,12 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 - Prefer the expand-and-contract pattern for breaking changes:
   1. **Expand** — add new column/table, deploy code that writes
      to both old and new
-  2. **Migrate** — backfill existing data from old to new
-  3. **Contract** — remove old column/table after all readers
-     have switched
+  2. **Migrate** — backfill existing data from old to new, and verify it
+  3. **Switch** — deploy code that reads and writes only the new one,
+     then wait until no old reader or writer runs: no instance of the
+     previous deployment, background job or scheduled task
+  4. **Contract** — remove the old column/table; a dual writer still
+     running fails on it
 - Never rename a column in a single step; add new, migrate, drop old
 - Never add a NOT NULL column without a default to a table in use; it
   fails on existing rows and breaks inserts from code that does not set it
