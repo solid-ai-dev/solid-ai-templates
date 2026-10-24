@@ -120,6 +120,16 @@ CASES = [
     ("find-bare-suppressions", "a bare directive in a multi-line block comment",
      {"app.js": "/*\n * eslint-disable\n */\nrun();\n"}, [], 1, 1),
 
+    # A line can close one block comment and open the next, so the scanner
+    # follows every boundary on it, not only the first.
+    ("find-bare-suppressions", "a bare directive in a block opened after one",
+     {"app.js": "/* a */ /* b\neslint-disable-next-line\n*/\nrun();\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare directive in a block reopened in one",
+     {"app.js": "/* a\n*/ run(); /* b\neslint-disable\n*/\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a bare line comment after a block closes",
+     {"app.js": "/* a\n*/ run(); // eslint-disable-line\n"}, [], 1, 1),
+
     # git prints `docs/rules.md`; a root written another way must still
     # reach it, and `.` means the whole tree.
     ("find-unfenced-checks", "a root written as ./docs",

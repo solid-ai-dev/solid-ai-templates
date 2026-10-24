@@ -50,7 +50,8 @@ def hash_comments(path):
 def slash_comments(path):
     """(row, text) of the comment part of each line, for the slash family.
 
-    The text after a line's first `//` or `/*` is read, and a block comment
+    Every comment boundary on a line is followed, so a block comment that
+    closes and is followed by another on the same line is read, and one
     left open carries on into the lines below until `*/`. Reading lines,
     not tokens, over-reports a directive quoted in a string rather than
     hide a real one: telling a regular expression from a division, or a
@@ -59,16 +60,30 @@ def slash_comments(path):
     src = read_lines(path)
     found, in_block = [], False
     for number, line in enumerate(src, 1):
-        if in_block:
-            found.append((number, line))
-            in_block = "*/" not in line
-            continue
-        opened = [k for k in (line.find("//"), line.find("/*")) if k >= 0]
-        if not opened:
-            continue
-        at = min(opened)
-        found.append((number, line[at + 2:]))
-        in_block = line.startswith("/*", at) and "*/" not in line[at + 2:]
+        parts, at = [], 0
+        while at < len(line):
+            if in_block:
+                end = line.find("*/", at)
+                if end < 0:
+                    parts.append(line[at:])
+                    break
+                parts.append(line[at:end])
+                at, in_block = end + 2, False
+                continue
+            opened = [k for k in (line.find("//", at), line.find("/*", at))
+                      if k >= 0]
+            if not opened:
+                break
+            at = min(opened)
+
+            # A line comment runs to the end of the line; a block comment
+            # opens here and is read by the branch above.
+            if line.startswith("//", at):
+                parts.append(line[at + 2:])
+                break
+            at, in_block = at + 2, True
+        if parts:
+            found.append((number, " ".join(parts)))
     return src, found
 
 
