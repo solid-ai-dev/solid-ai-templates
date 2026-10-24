@@ -118,7 +118,7 @@ backend:
     depends_on: [backend-http]
   - id: backend-database
     file: templates/backend/database.md
-    description: Migrations, transactions, no raw SQL, connection pooling
+    description: Migrations, transactions, parameterised queries, connection pooling
   - id: backend-caching
     file: templates/backend/caching.md
     description: Cache-aside, TTL, invalidation, resilience, stampede

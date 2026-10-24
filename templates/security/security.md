@@ -160,8 +160,9 @@ failures, and server-side request forgery.
 - Log full error details server-side for debugging
 - Use consistent error response formats; do not leak internal structure
   through varying error shapes
-- Return the error status the protocol defines: an HTTP 4xx or 5xx, never
-  200, or a gRPC status code, which travels over HTTP 200
+- Return the error signal the protocol defines: for REST an HTTP 4xx or
+  5xx, never 200; for gRPC a status code, which travels over HTTP 200;
+  for GraphQL an `errors` entry, under GraphQL-over-HTTP's status rules
 - Do not reveal whether a resource exists via error messages: login errors
   should say "invalid credentials", not "user not found" vs "wrong password"
 
@@ -219,9 +220,16 @@ failures, and server-side request forgery.
   validate and sanitize first
 - Allowlist permitted destination hosts and schemes; reject anything not
   on the list
-- Block requests to internal networks (`127.0.0.0/8`, `10.0.0.0/8`,
-  `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16`, `::1`, `fc00::/7`),
-  even after DNS resolution
+- Block a request whose resolved address is not public, in IPv4 and IPv6
+  alike: loopback, private, link-local, unique-local, shared, unspecified,
+  multicast and reserved ranges
+- Unwrap an IPv4-mapped IPv6 address (`::ffff:127.0.0.1`) to its IPv4
+  form before classifying it
+- Classify with the language's address library, such as Python's
+  `ipaddress` or Go's `netip`, never a hand-kept CIDR list
+- Test each excluded category the library reports apart: Python's
+  `is_global` is true for multicast (`224.0.0.1`, `ff02::1`), so reject
+  `is_multicast` too
 - Resolve the hostname once, validate the IP, and connect only to that
   address; a client that resolves the name again can be rebound by DNS
 - Keep TLS verifying the certificate against the original hostname when
