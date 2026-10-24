@@ -197,7 +197,8 @@ Releases up to 2.63.0 are listed in
   comments ([#2229])
 - Six rules state their scope: public endpoints, service auth, optional
   secrets, API versions, adoption, existing work ([#2238])
-- The bare-suppression hook reads a block comment opened after another closes on\n  one line ([#2246])
+- The bare-suppression hook reads a block comment opened after another closes on
+  one line ([#2246])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
