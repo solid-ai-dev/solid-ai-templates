@@ -21,6 +21,8 @@
   cancelled work is still running
 - Force-exit when the whole shutdown, from draining to releasing
   resources, passes its hard deadline (MUST)
+- Set the drain deadline plus the cancellation period below the hard
+  deadline, leaving time to release resources
 - Fit the hard deadline inside the grace period the platform allows
   before it kills the process
 - Recover cleanly when a process is killed without warning (`SIGKILL`,

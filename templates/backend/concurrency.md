@@ -39,6 +39,8 @@ CPU-bound work cannot be offloaded to a background job or worker process.
   release resources even when some of it ignores cancellation
 - Exit by one hard deadline covering draining, cancelling and releasing,
   whatever is still running then
+- Leave time before that deadline to release resources, and keep the
+  deadline inside the grace period the platform allows before a kill
 
 ## Pitfalls
 
