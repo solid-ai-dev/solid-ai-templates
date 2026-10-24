@@ -79,6 +79,47 @@ CASES = [
     ("find-bare-suppressions", "a suppression naming its rule",
      {"app.py": "import os  %s noqa: F401\n" % HASH}, [], 0, 0),
 
+    # ESLint reads its directives from block comments as well as line ones,
+    # and a directive quoted in a string suppresses nothing.
+    ("find-bare-suppressions", "a bare whole-file ESLint block comment",
+     {"app.js": "/* eslint-disable */\nrun();\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a bare next-line ESLint block comment",
+     {"app.js": "/* eslint-disable-next-line */\nrun();\n"}, [], 1, 1),
+    ("find-bare-suppressions", "an ESLint block comment naming its rule",
+     {"app.js": "/* eslint-disable no-console */\nrun();\n"}, [], 0, 0),
+
+    # The slash family is read by line, so a quoted directive over-reports
+    # rather than a real one hiding behind a regex or a template.
+    ("find-bare-suppressions", "a suppression quoted in a JavaScript string",
+     {"app.js": "const s = \"// eslint-disable-next-line\";\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a suppression quoted in a Python string",
+     {"app.py": "value = '%s noqa'\n" % HASH}, [], 0, 0),
+    ("find-bare-suppressions", "a bare suppression after a quote in a regex",
+     {"app.js": "const r = /\"/; // eslint-disable-next-line\nrun();\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after a postfix division",
+     {"app.js": "a++ / b; // eslint-disable-next-line\nrun(a);\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after a keyword property",
+     {"app.js": "obj.return / b; // eslint-disable-next-line\nrun();\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after a regex in a condition",
+     {"app.js": "if (ok) /\"/.test(v); // eslint-disable-next-line\nrun();\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after a commented regex",
+     {"app.js": "const r = /* p */ /\"/; // eslint-disable-next-line\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after an object division",
+     {"app.js": "const x = {} / 2; // eslint-disable-next-line\nrun();\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after a commented property",
+     {"app.js": "obj./* p */return / b; // eslint-disable-next-line\n"},
+     [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression in a template expression",
+     {"app.js": "const s = `${(() => { // eslint-disable-next-line\n"
+                "  return 1;\n})()}`;\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a bare directive in a multi-line block comment",
+     {"app.js": "/*\n * eslint-disable\n */\nrun();\n"}, [], 1, 1),
+
     # git prints `docs/rules.md`; a root written another way must still
     # reach it, and `.` means the whole tree.
     ("find-unfenced-checks", "a root written as ./docs",
@@ -99,6 +140,11 @@ CASES = [
      {"app.py": "x = 1  %s note\n" % HASH}, [], 1, 1),
     ("check-comment-layout", "a comment above its item, after a blank line",
      {"app.py": "x = 1\n\n%s note\ny = 2\n" % HASH}, [], 0, 0),
+    ("check-comment-layout", "a comment opening a block that quotes a hash",
+     {"app.py": "if value == \"%s\":\n    %s note\n    pass\n" % (HASH, HASH)},
+     [], 0, 0),
+    ("check-comment-layout", "a comment under code that quotes a hash",
+     {"app.py": "x = \"%s\"\n%s note\ny = 2\n" % (HASH, HASH)}, [], 1, 1),
     ("find-import-bans", "a domain module importing an adapter",
      {"domain/core.py": "import adapters.db\n", "adapters/db.py": "x = 1\n"},
      ["--forbid", "domain:adapters"], 1, 1),
@@ -310,8 +356,77 @@ def off_limits_cases():
         if code != 1:
             failures.append("  report-off-limits-paths, an unresolved base: "
                             "exited %d, owed 1" % code)
+
+        # A rename out of the declared directory touches it as much as an
+        # edit does, though git prints only the destination by name.
+        git(work, "branch", "moved")
+        os.makedirs(os.path.join(work, "retired"))
+        git(work, "mv", ".github/workflows/ci.yml", "retired/ci.yml")
+        git(work, "commit", "-q", "-m", "retire")
+        code, lines, findings = run_hook(
+            work, "report-off-limits-paths",
+            ["--base", "moved", "--path", ".github/workflows/"])
+        touched = [f.split(":")[0] for f in findings]
+        if code != 0 or "files changed: 2" not in lines \
+                or touched != [".github/workflows/ci.yml"]:
+            failures.append("  report-off-limits-paths, a workflow renamed "
+                            "out: exited %d, printed %s" % (code, lines))
+
+        # git quotes a path holding a space or a non-ASCII letter unless
+        # asked for raw output, and the quoted path matches no prefix.
+        git(work, "branch", "spaced")
+        name = os.path.join(work, ".github", "workflows",
+                            "caf%s ci.yml" % chr(233))
+        with open(name, "w", encoding="utf-8") as handle:
+            handle.write("on: push\n")
+        git(work, "add", "-A")
+        git(work, "commit", "-q", "-m", "spaced")
+        code, lines, _ = run_hook(
+            work, "report-off-limits-paths",
+            ["--base", "spaced", "--path", ".github/workflows/"])
+        if code != 0 or "off-limits files touched: 1" not in lines:
+            failures.append("  report-off-limits-paths, a workflow named with "
+                            "a space and an accent: exited %d, printed %s"
+                            % (code, lines))
     finally:
         shutil.rmtree(work, ignore_errors=True)
+    return failures
+
+
+def git_failure_cases():
+    """A tree scan where git fails, and the same scan outside a repository.
+
+    Outside a repository the hook does not apply. Inside one, a git that
+    cannot list the tree read nothing, so the hook fails in either mode.
+    """
+    failures = []
+    work = planted_repo({"app.py": "x = 1\n"})
+    plain = tempfile.mkdtemp(prefix="sait-plain-")
+    try:
+        with open(os.path.join(work, ".git", "config"), "w") as handle:
+            handle.write("[broken\n")
+        for hook in ("find-bare-suppressions", "check-comment-layout"):
+            for pre_commit in (False, True):
+                code, lines, findings = run_hook(work, hook, [],
+                                                 pre_commit=pre_commit)
+                if code != 1 or len(findings) != 1:
+                    failures.append("  %s, a malformed git config%s: exited "
+                                    "%d, printed %s"
+                                    % (hook, " under pre-commit"
+                                       if pre_commit else "", code, lines))
+            code, lines, _ = run_hook(plain, hook, [], pre_commit=True)
+            if code != 0 or not any(l.startswith("not applicable:")
+                                    for l in lines):
+                failures.append("  %s under pre-commit, outside a "
+                                "repository: exited %d, printed %s"
+                                % (hook, code, lines))
+            code, lines, _ = run_hook(plain, hook, [])
+            if code != 3:
+                failures.append("  %s, outside a repository: exited %d, "
+                                "owed 3" % (hook, code))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+        shutil.rmtree(plain, ignore_errors=True)
     return failures
 
 
@@ -373,4 +488,5 @@ def check_sys_23():
                                             code_owed, found_owed))
     failures += test_edit_cases()
     failures += off_limits_cases()
+    failures += git_failure_cases()
     return seen.failures() + failures, seen.notes()

@@ -2,7 +2,8 @@
 
 `--pre-commit` is set by the hook entries in `.pre-commit-hooks.yaml`. It
 maps "does not apply" to a printed line and exit 0, because pre-commit
-fails a hook on any nonzero exit.
+fails a hook on any nonzero exit. A git failure inside a work tree fails
+the hook in either mode.
 """
 
 import sys
@@ -13,7 +14,7 @@ from . import (check_ascii_identifiers, check_comment_layout,
                find_line_continuations, find_unfenced_checks,
                find_unreferenced_scripts, report_off_limits_paths,
                report_test_edits)
-from .support.files import NotARepository
+from .support.files import GitFailed, NotARepository
 from .support.report import Report
 
 # The hook IDs are frozen once shipped, like a section ID.
@@ -46,6 +47,12 @@ def main(argv=None):
         return hook.main(argv, report)
     except NotARepository as error:
         return report.not_applicable(str(error))
+
+    # The scan read nothing, so no count it would print can be trusted;
+    # passing it would report a clean tree that was never read.
+    except GitFailed as error:
+        report.finding(".", 0, "GIT", str(error))
+        return report.finish(True)
 
 
 if __name__ == "__main__":

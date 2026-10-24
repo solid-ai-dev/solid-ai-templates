@@ -1,5 +1,6 @@
 """The files a hook reads: the tracked ones, never the working-tree walk."""
 
+import os
 import posixpath
 import subprocess
 
@@ -13,6 +14,48 @@ class NotARepository(Exception):
     """Raised outside a git work tree, where nothing is tracked."""
 
 
+class GitFailed(Exception):
+    """Raised when git fails inside a work tree, so no listing is whole."""
+
+
+def run_git(args):
+    """Run git with its messages in English, returning the finished process.
+
+    Under the C locale git does not translate its errors, so the one that
+    means "no repository here" reads the same on every machine.
+    """
+    env = dict(os.environ, LC_ALL="C", LANGUAGE="C")
+    try:
+        return subprocess.run(["git"] + list(args), capture_output=True,
+                              env=env)
+    except OSError as error:
+        raise GitFailed("cannot run git: %s" % error)
+
+
+def ls_files(*args):
+    """The paths `git ls-files -z` prints for `args`.
+
+    Raises NotARepository outside a work tree and GitFailed when git fails
+    inside one.
+    """
+    listing = run_git(["ls-files", "-z"] + list(args))
+    if listing.returncode == 0:
+        return [p for p in listing.stdout.decode("utf-8").split("\0") if p]
+
+    # A malformed config, an unsafe owner or a corrupt index exits 128 just
+    # as a missing repository does. Read as "does not apply", that failure
+    # would pass a tree nobody scanned, so only git's own answer that this
+    # is no work tree counts as one.
+    probe = run_git(["rev-parse", "--is-inside-work-tree"])
+    if probe.stdout.strip() == b"false" \
+            or probe.stderr.startswith(b"fatal: not a git repository"):
+        raise NotARepository("not inside a git work tree")
+    reason = listing.stderr.decode("utf-8", "replace").strip()
+    raise GitFailed("git ls-files exited %d: %s"
+                    % (listing.returncode, reason.splitlines()[0]
+                       if reason else "no message"))
+
+
 def tracked(suffixes, roots=()):
     """Tracked paths ending in one of `suffixes`, under one of `roots`.
 
@@ -20,12 +63,7 @@ def tracked(suffixes, roots=()):
     check reads the same tree on a laptop as in CI. An empty `roots`
     means the whole tree.
     """
-    try:
-        listing = subprocess.run(
-            ["git", "ls-files", "-z"], capture_output=True, check=True)
-    except (OSError, subprocess.CalledProcessError):
-        raise NotARepository("not inside a git work tree")
-    paths = listing.stdout.decode("utf-8").split("\0")
+    paths = ls_files()
     prefixes = normalised(roots)
     return sorted(
         p for p in paths

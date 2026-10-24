@@ -6,10 +6,9 @@ comment sits above the right item takes a person.
 """
 
 import argparse
-import subprocess
 import tokenize
 
-from .support.files import VENDORED, NotARepository, normalised, read_lines
+from .support.files import VENDORED, ls_files, normalised
 
 DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
 
@@ -18,20 +17,19 @@ DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
 # needs no blank line under it.
 OPENERS = (":", "(", "[", "{")
 
+# Tokens that are layout, not code: a line whose last code token is none
+# of the rest holds no code that a comment below it could abut.
+LAYOUT = (tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE, tokenize.INDENT,
+          tokenize.DEDENT, tokenize.ENCODING, tokenize.ENDMARKER)
+
 
 def candidates(roots):
     """Tracked Python plus the untracked files a commit could still add."""
-    try:
-        listed = subprocess.run(
-            ["git", "ls-files", "-z", "--cached", "--others",
-             "--exclude-standard", "*.py"],
-            capture_output=True, check=True).stdout.decode("utf-8")
-    except (OSError, subprocess.CalledProcessError):
-        raise NotARepository("not inside a git work tree")
+    listed = ls_files("--cached", "--others", "--exclude-standard", "*.py")
     prefixes = normalised(roots)
     return sorted(set(
-        p for p in listed.split("\0")
-        if p and (not prefixes or p.startswith(prefixes))
+        p for p in listed
+        if (not prefixes or p.startswith(prefixes))
         and not any(part in VENDORED for part in p.split("/"))))
 
 
@@ -43,24 +41,32 @@ def main(argv, report):
 
     files = report.count("python files checked", candidates(args.root))
     for path in files:
-        src = read_lines(path)
-        with open(path, "rb") as handle:
-            for tok in tokenize.tokenize(handle.readline):
-                if tok.type != tokenize.COMMENT:
-                    continue
-                row, col = tok.start
-                if src[row - 1][:col].strip():
-                    body = tok.string.lstrip("#").strip()
-                    if not body.startswith(DIRECTIVES):
-                        report.finding(path, row, "ASIDE",
-                                       "comment to the right of code")
-                elif row > 1 and src[row - 2].strip():
-                    above = src[row - 2].split("#")[0].rstrip()
-                    if not src[row - 2].strip().startswith("#") \
-                            and not above.endswith(OPENERS):
-                        report.finding(path, row, "ABUTS",
-                                       "comment block with code directly "
-                                       "above it")
+        # The rows tokenize reports index these lines, so both come from
+        # one read: a split of its own would count a form feed as a line.
+        with tokenize.open(path) as handle:
+            src = handle.readlines()
+        tokens = list(tokenize.generate_tokens(iter(src).__next__))
+
+        # The last code token ending on each row. A `#` inside a string is
+        # part of that string's token, so it can never pass for a comment.
+        last_code = {}
+        for tok in tokens:
+            if tok.type not in LAYOUT:
+                last_code[tok.end[0]] = tok.string
+        for tok in tokens:
+            if tok.type != tokenize.COMMENT:
+                continue
+            row, col = tok.start
+            if src[row - 1][:col].strip():
+                body = tok.string.lstrip("#").strip()
+                if not body.startswith(DIRECTIVES):
+                    report.finding(path, row, "ASIDE",
+                                   "comment to the right of code")
+            elif row > 1 and src[row - 2].strip() \
+                    and row - 1 in last_code \
+                    and last_code[row - 1] not in OPENERS:
+                report.finding(path, row, "ABUTS",
+                               "comment block with code directly above it")
     report.count("layout violations", report.findings)
     if not files:
         return report.not_applicable("no Python file to check")

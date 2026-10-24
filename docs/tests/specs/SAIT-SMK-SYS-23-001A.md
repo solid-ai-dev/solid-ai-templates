@@ -59,7 +59,12 @@ tags: [tooling, hooks, checks, compatibility]
    pre-commit mode, after a commit editing a test, and against a base that
    does not resolve
 5. Run `report-off-limits-paths` on a branch touching a declared path, on
-   one touching none, and against a base that does not resolve
+   one touching none, on one renaming a declared file out of its directory,
+   on one adding a declared file whose name holds a space and an accent,
+   and against a base that does not resolve
+6. Run `find-bare-suppressions` and `check-comment-layout` in both modes in
+   a repository whose git config is malformed, and in a directory outside
+   any repository
 
 ### Assertions
 
@@ -75,7 +80,11 @@ tags: [tooling, hooks, checks, compatibility]
 7. Assert a root written as `./docs` or `.` reaches the paths git prints
 8. Assert `report-test-edits` fails on a base that does not resolve, in
    both modes, since a missing baseline compares nothing
-9. Assert the hook, hook-command and planted-case counts are non-zero
+9. Assert `report-off-limits-paths` reports the path a rename leaves, and
+   a declared path git would print quoted
+10. Assert a hook whose git listing fails exits 1 with one finding in both
+    modes, while a directory outside any repository stays not applicable
+11. Assert the hook, hook-command and planted-case counts are non-zero
 
 ### Negative controls
 

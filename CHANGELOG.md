@@ -193,6 +193,8 @@ Releases up to 2.63.0 are listed in
   env presence ([#2228])
 - Hooks parse every Markdown fence, resolve Python imports and follow script
   references ([#2230])
+- Hooks fail on Git errors, see both sides of a rename and read only real
+  comments ([#2229])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -286,6 +288,7 @@ Releases up to 2.63.0 are listed in
 [#2227]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2227
 [#2228]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2228
 [#2230]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2230
+[#2229]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2229
 
 ## [2.90.0] - 2026-09-12
 
