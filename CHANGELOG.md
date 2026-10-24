@@ -195,6 +195,8 @@ Releases up to 2.63.0 are listed in
   references ([#2230])
 - Hooks fail on Git errors, see both sides of a rename and read only real
   comments ([#2229])
+- Six rules state their scope: public endpoints, service auth, optional
+  secrets, API versions, adoption, existing work ([#2238])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -289,6 +291,7 @@ Releases up to 2.63.0 are listed in
 [#2228]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2228
 [#2230]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2230
 [#2229]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2229
+[#2238]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2238
 
 ## [2.90.0] - 2026-09-12
 

@@ -23,7 +23,7 @@ How a project's agent context files are structured and written.
 
 | | Inline | Hybrid |
 | --- | --- | --- |
-| Runtime | Every rule in context | Silent, unenforced rules in context; the rest read on demand |
+| Runtime | Every adopted rule in context | Silent, unenforced rules in context; the rest read on demand |
 | Reliability | Highest | High; every rule a missed read would break stays in context |
 | Maintenance | Rules drift from the templates | Project rules drift; referenced rules stay in sync |
 | Best for | A project that does not vendor the templates | A project that vendors them as a submodule |
@@ -94,7 +94,10 @@ not a note.
 
 ## Inline model
 
-- Inline every rule, so the file is self-contained
+- Inline every rule the project adopts, so the file is self-contained; a
+  template rule it has not adopted stays out
+- Regenerate without widening the adopted set: a rule upstream adds after
+  adoption stays out until the project adopts it (MUST)
 - Add `Model: inline` to the overview
 - Number the headings so other documents can cite a rule, such as "see
   section 2.3" (SHOULD); a project MAY keep its own numbering

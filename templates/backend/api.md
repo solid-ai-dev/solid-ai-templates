@@ -48,8 +48,10 @@ coverage, testing and versioning.
   drift fails a test, not a consumer
 - Contract-test a live instance against cases generated from the spec
   (e.g. Schemathesis)
-- Version the spec's `info.version` apart from the package version; never
-  bump it for a release that leaves the contract unchanged
+- Treat the spec's `info.version` as the contract revision, apart from the
+  package version and from the API version in the path
+- Bump the contract revision for every contract change, additive ones
+  included; never bump it for a release that leaves the contract unchanged
 
 ## Versioning
 - Keep every API version backward compatible (MUST)
@@ -60,12 +62,13 @@ coverage, testing and versioning.
 - Never version through the media type (MUST NOT)
 
 ## Backward compatibility
-- Release a new major version for every breaking change: a removed or
+- Release a new API version for every breaking change: a removed or
   renamed response field, a changed field type, a switched auth scheme
 - Treat as breaking, too, a changed verb or path, wire protocol or
   Content-Type, and business logic that changes observable results
-- Never bump the version for an additive change (MUST NOT): a new optional
-  field, endpoint, verb or query parameter
+- Never bump the API version for an additive change (MUST NOT): a new
+  optional field, endpoint, verb or query parameter keeps `/v1/` and moves
+  only the contract revision
 
 ## Deprecation strategy
 When a breaking change is introduced:
@@ -77,7 +80,8 @@ When a breaking change is introduced:
 3. Optionally add the `Sunset` header with the planned removal date:
    `Sunset: <HTTP-date>`
 4. Notify all consumers and agree on a migration timeline
-5. Remove the old version only after the sunset date has passed
+5. Remove the old version only after the sunset date has passed; without
+   a `Sunset` header, only after the timeline agreed in step 4 ends
 
 ```
 Deprecation: @<unix-timestamp>

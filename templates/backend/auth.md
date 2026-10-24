@@ -21,7 +21,12 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 - Prefer delegating authentication to an identity provider (IdP) via
   OAuth 2.0 / OIDC (e.g. Auth0, Keycloak, Cognito) over rolling your own
 - Use short-lived JWTs when issuing tokens directly (access token ≤ 15
-  minutes), with a separate refresh token (≤ 7 days, rotated on use)
+  minutes)
+- Issue refresh tokens only to user sessions, such as a browser or mobile
+  client; rotate each on use and expire it within 7 days
+- Never issue a refresh token to a service
+- Authenticate a service by credentials of its own, such as OAuth 2.0
+  client credentials, mutual TLS or a scoped API key (below)
 - Validate every JWT: signature, `exp`, `iss`, `aud` — reject tokens missing
   any required claim
 - Store refresh tokens server-side, in a database or a dedicated session
@@ -34,7 +39,8 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 - Send access tokens in the `Authorization: Bearer <token>` header (MUST)
 - Do NOT accept tokens in query parameters — they appear in server logs and
   browser history
-- Store refresh tokens in `httpOnly`, `Secure`, `SameSite=Strict` cookies (MUST)
+- Store a browser client's refresh tokens in `httpOnly`, `Secure`,
+  `SameSite=Strict` cookies (MUST)
 - Never store refresh tokens in `localStorage` or JavaScript-accessible memory
 - Require HTTPS for all authenticated endpoints outside local
   development, with no exception in staging or production
@@ -80,5 +86,5 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
   `PERMISSION_DENIED`) for authenticated requests with insufficient
   permissions
 - Test token expiry: assert that an expired token is rejected
-- Test token revocation: assert that a revoked refresh token cannot obtain
-  a new access token
+- Test token revocation where refresh tokens exist: assert that a revoked
+  refresh token cannot obtain a new access token
