@@ -61,6 +61,7 @@ CASES = [
      {"app.js": "/* eslint-disable-next-line */\nrun();\n"}, [], 1, 1),
     ("find-bare-suppressions", "an ESLint block comment naming its rule",
      {"app.js": "/* eslint-disable no-console */\nrun();\n"}, [], 0, 0),
+
     # The slash family is read by line, so a quoted directive over-reports
     # rather than a real one hiding behind a regex or a template.
     ("find-bare-suppressions", "a suppression quoted in a JavaScript string",
