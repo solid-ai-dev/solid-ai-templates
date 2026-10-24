@@ -191,6 +191,8 @@ Releases up to 2.63.0 are listed in
   migrations ([#2227])
 - Four shipped checks read what they claim: SBOM root, line endings, width and
   env presence ([#2228])
+- Hooks parse every Markdown fence, resolve Python imports and follow script
+  references ([#2230])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -283,6 +285,7 @@ Releases up to 2.63.0 are listed in
 [#2207]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2207
 [#2227]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2227
 [#2228]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2228
+[#2230]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2230
 
 ## [2.90.0] - 2026-09-12
 

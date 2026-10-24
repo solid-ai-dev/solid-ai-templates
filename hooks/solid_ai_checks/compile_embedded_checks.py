@@ -5,12 +5,37 @@ is not.
 """
 
 import argparse
+import re
 
 from .support.fences import blocks
 from .support.files import read_lines, tracked
 
 OPENER = "<<'EOF'"
 NEWLINE = chr(10)
+
+# A heredoc fed to a Python interpreter, on the line that opens it. Another
+# heredoc in the same block, such as a file written with cat, is not Python.
+INTERPRETER = re.compile(r"(^|[\s;|&(/])(py|python[0-9.]*)(\s|$)")
+
+
+def heredocs(body):
+    """Yield (opening offset, source) for every Python heredoc in a block.
+
+    A block can hold several checks, and each one is compiled, so a valid
+    first check cannot hide an invalid second. One left open runs to the
+    end of the block.
+    """
+    n = 0
+    while n < len(body):
+        line = body[n]
+        if OPENER not in line or not INTERPRETER.search(line):
+            n += 1
+            continue
+        end = n + 1
+        while end < len(body) and body[end].strip() != "EOF":
+            end += 1
+        yield n, NEWLINE.join(body[n + 1:end])
+        n = end + 1
 
 
 def main(argv, report):
@@ -24,16 +49,13 @@ def main(argv, report):
     found = 0
     for path in files:
         for start, _, body in blocks(read_lines(path)):
-            text = NEWLINE.join(body)
-            if OPENER not in text:
-                continue
-            found += 1
-            source = text.split(OPENER, 1)[1].split(NEWLINE + "EOF", 1)[0]
-            try:
-                compile(source.lstrip(NEWLINE), path, "exec")
-            except SyntaxError as error:
-                report.finding(path, start + (error.lineno or 1), "COMPILE",
-                               error.msg)
+            for offset, source in heredocs(body):
+                found += 1
+                try:
+                    compile(source, path, "exec")
+                except SyntaxError as error:
+                    report.finding(path, start + offset + (error.lineno or 1),
+                                   "COMPILE", error.msg)
 
     report.count("embedded checks found", found)
     report.count("checks that do not compile", report.findings)
