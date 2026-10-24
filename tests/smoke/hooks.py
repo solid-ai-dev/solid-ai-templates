@@ -20,6 +20,14 @@ HOOKS_DIR = os.path.join(ROOT, "hooks")
 HOOK_COMMAND = re.compile(r"^\s*pre-commit run ([a-z0-9-]+)\b", re.M)
 
 FENCE = "`" * 3
+TILDES = "~" * 3
+LONG_FENCE = "`" * 4
+
+# The parts of one package, for the import cases that resolve a name
+# against it.
+PACKAGE = {"pkg/__init__.py": "", "pkg/adapters.py": "x = 1\n",
+           "pkg/other.py": "y = 1\n"}
+LAYERS = ["--forbid", "pkg.domain:pkg.adapters"]
 
 # Built rather than spelled, so the bare-suppression scan, which reads this
 # file too, does not find its own planted case.
@@ -43,9 +51,27 @@ CASES = [
      [], 0, 0),
     ("compile-embedded-checks", "no heredoc check at all",
      {"rules.md": "Prose only.\n"}, [], 3, 0),
+
+    # Each heredoc in a block is a check of its own, and a fence of tildes
+    # or of more than three backticks is as much a fence as the usual one.
+    ("compile-embedded-checks", "a second heredoc check that does not compile",
+     {"rules.md": "%sbash\npy - <<'EOF'\nprint(1)\nEOF\npy - <<'EOF'\n"
+                  "print(\nEOF\n%s\n" % (FENCE, FENCE)}, [], 1, 1),
+    ("compile-embedded-checks", "two heredoc checks that compile",
+     {"rules.md": "%sbash\npy - <<'EOF'\nprint(1)\nEOF\npy - <<'EOF'\n"
+                  "print(2)\nEOF\n%s\n" % (FENCE, FENCE)}, [], 0, 0),
+    ("compile-embedded-checks", "a check in a tilde fence that does not compile",
+     {"rules.md": "%sbash\npy - <<'EOF'\nprint(\nEOF\n%s\n" % (TILDES, TILDES)},
+     [], 1, 1),
     ("find-line-continuations", "a continued line in a check",
      {"rules.md": "%sbash\nls %s\n  -la\n%s\n" % (FENCE, chr(92), FENCE)},
      [], 0, 1),
+    ("find-line-continuations", "a continued line in a tilde fence",
+     {"rules.md": "%sbash\nls %s\n  -la\n%s\n" % (TILDES, chr(92), TILDES)},
+     [], 0, 1),
+    ("find-line-continuations", "a continued line in a four-backtick fence",
+     {"rules.md": "%sbash\nls %s\n  -la\n%s\n"
+                  % (LONG_FENCE, chr(92), LONG_FENCE)}, [], 0, 1),
     ("find-line-continuations", "no block in a check language",
      {"rules.md": "%syaml\nkey: value\n%s\n" % (FENCE, FENCE)}, [], 3, 0),
     ("find-bare-suppressions", "a suppression naming no rule",
@@ -139,11 +165,35 @@ CASES = [
     ("find-import-bans", "a malformed ban beside a valid one",
      {"domain/core.py": "import os\n"},
      ["--forbid", "domain:adapters", "--forbid", ":adapters"], 1, 1),
+
+    # The banned module reached through its package, relative to the
+    # importer, and from below a src directory.
+    ("find-import-bans", "an adapter imported from its package",
+     dict(PACKAGE, **{"pkg/domain.py": "from pkg import adapters\n"}),
+     LAYERS, 1, 1),
+    ("find-import-bans", "an adapter imported relatively",
+     dict(PACKAGE, **{"pkg/domain.py": "from . import adapters\n"}),
+     LAYERS, 1, 1),
+    ("find-import-bans", "an adapter imported in a src layout",
+     {"src/pkg/__init__.py": "", "src/pkg/adapters.py": "x = 1\n",
+      "src/pkg/domain.py": "import pkg.adapters\n"}, LAYERS, 1, 1),
+    ("find-import-bans", "a sibling imported from the same package",
+     dict(PACKAGE, **{"pkg/domain.py": "from pkg import other\n"}),
+     LAYERS, 0, 0),
     ("find-unreferenced-scripts", "a script nothing names",
      {"scripts/old.py": "x = 1\n", "README.md": "Nothing here.\n"},
      [], 1, 1),
     ("find-unreferenced-scripts", "a script the README names",
      {"scripts/old.py": "x = 1\n", "README.md": "Run old.py.\n"}, [], 0, 0),
+
+    # A helper is kept by the script that imports it, but only when that
+    # script is itself reached.
+    ("find-unreferenced-scripts", "a helper the documented script imports",
+     {"scripts/main.py": "import helper\n", "scripts/helper.py": "x = 1\n",
+      "README.md": "Run scripts/main.py.\n"}, [], 0, 0),
+    ("find-unreferenced-scripts", "a helper only an unnamed script imports",
+     {"scripts/main.py": "import helper\n", "scripts/helper.py": "x = 1\n",
+      "README.md": "Nothing here.\n"}, [], 1, 2),
     ("find-unreferenced-scripts", "no scripts directory",
      {"README.md": "x\n"}, [], 3, 0),
     ("check-heading-numbers", "two sections numbered alike",
@@ -155,6 +205,25 @@ CASES = [
     ("check-heading-numbers", "a consistent document",
      {"spec.md": "## 1 One\n\n1. a\n2. b\n\n## 2 Two\n\n### 2.1 Sub\n"},
      ["--path", "spec.md"], 0, 0),
+
+    # A nested list and a second list each run from 1, and a fence holds an
+    # example, not the document's numbering. A skip across a flush code
+    # block and a repeat inside a nested list are still found.
+    ("check-heading-numbers", "a nested list numbered from 1",
+     {"spec.md": "## 1 Steps\n\n1. a\n   1. x\n   2. y\n2. b\n"},
+     ["--path", "spec.md"], 0, 0),
+    ("check-heading-numbers", "two lists under one heading, each from 1",
+     {"spec.md": "## Steps\n\n1. a\n2. b\n\nThen:\n\n1. c\n2. d\n"},
+     ["--path", "spec.md"], 0, 0),
+    ("check-heading-numbers", "a numbered heading in a code fence",
+     {"spec.md": "## 1 One\n\n%smarkdown\n## 9 Example\n%s\n\n## 2 Two\n"
+                 % (FENCE, FENCE)}, ["--path", "spec.md"], 0, 0),
+    ("check-heading-numbers", "a skip across a flush code block",
+     {"spec.md": "## Steps\n\n1. a\n2. b\n\n%sbash\nls\n%s\n\n4. d\n"
+                 % (FENCE, FENCE)}, ["--path", "spec.md"], 1, 1),
+    ("check-heading-numbers", "a repeat inside a nested list",
+     {"spec.md": "## Steps\n\n1. a\n   1. x\n   1. y\n2. b\n"},
+     ["--path", "spec.md"], 1, 1),
     ("check-heading-numbers", "a document with no ordinal",
      {"spec.md": "## Plain\n\nText.\n"}, ["--path", "spec.md"], 1, 1),
     ("check-heading-numbers", "no document named",

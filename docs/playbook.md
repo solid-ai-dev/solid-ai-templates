@@ -821,8 +821,8 @@ placeholder is not always what the issue or the prose calls it:
 `MILESTONE = None` rather than an empty string cost a first attempt here.
 
 Mutate the check's INPUT, never the string its disposition uses to find
-it. The two are the same text more often than it looks: the CRLF check is
-located by the extension list it filters on, so emptying its corpus by
+it. The two are the same text more often than it looks: when a check is
+located by the extension list it filters on, emptying its corpus by
 editing that list stops the registry from finding the block at all. The
 run then reports drift between the registry and the templates — a
 different defect, in a different file, that says nothing about the check.

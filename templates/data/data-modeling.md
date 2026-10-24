@@ -47,7 +47,9 @@ relational databases, document stores and static data files alike.
 
 - Run every schema change through a versioned migration (MUST); never
   change a production schema by hand
-- Prefer additive changes (new column, new table); they are safe
+- Prefer additive changes (new column, new table); they stay compatible
+  only when old writers still succeed, so add a column nullable or with a
+  default, never NOT NULL without one on a populated table
 - Give every destructive change (drop column, rename) a migration plan:
   add new → migrate data → drop old (MUST)
 - Include both up and down steps in every migration (MUST); where the

@@ -6,7 +6,7 @@
 templates/backend/api.md 100.0
 templates/backend/auth.md 100.0
 templates/backend/caching.md 100.0
-templates/backend/concurrency.md 98.1
+templates/backend/concurrency.md 97.8
 templates/backend/database.md 100.0
 templates/backend/edge.md 98.2
 templates/backend/errors.md 98.6
@@ -32,7 +32,7 @@ templates/core/review.md 100.0
 templates/core/testing.md 99.7
 templates/data/data-governance.md 100.0
 templates/data/data-migration.md 100.0
-templates/data/data-modeling.md 100.0
+templates/data/data-modeling.md 99.6
 templates/data/data-quality.md 100.0
 templates/frontend/content.md 100.0
 templates/frontend/quality.md 98.6
@@ -41,4 +41,4 @@ templates/infra/cicd.md 100.0
 templates/infra/containers.md 98.3
 templates/infra/deployment.md 99.5
 templates/security/devsecops.md 100.0
-templates/security/security.md 99.2
+templates/security/security.md 99.3
