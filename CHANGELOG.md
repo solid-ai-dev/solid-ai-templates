@@ -199,6 +199,10 @@ Releases up to 2.63.0 are listed in
   secrets, API versions, adoption, existing work ([#2238])
 - The bare-suppression hook reads a block comment opened after another closes on
   one line ([#2246])
+- Declared gRPC sign-up, sign-in and recovery methods may skip the auth
+  interceptor ([#2250])
+- Sign-up, sign-in and account-recovery writes may run without an identity, with
+  abuse controls ([#2247])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -295,6 +299,8 @@ Releases up to 2.63.0 are listed in
 [#2229]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2229
 [#2238]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2238
 [#2246]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2246
+[#2250]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2250
+[#2247]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2247
 
 ## [2.90.0] - 2026-09-12
 
