@@ -197,6 +197,7 @@ Releases up to 2.63.0 are listed in
   comments ([#2229])
 - Six rules state their scope: public endpoints, service auth, optional
   secrets, API versions, adoption, existing work ([#2238])
+- Shutdown waits for cancelled work only for a bounded period, then\n  force-exits ([#2248])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -292,6 +293,7 @@ Releases up to 2.63.0 are listed in
 [#2230]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2230
 [#2229]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2229
 [#2238]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2238
+[#2248]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2248
 
 ## [2.90.0] - 2026-09-12
 
