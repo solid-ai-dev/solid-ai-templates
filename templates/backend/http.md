@@ -15,9 +15,10 @@
 - Start fast — keep initialisation short (MUST)
 - Shut down gracefully on `SIGTERM` in order: stop accepting new
   requests, let in-flight ones finish until the drain deadline, cancel
-  what remains, wait out a bounded cancellation period, release
+  what remains, wait up to a bounded cancellation period, release
   resources, then exit (MUST)
-- Force-exit when cancelled work outlives the cancellation period
+- Release resources when the cancellation period ends, even when some
+  cancelled work is still running
 - Force-exit when the whole shutdown, from draining to releasing
   resources, passes its hard deadline (MUST)
 - Fit the hard deadline inside the grace period the platform allows
