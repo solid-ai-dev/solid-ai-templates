@@ -25,8 +25,8 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 - Issue refresh tokens only to user sessions, such as a browser or mobile
   client; rotate each on use and expire it within 7 days
 - Never issue a refresh token to a service
-- Authenticate a service by its own credentials: OAuth 2.0 client
-  credentials or mutual TLS
+- Authenticate a service by credentials of its own, such as OAuth 2.0
+  client credentials, mutual TLS or a scoped API key (below)
 - Validate every JWT: signature, `exp`, `iss`, `aud` — reject tokens missing
   any required claim
 - Store refresh tokens server-side, in a database or a dedicated session
