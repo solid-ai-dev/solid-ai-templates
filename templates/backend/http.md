@@ -14,9 +14,12 @@
 
 - Start fast — keep initialisation short (MUST)
 - Shut down gracefully on `SIGTERM` in order: stop accepting new
-  requests, let in-flight ones finish until the shutdown deadline, cancel
-  what remains, release resources, then exit (MUST)
-- Force-exit when a graceful shutdown passes its deadline
+  requests, let in-flight ones finish until the drain deadline, cancel
+  what remains, wait out a bounded cancellation period, release
+  resources, then exit (MUST)
+- Force-exit when cancelled work outlives the cancellation period
+- Fit the drain deadline and the cancellation period inside the grace
+  period the platform allows before it kills the process
 - Recover cleanly when a process is killed without warning (`SIGKILL`,
   power loss) (MUST)
 - Keep no state in the process; use external stores, so any instance can
