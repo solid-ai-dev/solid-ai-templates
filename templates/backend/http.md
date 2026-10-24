@@ -18,8 +18,10 @@
   what remains, wait out a bounded cancellation period, release
   resources, then exit (MUST)
 - Force-exit when cancelled work outlives the cancellation period
-- Fit the drain deadline and the cancellation period inside the grace
-  period the platform allows before it kills the process
+- Force-exit when the whole shutdown, from draining to releasing
+  resources, passes its hard deadline (MUST)
+- Fit the hard deadline inside the grace period the platform allows
+  before it kills the process
 - Recover cleanly when a process is killed without warning (`SIGKILL`,
   power loss) (MUST)
 - Keep no state in the process; use external stores, so any instance can

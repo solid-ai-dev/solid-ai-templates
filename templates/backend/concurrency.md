@@ -36,7 +36,9 @@ CPU-bound work cannot be offloaded to a background job or worker process.
 - On shutdown, stop admitting new work, let in-flight work drain until
   the drain deadline, then cancel what remains — do not rely on OS cleanup
 - Wait for cancelled work only for a bounded cancellation period, then
-  exit even when some of it ignores cancellation
+  release resources even when some of it ignores cancellation
+- Exit by one hard deadline covering draining, cancelling and releasing,
+  whatever is still running then
 
 ## Pitfalls
 
