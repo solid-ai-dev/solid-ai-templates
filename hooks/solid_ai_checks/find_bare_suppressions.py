@@ -33,24 +33,40 @@ JS_QUOTES = {'"': True, "'": True, "`": True}
 
 # A `/` opens a JavaScript regular expression where an expression can
 # start: after an operator, an opening bracket or one of these keywords,
-# or at the start of the file. After a name, a number or a closing bracket
-# it divides.
+# or at the start of the file. After a name, a number, a closing bracket
+# or a postfix `++`/`--` it divides.
 REGEX_AFTER = set("(,=:[!&|?{};+-*%<>~^")
 REGEX_KEYWORDS = {"return", "typeof", "case", "do", "else", "in", "of",
                   "new", "delete", "void", "throw", "yield", "await",
                   "instanceof"}
-WORD_BEFORE = re.compile(r"[A-Za-z_$][\w$]*$")
+
+
+def before(text, j):
+    """The index of the last non-blank character at or before `j`, or -1."""
+    while j >= 0 and text[j] in " \t\r\n":
+        j -= 1
+    return j
 
 
 def opens_regex(text, i):
     """Whether the `/` at `i` opens a regular expression literal."""
-    j = i - 1
-    while j >= 0 and text[j] in " \t\r\n":
-        j -= 1
-    if j < 0 or text[j] in REGEX_AFTER:
+    j = before(text, i - 1)
+    if j < 0:
         return True
-    word = WORD_BEFORE.search(text, max(0, j - 11), j + 1)
-    return bool(word) and word.group() in REGEX_KEYWORDS
+
+    # A postfix operator ends an operand, so `a++ / b` divides.
+    if text[j] in "+-" and j > 0 and text[j - 1] == text[j]:
+        return False
+    if text[j] in REGEX_AFTER:
+        return True
+    start = j
+    while start > 0 and (text[start - 1].isalnum() or text[start - 1] in "_$"):
+        start -= 1
+    if text[start:j + 1] not in REGEX_KEYWORDS:
+        return False
+
+    # A keyword spelled as a property, as in `obj.return / b`, is a name.
+    return text[before(text, start - 1)] != "." if start > 0 else True
 
 
 def regex_end(text, i):

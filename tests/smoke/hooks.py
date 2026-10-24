@@ -71,6 +71,11 @@ CASES = [
     ("find-bare-suppressions", "a division before a quoted suppression",
      {"app.js": "const x = a / b;\nconst s = \"// eslint-disable\";\n"},
      [], 0, 0),
+    ("find-bare-suppressions", "a bare suppression after a postfix division",
+     {"app.js": "a++ / b; // eslint-disable-next-line\nrun(a);\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a bare suppression after a keyword property",
+     {"app.js": "obj.return / b; // eslint-disable-next-line\nrun();\n"},
+     [], 1, 1),
 
     # git prints `docs/rules.md`; a root written another way must still
     # reach it, and `.` means the whole tree.
