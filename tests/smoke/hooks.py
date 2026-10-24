@@ -136,6 +136,9 @@ CASES = [
      {"app.js": "/* eslint-disable */ /* explanation */\nrun();\n"}, [], 1, 1),
     ("find-bare-suppressions", "a bare block directive before a line comment",
      {"app.js": "/* eslint-disable */ // explanation\nrun();\n"}, [], 1, 1),
+    ("find-bare-suppressions", "two bare directives on one line",
+     {"app.js": "/* eslint-disable */ /* eslint-disable */\nrun();\n"},
+     [], 1, 1),
 
     # git prints `docs/rules.md`; a root written another way must still
     # reach it, and `.` means the whole tree.

@@ -113,11 +113,18 @@ def main(argv, report):
         # Only a comment can hold a directive; reading code too would match
         # a quoted one, such as this module's own pattern table.
         src, found = comments(path)
+        lines = {}
         for number, comment in found:
+            lines.setdefault(number, []).append(comment)
+
+        # Each comment is judged alone, but a line is reported once per
+        # directive however many of its comments carry it.
+        for number, texts in lines.items():
             for name, pattern in SUPPRESSIONS:
-                if name in comment:
+                named = [text for text in texts if name in text]
+                if named:
                     total += 1
-                    if pattern.search(comment):
+                    if any(pattern.search(text) for text in named):
                         report.finding(path, number, "BARE",
                                        src[number - 1].strip())
 
