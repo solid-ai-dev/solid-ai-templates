@@ -130,6 +130,13 @@ CASES = [
     ("find-bare-suppressions", "a bare line comment after a block closes",
      {"app.js": "/* a\n*/ run(); // eslint-disable-line\n"}, [], 1, 1),
 
+    # Each comment is judged alone: the words of the next one on the line
+    # do not name a rule for a directive that names none.
+    ("find-bare-suppressions", "a bare block directive before a block comment",
+     {"app.js": "/* eslint-disable */ /* explanation */\nrun();\n"}, [], 1, 1),
+    ("find-bare-suppressions", "a bare block directive before a line comment",
+     {"app.js": "/* eslint-disable */ // explanation\nrun();\n"}, [], 1, 1),
+
     # git prints `docs/rules.md`; a root written another way must still
     # reach it, and `.` means the whole tree.
     ("find-unfenced-checks", "a root written as ./docs",

@@ -48,26 +48,27 @@ def hash_comments(path):
 
 
 def slash_comments(path):
-    """(row, text) of the comment part of each line, for the slash family.
+    """(row, text) of each comment on each line, for the slash family.
 
     Every comment boundary on a line is followed, so a block comment that
     closes and is followed by another on the same line is read, and one
-    left open carries on into the lines below until `*/`. Reading lines,
-    not tokens, over-reports a directive quoted in a string rather than
-    hide a real one: telling a regular expression from a division, or a
-    template's `${...}` from its text, takes a parser.
+    left open carries on into the lines below until `*/`. Each comment is
+    yielded alone, so the words of the next one never name a rule for it.
+    Reading lines, not tokens, over-reports a directive quoted in a string
+    rather than hide a real one: telling a regular expression from a
+    division, or a template's `${...}` from its text, takes a parser.
     """
     src = read_lines(path)
     found, in_block = [], False
     for number, line in enumerate(src, 1):
-        parts, at = [], 0
+        at = 0
         while at < len(line):
             if in_block:
                 end = line.find("*/", at)
                 if end < 0:
-                    parts.append(line[at:])
+                    found.append((number, line[at:]))
                     break
-                parts.append(line[at:end])
+                found.append((number, line[at:end]))
                 at, in_block = end + 2, False
                 continue
             opened = [k for k in (line.find("//", at), line.find("/*", at))
@@ -79,11 +80,9 @@ def slash_comments(path):
             # A line comment runs to the end of the line; a block comment
             # opens here and is read by the branch above.
             if line.startswith("//", at):
-                parts.append(line[at + 2:])
+                found.append((number, line[at + 2:]))
                 break
             at, in_block = at + 2, True
-        if parts:
-            found.append((number, " ".join(parts)))
     return src, found
 
 
