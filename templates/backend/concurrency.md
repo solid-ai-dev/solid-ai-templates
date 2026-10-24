@@ -33,8 +33,9 @@ CPU-bound work cannot be offloaded to a background job or worker process.
   `ExecutorService`) over fire-and-forget
 - Propagate cancellation explicitly — pass a cancellation token or context
   as the first argument to any function that may block
-- On shutdown, cancel all in-flight work and wait for it to finish before
-  the process exits — do not rely on OS cleanup
+- On shutdown, stop admitting new work, let in-flight work drain until
+  the shutdown deadline, then cancel what remains and wait for it to
+  finish before the process exits — do not rely on OS cleanup
 
 ## Pitfalls
 

@@ -68,6 +68,11 @@ The common cases; take any other from the full gRPC status code list.
 
 - Validate the token on every call in the **auth** interceptor — reject with
   `UNAUTHENTICATED` before the handler runs
+- Exempt only the `grpc.health.v1.Health` methods from it; they report
+  serving status and nothing else
+- Serve those methods on the same TLS listener as the business RPCs, and
+  probe with a client that speaks TLS (such as `grpc_health_probe -tls`)
+  rather than opening a plaintext port
 - Log method name, request ID, caller identity, duration, and status code
   for every call in the **logging** interceptor
 - Propagate W3C `traceparent` via gRPC metadata in the **tracing**
