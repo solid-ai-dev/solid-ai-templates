@@ -73,6 +73,14 @@ Releases up to 2.63.0 are listed in
   cadence and acceptance sign-off, IDs included ([#2286])
 - The quality template drops error hierarchies, comment layout, scripts/ rules
   and revisit triggers; check-writing rules move to quality gates ([#2289])
+- The review template drops its shared-module rule; its URL-parameter and
+  sign-in probe items become neutral ([#2296])
+- The docs template drops its markdownlint width check and the Mermaid and
+  narrow generator rules ([#2298])
+- The git template drops submodules, numbered documents, bidirectional artifacts
+  and its gh check-watch loop ([#2300])
+- The quality gates template drops AST rewrites, contract tests, module splits
+  and auto-merge, IDs included ([#2302])
 - The agents template drops monorepo package files, the brand-voice section
   and the mapping-copy rule ([#2338])
 
@@ -166,6 +174,8 @@ Releases up to 2.63.0 are listed in
 - A rule citing another section names its file and heading, not a bare ID ([#2173])
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
+- The config template drops the browser-bundle rule, the secrets table and
+  boolean prefixes; test secrets are stubs ([#2309])
 
 ### Deprecated
 
@@ -347,6 +357,11 @@ Releases up to 2.63.0 are listed in
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
+[#2296]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2296
+[#2298]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2298
+[#2300]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2300
+[#2302]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2302
+[#2309]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2309
 [#2338]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2338
 
 ## [2.90.0] - 2026-09-12
