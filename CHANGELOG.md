@@ -172,6 +172,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- Webhook rules hold for any provider: any credential, not only a signature,
+  and any stable event key ([#2362])
 - A gRPC read method the project declares public skips the auth check, as
   over HTTP ([#2283])
 - A declared public endpoint may take a write made before sign-in, such as
@@ -345,6 +347,7 @@ Releases up to 2.63.0 are listed in
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
+[#2362]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2362
 
 ## [2.90.0] - 2026-09-12
 
