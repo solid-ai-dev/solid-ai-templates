@@ -26,8 +26,8 @@ code separation, assets, SEO and structured data.
   static pages
 - Give every publicly indexed page a canonical URL
 - Serve a sitemap and reference it in `robots.txt` (MUST)
-- Generate the sitemap at build time where the build knows every page URL,
-  else at runtime
+- Generate the sitemap at build time where the build knows every page URL
+- Generate it at runtime where pages exist only at runtime
 - Give every content page a unique description (MUST) — used for
   `<meta name="description">`, OG description, and Twitter Card
 - Write meta descriptions as a pitch, not a summary (MUST); answer "why
