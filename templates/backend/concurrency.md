@@ -6,8 +6,8 @@ extends this one with its language's rules.
 
 ## When to use what
 
-- Never run blocking I/O or long CPU work on an event loop or the main
-  thread
+- Never run blocking I/O or long CPU work on a thread that runs an event
+  loop or accepts requests
 - Hand such work to a worker pool or a separate process
 - Never run CPU-bound work on threads the runtime runs one at a time;
   use processes
