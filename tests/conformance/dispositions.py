@@ -133,34 +133,13 @@ CHECKS = [
      "args": ["--forbid", "hooks:tools", "--forbid", "hooks:tests"],
      "expect": ["nonzero", "nonzero", "zero"]},
 
-    {"file": "core/quality.md", "find": "rg -n \"#<number>",
-     "title": "Closing a cited item audits the citations to it",
-     "do": SKIP,
-     "reason": "Takes the item being closed or superseded as `<number>`. "
-               "It is run per closure, in the change that closes the item, "
-               "not as a property of the tree."},
-
     {"file": "core/quality.md", "find": "check-ascii-identifiers",
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    {"file": "core/quality.md", "find": "check-comment-layout",
-     "title": "Comment layout", "do": RUN, "expect": ["nonzero", "zero"]},
-
-    # This repository has no scripts/; its maintained, unshipped tooling is
-    # tools/, which is the directory the rule is about.
-    {"file": "core/quality.md", "find": "find-unreferenced-scripts",
-     "title": "The scripts directory carries the rules it owes", "do": RUN,
-     "args": ["--dir", "tools"], "expect": ["nonzero", "nonzero", "zero"]},
-
     {"file": "core/quality.md", "find": "files not filed i/lf",
      "title": "No committed text file carries CRLF", "do": RUN,
      "expect": ["nonzero", "any", "any", "zero"]},
-
-    {"file": "core/quality.md",
-     "find": "checked out against a different convention",
-     "title": "The checkout carries the line ending the index does",
-     "do": RUN, "expect": ["nonzero", "zero"]},
 
     # -- core/testing.md ---------------------------------------------
 

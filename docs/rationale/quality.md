@@ -17,17 +17,6 @@ speculative. "In case it's useful later" is sunk-cost reasoning: code with
 no real case to anchor it rots, and confuses the next maintainer about which
 path fires.
 
-## quality-revisit-trigger
-
-Nothing polls a trigger, and the record holding it is not re-read on a
-schedule, so by default it fires into an empty room: a record describing a
-constraint that has since lifted reads exactly like a live one. The
-obligation therefore attaches to the action, not to the record. The actor
-usually does not know a record names their action, and the search is the
-only thing that connects them, which is why triggers are written to be
-found. A trigger that fires outside the repository has no automatic watcher
-at all. A trigger is a claim about the world and decays like any other.
-
 ## Architecture
 
 A hardcoded count is a stale count: the data changes and the number does
@@ -46,15 +35,7 @@ and `HEADED` say when to pick each.
 ## Complexity
 
 A boolean flag forces the caller to read the implementation to learn what
-`true` means. An enum fits a flag selecting what the code does. A flag
-selecting how many rules apply needs findings instead: an enum answers "how
-strict", while the caller usually asks "which rule did this break", and a
-setting carries no name to answer with. The tell is a proposed enum member
-describable only by what it permits, such as "allows unusual values", which
-names no set. With findings, the strict and permissive callers both fall
-out: one refuses a non-empty list, the other filters it by rule name. The
-guard takes the verb existing guards use, and an exception carries a message
-rather than data, so a caller asserting which rule broke needs the findings.
+`true` means.
 
 A threshold chosen by feel is too loose, masking bugs, or too tight,
 breaking edge cases, with no record of why. Naming the data source lets a
@@ -87,18 +68,10 @@ bind error on the worker's stderr under a caller spinning on a readiness
 flag. The symptom, a hang, is unrelated to the cause, which is what makes it
 expensive to diagnose.
 
-One error hierarchy lets a caller catch refusals and nothing else, so a bug
-inside the package surfaces as what it is. Deriving each type from the
-built-in its site raised before breaks no existing caller, in a language
-that lets an error type have two bases. Where it allows one superclass,
-as Java does, swapping a raise's built-in type for a package base breaks
-every caller catching the built-in, so the catch contract wins and the
-package grouping moves to an interface or an error code. A type per raise
-site re-encodes the messages as class names and serves the tests, not the
-callers: a missing URL scheme invites prepending one while an unsupported
-scheme is a refusal, so those separate; two encodings that both mean "retry
-differently" share a type. The contract erodes one commit at a time and no
-linter reads it, which is why a test walks the raises.
+A type per raise site re-encodes the messages as class names and serves the
+tests, not the callers: a type earns its place when a caller would handle it
+differently. Swapping a raise's built-in type breaks every caller catching
+the built-in, so the catch contract wins.
 
 A caller-side filter tighter than the function's real preconditions lets the
 function rot on the excluded inputs, which no test exercises. A filter that
@@ -122,12 +95,6 @@ the files the retirement stripped.
 A central constants module orphans each constant's provenance from the code
 that uses it.
 
-## Variants
-
-Auto-detect misclassifies silently, often the worst input, when inputs do not
-partition cleanly; a per-configuration flag captures the classification a
-person already knows.
-
 ## quality-library-output
 
 The host decides where output goes. A test runner that installs its own
@@ -147,18 +114,13 @@ another machine. The line ending fails worse because silently: a trailing
 carriage return makes every downstream comparison miss, and the consumer
 reports a confident zero rather than an error.
 
-`.editorconfig` normalises editors only; `.gitattributes` enforces LF at
-commit and checkout. `text=auto` is a heuristic: one stray carriage return
-makes git file the blob as binary and skip conversion. A file with CRLF and a
+`.gitattributes` enforces LF at commit and checkout. `text=auto` is a
+heuristic: one stray carriage return makes git file the blob as binary and
+skip conversion. A file with CRLF and a
 lone carriage return is filed `i/-text`, so a check naming `i/crlf` misses
 the worst case. The check filters by extension because `i/-text` is right
 for an image and a finding for Markdown, and splits on the tab because only
 the path is tab-delimited.
-
-A working copy made before `.gitattributes` landed keeps its old endings
-indefinitely and invisibly: commits are still normalised and `git status`
-stays clean, while every tool reading the files sees different bytes than on
-a colleague's machine.
 
 ## Comments
 
@@ -169,20 +131,10 @@ on a dead thread. Code outlives the tracker, so code never cites numbers,
 while Markdown docs cross-reference them as their job. A source (author,
 year, method, such as "Rappé 1992") ages gracefully where a number does not.
 
-The comment-layout hook reads through `tokenize`, because a line-based grep
-reports the `#` in a docstring example. A line closing the previous entry
-(`],`) opens nothing, so a comment under it is a real finding.
-
 ## Debug code
 
 A probe that lands becomes code nobody maintains; its findings belong where
-the change that used them is explained. For a uniform migration the diff is
-the audit trail, not the script.
-
-`scripts/` cannot be the home of files that must not be committed. A helper
-nothing invokes directly is still live when an invoked script imports it.
-No other gate reaches the directory: it sits outside packaging, carries no
-tests, and often sits inside a lint freeze, which is why it accumulates.
+the change that used them is explained.
 
 ## quality-rejected-mechanism-sweep
 
@@ -196,9 +148,7 @@ the discovery half of verifying every call site.
 
 A constraint is written for what gets authored next. A change that does not
 ask about what exists ships green over its own violations, the state that
-looks most like compliance. "Swept `templates/`, N blocks, M violations,
-fixed" names a tree someone can read again; "applied the rule" names
-nothing. Recorded without its gap, a partial sweep reads as complete.
+looks most like compliance.
 
 ## quality-destructive-ownership
 
@@ -213,38 +163,8 @@ why it exists. The path bug still happens; it stops being destructive.
 ## quality-cross-validation
 
 A systematic tool bug masquerades as data divergence, and applying the
-tool's values corrupts correct data.
-
-Self-match is the opposite failure to reaching too little, and every other
-control reports healthy while it happens. An inflating self-match fails a
-clean tree loudly; an absorbing one, a conformance check finding its own
-example of the correct form, reports a clean tree having verified nothing. A
-path exclusion grows to cover real findings as the tree changes, and one
-written against a pattern's neighbourhood rather than its position absorbs
-true findings.
-
-A judgement check fails silently from either direction. Scored, it fires on
-compliance: a gate every conforming change trips measures nothing. Silenced,
-it fires on nothing: a runner recording a pass without surfacing the output
-told nobody. Answered outside its moment, it emits a count whose pass
-condition assumes the moment is in progress, and a reader who meets the
-same inapplicable line every run stops reading. Read where a verdict was
-available, it hides real findings in a pile: six changelog entries of 73 to
-97 words shipped across five pull requests that all ran the suite.
-
-Detecting the moment rather than the emptiness matters because a release
-check's count reading zero today can read one tomorrow with nothing decided.
-A command that yields no baseline is answered by whatever the empty value
-sorts against: every date is later than the empty string, and every commit
-range starting at it is empty, so the check reports clean from a comparison
-that never ran. That refusal is a finding: a moment not yet arrived and a
-baseline that failed to resolve are different states, and one is a bug.
-
-A pass condition satisfied by the absence of output declares no verdict: the
-run that reported the defect exits as the clean run does. A phrase matched
-in output is a convention no check declares, so not-applicable is an exit
-status. A skip is a judgement about the project made once; exit 3 is the
-check answering this run, and folding one into the other loses that it ran.
+tool's values corrupts correct data. A rule weakened until its check goes
+green stops describing the defect it was written for.
 
 ## Enforcement
 
