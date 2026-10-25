@@ -73,7 +73,7 @@ receives nothing (ADR-051).
 | The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | the fingerprint moves to `base-quality-gates`, ID kept; the other two are removed, IDs included |
 | The module-split procedure | `base-quality` | removed; the stable import paths and the untouched suite join Refactors in `base-quality-gates`, and the general module rules stay |
 | Hierarchies: variadic overrides, the override checker and its contract test | `base-quality` | `base-oop` |
-| Citing the software | `base-docs` | `base-measurement` |
+| Citing the software | `base-docs` | removed |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | all removed, the neutral editor-settings rule that replaced the allowlist included |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-quality` | neutral rules remain |
 | Revisit triggers, `quality-revisit-trigger`; spike bars; the data directory; flag-selected rule sets; the package error hierarchy and its raise-walking test; return-type shims; extraction-ready modules; exact ports; auto-detect variants; `.editorconfig` and the old-checkout refresh; the citation test and audit; comment layout; probe naming; `scripts/` | `base-quality` | removed, ID included; the `check-comment-layout` and `find-unreferenced-scripts` hooks still ship |
@@ -85,6 +85,7 @@ receives nothing (ADR-051).
 | The secondary-toolchain rule, the auto-merge rule, the hierarchy control in a freeze retirement and ASCII-only output | `base-quality-gates` | removed; byte-exact test inputs, the aggregate CI job and the formatter ignore list are restated tool-neutrally |
 | The browser-bundle runtime config file; the per-environment secrets table; the boolean `ENABLE_`/`DISABLE_` and group-prefix naming rules; the development-dependency split | `base-config` | removed; the table's test-stub row stays as a neutral rule |
 | The agent-to-file mapping copy rule, the deprecated reference-model upgrade, the decision-record length rule, the monorepo package files, the brand-voice skeleton section | `base-agents` | removed; a file delivered by reference alone stays forbidden |
+| The memory budget and checkpoints; the convergence escalation ladder; the spike deliverable; citing the software | `base-measurement` | removed; the convergence check, approximations, calibration and source silence remain, IDs kept |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
