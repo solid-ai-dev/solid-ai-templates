@@ -89,6 +89,7 @@ Releases up to 2.63.0 are listed in
 - Long checks ship as pre-commit hooks, and templates name the hook to
   run ([#2062])
 - Rules that compress an incident into one line gain a short example ([#2171])
+- A check that fails when a new section ID splits a section frozen in 3.x
 
 ### Changed
 

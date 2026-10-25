@@ -33,7 +33,7 @@ A heading may carry several tag lines:
 - A section runs from its tags to the next `[ID:]` or the end of the file,
   and is never empty
 - Shipped IDs are frozen: never removed, renamed or moved to another file
-  inside a major (8.7)
+  inside a major, and a new ID never splits a shipped section (8.7)
 
 `[DEPENDS ON]` lists direct dependencies only, matching the manifest's
 `depends_on` for the entry. The manifest wins a mismatch, and SYS-04 checks
@@ -125,7 +125,7 @@ and deprecate one by naming its replacement (8.8).
 |---------|----------------|--------|
 | Template paths | The file path of every shipped template | ADR-051 |
 | Template IDs | The `id` of every manifest entry | ADR-051 |
-| Section IDs | Every `[ID:]`, in the file that holds it: a section does not move to another file | ADR-051 |
+| Section IDs | Every `[ID:]`, in the file that holds it, and the headings its section holds: a section does not move to another file, and a minor adds an ID only on new content, never in front of lines a shipped section holds. SYS-24 checks it against the newest 3.x tag | ADR-051 |
 | Manifest schema | The fields the header comment of `templates/manifest.yaml` lists, and their meaning; a minor adds only optional fields | ADR-051 |
 | Core-tier membership | The IDs under `core:`; a new template is reached by declaring it, never by joining the core | ADR-051 |
 | Check exit codes | 0 passes, 1 fails, 3 does not apply | ADR-051 |
