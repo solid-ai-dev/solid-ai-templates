@@ -60,7 +60,7 @@ receives nothing (ADR-051).
 | Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral; one cross-language port rule remains |
 | The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once, DAST before production and artifact promotion remain |
 | Kubernetes: namespaces, two replicas per service, probes, PodDisruptionBudget, ConfigMap secrets | `base-containers` | removed; resources as code and the readiness gate remain, orchestrator-neutral |
-| Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file; relational rules say so |
+| Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file |
 | Per-target product choices: managed CAs, `step-ca`, F5 and MetalLB, Route 53 and Consul, Harbor and Athens, Vault topologies | `base-deployment` | removed; each section keeps its ID and the rules that hold on any target |
 | `backend-quality`: the handler, service and repository layering and its pattern catalogue | `backend-quality` | removed with the template; declare a stack's own architecture in a fork |
 | `backend-quality`: process lifecycle, admin processes, outbound timeouts, auth before logic, rate limits | `backend-quality` | `backend-http` |
