@@ -224,6 +224,8 @@ Releases up to 2.63.0 are listed in
   neutral accessibility scan ([#2325])
 - The data-governance template drops cross-domain interfaces and named regulations;
   access is least-privilege ([#2310])
+- The data-migration rules hold for any store and migration tool; the cohort
+  check covers any key derived from the source ([#2336])
 
 ### Deprecated
 
@@ -441,6 +443,7 @@ Releases up to 2.63.0 are listed in
 [#2325]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2325
 [#2310]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2310
 [#2314]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2314
+[#2336]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2336
 
 ## [2.90.0] - 2026-09-12
 
