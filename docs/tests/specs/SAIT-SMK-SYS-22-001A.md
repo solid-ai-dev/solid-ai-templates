@@ -72,5 +72,5 @@ tags: [tooling, manifest, compatibility, deprecation]
 ## Related
 
 - ADR-051 rule 5: how a deprecation is marked
-- The spec, chapter 8.7, "Deprecation": the field and the CHANGELOG's
+- The spec, chapter 8.8, "Deprecation": the field and the CHANGELOG's
   `Deprecated` section
