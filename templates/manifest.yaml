@@ -114,7 +114,7 @@ frontend:
 backend:
   - id: backend-http
     file: templates/backend/http.md
-    description: URI design, methods, headers, HATEOAS, auth, errors
+    description: Port, lifecycle, admin tasks, handlers, headers, methods, payloads, errors, auth
   - id: backend-api
     file: templates/backend/api.md
     description: API-first, OpenAPI, versioning, deprecation, pagination
