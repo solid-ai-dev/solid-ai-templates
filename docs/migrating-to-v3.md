@@ -89,6 +89,7 @@ receives nothing (ADR-051).
 | The agent-to-file mapping copy rule, the deprecated reference-model upgrade, the decision-record length rule, the monorepo package files, the brand-voice skeleton section | `base-agents` | removed; a file delivered by reference alone stays forbidden |
 | The memory budget and checkpoints; the convergence escalation ladder; the spike deliverable; citing the software | `base-measurement` | removed; the convergence check, approximations, calibration and source silence remain, IDs kept |
 | URI design; HATEOAS; query-parameter naming and reserved names; header-name spelling; the methods table; JSON by default; RFC 9457 errors; JWT by name; a port the process opens itself | `backend-http` | removed; malformed query values, header case, safe and idempotent methods and the JSON number rules remain, tool-neutral |
+| The hand-authored spec served verbatim, the Schemathesis example, the SOAP rule, the duplicate deprecation-header block | `backend-api` | removed; the contract rules now cover every contract kind, and any second API style in one service needs a decision record, except REST for external and ops endpoints combined with gRPC for internal hot paths |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
