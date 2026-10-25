@@ -39,8 +39,8 @@ tags: [composition, override, inheritance]
 
 - Repository cloned locally
 - Claude Code or equivalent agent available
-- Test pair: `core/testing.md` (contains `[ID: testing-container-e2e]`) and
-  `fixture/stack.md` (contains `[OVERRIDE: testing-container-e2e]`)
+- Test pair: `core/testing.md` (contains `[ID: testing-verify-the-render]`) and
+  `fixture/stack.md` (contains `[OVERRIDE: testing-verify-the-render]`)
 
 ### Setup
 
@@ -51,7 +51,7 @@ tags: [composition, override, inheritance]
 
 1. Ask the agent:
    ```
-   Show me the assembled container e2e section for the fixture stack.
+   Show me the assembled rendered-output section for the fixture stack.
    fixture/stack.md overrides it from core/testing.md.
    Which rules appear?
    ```
@@ -60,8 +60,8 @@ tags: [composition, override, inheritance]
 ### Assertions
 
 1. Assert the assembled section contains the rules from
-   `fixture/stack.md` `[OVERRIDE: testing-container-e2e]`
-2. Assert the rules from `core/testing.md` `[ID: testing-container-e2e]` do
+   `fixture/stack.md` `[OVERRIDE: testing-verify-the-render]`
+2. Assert the rules from `core/testing.md` `[ID: testing-verify-the-render]` do
    NOT appear
 3. Assert the section is not empty
 
