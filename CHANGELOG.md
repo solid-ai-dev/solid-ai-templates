@@ -172,6 +172,8 @@ Releases up to 2.63.0 are listed in
 - A rule citing another section names its file and heading, not a bare ID ([#2173])
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
+- The config template drops the browser-bundle rule, the secrets table and
+  boolean prefixes; test secrets are stubs ([#2309])
 
 ### Deprecated
 
@@ -357,6 +359,7 @@ Releases up to 2.63.0 are listed in
 [#2298]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2298
 [#2300]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2300
 [#2302]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2302
+[#2309]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2309
 
 ## [2.90.0] - 2026-09-12
 
