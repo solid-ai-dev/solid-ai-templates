@@ -16,8 +16,6 @@ How a project's agent context files are structured and written.
   (`@AGENTS.md`) and add only Claude-specific rules
 - Never let the two disagree; a change to one is a change to both
 - Add an agent's native context file of another name beside the two
-- Generate every copy of the agent-to-file mapping from the one table in
-  the documentation rules, and gate the copy like any generated block
 
 ## Choosing a model
 
@@ -32,7 +30,6 @@ How a project's agent context files are structured and written.
   reference alone, which nothing loads (MUST NOT)
 - Default to hybrid when the project vendors the templates, inline
   otherwise
-- Regenerate a file made under the deprecated reference model as hybrid
 
 ## Placing a rule
 
@@ -51,8 +48,6 @@ How a project's agent context files are structured and written.
   architecture notes or progress log
 - Keep every qualifier a rule needs; never compress away a load-bearing
   clause
-- Never treat a rule's length, shortened or lengthened, as a reason to
-  write a decision record
 - Put explanations in the documents they belong to, not the context file
 - Point to a rule that is authoritative in a skill, ADR, README or template;
   never restate it unless the model below inlines it
@@ -122,13 +117,10 @@ not a note.
 ## 3. Quality
 ### 3.1 Testing
 
-## 4. Identity
-[Design and brand voice, if applicable]
-
-## 5. Review process
+## 4. Review process
 [Priority order and checklists from templates/core/review.md]
 
-## 6. Session protocol
+## 5. Session protocol
 [How a session starts, proceeds and ends]
 ```
 
@@ -141,9 +133,9 @@ not a note.
 - Inline these, which most often break silently: git conventions, file
   placement rules, language safety rules, content and style rules, and the
   session protocol
-- Reference only rules whose breaking shows an error or that a tool
-  enforces, from quality, review, testing, documentation, accessibility,
-  SEO and delivery; never reference one of these areas whole
+- Never reference a whole area, such as quality, review or testing
+- Reference only an area's rules whose breaking shows an error or that a
+  tool enforces
 - Inline the adoption boundary: adopted rules stay in force, and reading a
   new upstream rule or moving the pin adopts nothing (MUST)
 - Exclude the vendored submodule from every tool that walks the tree
@@ -173,22 +165,12 @@ Key references:
 ## 3. Quality
 [Inlined: every rule "Placing a rule" marks MUST inline]
 
-## 4. Identity
-[Design and brand voice, if applicable]
-
-## 5. Review process
+## 4. Review process
 [Inlined: every review rule marked MUST inline; reference the rest]
 
-## 6. Session protocol
+## 5. Session protocol
 [How a session starts, proceeds and ends]
 ```
-
-## Monorepos (if applicable)
-
-- Add a package-level context file for package-specific rules, for agents
-  that read every file from the root to the working directory
-- Keep only rules that differ from or extend the root in a package file
-  (SHOULD)
 
 ## Formatting
 

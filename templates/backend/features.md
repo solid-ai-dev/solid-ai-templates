@@ -34,14 +34,12 @@ decides when and for whom it activates.
 | **Release** | Whether a feature is visible at all | New checkout flow for 0% → 100% of users |
 | **Experiment** | Which variant a user sees | Button colour A vs B |
 | **Ops / kill switch** | Emergency disable of a subsystem | Disable background sync |
-| **Permission** | Access for a specific user, role, or tenant | Beta access for select accounts |
 
 ## Targeting and rollout strategy
 
-- Roll out by percentage of requests or users, raising it while watching
-  error rate and latency
-- Target cohorts (user IDs, tenant IDs, roles) before a general rollout
-- Enable a canary instance or region before expanding
+- Roll out in steps while watching error rate and latency
+- Size each step by percentage of requests or users, or by a cohort such
+  as chosen tenants
 - Keep each user on one variant for an experiment's duration: hash the
   user ID, never draw per request
 
@@ -64,8 +62,8 @@ decides when and for whom it activates.
 
 ## Tooling
 
-- Serve flags from a flag service or SDK, or from configuration the
-  application reloads at runtime; never from the application database
+- Serve flags from a source that changes at runtime without a deploy,
+  such as a flag service or reloaded configuration
 - Keep a flag's targeting rules in one place, never split across
   environment variables and code
 - Declare each flag's failure policy for a provider outage: the safe
