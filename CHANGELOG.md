@@ -206,6 +206,8 @@ Releases up to 2.63.0 are listed in
   neutral rules remain ([#2343])
 - The microservices template drops protocol-specific rules, SLOs and rules its chain
   states ([#2351])
+- The database template drops the ORM preference and partial indexes; its other rules
+  are engine-neutral ([#2353])
 
 ### Deprecated
 
@@ -411,6 +413,7 @@ Releases up to 2.63.0 are listed in
 [#2350]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2350
 [#2351]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2351
 [#2352]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2352
+[#2353]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2353
 
 ## [2.90.0] - 2026-09-12
 
