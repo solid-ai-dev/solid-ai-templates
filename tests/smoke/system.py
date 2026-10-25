@@ -1698,9 +1698,13 @@ def line_owners(text):
 
 
 def section_splits(was, now):
-    """Each line a frozen section lost to another section, as a finding."""
+    """Each section that lost lines to another, as one finding.
+
+    A finding names the two sections, the count of lines moved and the
+    first of them, so one inserted ID reads as one split.
+    """
     before, after = line_owners(was), line_owners(now)
-    found = []
+    moved = {}
     for line, held in before.items():
         if line not in after:
             continue
@@ -1712,9 +1716,13 @@ def section_splits(was, now):
         if not gained:
             continue
         taker = ", ".join(sorted(str(o) for o in gained))
-        shown = line if len(line) <= 60 else line[:57] + "..."
         for owner in sorted(lost):
-            found.append(f"'{shown}' left {owner} for {taker}")
+            moved.setdefault((owner, taker), []).append(line)
+    found = []
+    for (owner, taker), lines in moved.items():
+        first = lines[0] if len(lines[0]) <= 60 else lines[0][:57] + "..."
+        found.append(f"{len(lines)} line(s) left {owner} for {taker}, "
+                     f"from '{first}'")
     return found
 
 
@@ -1745,17 +1753,15 @@ SPLIT_CASES = [
      []),
     ("an ID inserted above a frozen heading",
      SPLIT_BASE.replace("## Checks", "## Checks\n\n[ID: base-b]"),
-     ["'Checks' left base-a for base-b",
-      "'- Check one' left base-a for base-b"]),
+     ["2 line(s) left base-a for base-b, from 'Checks'"]),
     ("an ID inserted between a frozen heading and its rule",
      SPLIT_BASE.replace("- Check one\n",
                         "## Late\n\n[ID: base-b]\n\n- Check one\n"),
-     ["'- Check one' left base-a for base-b"]),
+     ["1 line(s) left base-a for base-b, from '- Check one'"]),
     ("a frozen heading moved under a later ID",
      SPLIT_BASE.replace("## Checks\n\n- Check one\n", "") +
      "\n## Extra\n\n[ID: base-b]\n\n## Checks\n\n- Check one\n",
-     ["'Checks' left base-a for base-b",
-      "'- Check one' left base-a for base-b"]),
+     ["2 line(s) left base-a for base-b, from 'Checks'"]),
 ]
 
 # The text the planted repositories commit over SPLIT_BASE: a split.

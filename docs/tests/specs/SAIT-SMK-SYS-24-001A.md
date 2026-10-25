@@ -63,8 +63,9 @@ HEAD)
 5. For each template present at the baseline, map every content line --
    any line with a letter or digit, other than a directive or a fence
    delimiter -- to the section holding it, on both sides, and report each
-   line one section lost and another gained. A heading followed only by
-   blank and directive lines before an `[ID:]` belongs to that ID
+   line one section lost and another gained, grouped into one finding per
+   pair of sections. A heading followed only by blank and directive lines
+   before an `[ID:]` belongs to that ID
 6. Report the planted counts, the fixture files exempt, the templates
    compared, and the baseline
 
@@ -75,7 +76,8 @@ HEAD)
    controls that what chapter 8.7 allows passes
 2. Assert an ID inserted above a frozen heading, an ID inserted between a
    frozen heading and its rule, and a frozen heading moved under a later ID
-   each yield one finding per moved line, naming it and both IDs
+   each yield one finding naming both IDs, the count of lines moved and
+   the first of them
 3. Assert, through git, that a split behind a `v3.0.0` tag is found, that a
    repository holding only an earlier major's tag finds nothing, and that a
    repository with no tag is refused
@@ -90,7 +92,7 @@ HEAD)
 1. **The defect that motivated the check.** Adding
    `[ID: base-git-off-limits]` inside `core/git.md` shrank `base-git` while
    smoke and fork sync stayed green. With a `v3.0.0` tag on HEAD in a
-   scratch clone, the same insertion fails, naming each heading it moved
+   scratch clone, the same insertion fails, naming the lines it moved
 2. **A split between two rules.** A heading-only comparison passed a new
    heading and ID inserted before the last bullet of `core/git.md`, which
    moves that rule out of `base-git`. The same insertion now fails, naming
