@@ -18,6 +18,10 @@ change created. A refactor that extracts a helper can silently change an
 edge case (null handling, sort direction, a boundary) on one of the paths it
 serves, which is why every path is checked, not the one that motivated it.
 
+Every project takes input from outside its process: a URL parameter, a
+command-line argument, a file, a message. Destructuring or indexing it
+before validation turns a malformed value into a crash or an injection.
+
 ## CI signals
 
 An infrastructure failure (a network error, a missing release, broken
@@ -69,7 +73,8 @@ Extraction tools are silently partial: a parser walks the node types it
 knows, so "X is missing" often means the extractor does not reach where X
 lives.
 
-A request's result depends on who makes it. An endpoint honouring cookie
+A probe's result depends on the conditions it ran under: who ran it, with
+what credential, in which environment. An endpoint honouring cookie
 sessions commonly ignores a bearer token, so adding a token reproduces the
 anonymous result and reads like confirmation.
 

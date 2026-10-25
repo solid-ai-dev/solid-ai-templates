@@ -8,16 +8,18 @@ messaging rules for idempotency, retries, DLQs and backpressure.
 
 ## Intake
 
-- Expose one intake URL per provider or connection; never multiplex
-  providers onto one endpoint
-- Scope failures, signature handling and metrics to that URL
+- Expose one intake URL per provider; never multiplex providers onto one
+  endpoint
+- Scope failures, authentication and metrics to that URL
 
 ## Verify at the edge
 
-- Verify the provider signature before any work; reject a forged or
-  malformed payload before parsing, persisting or enqueueing it
-- Verify the exact bytes received, never a re-serialised copy
-- Treat the raw body as untrusted until its signature checks out
+- Authenticate each delivery before any work, with the provider's
+  credential, such as a signature, a shared token or a client certificate
+- Reject a forged or malformed delivery before parsing, persisting or
+  enqueueing it
+- Check a body signature against the exact bytes received, never a
+  re-serialised copy
 
 ## Respond fast
 
@@ -28,18 +30,20 @@ messaging rules for idempotency, retries, DLQs and backpressure.
 
 ## Survive provider retries
 
-- Expect a non-2xx response to make the provider resend, so a slow or
-  failing handler multiplies inbound load
+- Assume a non-2xx response or a timeout brings a resend; a slow or
+  failing handler then multiplies inbound load
 - Return 2xx for an event skipped on purpose (duplicate, irrelevant)
 - Return 5xx only where redelivery is wanted
-- Deduplicate on the provider's event ID; at-least-once delivery sends the
-  same event more than once
+- Deduplicate on a stable event key, such as the provider's event ID; the
+  same event can arrive more than once
 
 ## Testing
 [EXTEND: base-testing]
 
-- Test signature rejection: a tampered body or invalid signature MUST be
+- Test authentication rejection: a missing or invalid credential MUST be
   rejected before any side effect occurs
+- Test tamper rejection where authentication binds the body, such as a
+  body signature: a changed body MUST be rejected too
 - Test idempotency: deliver the same event twice and assert a single effect
 - Test the fast-ack path: the handler returns 2xx without waiting for
   downstream processing to complete
