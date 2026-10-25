@@ -81,12 +81,12 @@
   beyond that range precisely, in either direction
 - Reject non-finite values in an endpoint that serialises computed floats
   to JSON (MUST); `NaN`/`Infinity` are not valid RFC 8259 JSON
-- Configure the encoder to reject them, so it fails loud at the
+- Configure the JSON encoder to reject them, so it fails loud at the
   serialisation boundary (a 500) instead of emitting a bare `NaN` token
   that strict parsers reject
-- Represent an undefined computed float as `null`, normalised before
-  serialisation
-- Document such a field as nullable in the contract
+- Represent an undefined computed float in JSON as `null`, normalised
+  before serialisation
+- Document such a JSON field as nullable in the contract
 - Return only the fields the caller needs (MUST); never pad a payload
   with fields that are not consumed
 
