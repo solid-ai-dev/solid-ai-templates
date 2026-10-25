@@ -87,6 +87,37 @@ exists to prevent, and it is worse than none because it looks enforced.
   rule when the rule changes upstream. A pinned hook runs the check the rule
   names, and the template carries the command instead of the code.
 
+Self-match is the opposite failure to reaching too little, and every other
+control reports healthy while it happens. An inflating self-match fails a
+clean tree loudly; an absorbing one, a conformance check finding its own
+example of the correct form, reports a clean tree having verified nothing. A
+path exclusion grows to cover real findings as the tree changes, and one
+written against a pattern's neighbourhood rather than its position absorbs
+true findings.
+
+A judgement check fails silently from either direction. Scored, it fires on
+compliance: a gate every conforming change trips measures nothing. Silenced,
+it fires on nothing: a runner recording a pass without surfacing the output
+told nobody. Answered outside its moment, it emits a count whose pass
+condition assumes the moment is in progress, and a reader who meets the
+same inapplicable line every run stops reading. Read where a verdict was
+available, it hides real findings in a pile: six changelog entries of 73 to
+97 words shipped across five pull requests that all ran the suite.
+
+Detecting the moment rather than the emptiness matters because a release
+check's count reading zero today can read one tomorrow with nothing decided.
+A command that yields no baseline is answered by whatever the empty value
+sorts against: every date is later than the empty string, and every commit
+range starting at it is empty, so the check reports clean from a comparison
+that never ran. That refusal is a finding: a moment not yet arrived and a
+baseline that failed to resolve are different states, and one is a bug.
+
+A pass condition satisfied by the absence of output declares no verdict: the
+run that reported the defect exits as the clean run does. A phrase matched
+in output is a convention no check declares, so not-applicable is an exit
+status. A skip is a judgement about the project made once; exit 3 is the
+check answering this run, and folding one into the other loses that it ran.
+
 ## quality-gates-check-timing
 
 Run before the change, a check reports the state before the change, and

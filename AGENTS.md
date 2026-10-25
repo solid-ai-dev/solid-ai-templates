@@ -149,7 +149,7 @@ labels are terminal, applied when closing without action: `duplicate`
   hook ID is frozen like a section ID
 - A check that derives a comparison baseline by running a command MUST
   verify the command produced one and refuse when it did not — the
-  refusal is a finding, never exit 3; see `base-quality`
+  refusal is a finding, never exit 3; see `base-quality-gates`
 - Never name another file's section ID in running prose unless that file
   resolves into every chain carrying yours — state the substance inline
   instead; SYS-11 checks it per chain (spec, chapter 8.4)

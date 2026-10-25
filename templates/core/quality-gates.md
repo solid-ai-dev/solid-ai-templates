@@ -25,8 +25,8 @@ looks like a clean one.
   check for it
 - Wire a check guarding a committed generated artifact into CI as a
   required status check (see "Generated-file staleness" below)
-- Test a pattern check against its own source, as `core/quality.md`,
-  "Check trust", states
+- Test a pattern check against its own source, as "Self-match" below
+  states
 
 A line-length limit of 80, for example, pairs with:
 
@@ -107,14 +107,36 @@ informally.
   (MUST)
 - Report every finding before exiting; where a check cannot continue past
   one, say so
-- Decide which counts carry the verdict as `core/quality.md`,
-  "Check trust", states, from the pass condition rather than a sample of
-  the output
 - Report an empty result as a failure where emptiness means drift
 - Emit ASCII only, and print an offending character's code point, never
   the character
 - Triage a violation count far larger than expected as a possible defect
   in the check before working it as a backlog
+
+### Verdicts and readings
+
+- Verify a measurement against an independent check before tuning a gate
+  or budget threshold it disagrees with
+- Refuse when the command that should yield a comparison baseline yields
+  none (MUST)
+- Report that refusal as a finding, never as exit 3
+- Print a derived baseline on its own line (MUST)
+- Reach an automatic verdict on every threshold a check declares; the
+  judgement is what remains (MUST)
+- Read that threshold from the check's pass condition, never from a sample
+  of its output (MUST)
+- Say which counts carry the verdict and which are for a reader, where a
+  check carries both (MUST)
+- Carry a shipped check's verdict in its exit status, and prove the status
+  separates a planted violation from a clean tree (MUST)
+- Say beside a check whose verdict takes a person what that judgement is
+- Never wire a governance signal as a build gate where the project's own
+  rules oblige the change that trips it (MUST NOT)
+
+  ```
+  rule: each new fenced block adds an entry to the dispositions file
+  gate: fail any change that edits a test file -> every conforming change fails
+  ```
 
 ### Controls
 
@@ -132,6 +154,18 @@ informally.
 - Stage or commit before running a control that mutates the tree
 - Plant into a throwaway copy whose clean state is known, so the landing
   check is a comparison (SHOULD)
+
+### Self-match
+
+- Test a check whose scan can reach its own source by running it from a
+  tree with and without that source
+- Pass that test when adding the source raises the inspected count and
+  leaves the findings identical
+- Constrain the scan to where the pattern can legitimately appear, such as
+  the comment half of a line, rather than excluding a path
+- Name what an unavoidable exclusion excludes, and why (MUST)
+- Constrain by the narrowest property separating a real occurrence from a
+  quoted one
 
 ### Shipped checks
 

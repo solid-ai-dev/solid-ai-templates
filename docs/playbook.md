@@ -885,7 +885,7 @@ pull request where it looked, what it found and what it left out. Where the
 corpus does not comply, say whether the instances were fixed or frozen, or,
 for a corpus that cannot be edited, the boundary the rule binds forward
 from. `quality-constraint-corpus-sweep` in `templates/core/quality.md`
-is the rule.
+requires the sweep; the record is this repository's own rule.
 
 A control proves something only when each of these holds:
 
