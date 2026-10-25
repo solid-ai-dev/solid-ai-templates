@@ -113,6 +113,8 @@ Releases up to 2.63.0 are listed in
   slices and server rendering by default ([#2324])
 - The data-quality template drops completeness thresholds, scoring scales and the
   assisted ground-truth workflow ([#2314])
+- The data-modeling template states its relational-only rules for any store and
+  drops junction tables ([#2337])
 
 ### Added
 
@@ -444,6 +446,7 @@ Releases up to 2.63.0 are listed in
 [#2310]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2310
 [#2314]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2314
 [#2336]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2336
+[#2337]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2337
 
 ## [2.90.0] - 2026-09-12
 
