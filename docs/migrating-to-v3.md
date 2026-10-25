@@ -33,7 +33,7 @@ receives nothing (ADR-051).
 | Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed; one diagnostic-view rule remains |
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
-| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries |
+| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries; the Mermaid-note rule, stale-entry counts and schema-derived fields are removed |
 | Verifying a filed issue in full, its shapes and checks | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
@@ -78,6 +78,7 @@ receives nothing (ADR-051).
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-quality` | neutral rules remain |
 | Revisit triggers, `quality-revisit-trigger`; spike bars; the data directory; flag-selected rule sets; the package error hierarchy and its raise-walking test; return-type shims; extraction-ready modules; exact ports; auto-detect variants; `.editorconfig` and the old-checkout refresh; the citation test and audit; comment layout; probe naming; `scripts/` | `base-quality` | removed, ID included; the `check-comment-layout` and `find-unreferenced-scripts` hooks still ship |
 | Self-match and the verdict rules from "Check trust" | `base-quality` | `base-quality-gates`, under "Running a check" |
+| The markdownlint line-width check and its line-of-its-own setting; the Mermaid note characters; uniform node shapes; the bulk-emit stale count; per-field generators reading the schema | `base-docs` | removed; the width rules stay tool-neutral, with Mermaid only as an example |
 | Container e2e and test tiers, `testing-container-e2e` and `testing-tier-by-directory`; system, end-to-end and acceptance obligations; the regression cadence and budgets; integration-test naming | `base-testing` | removed, IDs included; a fork's stack can carry them. Doubles cover boundary-crossing dependencies only, and the deadline-wait rule joins Isolation |
 | The structure audit's shared-module rule; the URL-parameter and principal and credential probe items | `base-review` | the shared-module rule removed, as `base-quality`'s DRY rule states it; neutral rules on external input and probe conditions remain |
 

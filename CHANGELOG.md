@@ -75,6 +75,8 @@ Releases up to 2.63.0 are listed in
   and revisit triggers; check-writing rules move to quality gates ([#2289])
 - The review template drops its shared-module rule; its URL-parameter and
   sign-in probe items become neutral ([#2296])
+- The docs template drops its markdownlint width check and the Mermaid and
+  narrow generator rules ([#2298])
 
 ### Added
 
@@ -348,6 +350,7 @@ Releases up to 2.63.0 are listed in
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
 [#2296]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2296
+[#2298]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2298
 
 ## [2.90.0] - 2026-09-12
 
