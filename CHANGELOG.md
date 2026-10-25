@@ -73,6 +73,8 @@ Releases up to 2.63.0 are listed in
   cadence and acceptance sign-off, IDs included ([#2286])
 - The quality template drops error hierarchies, comment layout, scripts/ rules
   and revisit triggers; check-writing rules move to quality gates ([#2289])
+- The data-modeling template states its relational-only rules for any store and
+  drops junction tables ([#2337])
 
 ### Added
 
@@ -345,6 +347,7 @@ Releases up to 2.63.0 are listed in
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
+[#2337]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2337
 
 ## [2.90.0] - 2026-09-12
 
