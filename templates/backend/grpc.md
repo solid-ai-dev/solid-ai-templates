@@ -6,15 +6,6 @@ Cross-cutting rules for gRPC services backed by Protocol Buffers. Applies
 regardless of implementation language. Language-specific stacks extend this
 file with runtime conventions, project structure, and tooling.
 
-## When to use gRPC
-
-- Use gRPC for synchronous service-to-service communication where performance,
-  strong typing, or streaming are required
-- Use gRPC when a shared proto schema across multiple language runtimes is
-  preferable to maintaining multiple OpenAPI specs
-- Do NOT use gRPC as the primary API for browser clients — use REST or GraphQL
-  at the edge and gRPC internally
-
 ## Proto design
 [ID: grpc-proto]
 
@@ -83,7 +74,7 @@ The common cases; take any other from the full gRPC status code list.
 - Log method name, request ID, caller identity, duration, and status code
   for every call in the **logging** interceptor
 - Propagate W3C `traceparent` via gRPC metadata in the **tracing**
-  interceptor, using OpenTelemetry gRPC instrumentation
+  interceptor
 - Catch unhandled panics or exceptions in the **recovery** interceptor —
   return `INTERNAL`, never crash the server process
 - Register all interceptors as a chain at server startup — not inside handlers
@@ -93,21 +84,15 @@ The common cases; take any other from the full gRPC status code list.
 
 - Pass credentials via gRPC metadata: key `authorization`, value
   `Bearer <token>`
-- Validate in the auth interceptor — not in service handlers
-- Use mutual TLS (mTLS) for service-to-service calls in production
-- Manage certificate rotation at the infrastructure layer (cert-manager,
-  Vault)
 - Use plaintext only in local development — never in staging or production
 
 ## Observability
 [EXTEND: backend-observability]
 
-- Expose Prometheus metrics on a separate HTTP port (`/metrics`):
-  - `grpc_server_handled_total` — labelled by method and status code
-  - `grpc_server_handling_seconds` — histogram, labelled by method
+- Count every call, labelled by method and status code
+- Record call duration as a histogram, labelled by method
 - Implement the standard gRPC Health Checking Protocol
   (`grpc.health.v1.Health`) — orchestrators and load balancers probe it
-- Propagate trace context through gRPC metadata for distributed tracing
 
 ## Testing
 [ID: grpc-testing]
@@ -117,18 +102,16 @@ The common cases; take any other from the full gRPC status code list.
   plain request structs/objects, assert plain response structs/objects
 - Start an in-process gRPC server for integration tests and call it with a
   real client
-- Test each method in integration tests for success, invalid argument, and
-  auth failure
-- Name tests `<MethodName>_<state>_<expected>`,
-  e.g. `GetUser_UserNotFound_ReturnsNotFoundStatus`
+- Test each method in integration tests for success and invalid argument
+- Test each method the auth interceptor guards for auth failure as well
 
 ## Proto tooling
 [ID: grpc-tooling]
 
-- Lint protos with `buf lint` in CI — enforce naming, field numbering, and
-  style consistency
-- Detect breaking changes with `buf breaking --against` in CI — reject PRs
-  that introduce wire-incompatible changes without a version bump
+- Lint protos in CI — enforce naming, field numbering, and style
+  consistency
+- Detect breaking proto changes in CI — reject PRs that introduce
+  wire-incompatible changes without a version bump
 - Generate stubs in CI
 - Regenerate and commit stubs in the same PR as the proto change if generated
   code is committed; never let protos and stubs diverge

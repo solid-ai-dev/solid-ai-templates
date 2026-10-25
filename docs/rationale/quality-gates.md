@@ -129,9 +129,11 @@ makes.
 
 ## quality-gates-check-selection
 
-Selecting a CI run by recency is correct until a second workflow is added for
-an unrelated reason; then the check reports whichever finished last and hides
-the other, and a contributor can read a green scan and call a red build good.
+A check can exit zero while reporting on the wrong thing, broken by a change
+in another file whose reviewer has no reason to look. Selecting a CI run by
+recency is correct until a second workflow is added for an unrelated reason;
+then the check reports whichever finished last and hides the other, and a
+contributor can read a green scan and call a red build good.
 
 A line-ending gate counting index entries classified as CRLF is the sharper
 case. A file that gains a NUL byte is reclassified as binary, which stops it
@@ -249,8 +251,6 @@ Two edits empty a blind-except entry: using the caught exception silences the
 rule while the blind handler stays, and narrowing the handler does the real
 work. Narrowing can go too far and let a raw exception escape. A suite that
 passed before passes after for the same reason, so it is not the control.
-Narrowing seventy handlers in one downstream migration left four sites wrong;
-a contract test walking the whole hierarchy found all four.
 
 ### Site-local suppressions
 
@@ -273,39 +273,10 @@ perturbs a large output that unit tests check only in the small. A
 committed platform-dependent hash goes flaky across machines, so the
 fingerprint proves the refactor and invariant tests guard the future.
 
-## testing-ast-equivalence
-
-An output fingerprint cannot prove a formatter's rewrite was mechanical,
-because it assumes what is in question. Syntax trees answer it directly,
-and every mainstream language exposes them. One adoption rewrote nearly every
-file and reported a single differing tree, which had lost a redundant
-`u""` prefix. The normalisation decides which differences are declared
-invisible, so it is stated before the result is read.
-
-## testing-ast-contract
-
-A blanket annotation lint forces `Any` onto private helpers that take
-unstubbed third-party objects. Splitting the rule lets the linter own format
-and complexity while a test owns presence on the public surface only. The
-same traversal can enforce adjacent rules no linter has, such as a trailing
-comment or a ticket number in a comment.
-
-## Module splits
-
-The unchanged suite is a split's regression oracle; rewriting its imports
+The unchanged suite is a move's regression oracle; rewriting its imports
 forfeits it, by touching the oracle in the change that restructures the code
 under test. The oracle certifies a move: same call graph, same signatures,
-new file boundaries. Where the seam runs through a class, the suite stays
-green over call paths it was never written to distinguish, and certifies a
-neutrality it cannot establish, most confidently where it is thinnest.
-
-The oracle also assumes nothing reads module identity. A helper filtering on
-the module a class reports, or a coverage gate enumerating submodules, reads
-an `__init__` that declares nothing after the split, and breaks by examining
-an empty set; a negative assertion among them passes vacuously.
-
-The cheap static gates catch every mechanical split error at
-once, so the slow suite runs once.
+new file boundaries.
 
 ## quality-gates-test-edit-boundary
 
