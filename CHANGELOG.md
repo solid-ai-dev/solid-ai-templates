@@ -164,6 +164,8 @@ Releases up to 2.63.0 are listed in
 - A rule citing another section names its file and heading, not a bare ID ([#2173])
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
+- The database template drops the ORM preference and partial indexes; its other rules
+  are engine-neutral ([#2353])
 
 ### Deprecated
 
@@ -345,6 +347,7 @@ Releases up to 2.63.0 are listed in
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
+[#2353]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2353
 
 ## [2.90.0] - 2026-09-12
 
