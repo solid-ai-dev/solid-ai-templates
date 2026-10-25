@@ -164,6 +164,8 @@ Releases up to 2.63.0 are listed in
 - A rule citing another section names its file and heading, not a bare ID ([#2173])
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
+- The gRPC template drops mutual TLS, Prometheus names, buf and test naming;
+  neutral rules remain ([#2343])
 
 ### Deprecated
 
@@ -345,6 +347,7 @@ Releases up to 2.63.0 are listed in
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
+[#2343]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2343
 
 ## [2.90.0] - 2026-09-12
 
