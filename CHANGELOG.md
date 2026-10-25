@@ -165,7 +165,7 @@ Releases up to 2.63.0 are listed in
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
 - The data-migration rules hold for any store and migration tool; the cohort
-  check covers every bulk migration ([#2336])
+  check covers any key derived from the source ([#2336])
 
 ### Deprecated
 

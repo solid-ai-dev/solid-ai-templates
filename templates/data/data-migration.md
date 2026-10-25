@@ -73,7 +73,8 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 ## Post-migration checks
 [ID: base-testing-data-validation]
 
-- Assert, after a bulk migration, that the set of written keys equals the
-  set derived independently from the source of truth (MUST)
+- Assert, after a bulk migration whose destination keys derive from the
+  source, that the written keys equal the keys derived independently from
+  the source of truth (MUST)
 - Treat per-record validation as blind to a partial migration: an orphan
   key and a missing entry are each individually valid
