@@ -408,6 +408,23 @@ def off_limits_cases():
             failures.append("  report-off-limits-paths, a workflow named with "
                             "a space and an accent: exited %d, printed %s"
                             % (code, lines))
+
+        # A release tag's pipeline runs on a commit the base has since
+        # moved past. The base already holds that commit, so no change is
+        # under review there, the same as at the base itself.
+        git(work, "checkout", "-q", "--detach", "moved")
+        for pre_commit, owed in ((False, 3), (True, 0)):
+            code, lines, _ = run_hook(
+                work, "report-off-limits-paths",
+                ["--base", "spaced", "--path", ".github/workflows/"],
+                pre_commit=pre_commit)
+            said = not pre_commit or any(l.startswith("not applicable:")
+                                         for l in lines)
+            if code != owed or not said:
+                failures.append("  report-off-limits-paths, HEAD behind the "
+                                "base%s: exited %d, printed %s"
+                                % (" under pre-commit" if pre_commit else "",
+                                   code, lines))
     finally:
         shutil.rmtree(work, ignore_errors=True)
     return failures
