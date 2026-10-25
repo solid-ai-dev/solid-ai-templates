@@ -2,16 +2,14 @@
 [ID: backend-jobs]
 
 Rules for background job processing, task queues, and scheduled work.
-Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, or any other).
+Applies with any queue or scheduler.
 
 ## When to use background jobs
 
-- Move into a job any work that does not need to complete within the HTTP
-  request cycle
-- Use jobs for: email delivery, report generation, image processing,
-  webhook fanout, long-running data imports
+- Move into a job any work that need not complete before the request's
+  response
 - Do NOT use jobs for work that the caller needs the result of immediately;
-  use async/await or streaming instead
+  do it in the request path instead
 - Do NOT use jobs to paper over a slow synchronous path; fix the root cause
   first
 
@@ -28,22 +26,17 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, or any other).
 
 - Give every job a retry limit (MUST); infinite retries will fill the queue
 - Use exponential backoff with jitter between retries
-- Move the job to a dead-letter queue (DLQ) after the retry limit is
-  exhausted
+- Move the job to a dead-letter queue or failed-job store (DLQ) after the
+  retry limit is exhausted
 - Never silently drop failed jobs
 - Alert on DLQ depth; a growing DLQ is a silent production incident
-- Log the job ID, attempt number, and error on every failure
 
 ## Separation of concerns
 
 - Keep job handlers thin (MUST); delegate all business logic to service
   functions
-- Use the same service functions in jobs as in HTTP handlers, with no
+- Use the same service functions in jobs as in request handlers, with no
   parallel logic paths (SHOULD)
-- Never access the database directly in job handlers; go through the service
-  layer
-- Never make HTTP calls in job handlers unless the job's explicit purpose is
-  an outbound webhook
 
 ## Scheduling
 
@@ -57,8 +50,8 @@ Applies regardless of technology (Celery, asynq, Sidekiq, BullMQ, or any other).
 ## Observability
 
 - Emit a structured log entry at job start (INFO) and job completion (INFO)
-- Log failures at ERROR with full context (job type, ID, payload summary,
-  error message, stack trace)
+- Log every failure at ERROR with full context: job type, ID, attempt
+  number, payload summary, error message and stack trace
 - Track job duration, queue depth, and failure rate as metrics
 - Alert if queue depth exceeds a threshold that indicates worker starvation
 
