@@ -33,7 +33,7 @@ receives nothing (ADR-051).
 | Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed; one diagnostic-view rule remains |
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
-| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries |
+| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries; the Mermaid-note rule, stale-entry counts and schema-derived fields are removed |
 | Verifying a filed issue in full, its shapes and checks | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
@@ -68,17 +68,21 @@ receives nothing (ADR-051).
 | `frontend-static-site`: one stylesheet, BEM naming, system fonts, the `localStorage` theme snippet, the page table, lint and format files | `frontend-static-site` | removed with the template; a fork's static-site stack carries its choices |
 | `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept |
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
-| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | stays in `base-git`, with the `check-heading-numbers` hook; the playbook keeps this repository's own form |
+| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | the numbered-document check is removed, and the `check-heading-numbers` hook still ships; the first-CI-run rule stays in `base-git`; the playbook keeps this repository's own form |
 | The in-process server, `testing-in-process-server` | `base-testing` | `frontend-quality`, ID kept |
-| The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | `base-quality-gates`, IDs kept |
-| The module-split procedure | `base-quality` | `base-quality-gates`; the general module rules stay |
+| The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | the fingerprint moves to `base-quality-gates`, ID kept; the other two are removed, IDs included |
+| The module-split procedure | `base-quality` | removed; the stable import paths and the untouched suite join Refactors in `base-quality-gates`, and the general module rules stay |
 | Hierarchies: variadic overrides, the override checker and its contract test | `base-quality` | `base-oop` |
 | Citing the software | `base-docs` | `base-measurement` |
-| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | mask and allowlist removed; the submodule update and a neutral editor-settings rule remain |
+| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | all removed, the neutral editor-settings rule that replaced the allowlist included |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-quality` | neutral rules remain |
 | Revisit triggers, `quality-revisit-trigger`; spike bars; the data directory; flag-selected rule sets; the package error hierarchy and its raise-walking test; return-type shims; extraction-ready modules; exact ports; auto-detect variants; `.editorconfig` and the old-checkout refresh; the citation test and audit; comment layout; probe naming; `scripts/` | `base-quality` | removed, ID included; the `check-comment-layout` and `find-unreferenced-scripts` hooks still ship |
 | Self-match and the verdict rules from "Check trust" | `base-quality` | `base-quality-gates`, under "Running a check" |
+| The markdownlint line-width check and its line-of-its-own setting; the Mermaid note characters; uniform node shapes; the bulk-emit stale count; per-field generators reading the schema | `base-docs` | removed; the width rules stay tool-neutral, with Mermaid only as an example |
+| The work-email rule; the `gh` check-watch loop; bidirectional artifacts; the vendored-pointer default | `base-git` | removed; tool-neutral rules on registered checks and branch updates remain |
 | Container e2e and test tiers, `testing-container-e2e` and `testing-tier-by-directory`; system, end-to-end and acceptance obligations; the regression cadence and budgets; integration-test naming | `base-testing` | removed, IDs included; a fork's stack can carry them. Doubles cover boundary-crossing dependencies only, and the deadline-wait rule joins Isolation |
+| The structure audit's shared-module rule; the URL-parameter and principal and credential probe items | `base-review` | the shared-module rule removed, as `base-quality`'s DRY rule states it; neutral rules on external input and probe conditions remain |
+| The secondary-toolchain rule, the auto-merge rule, the hierarchy control in a freeze retirement and ASCII-only output | `base-quality-gates` | removed; byte-exact test inputs, the aggregate CI job and the formatter ignore list are restated tool-neutrally |
 | The browser-bundle runtime config file; the per-environment secrets table; the boolean `ENABLE_`/`DISABLE_` and group-prefix naming rules; the development-dependency split | `base-config` | removed; the table's test-stub row stays as a neutral rule |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
