@@ -97,6 +97,8 @@ Releases up to 2.63.0 are listed in
   OpenTelemetry mandate for neutral rules ([#2320])
 - The jobs template drops its database and HTTP-call bans and names no
   vendor ([#2326])
+- The edge template drops load-balancing, routing, WAF and geo rules; forwarded
+  headers trust any known proxy hop ([#2329])
 
 ### Added
 
@@ -396,6 +398,7 @@ Releases up to 2.63.0 are listed in
 [#2322]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2322
 [#2323]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2323
 [#2326]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2326
+[#2329]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2329
 
 ## [2.90.0] - 2026-09-12
 
