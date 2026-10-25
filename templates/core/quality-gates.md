@@ -117,9 +117,10 @@ informally.
 
 - Verify a measurement against an independent check before tuning a gate
   or budget threshold it disagrees with
-- Refuse, as a finding and never as exit 3, when the command that should
-  yield a comparison baseline yields none, and print the baseline on its
-  own line (MUST)
+- Refuse when the command that should yield a comparison baseline yields
+  none (MUST)
+- Report that refusal as a finding, never as exit 3
+- Print a derived baseline on its own line (MUST)
 - Reach an automatic verdict on every threshold a check declares; the
   judgement is what remains (MUST)
 - Read that threshold from the check's pass condition, never from a sample
@@ -156,9 +157,10 @@ informally.
 
 ### Self-match
 
-- Test a check whose scan can reach its own source: run it from a tree with
-  and without that source; the inspected count rises and the findings stay
-  identical
+- Test a check whose scan can reach its own source by running it from a
+  tree with and without that source
+- Pass that test when adding the source raises the inspected count and
+  leaves the findings identical
 - Constrain the scan to where the pattern can legitimately appear, such as
   the comment half of a line, rather than excluding a path
 - Name what an unavoidable exclusion excludes, and why (MUST)
