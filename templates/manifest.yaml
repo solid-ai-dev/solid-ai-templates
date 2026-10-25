@@ -26,7 +26,7 @@ core: [base-quality, base-git, base-docs, base-testing, base-review]
 base:
   - id: base-git
     file: templates/core/git.md
-    description: Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore
+    description: Committer identity, branching, pull requests, CI evidence, regenerated artifacts, off-limits paths, .gitignore
   - id: base-docs
     file: templates/core/docs.md
     description: Rule language, standard documents, upkeep, line width, writing style, diagrams, generated files, agent output files
