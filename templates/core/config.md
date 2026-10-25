@@ -11,8 +11,8 @@ Store configuration in the environment, not in code, after the
   precedence below lists; keep defaults in code only for optional settings
 - Read every secret from the environment or a secrets manager, never from a
   committed file or a command-line flag (MUST)
-- Commit `.env.example` with placeholder values, and list `.env` in
-  `.gitignore`
+- Commit an example configuration file with placeholder values; never
+  commit the file that holds the real values
 - Keep separate configuration for each environment the project runs, such
   as development, testing, staging and production
 - Pass configuration to components explicitly; never read a global config
@@ -22,10 +22,6 @@ Store configuration in the environment, not in code, after the
 
 - Name environment variables in `SCREAMING_SNAKE_CASE`
 - Prefix each with the app or service name, such as `MYAPP_DATABASE_URL`
-- Group related variables under a common prefix, such as `MYAPP_DB_HOST`
-  and `MYAPP_DB_PORT`
-- Prefix a boolean with `ENABLE_` or `DISABLE_`, such as
-  `MYAPP_ENABLE_CACHE`
 
 ## Precedence
 
@@ -49,7 +45,6 @@ Sources override in this order, highest last:
 - Fail fast on a missing required value or an invalid one
 - Read configuration through a typed object or schema; never scatter raw
   environment reads across the code
-- Give defaults only to optional, non-sensitive settings
 - Never give a secret a default (MUST NOT)
 - Require a secret whenever the capability that uses it is enabled, and
   only then: disabled mail delivery needs no provider key
@@ -62,8 +57,6 @@ Sources override in this order, highest last:
   as public keys
 - Read the rest at start or per request: API base URLs, feature flags,
   secrets, database URLs, log levels
-- Give a browser bundle its per-environment values at runtime, from a
-  config file the server provides
 - Never put a secret in build-time config (MUST NOT); it ships inside the
   artifact
 - Document which variables are build-time and which are runtime
@@ -71,17 +64,11 @@ Sources override in this order, highest last:
 ## Secrets
 
 - Source production secrets from a secrets manager or the CI secret store,
-  never from a flat `.env` file
+  never from a plain file on the host
+- Give automated tests stub secrets, never real ones
 - Load secrets so they can rotate without a redeployment
 - Never log a secret; redact or omit it from logs and diagnostics
 - Reference a secret by name or path; never embed it in a config file
-
-| Environment | Purpose | Secrets source |
-| --- | --- | --- |
-| development | local work | `.env` file |
-| testing | automated tests | hardcoded stubs |
-| staging | pre-production | secrets manager or CI |
-| production | live | secrets manager |
 
 ## Dependencies
 
@@ -89,7 +76,6 @@ Sources override in this order, highest last:
   `pyproject.toml`, `go.mod` or `Cargo.toml`
 - Run with only the declared dependencies installed; never rely on
   system-wide packages (MUST)
-- Separate production dependencies from development and test ones
 
 ## Example
 
