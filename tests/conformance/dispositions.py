@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 4
+SKIP_BUDGET = 3
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -149,15 +149,6 @@ CHECKS = [
      "reason": "Takes the module under review and the guard field as "
                "arguments. It is run when one inert primitive is found, to "
                "sweep for its siblings, not as a property of the tree."},
-
-    # -- security/devsecops.md ---------------------------------------
-
-    {"file": "security/devsecops.md", "find": "sbom.json",
-     "title": "The SBOM lists the components the build produced",
-     "do": SKIP,
-     "reason": "Reads `sbom.json`, produced by a build this repository does "
-               "not have -- it ships Markdown and has no dependency graph "
-               "to describe."},
 
     # -- core/quality-gates.md -----------------------------------
 
