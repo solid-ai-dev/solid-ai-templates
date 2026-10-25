@@ -73,6 +73,30 @@ Releases up to 2.63.0 are listed in
   cadence and acceptance sign-off, IDs included ([#2286])
 - The quality template drops error hierarchies, comment layout, scripts/ rules
   and revisit triggers; check-writing rules move to quality gates ([#2289])
+- The review template drops its shared-module rule; its URL-parameter and
+  sign-in probe items become neutral ([#2296])
+- The docs template drops its markdownlint width check and the Mermaid and
+  narrow generator rules ([#2298])
+- The git template drops submodules, numbered documents, bidirectional artifacts
+  and its gh check-watch loop ([#2300])
+- The quality gates template drops AST rewrites, contract tests, module splits
+  and auto-merge, IDs included ([#2302])
+- The agents template drops monorepo package files, the brand-voice section
+  and the mapping-copy rule ([#2338])
+- The measurement template drops memory budgets, checkpoints, the convergence
+  ladder and software citation ([#2358])
+- The devsecops template drops its CycloneDX check and container-only SCA
+  rules for neutral ones ([#2297])
+- The security template drops MFA, internal mTLS, preflight caching and .env
+  conventions; its examples go tool-neutral ([#2339])
+- The HTTP template drops URI design, HATEOAS, query naming and problem
+  JSON errors; neutral rules remain ([#2313])
+- The API template drops the hand-authored spec, Schemathesis and SOAP rules;
+  contract rules cover every contract kind ([#2312])
+- The observability template drops HTTP status codes, health paths and the
+  OpenTelemetry mandate for neutral rules ([#2320])
+- The jobs template drops its database and HTTP-call bans and names no
+  vendor ([#2326])
 - The edge template drops load-balancing, routing, WAF and geo rules; forwarded
   headers trust any known proxy hop ([#2329])
 
@@ -166,6 +190,14 @@ Releases up to 2.63.0 are listed in
 - A rule citing another section names its file and heading, not a bare ID ([#2173])
 - Seventeen older templates state each rule as an instruction, conditions and strength
   kept ([#2174])
+- The config template drops the browser-bundle rule, the secrets table and
+  boolean prefixes; test secrets are stubs ([#2309])
+- The object-oriented design template states its override and type-family rules for any
+  language ([#2340])
+- The auth template drops JWT, vendor and gRPC specifics and states each rule
+  token-neutrally ([#2322])
+- The monitoring template drops the status page and dashboards as code; metrics and
+  severities are vendor-neutral ([#2323])
 
 ### Deprecated
 
@@ -174,6 +206,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- The embedded-checks template says its compile check reads Python heredocs
+  only, so not applicable is no pass ([#2361])
 - A gRPC read method the project declares public skips the auth check, as
   over HTTP ([#2283])
 - A declared public endpoint may take a write made before sign-in, such as
@@ -347,6 +381,23 @@ Releases up to 2.63.0 are listed in
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
+[#2296]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2296
+[#2298]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2298
+[#2300]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2300
+[#2302]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2302
+[#2309]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2309
+[#2338]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2338
+[#2340]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2340
+[#2358]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2358
+[#2361]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2361
+[#2297]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2297
+[#2339]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2339
+[#2313]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2313
+[#2312]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2312
+[#2320]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2320
+[#2322]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2322
+[#2323]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2323
+[#2326]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2326
 [#2329]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2329
 
 ## [2.90.0] - 2026-09-12
