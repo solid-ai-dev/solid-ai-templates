@@ -9,20 +9,15 @@ code separation, assets, SEO and structured data.
 [ID: static-site-content]
 [EXTEND: base-docs]
 
-- Store editable content as structured files: JSON, YAML or Markdown
+- Store editable content as structured data apart from code, such as JSON,
+  YAML or Markdown files
 - Never hardcode content a non-developer might want to change
-
-| File | Controls |
-|------|----------|
-| `[data path]/site.[ext]` | Nav links, hero text, contact links, footer |
-| `[data path]/[section].[ext]` | [what it controls] |
 
 ## Assets
 [ID: static-site-assets]
 
-- Keep images and documents in the directory the build serves statically,
-  and reference them by root-relative paths
-- Serve no asset from outside that directory
+- Reference each image and document by a path that resolves the same from
+  every page, never by one relative to the current page
 
 ## SEO
 [ID: static-site-seo]
@@ -31,29 +26,25 @@ code separation, assets, SEO and structured data.
   static pages
 - Give every publicly indexed page a canonical URL
 - Serve a sitemap and reference it in `robots.txt` (MUST)
-- Generate the sitemap at build time where the build knows every page URL
-- Generate it at runtime where pages exist only at runtime
+- Generate the sitemap at build time where the build knows every page URL,
+  else at runtime
 - Give every content page a unique description (MUST) — used for
   `<meta name="description">`, OG description, and Twitter Card
-- Keep the description in frontmatter where pages are files that carry it
 - Write meta descriptions as a pitch, not a summary (MUST); answer "why
   should I click this?"
-- Add JSON-LD structured data to content pages, with the schema type that
-  matches the page (Article, Course) (SHOULD)
-- Allow answer-engine crawlers in `robots.txt` (MAY): OAI-SearchBot,
-  ChatGPT-User, PerplexityBot, Claude-SearchBot/Claude-User, Applebot
+- Add JSON-LD structured data to content pages (SHOULD)
+- Match each JSON-LD schema type to the page's actual role, such as Article
+  or Course (MUST)
+- Never mark up a claim the page does not make (MUST NOT), such as an offer
+  with no seller named on a page that only reviews the item
 - Decide answer-engine crawler access in `robots.txt` deliberately
+- Allow answer-engine crawlers by user agent in `robots.txt` (MAY)
 - Verify no edge setting overrides the answer-engine crawler access set
   in `robots.txt`
 - Add `twitter:image` wherever `og:image` is present (MUST); Twitter/X
   does not reliably fall back to `og:image`
-- Add `og:image:width` and `og:image:height` (1200×630 recommended) to
-  avoid render delays on social platforms
-- Repeat H1 keywords in the page body (SHOULD); engines read heading and
-  body coherence as relevance
 - Keep each H1 unique to its page and true to its content (SHOULD)
-- Provide an SVG favicon (`<link rel="icon" type="image/svg+xml">`) and a
-  180×180 `apple-touch-icon` for iOS bookmarks
+- Provide a favicon, and an icon for home-screen bookmarks on mobile
 - Lead each section with a direct answer in self-contained paragraphs;
   answer engines retrieve passages, not pages
 - Serve a custom 404 page that links back into the site
@@ -64,20 +55,7 @@ code separation, assets, SEO and structured data.
 - Pick one convention, with or without, and enforce it across internal
   links, canonical URLs and sitemap entries (MUST); redirect chains waste
   crawl budget and can prevent indexing
-- Verify the convention matches the host's behaviour (MUST): GitHub Pages
-  forces trailing slashes; Netlify and Vercel are configurable
-- Add a CI check that scans built HTML for internal hrefs that break the
-  convention (SHOULD)
-
-## Structured data (if applicable)
-[ID: frontend-content-structured-data]
-
-- Match schema `@type` to the page's actual role (MUST)
-- Mark up an `Offer` only for a real offer the page shows accurately: the
-  site's own, or a named merchant's, as on a product review citing a
-  retailer's price
-- Never fabricate an offer, or let its fields imply capabilities the site
-  lacks (MUST NOT): an `availability` or `priceValidUntil` with no other
-  seller named claims the site itself sells the item
-- Review schema choice when site role differs from template examples —
-  e-commerce examples applied to editorial sites produce misleading markup
+- Verify the convention matches the host's behaviour (MUST); some hosts
+  force one, others make it configurable
+- Add a CI check that fails on an internal link breaking the convention
+  (SHOULD)
