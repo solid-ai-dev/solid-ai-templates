@@ -34,8 +34,10 @@
   boundary, and create a new span for each hop
 - Start a new trace only where the incoming context is absent, invalid or
   deliberately rejected, such as at an untrusted public edge
-- Propagate the trace context in the W3C Trace Context format on every
-  outbound call and message, such as in HTTP headers or queue metadata
+- Propagate the trace context on every outbound call and message, such as
+  in HTTP headers or queue metadata
+- Propagate it in a format the receivers accept, such as W3C Trace Context
+  or B3 through OpenTelemetry propagators
 - Include the trace ID in every log entry for that request — use the same
   field name across all services, such as `trace_id`
 - Instrument through a vendor-neutral API, such as OpenTelemetry; avoid
