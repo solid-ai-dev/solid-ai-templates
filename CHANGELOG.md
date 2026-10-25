@@ -168,6 +168,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- Hook installs keep building after setuptools drops the old licence
+  field
 - Rules the rewrites made mandatory are SHOULD or MAY again, as before
   ([#2078])
 - Four rules that contradicted others in the same chain now agree
