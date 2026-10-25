@@ -18,8 +18,10 @@
 - Meet WCAG 2.1 AA
 - Keep text contrast at 4.5:1 or more, 3:1 for large text
 - Make every interactive element reachable and operable by keyboard
-- Use a native button or link for anything clickable (MUST); a click
-  handler on another element adds no tab stop or keyboard activation
+- Never put a click handler on a non-focusable element (MUST NOT); it adds
+  no tab stop or keyboard activation
+- Use a native interactive element for such a control instead: a button, a
+  link or another native control
 - Style focus with `:focus-visible`, not `:focus`, which also outlines
   mouse clicks
 - Keep a visible focus indicator on every focusable element, links and nav
