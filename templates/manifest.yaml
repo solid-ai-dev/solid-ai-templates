@@ -26,7 +26,7 @@ core: [base-quality, base-git, base-docs, base-testing, base-review]
 base:
   - id: base-git
     file: templates/core/git.md
-    description: Committer identity, branching, pull requests, submodules, off-limits paths, .gitignore
+    description: Committer identity, branching, pull requests, CI evidence, regenerated artifacts, off-limits paths, .gitignore
   - id: base-docs
     file: templates/core/docs.md
     description: Rule language, standard documents, upkeep, line width, writing style, diagrams, generated files, agent output files
@@ -80,7 +80,7 @@ base:
     description: SOLID, object design, hierarchies, design patterns, cross-cutting concerns; opt-in
   - id: base-quality-gates
     file: templates/core/quality-gates.md
-    description: How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict; refactor and module-split safety
+    description: How a check is built - retrofitting a gate, pairing a constraint with its check, reading a verdict; refactor safety
     depends_on: [base-quality, base-git, base-testing, base-config]
   - id: base-embedded-checks
     file: templates/core/embedded-checks.md
@@ -88,7 +88,7 @@ base:
     depends_on: [base-quality-gates]
   - id: base-measurement
     file: templates/core/measurement.md
-    description: Numerical routines, calibration against reference data, source silence, citing the software
+    description: Numerical routines, calibration against reference data, source silence
     depends_on: [base-quality]
 platform:
   - id: platform-fixture
@@ -114,7 +114,7 @@ frontend:
 backend:
   - id: backend-http
     file: templates/backend/http.md
-    description: URI design, methods, headers, HATEOAS, auth, errors
+    description: Port, lifecycle, admin tasks, handlers, headers, methods, payloads, errors, auth
   - id: backend-api
     file: templates/backend/api.md
     description: API-first, contracts, versioning, deprecation, pagination
