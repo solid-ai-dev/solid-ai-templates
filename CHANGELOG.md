@@ -109,6 +109,8 @@ Releases up to 2.63.0 are listed in
   and duplicate rules ([#2360])
 - The content template drops its structured-data section, frontmatter, image-size
   and vendor rules ([#2308])
+- The frontend quality template drops React-era component patterns, store
+  slices and server rendering by default ([#2324])
 
 ### Added
 
@@ -429,6 +431,7 @@ Releases up to 2.63.0 are listed in
 [#2362]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2362
 [#2363]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2363
 [#2308]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2308
+[#2324]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2324
 
 ## [2.90.0] - 2026-09-12
 
