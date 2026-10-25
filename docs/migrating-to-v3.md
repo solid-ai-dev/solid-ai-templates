@@ -88,6 +88,7 @@ receives nothing (ADR-051).
 | The browser-bundle runtime config file; the per-environment secrets table; the boolean `ENABLE_`/`DISABLE_` and group-prefix naming rules; the development-dependency split | `base-config` | removed; the table's test-stub row stays as a neutral rule |
 | The agent-to-file mapping copy rule, the deprecated reference-model upgrade, the decision-record length rule, the monorepo package files, the brand-voice skeleton section | `base-agents` | removed; a file delivered by reference alone stays forbidden |
 | The memory budget and checkpoints; the convergence escalation ladder; the spike deliverable; citing the software | `base-measurement` | removed; the convergence check, approximations, calibration and source silence remain, IDs kept |
+| URI design; HATEOAS; query-parameter naming and reserved names; header-name spelling; the methods table; JSON by default; RFC 9457 errors; JWT by name; a port the process opens itself | `backend-http` | removed; malformed query values, header case, safe and idempotent methods and the JSON number rules remain, tool-neutral |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

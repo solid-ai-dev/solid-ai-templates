@@ -89,6 +89,8 @@ Releases up to 2.63.0 are listed in
   rules for neutral ones ([#2297])
 - The security template drops MFA, internal mTLS, preflight caching and .env
   conventions; its examples go tool-neutral ([#2339])
+- The HTTP template drops URI design, HATEOAS, query naming and problem
+  JSON errors; neutral rules remain ([#2313])
 
 ### Added
 
@@ -378,6 +380,7 @@ Releases up to 2.63.0 are listed in
 [#2361]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2361
 [#2297]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2297
 [#2339]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2339
+[#2313]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2313
 
 ## [2.90.0] - 2026-09-12
 
