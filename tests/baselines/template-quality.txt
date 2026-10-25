@@ -29,7 +29,7 @@ templates/core/oop.md 96.1
 templates/core/quality-gates.md 98.1
 templates/core/quality.md 97.8
 templates/core/review.md 100.0
-templates/core/testing.md 99.5
+templates/core/testing.md 99.7
 templates/data/data-governance.md 100.0
 templates/data/data-migration.md 100.0
 templates/data/data-modeling.md 99.6
