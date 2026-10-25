@@ -53,7 +53,7 @@ base:
     description: Pipeline gates, environments, IaC, deployment, release record
   - id: base-containers
     file: templates/infra/containers.md
-    description: Dockerfile, runtime security, resource limits, image hygiene, Compose
+    description: Image build, runtime security, resource limits, image hygiene, deployment
   - id: base-config
     file: templates/core/config.md
     description: Env vars, secrets, fail-fast validation
