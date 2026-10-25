@@ -71,6 +71,8 @@ Releases up to 2.63.0 are listed in
 - Rare procedures leave the core tier for the opt-in template each belongs to ([#2169])
 - The testing template drops container e2e, directory tiers, the regression
   cadence and acceptance sign-off, IDs included ([#2286])
+- The quality template drops error hierarchies, comment layout, scripts/ rules
+  and revisit triggers; check-writing rules move to quality gates ([#2289])
 
 ### Added
 
@@ -342,6 +344,7 @@ Releases up to 2.63.0 are listed in
 [#2281]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2281
 [#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 [#2286]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2286
+[#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
 
 ## [2.90.0] - 2026-09-12
 
