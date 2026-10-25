@@ -212,6 +212,8 @@ Releases up to 2.63.0 are listed in
   states ([#2351])
 - The database template drops the ORM preference and partial indexes; its other rules
   are engine-neutral ([#2353])
+- The errors template drops rules its chain already states and names no language
+  or tool ([#2363])
 
 ### Deprecated
 
@@ -423,6 +425,7 @@ Releases up to 2.63.0 are listed in
 [#2359]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2359
 [#2360]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2360
 [#2362]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2362
+[#2363]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2363
 
 ## [2.90.0] - 2026-09-12
 
