@@ -32,7 +32,8 @@ A heading may carry several tag lines:
 - `[EXTEND:]` or `[OVERRIDE:]` declares the relationship to a parent
 - A section runs from its tags to the next `[ID:]` or the end of the file,
   and is never empty
-- Shipped IDs are frozen: never removed or renamed inside a major (ADR-051)
+- Shipped IDs are frozen: never removed, renamed or moved to another file
+  inside a major (8.7)
 
 `[DEPENDS ON]` lists direct dependencies only, matching the manifest's
 `depends_on` for the entry. The manifest wins a mismatch, and SYS-04 checks
@@ -113,7 +114,37 @@ silently wrong at the next stack.
 | Fork-owned files | `README.md`, `AGENTS.md`, `CLAUDE.md` and `CHANGELOG.md`; the fork keeps its side on every merge |
 | Fork-owned modules | `tests/fork_checks.py`, `tests/fork_dispositions.py` and `tools/fork_examples.py`, loaded when present. `fork_examples.py` may set `CHAIN_EXAMPLES_DOC`, default `docs/architecture/06-runtime-view.md` |
 
-## 8.7 Deprecation
+## 8.7 Frozen surface
+
+This is the one list of what 3.x freezes; other documents point here. From
+3.0.0 no release removes, renames or changes the meaning of an element below
+before 4.0.0, except for a security fix (ADR-051). A minor may add elements
+and deprecate one by naming its replacement (8.8).
+
+| Element | What is frozen | Source |
+|---------|----------------|--------|
+| Template paths | The file path of every shipped template | ADR-051 |
+| Template IDs | The `id` of every manifest entry | ADR-051 |
+| Section IDs | Every `[ID:]`, in the file that holds it: a section does not move to another file | ADR-051 |
+| Manifest schema | The fields the header comment of `templates/manifest.yaml` lists, and their meaning; a minor adds only optional fields | ADR-051 |
+| Core-tier membership | The IDs under `core:`; a new template is reached by declaring it, never by joining the core | ADR-051 |
+| Check exit codes | 0 passes, 1 fails, 3 does not apply | ADR-051 |
+| Hooks | A shipped hook ID, its direct exit codes, its `not applicable` line and its violation codes | ADR-055 |
+| Hook arguments | The name and default of each argument a consumer writes into its config, such as `--path`, `--forbid` and `--base`; a minor adds only arguments whose default keeps the hook's behaviour | ADR-051, applied to hooks |
+| Fork entry points | The fork-owned module names (8.6), and what upstream reads from them: `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |
+| Fork baseline | The `SAIT_UPSTREAM_REF` variable smoke reads | ADR-051, applied to forks |
+| Resolver CLI | `tools/resolve_chain.py <id>` and its `--concat`, `--generate`, `--list`, `--roots` and `--check` flags | ADR-051, applied to forks |
+
+What is not frozen:
+
+| Element | Why |
+|---------|-----|
+| The wording inside a section | Prose is free while the section keeps its ID (ADR-051) |
+| The declaration block | A target with no producer and no reader (ADR-053, 6.3) |
+| The fixture: `stack-fixture`, `platform-fixture` | Test input; no listing offers it and no project resolves it |
+| The helpers `bind()` hands `fork_checks.py` | Every name in the smoke modules; a change to one is listed in the changelog |
+
+## 8.8 Deprecation
 
 From 3.0.0 a template is not removed inside a major (ADR-051). Its manifest
 entry names the template that replaces it, and the release that marks it
@@ -129,7 +160,7 @@ lists it under `Deprecated` in the changelog.
 The entry still resolves. SYS-22 fails a `deprecated` that names no entry,
 or one that is itself deprecated. Removal waits for the next major.
 
-## 8.8 Rule language and naming
+## 8.9 Rule language and naming
 
 A rule is a plain imperative, read as MUST or MUST NOT, or carries an RFC
 2119 keyword where strength matters (`templates/core/docs.md`, "Rule
@@ -146,7 +177,7 @@ templates/fixture/<name>.md     # test input
 A fork names its own files; the Imbra fork names a stack
 `<prefix>-<name>.md`, such as `python-fastapi.md`.
 
-## 8.9 Context cost
+## 8.10 Context cost
 
 Every rule in a widely resolved file is read on every turn by every project
 on that chain. A change that moves a stack category across a context-window

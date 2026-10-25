@@ -106,8 +106,8 @@ Releases up to 2.63.0 are listed in
   .markdownlint.json ([#2049])
 - The repository moved to the solid-ai-dev organisation; old links
   redirect ([#1841])
-- Paths, IDs, the manifest and the core rules stay stable until 4.0
-  ([#1940], [#2014])
+- Paths, IDs, the manifest, core-tier membership, check exit codes and hooks
+  stay stable until 4.0 ([#1940], [#2014])
 - A plain imperative counts as a binding rule ([#2017])
 - The quality-gates rules are short, topic-headed lists; their reasoning
   moves to a rationale doc ([#2060])

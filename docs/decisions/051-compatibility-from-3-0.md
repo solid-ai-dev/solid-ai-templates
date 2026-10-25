@@ -124,4 +124,7 @@ Suppose a hypothetical `backend-cache` replaces `backend-caching` in 3.4.0:
 
 - ADR-049 - the fork model this record protects.
 - ADR-050 - the boundary whose upstream side this record freezes.
+- ADR-053 - takes the declaration block out of rule 1.
+- ADR-055 - adds hooks to the frozen surface.
+- Chapter 8.7 of the architecture - the current list of the frozen surface.
 - solid-ai-dev/solid-ai-templates#1292 - the migration guide.

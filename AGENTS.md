@@ -123,7 +123,7 @@ labels are terminal, applied when closing without action: `duplicate`
   rule still applies correctly
 - Give a section an `[ID: ...]` when something references it: another
   template EXTENDs or OVERRIDEs it, or a rule names it. Never remove or
-  rename an existing ID — shipped IDs are frozen surface (ADR-051)
+  rename an existing ID — shipped IDs are frozen surface (spec, chapter 8.7)
 - Optional sections are marked `(if applicable)` in the heading
 - Keep line length under 88 characters, the width declared in
   `.editorconfig` for Markdown and Python —

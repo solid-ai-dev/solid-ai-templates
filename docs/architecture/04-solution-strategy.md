@@ -7,7 +7,7 @@
 | No transitive surprises | A stack composes only the modules it declares; the core tier is seeded into every chain, everything else is opt-in | ADR-004 |
 | Rules an agent actually applies | A generated file delivers rules inline or hybrid, never by reference alone | ADR-052 |
 | Shared policy, local content | Upstream keeps the engine and shared policy; forks carry stacks and process and merge upstream | ADR-049, ADR-050 |
-| A contract consumers can pin | 3.x freezes paths, IDs and the manifest shape; removal waits for the next major | ADR-051 |
+| A contract consumers can pin | 3.x freezes the surface chapter 8.7 lists; removal waits for the next major | ADR-051 |
 | Rules that check themselves | A mechanically checkable rule names its command and pass condition; the conformance runner runs those checks against this repository | ADR-030, ADR-031 |
 
 ## 4.1 Delivery model

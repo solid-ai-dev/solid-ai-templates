@@ -9,8 +9,11 @@
 #   depends_on  — list of IDs this template extends
 #   label       — human-readable name (stacks only, for interview)
 #   layer       — classification (stacks only, for README table)
-#   produces    — output filename (output entries only)
 #   fixture     — true for test input the checks read and no listing offers
+#   deprecated  — the ID that replaces this entry; it still resolves
+#
+# These fields are frozen for 3.x (docs/architecture/08-crosscutting-concepts.md,
+# 8.7): a minor adds only optional fields.
 #
 # Every top-level list of entries is a section, so a fork keeps its own
 # templates under a key of its own. `core` is upstream's core tier; a fork
