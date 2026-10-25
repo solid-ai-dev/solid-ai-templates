@@ -49,6 +49,7 @@ receives nothing (ADR-051).
 | Python editable installs under Compose, `run --rm` write loss, the linter target-version exception | `base-containers` | removed |
 | Figure cropping, the research scrape cache, the lens-catalogue examples | `base-data-quality` | removed; neutral rules remain |
 | MySQL online-DDL tool names; the host MIME-registry example | `base-data-migration`, `base-security` | neutral rules remain |
+| Multi-factor authentication, internal mTLS, the CORS preflight cache, `.env` files; vendor, library and shell-command examples | `base-security` | removed; neutral rules remain and every ID stays |
 | React hooks and render props, the CSS line-width note, the no-consent-banner choice | `frontend-quality` | removed |
 | Cloudflare crawl control, SEO audit thresholds, AEO measurement, the FAQPage fact; answer-engine crawlers now MAY | `frontend-static-site`, `frontend-quality` | removed or relaxed |
 | `public/` paths, ESLint and Prettier file names, the homepage-sections note | `frontend-static-site` | removed; `frontend-content` keeps a neutral asset-path rule |

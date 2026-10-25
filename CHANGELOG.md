@@ -87,6 +87,8 @@ Releases up to 2.63.0 are listed in
   ladder and software citation ([#2358])
 - The devsecops template drops its CycloneDX check and container-only SCA
   rules for neutral ones ([#2297])
+- The security template drops MFA, internal mTLS, preflight caching and .env
+  conventions; its examples go tool-neutral ([#2339])
 
 ### Added
 
@@ -375,6 +377,7 @@ Releases up to 2.63.0 are listed in
 [#2358]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2358
 [#2361]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2361
 [#2297]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2297
+[#2339]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2339
 
 ## [2.90.0] - 2026-09-12
 
