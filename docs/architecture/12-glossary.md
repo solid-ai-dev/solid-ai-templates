@@ -11,7 +11,7 @@
 | Extra | An orthogonal template a project picks beside its stack |
 | Fixture | The stack and platform under `templates/fixture/`, test input only |
 | Fork | A GitHub fork of this repository carrying stacks, platforms, process rules and the interview |
-| Frozen surface | What 3.x does not break: template paths, template and section IDs, the manifest shape |
+| Frozen surface | What 3.x does not break, listed in chapter 8.7: paths, IDs, the manifest schema, the core tier, exit codes, hooks and fork entry points |
 | Hybrid | A context file that copies in the rules that matter and names the rest as files to read |
 | Inline | A context file that copies in every rule |
 | Interview | A fork's questions an agent asks before generating a context file |

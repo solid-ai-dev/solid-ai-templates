@@ -15,7 +15,7 @@ The givens the design accepts rather than chooses.
 
 | # | Constraint | In practice | Source |
 |---|------------|-------------|--------|
-| 1 | 3.x freezes the contract | Template paths, template and section IDs and the manifest shape do not break inside a major; a template is deprecated, then removed at the next major | ADR-051, chapter 8 |
+| 1 | 3.x freezes the contract | The frozen surface does not break inside a major; a template is deprecated, then removed at the next major | ADR-051, chapter 8.7 |
 | 2 | Forks sync by merge | Upstream never edits a path a fork owns, and a fork never edits an upstream manifest key | ADR-049, ADR-050 |
 
 ## 2.3 Organisational constraints
