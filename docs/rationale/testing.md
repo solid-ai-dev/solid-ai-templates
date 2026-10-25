@@ -10,9 +10,12 @@ where the section has one.
 The boundary crossed is what changes the failure modes a test can see, so
 it decides the type; the tool that drives the test and the asset that feeds
 it do not. A test fed from the product specification is still an
-integration test if it crosses one component boundary. Regression is a
-selection of existing tests rather than a type of its own, which is why its
-rule is about when each subset runs.
+integration test if it crosses one component boundary.
+
+A double stands in for what is slow, nondeterministic or outside the
+process. Doubling a deterministic in-process collaborator as well makes the
+test assert the calls the code makes, so it pins the implementation and
+passes against a collaborator that no longer behaves as the double does.
 
 ## Coverage
 
@@ -41,6 +44,9 @@ the failure is damage to the developer's machine, not a flaky test, and a
 suite doing it can pass every assertion while leaving only a line on
 stderr. A fake at one seam does not neutralise a real call at another,
 which is why every seam that reaches the host is stubbed.
+
+A fixed sleep is too short on a slow machine and wasted time on a fast one;
+waiting on the condition itself, bounded by a deadline, is neither.
 
 ## testing-external-definition
 
@@ -184,18 +190,3 @@ holds strings, so an entry can name nothing; ruff `F822` reports that in a
 plain module and stays silent in `__init__.py`, where export lists live.
 Languages whose compiler sees the export (Rust `pub use`, Go capitalised
 names) need no guard.
-
-## testing-container-e2e
-
-Hardcoding Docker and a fixed sleep breaks on rootless Podman, in CI
-without Docker, and on a slow start. Ryuk and similar reapers assume a
-privileged Docker. Local multi-service composition belongs to
-`containers.md`.
-
-## testing-tier-by-directory
-
-A hand-applied marker drifts from where the test lives; a tier derived from
-the directory cannot. A tier layout puts modules one level down and repeats
-basenames across tiers, and the runner's import rules decide whether that
-collects. The decision is cheap before the first file moves and a rewrite of
-every helper import after.
