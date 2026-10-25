@@ -11,16 +11,6 @@ downstream, and nothing errors. Firing the escalation only on failure keeps
 the path that already converges byte-identical. A speed knob that shifts the
 numbers, left on by default, silently perturbs the canonical output.
 
-A library's fixed memory default is not the box the job runs on; an
-estimated intermediate that spills or refuses gives a diagnosable error
-where an OOM gives a crash. A tmpfs scratch path is memory under another
-name.
-
-Discarding the reusable state of a paid-for computation forces a full
-re-run for the next question about the same input. A wrapper or proxy
-around the engine can swallow the checkpoint parameter silently, which is
-why the round-trip is tested through it.
-
 ## quality-calibration
 
 Calibration is silently invalidated three ways: by suspect ground truth, by
@@ -63,8 +53,7 @@ so "nothing" is a data-loss failure mode. No tuning finds this: it is a
 property of the control flow.
 
 A rule that survives every case its own author wrote is fitted to that set,
-not measured against it. "The evidence does not exist yet" reads as a
-non-answer unless stated as the deliverable.
+not measured against it.
 
 Showing the candidate output beside a reading task biases the reading toward
 the candidate and turns calibration into a self-confirming loop. Assisted
@@ -79,9 +68,3 @@ the same thing; treating them as equal floods the report with false
 mismatches that bury real errors. The stored-default convention and the
 verification semantics pull in opposite directions, and the naive
 implementation looks correct until it meets real data.
-
-## Citing the software
-
-A repository URL or project domain can move, lapse or be rebranded, and
-every citation pointing at it rots. A persistent identifier resolves to an
-archived, immutable snapshot, so the domain stays free to change.

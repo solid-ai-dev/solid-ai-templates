@@ -18,38 +18,32 @@
 | gRPC      | Internal service-to-service, performance-critical paths, streaming, polyglot teams sharing a schema |
 | GraphQL   | Frontend-facing APIs where clients need flexible querying and over-fetching is a real problem       |
 | WebSocket | Real-time push, bidirectional streams where HTTP polling is not viable                              |
-| Messaging | Async, fire-and-forget, event-driven                                                                        |
+| Messaging | Async, fire-and-forget, event-driven                                                                |
 
 - Start with REST; deviate only with a reason in a decision record
 - Combine REST for external and ops endpoints with gRPC for internal hot
   paths (MAY)
+- Justify any other pair of API styles in one service in a decision
+  record; two surfaces double the maintenance
 - Never use gRPC as the primary interface for browser clients
-- Justify GraphQL and REST in one service strongly; two surfaces double the
-  maintenance
-- Record a per-case decision for SOAP or another legacy protocol
 
-## OpenAPI specification
-
-The first two rules apply to every API, the rest to an OpenAPI
-specification: a protobuf or GraphQL schema keeps its own conventions for
-coverage, testing and versioning.
-
-- Give every REST API an OpenAPI specification (MUST), and keep it
-  current (MUST); a stale spec is worse than none
-- Give any other API the machine-readable contract of its kind instead,
-  even when it runs over HTTP: protobuf for gRPC, a GraphQL schema, a
-  message schema for messaging (MUST); it needs no OpenAPI specification
-- Cover every resource, method, parameter, response schema, error response
-  and authentication requirement in the OpenAPI spec
+## API contract
+- Give every API the machine-readable contract of its kind, even when it
+  runs over HTTP (MUST):
+  - an OpenAPI specification for REST
+  - protobuf for gRPC
+  - a GraphQL schema
+  - a message schema for messaging
+- Keep the contract current (MUST); a stale contract is worse than none
+- Cover every resource, operation, parameter, response schema, error
+  response and authentication requirement in the contract
 - Keep a changelog of API changes across versions
-- Prefer design-first: hand-author the spec and serve that file verbatim,
-  never one generated from code annotations
-- Assert that the enums, routes and error codes in code match the spec, so
-  drift fails a test, not a consumer
-- Contract-test a live instance against cases generated from the spec
-  (e.g. Schemathesis)
-- Treat the spec's `info.version` as the contract revision, apart from the
-  package version and from the API version in the path
+- Assert that the enums, operations and error codes in code match the
+  contract, so drift fails a test, not a consumer
+- Contract-test a running instance against cases generated from the
+  contract
+- Give the contract a revision of its own, apart from the package version
+  and from the API version
 - Bump the contract revision for every contract change, additive ones
   included; never bump it for a release that leaves the contract unchanged
 
@@ -83,11 +77,6 @@ When a breaking change is introduced:
 5. Remove the old version only after the sunset date has passed; without
    a `Sunset` header, only after the timeline agreed in step 4 ends
 
-```
-Deprecation: @<unix-timestamp>
-Sunset: <HTTP-date>
-```
-
 ## Statelessness
 [ID: backend-api-statelessness]
 - Keep APIs stateless (MUST): store no client context on the server
@@ -99,4 +88,4 @@ Sunset: <HTTP-date>
 ## Pagination
 - Paginate every collection endpoint (MUST); never return an unbounded list
 - Use `limit` and `offset` (or cursor-based) pagination
-- Include navigation links (`next`, `prev`) in the response per HATEOAS
+- Include navigation links or cursors (`next`, `prev`) in the response
