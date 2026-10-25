@@ -222,6 +222,8 @@ Releases up to 2.63.0 are listed in
 
 - The embedded-checks template says its compile check reads Python heredocs
   only, so not applicable is no pass ([#2361])
+- Webhook rules hold for any provider: any credential, not only a signature,
+  and any stable event key ([#2362])
 - A gRPC read method the project declares public skips the auth check, as
   over HTTP ([#2283])
 - A declared public endpoint may take a write made before sign-in, such as
@@ -420,6 +422,7 @@ Releases up to 2.63.0 are listed in
 [#2353]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2353
 [#2359]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2359
 [#2360]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2360
+[#2362]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2362
 
 ## [2.90.0] - 2026-09-12
 
