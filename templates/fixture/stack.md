@@ -33,7 +33,7 @@ make lint      # lint and format check
 
 - Every endpoint test sends an empty body as well as a non-empty one
 
-## Container e2e
-[OVERRIDE: testing-container-e2e]
+## Rendered output
+[OVERRIDE: testing-verify-the-render]
 
-- The service ships no image, so no test builds or runs a container
+- The service renders no page, so no test reads pixels or a DOM

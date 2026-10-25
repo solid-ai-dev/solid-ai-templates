@@ -17,23 +17,12 @@ tool drives it.
 | Regression | Any, reusing existing tests | Unintended change |
 | Exploratory | Any, unscripted | Unexpected behaviour |
 
-- Replace a unit's dependencies with doubles
+- Double only what a unit test would cross a boundary to reach: I/O, time,
+  randomness, another process
+- Keep deterministic in-process collaborators real
 - Use the real dependency for the boundary an integration test covers; you
   MAY double the unrelated ones
-- Run system tests against documented requirements, in an environment
-  representative of production
-- Cover the critical user journeys with automated end-to-end tests
-- Sign off acceptance manually against documented criteria; automation
-  supports the sign-off, never replaces it
-- Run smoke regression on every commit, quick regression on every merge
-  request and full regression on each release candidate; automate smoke and
-  quick fully
-- Keep smoke regression under 15 minutes and quick regression under 60
-  (SHOULD)
-- Automate full regression where it can be (SHOULD), and document every
-  manual step it keeps (MUST)
-- Turn every defect exploratory testing finds into a regression test
-  (SHOULD)
+- Add a regression test for every fixed defect (SHOULD)
 
 ## Coverage
 
@@ -46,8 +35,6 @@ tool drives it.
 - Run every unit test from CI, with no human step
 - Name a test so the name alone states the unit, the input and the expected
   outcome (SHOULD)
-- Name integration tests by a structured scheme that supports filtering and
-  traceability (SHOULD)
 - Run a unit that reads a structured external artifact against real
   production data once before calling its suite complete, and add a
   regression test for each gap it shows
@@ -70,6 +57,7 @@ tool drives it.
 - Set or clear every environment variable a test depends on, in that test;
   never rely on the ambient process state
 - Treat a test that passes or fails by run order as an isolation bug
+- Wait on a condition with a deadline, never a fixed sleep
 - Never enumerate, signal or terminate a process the test did not start
   (MUST NOT)
 - Never mutate host state outside the working directory: the process
@@ -189,8 +177,8 @@ never consulted.
 
 [ID: testing-worker-leak-guard]
 
-- Assert after every test, in an automatic fixture, that no thread,
-  subprocess or server the suite started survives it (MUST)
+- Assert after every test that no thread, subprocess or server the suite
+  started survives it (MUST)
 - Run the assertion per test, not once at session end
 - Name the leak in the message, and the fix: join with a timeout, never
   sleep
@@ -238,24 +226,3 @@ never consulted.
 - Introspect the live artifact rather than hardcode the expected value
   (SHOULD)
 - Assert one direction: the derived copy matches the source of truth
-
-## Container e2e
-
-[ID: testing-container-e2e]
-
-- Drive containers through a library that speaks the Docker API, so one
-  test runs on Docker or rootless Podman
-- Poll the health endpoint against a deadline; never sleep
-- Skip cleanly where the optional e2e dependency is not installed
-- Disable the resource reaper on rootless runtimes
-
-## Test tiers
-
-[ID: testing-tier-by-directory]
-
-- Derive a test's tier from its directory with one collection hook: unit,
-  integration, e2e
-- Make the default run the fast tiers; gate container and browser tests
-  behind an opt-in marker and an optional dependency extra
-- Settle how test modules import one another before moving any into tier
-  directories
