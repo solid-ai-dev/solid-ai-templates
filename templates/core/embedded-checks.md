@@ -29,7 +29,7 @@ pre-commit run find-unfenced-checks --all-files --verbose
 ```
 
 - Require paragraphs above zero and `checks stated outside a fence` zero
-- Pass a `--root` for each directory of rule documents; zero paragraphs
+- Pass a `--root` for each directory of documents with checks; zero paragraphs
   means the roots named nothing
 - Compile every embedded check as a reader extracts it (MUST):
 
@@ -39,7 +39,8 @@ pre-commit run compile-embedded-checks --all-files --verbose
 
 - Require files and checks above zero and `checks that do not compile`
   zero; each later line names a failing check
-- Read `not applicable` as no heredoc check in any Markdown file
+- Read `not applicable` as no Python heredoc check in any Markdown file;
+  the hook compiles no other language
 - List each line where a continuation could be lost, and read it against
   the source; the hook cannot see one already lost:
 

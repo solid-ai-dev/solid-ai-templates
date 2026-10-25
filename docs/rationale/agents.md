@@ -6,9 +6,10 @@ section, named by ID where the section has one.
 
 ## Output files
 
-A mapping of agents to files typed into two documents drifts in one of them
-without either being wrong on the day it was written; generating every copy
-from one table, and gating the copy, keeps them equal.
+A project changes agents, and its contributors use different ones, so both
+files are carried whichever agent the project starts with. Two files that
+can disagree leave the agent no signal which one wins; an import keeps one
+source.
 
 ## Choosing a model
 
@@ -53,9 +54,3 @@ the index scans them.
 The procedures for reading and bumping a vendored pin, and the gate for a
 chain list written into a context file, are in `docs/playbook.md`, "Vendor
 the templates in a project".
-
-## Monorepos
-
-Agents that read every context file from the root to the working directory
-apply the root's rules everywhere, so a package file that repeats them adds
-only drift.
