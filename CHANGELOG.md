@@ -202,6 +202,8 @@ Releases up to 2.63.0 are listed in
   severities are vendor-neutral ([#2323])
 - The gRPC template drops mutual TLS, Prometheus names, buf and test naming;
   neutral rules remain ([#2343])
+- The microservices template drops protocol-specific rules, SLOs and rules its chain
+  states ([#2351])
 
 ### Deprecated
 
@@ -405,6 +407,7 @@ Releases up to 2.63.0 are listed in
 [#2329]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2329
 [#2343]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2343
 [#2350]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2350
+[#2351]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2351
 
 ## [2.90.0] - 2026-09-12
 
