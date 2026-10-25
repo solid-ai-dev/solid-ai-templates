@@ -38,10 +38,10 @@ restart.
 ## Secrets
 
 A flat file of secrets on a production host is one copy too many and cannot
-rotate centrally. A logged configuration value is a secret in the log store.
+rotate centrally. A real secret in a test run lets the suite act on a live
+account. A logged configuration value is a secret in the log store.
 
 ## Dependencies
 
-A lockfile pins the exact versions a build used, so two builds of one commit
-agree. A system-wide package works on the machine that has it and fails
-everywhere else.
+A system-wide package works on the machine that has it and fails everywhere
+else.
