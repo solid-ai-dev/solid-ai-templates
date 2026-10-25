@@ -85,6 +85,8 @@ Releases up to 2.63.0 are listed in
   and the mapping-copy rule ([#2338])
 - The measurement template drops memory budgets, checkpoints, the convergence
   ladder and software citation ([#2358])
+- The devsecops template drops its CycloneDX check and container-only SCA
+  rules for neutral ones ([#2297])
 
 ### Added
 
@@ -372,6 +374,7 @@ Releases up to 2.63.0 are listed in
 [#2340]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2340
 [#2358]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2358
 [#2361]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2361
+[#2297]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2297
 
 ## [2.90.0] - 2026-09-12
 
