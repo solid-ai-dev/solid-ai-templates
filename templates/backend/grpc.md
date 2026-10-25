@@ -70,6 +70,7 @@ The common cases; take any other from the full gRPC status code list.
   `UNAUTHENTICATED` before the handler runs
 - Exempt the `grpc.health.v1.Health` methods from it; they report
   serving status and nothing else
+- Exempt a read method the project declares public
 - Exempt a write method the project declares public because it must run
   before the caller has an identity, such as sign-up, sign-in or account
   recovery

@@ -168,6 +168,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- A gRPC read method the project declares public skips the auth check, as
+  over HTTP ([#2283])
 - A declared public endpoint may take a write made before sign-in, such as
   a contact form ([#2281])
 - A cache outage no longer fails the health check or maps to a 503
@@ -336,6 +338,7 @@ Releases up to 2.63.0 are listed in
 [#2279]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2279
 [#2280]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2280
 [#2281]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2281
+[#2283]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2283
 
 ## [2.90.0] - 2026-09-12
 
