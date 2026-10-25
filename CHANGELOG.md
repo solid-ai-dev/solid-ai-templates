@@ -230,6 +230,8 @@ Releases up to 2.63.0 are listed in
   access is least-privilege ([#2310])
 - The data-migration rules hold for any store and migration tool; the cohort
   check covers any key derived from the source ([#2336])
+- The deployment template drops its air-gapped mirror, external-call audit and L7
+  preference ([#2335])
 
 ### Deprecated
 
@@ -450,6 +452,7 @@ Releases up to 2.63.0 are listed in
 [#2336]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2336
 [#2337]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2337
 [#2299]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2299
+[#2335]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2335
 
 ## [2.90.0] - 2026-09-12
 

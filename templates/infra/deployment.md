@@ -22,7 +22,7 @@ template.
 - Distribute every trusted root certificate through configuration
   management or the base image, never by hand
 - Renew certificates and check revocation against endpoints the target can
-  reach; an offline target uses internal ones only
+  reach
 
 ## Load balancing and reverse proxy
 [ID: base-deployment-lb]
@@ -30,8 +30,6 @@ template.
 - Route public ingress through a load balancer or reverse proxy that
   health-checks its backends; never make an instance directly
   internet-routable
-- Prefer application-layer (L7) load balancing for HTTP services — it
-  enables path-based routing, header inspection, and health checks
 
 ## Service discovery and DNS
 [ID: base-deployment-dns]
@@ -42,27 +40,23 @@ template.
 - Sync every node's clock from a time source the target can reach — clock
   skew breaks certificate validation and distributed systems
 
-## Container and artifact registries
+## Artifact registries
 [ID: base-deployment-registries]
 
-- Sign every image and scan it for vulnerabilities before promotion to
-  production
-- Mirror every image and package into an internal registry where the
-  target cannot reach public ones, and point every build environment at
-  the mirror
-- Scan and approve each dependency before mirroring it — the mirror is a
-  trusted supply chain
+- Sign every deployable artifact and scan it for vulnerabilities before
+  promotion to production
 
 ## Secrets management
 [ID: base-deployment-secrets]
 
-- Inject secrets at runtime from a secrets service; never bake them into an
-  image
+- Inject secrets at runtime from a secrets service; never bake them into a
+  deployable artifact
 - Rotate secrets automatically; alert on rotation failures
 - Authenticate services to the secrets service by platform identity — no
   static tokens in configuration files
-- Keep the secrets service's unseal and recovery free of anything the
-  target cannot reach, and document a break-glass procedure
+- Keep the secrets service's recovery free of anything the target cannot
+  reach
+- Document a break-glass procedure for the secrets service
 
 ## Network assumptions
 [ID: base-deployment-network]
@@ -73,7 +67,4 @@ template.
 - Route traffic that crosses a network boundary through a defined ingress
   or egress point
 - Keep firewall rules in version control beside the service
-- Audit dependencies for hidden external calls (telemetry, update checks,
-  licence validation) on a target without outbound internet, and disable
-  them before deployment
 - Make every required endpoint reachable before the service starts
