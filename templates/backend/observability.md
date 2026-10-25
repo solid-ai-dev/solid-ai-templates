@@ -64,7 +64,10 @@ Use the correct level — do not elevate debug information to INFO:
 
 - Expose a health check endpoint: `/health` or `/healthz`
 - Return HTTP 200 when the service is ready to handle traffic
-- Return HTTP 503 when a critical dependency (DB, cache) is unavailable
+- Return HTTP 503 when a dependency no request can be served without,
+  such as the primary database, is unavailable
+- Never fail the health check on an optional dependency, such as a
+  cache: every instance leaves rotation at once (MUST NOT)
 - Never require authentication for the health check (MUST NOT)
 - Make the health check the first thing that passes before traffic is
   routed to a new instance (MUST)

@@ -168,6 +168,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- A cache outage no longer fails the health check or maps to a 503
+  ([#2280])
 - Hook installs keep building after setuptools drops the old licence
   field ([#2279])
 - Rules the rewrites made mandatory are SHOULD or MAY again, as before
@@ -330,6 +332,7 @@ Releases up to 2.63.0 are listed in
 [#2277]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2277
 [#2278]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2278
 [#2279]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2279
+[#2280]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2280
 
 ## [2.90.0] - 2026-09-12
 
