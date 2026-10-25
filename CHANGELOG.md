@@ -101,6 +101,8 @@ Releases up to 2.63.0 are listed in
   headers trust any known proxy hop ([#2329])
 - The feature-flags template drops permission flags, cohort-first and canary
   rollout steps, and its database-storage ban ([#2350])
+- The messaging template drops its broker table and Kafka schema registry;
+  its rules are broker-neutral ([#2352])
 
 ### Added
 
@@ -408,6 +410,7 @@ Releases up to 2.63.0 are listed in
 [#2343]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2343
 [#2350]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2350
 [#2351]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2351
+[#2352]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2352
 
 ## [2.90.0] - 2026-09-12
 
