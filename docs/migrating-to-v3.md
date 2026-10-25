@@ -65,6 +65,7 @@ receives nothing (ADR-051).
 | `backend-quality`: the handler, service and repository layering and its pattern catalogue | `backend-quality` | removed with the template; declare a stack's own architecture in a fork |
 | `backend-quality`: process lifecycle, admin processes, outbound timeouts, auth before logic, rate limits | `backend-quality` | `backend-http` |
 | `backend-quality`: N+1, async I/O, API deprecation, circuit breaker, outbox | `backend-quality` | already in `backend-database`, `backend-concurrency`, `backend-api`, `backend-errors`, `backend-messaging` |
+| The broker selection table; the schema registry for Kafka; the pointers to the jobs and concurrency templates; per-broker metric names | `backend-messaging` | removed; broker-neutral rules remain, ID kept |
 | `frontend-static-site`: one stylesheet, BEM naming, system fonts, the `localStorage` theme snippet, the page table, lint and format files | `frontend-static-site` | removed with the template; a fork's static-site stack carries its choices |
 | `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept |
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |

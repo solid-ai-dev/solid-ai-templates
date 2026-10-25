@@ -12,17 +12,7 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 - Use messaging to decouple services that scale independently
 - Do NOT use messaging when the caller needs a synchronous result — use HTTP or
   gRPC instead
-- Do NOT replace a simple job queue within one service with a broker — use
-  `templates/backend/jobs.md` instead
-
-### Broker selection guide
-
-| Broker | Best for |
-|--------|----------|
-| **Kafka** | High-throughput event streaming, ordered logs, replay, analytics pipelines |
-| **RabbitMQ** | Task queues, work distribution, complex routing, RPC-over-messaging |
-| **SQS** | AWS-native workloads, simple queues, no broker management overhead |
-| **SQS + SNS** | Fan-out from one publisher to multiple independent consumers |
+- Do NOT replace a simple job queue within one service with a broker
 
 ## Producer rules
 
@@ -34,7 +24,7 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   broker-level deduplication on producer retry
 - Do not publish inside a database transaction without the transactional outbox
   pattern — a commit/publish race will cause lost or phantom messages
-- **Outbox pattern**: write the message to an `outbox` table in the same
+- **Outbox pattern**: write the message to an outbox in the same
   transaction as the domain write; a relay process publishes from the outbox
   asynchronously
 
@@ -72,27 +62,22 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   so one noisy producer cannot starve the rest (head-of-line blocking)
 - Load-test the consumer at volume: watch queue depth and consumer lag,
   not the receive endpoint's latency, to find the real saturation point
-- See `templates/backend/concurrency.md` for bounded worker concurrency;
-  idempotency, retry/backoff, and the DLQ are covered in Consumer rules
-  above
 
 ## Schema and contracts
 
-- Define message schemas explicitly — JSON Schema, Avro, or Protobuf
+- Define message schemas explicitly, in a format such as JSON Schema, Avro or Protobuf
 - Keep schema changes backward-compatible (MUST): add fields, never remove
   or rename required fields without a versioning strategy
-- Use a schema registry (Confluent Schema Registry, AWS Glue, or equivalent)
-  for Kafka-based systems — this prevents schema drift across teams
 - Version the schema on breaking changes: encode the version in the topic name
   (`orders.v2`) or as a `schema_version` field in the payload
 
 ## Observability
 
-- Log at consumer entry: message ID, topic/queue name, correlation ID, consumer
-  group
+- Log at consumer entry: message ID, topic/queue name, correlation ID,
+  subscription or consumer group
 - Log at consumer exit: processing duration, outcome (success / retry / DLQ)
 - Track per topic/queue:
-  - Consumer lag (Kafka) or queue depth (RabbitMQ / SQS)
+  - Consumer lag or queue depth, whichever the broker exposes
   - Processing time (p50 / p95 / p99)
   - Error rate and DLQ depth
 - Alert when:
