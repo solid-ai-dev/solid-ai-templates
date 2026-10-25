@@ -15,23 +15,39 @@ Releases up to 2.63.0 are listed in
   ([#2053])
 - One command runs the test suites: py tests/run.py smoke, conformance or
   all ([#2055])
-- Stacks, platforms, process rules and the interview move to forks; pin
-  2.90.0 or a fork ([#1972])
-- The core rules require only a README and the two agent files ([#1964])
-- Template folders move out of the base folder; template IDs are unchanged
-  ([#1941], [#1966])
+- Process rules in the git, docs and quality-gates templates, and the
+  interview, move to forks; pin 2.90.0 or a fork ([#1972])
+- Stack templates move to forks: stack-astro, stack-c-embedded,
+  stack-django, stack-express, stack-fastapi, stack-flask, stack-go-echo,
+  stack-go-lib, stack-go-service, stack-grpc-go, stack-grpc-python,
+  stack-htmx, stack-nestjs, stack-nodejs-lib, stack-python-lib,
+  stack-python-service and stack-tutorial ([#1972])
+- Platform templates move to forks: platform-github, platform-gitlab and
+  platform-linear ([#1972])
+- Workflow templates move to forks: base-360, base-ai-workflow,
+  base-communication, base-compression, base-issues, base-release,
+  base-scope and base-two-pass-review ([#1972])
+- Language templates move to forks: base-c, base-go, base-python and
+  base-typescript ([#1972])
+- base-cli, base-skills, base-examples and backend-templating move to forks
+  ([#1972])
+- base-readme leaves the core tier for forks; the core rules require only a
+  README and the two agent files ([#1964], [#1972])
+- Templates leave the base folder and quality-gates moves into core; IDs are
+  unchanged, and the migration guide maps each path ([#1941], [#1966])
 - SEO rules move from the frontend quality template to a new content
   template ([#2016])
 - Rules for writing checks leave the testing template for the playbook;
-  pipeline-diagnostic and Python-only test rules are removed ([#2069])
-- The docs template drops its line-width and figure scripts, and the
-  Mermaid and bulk-generator rules ([#2071])
+  Python-only test rules go, and one pipeline-diagnostic rule remains
+  ([#2069])
+- The docs template drops its line-width and figure scripts and most of its
+  Mermaid and generator rules ([#2071])
 - The review template drops its full issue-verification procedure and its
   numerical-gate items ([#2072])
 - The config template drops the in-process config model and the dependency
   updater rule ([#2073])
-- The agents template drops its vendored-pin procedures and chain-list
-  gate ([#2074])
+- Vendored-pin procedures and the chain-list rule leave the agents template
+  for the playbook ([#2074])
 - The devsecops template drops its GitHub and Python specifics for neutral
   rules ([#2075])
 - The devsecops template drops penetration testing and its IaC example list
@@ -42,10 +58,10 @@ Releases up to 2.63.0 are listed in
   one-site rules ([#2080])
 - The quality-gates template drops its length-gate exemptions and ruff block
   ([#2081])
-- The quality template drops its exemption-doc sweep, porting rules and
-  check-harness rules ([#2082])
-- The git template drops its submodule, numbered-document and base64 rules
-  and the .vscode allowlist ([#2093])
+- The quality template drops its exemption-doc sweep, the not-applicable exit
+  status, its run-summary rules and the ported-script split ([#2082])
+- The git template drops its base64 bundle mask, and a neutral
+  editor-settings rule replaces the .vscode allowlist ([#2093])
 - The backend-quality template is retired; its general rules move to the HTTP
   template ([#2102])
 - The frontend-static-site template is retired; its theme, trailing-slash and
