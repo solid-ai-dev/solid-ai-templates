@@ -115,6 +115,8 @@ Releases up to 2.63.0 are listed in
   assisted ground-truth workflow ([#2314])
 - The data-modeling template states its relational-only rules for any store and
   drops junction tables ([#2337])
+- The cicd template drops environment separation, zero-downtime rollouts, health-check
+  routing and DAST ([#2299])
 
 ### Added
 
@@ -447,6 +449,7 @@ Releases up to 2.63.0 are listed in
 [#2314]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2314
 [#2336]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2336
 [#2337]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2337
+[#2299]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2299
 
 ## [2.90.0] - 2026-09-12
 

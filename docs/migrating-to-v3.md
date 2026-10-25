@@ -60,7 +60,7 @@ receives nothing (ADR-051).
 | The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
 | `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
 | Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral; one cross-language port rule remains |
-| The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once, DAST before production and artifact promotion remain |
+| The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once and artifact promotion remain; DAST before production is in `base-devsecops` |
 | Kubernetes: namespaces, two replicas per service, probes, PodDisruptionBudget, ConfigMap secrets | `base-containers` | removed; resources as code and the readiness gate remain, orchestrator-neutral |
 | Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file |
 | Per-target product choices: managed CAs, `step-ca`, F5 and MetalLB, Route 53 and Consul, Harbor and Athens, Vault topologies | `base-deployment` | removed; each section keeps its ID and the rules that hold on any target |
@@ -105,6 +105,7 @@ receives nothing (ADR-051).
 | Cross-domain access through APIs or views only; the named regulations (GDPR, CCPA, HIPAA), role-based access and the right-to-erasure label; the audit-log retention bullet | `base-data-governance` | removed, IDs kept; least-privilege access, a PII deletion mechanism and applicable regulations remain, and Retention already covers audit logs |
 | The completeness score and publishing threshold, the scoring scale, filter booleans, the agent-assisted ground-truth workflow, one data change per commit | `base-data-quality` | removed, IDs kept; derived values, the data change record and schema validation restated tool-neutrally |
 | Relational-only rules: third normal form, explicit foreign keys, `CASCADE`, `SET NULL` and `RESTRICT`, junction tables, the JSON-array column ban | `base-data-modeling` | store-neutral rules: each fact in one place, enforced references, a decided delete behavior; junction tables and the JSON-array ban removed, IDs kept |
+| Environment separation, staging that mirrors production, zero-downtime rollouts, health-check routing, DAST before production, periodic environment rebuilds, deploying small and often, IaC tool names | `base-cicd` | removed; `base-devsecops` keeps DAST, `base-config` keeps environment values out of the artifact, and packaging once now covers promotion |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

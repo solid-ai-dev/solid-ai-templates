@@ -3,8 +3,9 @@
 
 ## Principle
 
-Every project MUST have an automated pipeline. No manual steps between a
-merged PR and a deployed artifact — humans approve, machines execute.
+- Give every project an automated pipeline (MUST)
+- Leave no manual step between a merged change and a released artifact:
+  humans approve, machines execute
 
 ## Quality gates
 
@@ -19,55 +20,39 @@ merged PR and a deployed artifact — humans approve, machines execute.
 - Select the patterns the project's workflow needs (MAY): gate job, path
   filtering, fan-out/fan-in, artifact promotion, caching, matrix builds,
   auto-merge, deploy previews
-- Build every image the project ships in the pipeline, never by hand
 
 ## Pipeline stages
 
 - Build, lint, test and security-scan (SAST, secret detection, SCA) every
   change before it merges (MUST)
-- Package the deployable artifact once, after those stages pass; every
-  later stage uses that artifact
+- Package the release artifact once, after those stages pass; every later
+  stage and environment uses that artifact, never a rebuild
+- Build every artifact the project ships in the pipeline, never by hand
 - Fail fast: a failed stage stops the pipeline (MUST)
-- Scan the running application (DAST) before a build reaches production
-- Deploy to production only from a revision that passed every stage
-- Treat the stage count, their order beyond these and the deploy trigger as
-  the project's choice
-
-## Environment separation
-
-- Never test against production; test in an environment that mirrors it
-- Inject environment-specific configuration via environment variables;
-  never bake it into the artifact
-- Promote the same artifact through environments — never rebuild per
-  environment
+- Never test against production
+- Release only from a revision that passed every stage
+- Treat the stage count, their order beyond these and the release trigger
+  as the project's choice
 
 ## Infrastructure as code
 
-- Define all infrastructure in code (MUST) — Terraform, Pulumi or similar
+- Define all infrastructure in code (MUST)
 - Never change any environment by hand; route all changes through the
   pipeline
 - Put IaC changes through the same review process as application code
-- Destroy and recreate environments from IaC to verify correctness
-  periodically
 
-## Deployment strategy
+## Deployment
 
-- Support zero-downtime deployments (MUST); use rolling updates or
-  blue/green
 - Document and test a rollback procedure (MUST)
-- Route traffic to a new instance only after its health check endpoint
-  returns healthy (MUST)
-- Deploy small and often — large infrequent deployments increase risk
-- Deploy the artifact by its immutable reference, an image digest or tag
-  (SHOULD); never rebuild it in the deploy step
-- Skip a deploy step whose secret (a deploy-hook URL or token) is absent on
-  forks or contributor branches, and let it succeed (MUST); this keeps the
-  workflow green rather than hard-failing
+- Deploy the artifact by an immutable reference, such as a content digest
+  (SHOULD)
+- Skip a deploy step whose secret is absent on a fork or contributor
+  branch, and let it succeed (MUST) rather than hard-fail
 
 ## Release record
 
-On a release tag, the pipeline MUST create a durable release record on
-the forge, not only publish artifacts. For the release job:
+On a release tag, the pipeline MUST create a durable release record, not
+only publish artifacts. For the release job:
 
 - Run it only on tag pushes, so a manual run on a branch is skipped
 - Keep it **independent** of the publish/deploy jobs — the record captures
