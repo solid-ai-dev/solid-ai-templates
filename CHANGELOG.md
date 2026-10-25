@@ -99,6 +99,8 @@ Releases up to 2.63.0 are listed in
   vendor ([#2326])
 - The edge template drops load-balancing, routing, WAF and geo rules; forwarded
   headers trust any known proxy hop ([#2329])
+- The feature-flags template drops permission flags, cohort-first and canary
+  rollout steps, and its database-storage ban ([#2350])
 
 ### Added
 
@@ -402,6 +404,7 @@ Releases up to 2.63.0 are listed in
 [#2326]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2326
 [#2329]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2329
 [#2343]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2343
+[#2350]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2350
 
 ## [2.90.0] - 2026-09-12
 

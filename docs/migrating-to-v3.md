@@ -94,6 +94,7 @@ receives nothing (ADR-051).
 | The status page, example alert thresholds, dashboards as code, business-KPI dashboards; the P1/P2, 4xx/5xx and CPU, memory and disk wording | `backend-monitoring` | removed; severity, error and saturation rules remain, vendor-neutral |
 | Load-balancing algorithms and availability zones, declarative routing, WAF and geo rules; the TLS-version and HSTS bullets | `backend-edge` | removed; `base-security` already carries TLS and HSTS. Forwarded headers now trust any known proxy hop, a CDN's included |
 | When to use gRPC; mutual TLS and certificate rotation; Prometheus metric names and port; `buf`; the test naming pattern | `backend-grpc` | removed, IDs kept; tool-neutral rules for metrics, proto lint and breaking-change checks remain |
+| The permission flag type; cohort-before-general and canary-instance rollout steps; the ban on database-stored flags | `backend-features` | removed; a rollout steps by percentage or cohort, and flags come from a source changed at runtime without a deploy |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
