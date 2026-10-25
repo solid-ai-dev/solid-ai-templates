@@ -5,7 +5,7 @@
 
 ## UX principles
 
-- Design for small screens first, then enhance for larger ones
+- Make every view usable on a small screen, not only on a desktop one
 - Show only what the user needs at each step
 - Never use a dark pattern: misleading UI, a forced action, a hidden cost
 - Use the same interaction pattern for the same task throughout
@@ -18,14 +18,12 @@
 - Meet WCAG 2.1 AA
 - Keep text contrast at 4.5:1 or more, 3:1 for large text
 - Make every interactive element reachable and operable by keyboard
-- Put a `<button>` inside any non-focusable element (`<th>`, `<div>`,
-  `<span>`) with an `onClick` (MUST); `onClick` alone adds no tab stop or
-  keyboard activation
+- Use a native button or link for anything clickable (MUST); a click
+  handler on another element adds no tab stop or keyboard activation
 - Style focus with `:focus-visible`, not `:focus`, which also outlines
   mouse clicks
-- Keep focus indicators visible throughout keyboard navigation
-- Give every `<a>` and nav link a visible `:focus-visible` outline (MUST);
-  links often lack one even where buttons have it
+- Keep a visible focus indicator on every focusable element, links and nav
+  links included (MUST); links often lack one even where buttons have it
 - Never convey meaning by colour alone
 - Give images descriptive `alt` text, and decorative ones `alt=""`
 - Use semantic HTML: landmark elements and a correct heading hierarchy
@@ -43,20 +41,15 @@ testing too.
 
 ### Automated (run in CI)
 
-- Run axe-core through the framework's adapter (`@axe-core/react`,
-  `@axe-core/vue`, `axe-playwright`, `jest-axe`); merge on zero violations
-- Hold every key page to a Lighthouse accessibility score of 90 or more,
-  in CI through `lighthouse-ci`
-- Lint for missing `alt`, wrong ARIA roles and missing form labels with
-  the framework's a11y plugin (`eslint-plugin-jsx-a11y`,
-  `eslint-plugin-vuejs-accessibility`; Svelte warns by default)
+- Scan rendered pages or components with an automated accessibility
+  checker in CI; merge on zero violations
 
 ### Manual (run before shipping new interactive components)
 
 - Tab through the whole feature without a mouse: every action reachable,
   focus order logical, no focus trap but an intentional modal
-- Walk it with one screen reader (NVDA with Chrome, VoiceOver with Safari,
-  or TalkBack), and check every content and state change is announced
+- Test it with one screen reader, such as NVDA, VoiceOver or TalkBack, and
+  check every content and state change is announced
 - Zoom to 200%: nothing clipped or overlapping, and no horizontal scroll
   at a 1280px viewport
 - Check Windows High Contrast or the forced-colors media query: no
@@ -66,8 +59,7 @@ testing too.
 
 A feature is not complete until:
 
-- [ ] `axe-core` reports zero violations in component tests
-- [ ] Lighthouse accessibility score ≥ 90
+- [ ] The automated accessibility check reports zero violations
 - [ ] Keyboard navigation verified manually
 - [ ] Screen reader walkthrough completed for new interactive elements
 
@@ -79,7 +71,6 @@ A feature is not complete until:
   from the design system (MUST); never hardcode a visual value
 - Build UI as a hierarchy of reusable, self-contained components, never a
   monolithic view
-- Document a new component with usage examples before shipping it (SHOULD)
 
 ## Browser support
 

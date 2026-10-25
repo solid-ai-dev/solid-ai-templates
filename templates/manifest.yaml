@@ -100,7 +100,7 @@ platform:
 frontend:
   - id: frontend-ux
     file: templates/frontend/ux.md
-    description: UX principles, WCAG 2.1 AA, responsive breakpoints
+    description: UX principles, WCAG 2.1 AA, accessibility testing, design system, browser support
     depends_on: [base-quality]
   - id: frontend-quality
     file: templates/frontend/quality.md
