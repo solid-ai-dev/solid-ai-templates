@@ -33,13 +33,13 @@ receives nothing (ADR-051).
 | Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed; one diagnostic-view rule remains |
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
-| Mermaid parser quirks, bulk-emit and round-trip generator rules | `base-docs` | removed; one rule each on Mermaid notes, stale counts and refresh remains |
-| Verifying a filed issue in full, its shapes and checks; counting a text's self-claims | `base-review` | this repository's playbook; a short form stays |
+| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries |
+| Verifying a filed issue in full, its shapes and checks | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
 | Port binding | `base-config` | `backend-http` |
 | The in-process config model and the interlocked-dependency updater rule | `base-config` | removed |
-| Reading and bumping a vendored pin, and the chain-list gate | `base-agents` | this repository's playbook, "Vendor the templates in a project" |
+| Reading and bumping a vendored pin, and the chain-list rule | `base-agents` | this repository's playbook, "Vendor the templates in a project" |
 | GitHub-specific SBOM upload and Actions pinning, Python SBOM tools, per-platform tool choice | `base-devsecops` | removed; neutral rules remain |
 | Where a licence notice sits inside an image | `base-devsecops` | `base-containers` |
 | Penetration testing, a periodic engagement rather than a pipeline step | `base-devsecops` | removed; a fork's process template can carry it |
@@ -49,12 +49,12 @@ receives nothing (ADR-051).
 | Figure cropping, the research scrape cache, the lens-catalogue examples | `base-data-quality` | removed; neutral rules remain |
 | MySQL online-DDL tool names; the host MIME-registry example | `base-data-migration`, `base-security` | neutral rules remain |
 | React hooks and render props, the CSS line-width note, the no-consent-banner choice | `frontend-quality` | removed |
-| Cloudflare crawl control, SEO audit thresholds, AEO measurement, the FAQPage fact; answer-engine crawlers now MAY | `frontend-content` | removed or relaxed |
-| `public/` paths, ESLint and Prettier file names, the homepage-sections note | `frontend-content`, `frontend-static-site` | neutral rules remain |
+| Cloudflare crawl control, SEO audit thresholds, AEO measurement, the FAQPage fact; answer-engine crawlers now MAY | `frontend-static-site`, `frontend-quality` | removed or relaxed |
+| `public/` paths, ESLint and Prettier file names, the homepage-sections note | `frontend-static-site` | removed; `frontend-content` keeps a neutral asset-path rule |
 | Sortable boolean columns, fixed breakpoints, `frontend-ux-bakeoff` | `frontend-ux` | removed; breakpoints come from the design system |
 | Pipeline diagnosability, the Serilog log shape, the OpenAPI drift-test detail | `backend-observability`, `backend-api` | removed or neutral |
-| The unfenced-check hook and extraction rules | `base-quality-gates` | `base-embedded-checks` |
-| `quality-gates-length-bound-exemptions`, synthetic-subject and fixing-branch controls, the backslash table | `base-quality-gates`, `base-embedded-checks` | this repository's playbook |
+| The unfenced-check script and the extraction rules | `base-quality-gates` | `base-embedded-checks`; the script ships as a hook |
+| `quality-gates-length-bound-exemptions`, synthetic-subject and fixing-branch controls, the backslash table | `base-quality-gates` | this repository's playbook |
 | The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
 | `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
 | Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral; one cross-language port rule remains |
@@ -75,11 +75,73 @@ receives nothing (ADR-051).
 | Hierarchies: variadic overrides, the override checker and its contract test | `base-quality` | `base-oop` |
 | Citing the software | `base-docs` | `base-measurement` |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | mask and allowlist removed; the submodule update and a neutral editor-settings rule remain |
-| Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-measurement` | neutral rules remain |
+| Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-quality` | neutral rules remain |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
 project's own; `templates/core/agents.md` offers a default.
+
+## Removed templates
+
+A 2.90.0 template ID listed here no longer resolves upstream. The Imbra fork
+keeps every template the split moved to forks, under the same ID.
+
+| ID | 2.90.0 file | Where its rules went |
+| -- | ----------- | -------------------- |
+| `stack-astro`, `stack-c-embedded`, `stack-django`, `stack-express`, `stack-fastapi`, `stack-flask`, `stack-go-echo`, `stack-go-lib`, `stack-go-service`, `stack-grpc-go`, `stack-grpc-python`, `stack-htmx`, `stack-nestjs`, `stack-nodejs-lib`, `stack-python-lib`, `stack-python-service`, `stack-tutorial` | `templates/stack/*.md` | a fork |
+| `platform-github`, `platform-gitlab`, `platform-linear` | `templates/platform/*.md` | a fork |
+| `base-360`, `base-ai-workflow`, `base-communication`, `base-compression`, `base-issues`, `base-release`, `base-scope`, `base-two-pass-review` | `templates/base/workflow/*.md`, except `quality-gates.md` | a fork |
+| `base-c`, `base-go`, `base-python`, `base-typescript` | `templates/base/language/*.md` | a fork; idioms that hold in any language are rules in `base-quality` and `base-oop` |
+| `base-readme`, core tier in 2.90.0 | `templates/base/core/readme.md` | a fork; the core tier requires `README.md` and prescribes no structure |
+| `base-cli`, `base-skills`, `base-examples` | `templates/base/core/cli.md`, `templates/base/core/skills.md`, `templates/base/core/examples.md` | a fork |
+| `backend-templating` | `templates/backend/templating.md` | a fork |
+| `backend-quality` | `templates/backend/quality.md` | `backend-http` and the other backend templates; the layering and its pattern catalogue are removed |
+| `frontend-static-site` | `templates/frontend/static-site.md` | `frontend-quality` and `frontend-content`; its stack choices are removed |
+
+## Template paths
+
+Every template still shipped keeps its ID. Files under `templates/base/`
+lose that folder, except `quality-gates.md`, which moves from `workflow/`
+into `core/`:
+
+| ID | 2.90.0 file | 3.0.0 file |
+| -- | ----------- | ---------- |
+| `backend-api` | `templates/backend/api.md` | unchanged |
+| `backend-auth` | `templates/backend/auth.md` | unchanged |
+| `backend-caching` | `templates/backend/caching.md` | unchanged |
+| `backend-concurrency` | `templates/backend/concurrency.md` | unchanged |
+| `backend-database` | `templates/backend/database.md` | unchanged |
+| `backend-edge` | `templates/backend/edge.md` | unchanged |
+| `backend-errors` | `templates/backend/errors.md` | unchanged |
+| `backend-features` | `templates/backend/features.md` | unchanged |
+| `backend-grpc` | `templates/backend/grpc.md` | unchanged |
+| `backend-http` | `templates/backend/http.md` | unchanged |
+| `backend-jobs` | `templates/backend/jobs.md` | unchanged |
+| `backend-messaging` | `templates/backend/messaging.md` | unchanged |
+| `backend-microservices` | `templates/backend/microservices.md` | unchanged |
+| `backend-monitoring` | `templates/backend/monitoring.md` | unchanged |
+| `backend-observability` | `templates/backend/observability.md` | unchanged |
+| `backend-webhooks` | `templates/backend/webhooks.md` | unchanged |
+| `base-agents` | `templates/base/core/agents.md` | `templates/core/agents.md` |
+| `base-config` | `templates/base/core/config.md` | `templates/core/config.md` |
+| `base-docs` | `templates/base/core/docs.md` | `templates/core/docs.md` |
+| `base-git` | `templates/base/core/git.md` | `templates/core/git.md` |
+| `base-oop` | `templates/base/core/oop.md` | `templates/core/oop.md` |
+| `base-quality` | `templates/base/core/quality.md` | `templates/core/quality.md` |
+| `base-review` | `templates/base/core/review.md` | `templates/core/review.md` |
+| `base-testing` | `templates/base/core/testing.md` | `templates/core/testing.md` |
+| `base-data-governance` | `templates/base/data/data-governance.md` | `templates/data/data-governance.md` |
+| `base-data-migration` | `templates/base/data/data-migration.md` | `templates/data/data-migration.md` |
+| `base-data-modeling` | `templates/base/data/data-modeling.md` | `templates/data/data-modeling.md` |
+| `base-data-quality` | `templates/base/data/data-quality.md` | `templates/data/data-quality.md` |
+| `base-cicd` | `templates/base/infra/cicd.md` | `templates/infra/cicd.md` |
+| `base-containers` | `templates/base/infra/containers.md` | `templates/infra/containers.md` |
+| `base-deployment` | `templates/base/infra/deployment.md` | `templates/infra/deployment.md` |
+| `base-devsecops` | `templates/base/security/devsecops.md` | `templates/security/devsecops.md` |
+| `base-security` | `templates/base/security/security.md` | `templates/security/security.md` |
+| `base-quality-gates` | `templates/base/workflow/quality-gates.md` | `templates/core/quality-gates.md` |
+| `frontend-quality` | `templates/frontend/quality.md` | unchanged |
+| `frontend-ux` | `templates/frontend/ux.md` | unchanged |
 
 ## Projects
 
@@ -110,6 +172,10 @@ fork.
    as the templates. Where the project's own docs carry check scripts, add
    `base-embedded-checks` to `Extras`; where it computes, calibrates or
    extracts values, add `base-measurement`
+
+An `Extras` ID that no longer resolves is listed in
+[Removed templates](#removed-templates); a path a context file names maps
+through [Template paths](#template-paths).
 
 No guide document a project carries is renamed — see
 [Guide documents](#guide-documents).
@@ -147,6 +213,7 @@ that name an old path do not follow, so edit them in the merge:
 
 | Upstream change | Fork action |
 | --------------- | ----------- |
+| Templates leave `templates/base/`, and `quality-gates.md` moves into `core/` ([#1941], [#1966]) | Update every template path the fork's files name, `DEPENDS ON` lines included, per [Template paths](#template-paths) |
 | Tools named verb-first: `resolve.py`, `sync.py`, `release_check.py`, `template_quality.py` become `resolve_chain.py`, `sync_docs.py`, `check_release.py`, `score_templates.py` ([#2052]) | Update every call and mention in `tests/fork_checks.py`, `tests/fork_dispositions.py`, `tests/cases.py`, `tests/run_e2e.py` and `tools/fork_examples.py` |
 | `tests/lib.py` becomes `tests/testkit/` ([#2053], [#2055]) | `from lib import` becomes `from testkit import` |
 | One wrapper runs every suite: `py tests/run.py <suite>` ([#2055]) | Move `tests/run_e2e.py` to `tests/e2e/run.py`; replace `py tests/run_smoke.py` with `py tests/run.py smoke` |
@@ -156,6 +223,8 @@ that name an old path do not follow, so edit them in the merge:
 `tests/fork_checks.py` and `tests/fork_dispositions.py` stay where they
 are: the smoke and conformance runners import them from `tests/`.
 
+[#1941]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1941
+[#1966]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1966
 [#2049]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2049
 [#2052]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2052
 [#2053]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2053
