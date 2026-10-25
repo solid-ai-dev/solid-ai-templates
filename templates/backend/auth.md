@@ -18,17 +18,17 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 ## Authentication
 [EXTEND: security-authn]
 
-- Prefer delegating authentication to an identity provider (IdP) via
-  OAuth 2.0 / OIDC (e.g. Auth0, Keycloak, Cognito) over rolling your own
-- Use short-lived JWTs when issuing tokens directly (access token ≤ 15
-  minutes)
+- Prefer delegating authentication to an identity provider (IdP) over
+  rolling your own
+- Expire an access token within 15 minutes when the service issues tokens
+  itself
 - Issue refresh tokens only to user sessions, such as a browser or mobile
   client; rotate each on use and expire it within 7 days
 - Never issue a refresh token to a service
 - Authenticate a service by credentials of its own, such as OAuth 2.0
   client credentials, mutual TLS or a scoped API key (below)
-- Validate every JWT: signature, `exp`, `iss`, `aud` — reject tokens missing
-  any required claim
+- Validate every signed token's signature, expiry, issuer and audience
+- Reject a token that lacks any required claim
 - Store refresh tokens server-side, in a database or a dedicated session
   store, so they can be revoked; stateless refresh tokens cannot be
   invalidated before expiry
@@ -42,8 +42,6 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 - Store a browser client's refresh tokens in `httpOnly`, `Secure`,
   `SameSite=Strict` cookies (MUST)
 - Never store refresh tokens in `localStorage` or JavaScript-accessible memory
-- Require HTTPS for all authenticated endpoints outside local
-  development, with no exception in staging or production
 
 ## Authorization
 
@@ -75,16 +73,15 @@ Extends `security/security.md`, "Authentication" (`security-authn`) and
 - Log authorization failures at WARN with user ID, resource, and action
 - Alert on a spike in auth failures; it may indicate a credential stuffing
   attack
-- Never log tokens, passwords, or secrets, even at DEBUG level
 
 ## Testing
 
 - Cover permission logic with unit tests for all role combinations,
   including edge cases (no role, multiple roles, deprecated role)
-- Assert in an integration test that protected endpoints return 401 (gRPC
-  `UNAUTHENTICATED`) for unauthenticated requests and 403 (gRPC
-  `PERMISSION_DENIED`) for authenticated requests with insufficient
-  permissions
+- Assert in an integration test that a protected endpoint rejects an
+  unauthenticated request with an unauthenticated status, such as HTTP 401
+- Assert in an integration test that it rejects an authenticated request
+  lacking permission with a permission-denied status, such as HTTP 403
 - Test token expiry: assert that an expired token is rejected
 - Test token revocation where refresh tokens exist: assert that a revoked
   refresh token cannot obtain a new access token
