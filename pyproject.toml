@@ -12,7 +12,10 @@ name = "solid-ai-checks"
 # release is the tag, so this package version carries no release meaning.
 version = "0.0.0"
 description = "The checks the solid-ai templates prescribe, as pre-commit hooks"
-license = { text = "MIT" }
+
+# No license field: the package is never published, so LICENSE at the root
+# is the licence. The table form is deprecated in setuptools, and the
+# string form needs setuptools 77, which drops Python 3.8.
 requires-python = ">=3.8"
 
 [project.scripts]
