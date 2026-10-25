@@ -3,30 +3,13 @@
 [ID: frontend-quality]
 [DEPENDS ON: templates/core/quality.md]
 
-## Patterns
-
-- Use the pattern each case names: an error boundary around a failing
-  subtree, a skeleton for loading, virtual scroll for long lists, a
-  debounce on search input, validation on form input, a responsive switch
-  at breakpoints, URL sync for shareable state
-
 ## Design patterns
 
-- Separate data fetching and state (container) from rendering
-  (presentational); give presentational components only props and no side
-  effects (SHOULD)
-- Expose related sub-components that share implicit state as a compound
-  component (`<Tabs>`, `<Tab>`, `<TabPanel>`) rather than drill props
-  (SHOULD)
 - Subscribe to external state (store, event bus, WebSocket) through one
   subscription point, and unsubscribe on unmount (SHOULD)
 - Wrap a third-party library (analytics, maps, payment SDK) behind a thin
   project-owned interface; never scatter its calls across components
   (SHOULD)
-- Apply a mutation's expected result at once and roll back on failure;
-  document the rollback path (SHOULD)
-- Avoid connecting components through an event bus; share state or lift
-  it up instead (SHOULD NOT)
 
 ## State management
 
@@ -44,20 +27,16 @@ never fetched from a server.
 
 Rules:
 
-- Never duplicate server state in a global store — use a dedicated server
-  cache; the store holds only client-owned state
-- Never put derived state in the store — compute it from existing state
+- Keep server data in one client cache; never copy it into a global store,
+  which holds only client-owned state
+- Never put derived state in a store — compute it from existing state
 - Prefer URL state for anything the user should be able to bookmark or share
-- Keep global store slices small and focused — one slice per domain concern,
-  not one slice for everything
 - Find everything that depends on shared browser state (history, URL,
   localStorage, global context) before changing it
 
 ## Linting and formatting
 
-- Configure a linter for all JS/TS code (MUST)
-- Run the linter and formatter on save in the IDE (SHOULD); never rely on
-  CI alone for style
+- Configure a linter for all script code the frontend ships (MUST)
 - Merge no PR with a warning or error in the browser console or test
   output (MUST)
 - Lower the lint error count over time, never raise it (SHOULD)
@@ -72,10 +51,8 @@ Rules:
 ## Performance
 
 - Preload critical above-the-fold assets
-- Render pages at build or on the server by default; render on the client
-  only where a page needs client-side state
-- Keep client-side JS minimal — every dependency adds to bundle size
-- Avoid unnecessary dependencies
+- Keep client-side script minimal; add a dependency only when it earns
+  its bundle size
 - Defer non-critical scripts
 - Monitor Core Web Vitals (LCP, CLS, INP) — treat regressions as bugs
 
@@ -83,11 +60,10 @@ Rules:
 
 [ID: testing-in-process-server]
 
-- Run browser-driven UI journeys against the real app, served in a thread
+- Run browser-driven UI journeys against the real app, served in-process
   on port 0 and driven over real HTTP (SHOULD)
-- Derive the base URL from the assigned port, and stop the server in a
-  `finally`
-- Share one serving helper between scripts and browser tests
+- Derive the base URL from the assigned port, and stop the server however
+  the test ends
 - Reserve a container for tests that need the built image or sidecar
   services
 
