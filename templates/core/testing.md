@@ -113,8 +113,8 @@ never consulted.
 
 - Assert the source of a value, not the value, where a fix changes where it
   comes from
-- Inject a source that yields a different value, and assert the code
-  overrides it
+- For such a fix, inject a source that yields a different value, and assert
+  the code overrides it
 - Treat a new test that passes against the unfixed code as aimed at the
   wrong property, not as proof the fix was unnecessary
 - Substitute at the name the module under test reads, not on the module
@@ -221,11 +221,11 @@ never consulted.
 [ID: testing-drift-guard]
 
 - Give every fact stored in two places a test that fails when the copies
-  diverge
-- Pair a documented limit with its constant, and live routes with the API
-  contract
-- Pair the runtime version with the package metadata, and an export list
-  with the module's bindings
+  diverge, such as:
+  - a documented limit and its constant
+  - live routes and the API contract
+  - the runtime version and the package metadata
+  - an export list and the module's bindings
 - Introspect the live artifact rather than hardcode the expected value
   (SHOULD)
 - Assert one direction: the derived copy matches the source of truth
