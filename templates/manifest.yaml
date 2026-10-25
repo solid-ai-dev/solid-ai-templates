@@ -117,7 +117,7 @@ backend:
     description: URI design, methods, headers, HATEOAS, auth, errors
   - id: backend-api
     file: templates/backend/api.md
-    description: API-first, OpenAPI, versioning, deprecation, pagination
+    description: API-first, contracts, versioning, deprecation, pagination
     depends_on: [backend-http]
   - id: backend-database
     file: templates/backend/database.md
