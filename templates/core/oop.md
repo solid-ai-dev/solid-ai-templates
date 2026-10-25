@@ -23,44 +23,28 @@ Apply SOLID at the class, module and service level:
   relationship
 - Encapsulate state and implementation; expose behaviour through a public
   interface
-- Design to interfaces, protocols or abstract base classes, not concrete
-  types
 - Treat a hierarchy deeper than two levels as a signal to refactor toward
   composition
 - Model a closed type family, every variant known when the type is
-  written, as a tagged union on a literal field (`kind`, `type`), so the
-  compiler checks every branch
+  written, so that a branch missing a variant fails rather than falls
+  through
 - Keep class hierarchies for families callers extend
-- Name a module or class for the role its layer gives it; rename an
-  `endpoints.py` with no routes or a `*RestApi` that is not the REST API
+- Name a module or class for the role its layer gives it
+- Rename a module or class whose name claims a role it does not play
 
 ## Hierarchies
 
-- Never declare a variadic parameter (`*args`, `**kwargs`) on an abstract
-  or overridable operation
-
-  ```
-  class Store:       def put(self, key, *args)   promises nothing
-  class Disk(Store): def put(self, key, path)    Store callers cannot call it
-  ```
-
+- Never declare a variadic parameter on an abstract or overridable
+  operation; it states no contract a subtype can keep
 - Give a capability its own name where a class part-way down a hierarchy
-  offers what its own subtypes must not; never widen the shared operation
+  offers what its own subtypes must not
+- Never widen the shared operation to carry such a capability
 - Keep every override callable wherever its base is: the same member kind
   and parameters, with new parameters only appended and given defaults
-
-  ```
-  base   def load(self, path)
-  keeps  def load(self, path, cache=True)
-  fails  def load(self, url)     @staticmethod def load(path)
-  ```
-
-- Check overrides with a strict type checker's override rule, bound in
-  the project's type-checker configuration, and shrink its variadic
-  findings first (SHOULD)
-- Where that checker is frozen, keep a contract test walking every
-  concrete class against the override rule above, and declaring no
-  variadic (SHOULD)
+- Check every override against its base with a tool (SHOULD), such as:
+  - the compiler
+  - a strict type checker's override rule
+  - a contract test walking every concrete class
 
 ## When not to reach for a class
 [ID: base-oop-restraint]
@@ -68,7 +52,7 @@ Apply SOLID at the class, module and service level:
 SOLID and the patterns below bias toward classes; these rules are the
 counterweight.
 
-- Write stateless logic as a free function; introduce a class only to
+- Write stateless logic as a function; introduce a class only to
   encapsulate state it owns
 - Treat a class whose only public method is `run()` or `execute()` as a
   function in disguise, unless its retained state warrants an object
@@ -90,9 +74,11 @@ counterweight.
 ## Cross-cutting concerns
 [ID: base-oop-aop]
 
-- Keep cross-cutting behaviour visible at its call site: a logger call, an
-  auth middleware or guard, a transaction context manager, a validation
-  call at the boundary
+- Keep cross-cutting behaviour visible at its call site, such as:
+  - a logger call
+  - an auth middleware or guard
+  - a transaction block
+  - a validation call at the boundary
 - Never inject behaviour through method interception, bytecode weaving or
   an opaque runtime proxy — it is hard to read, debug and test
 - Use a decorator only when it wraps and visibly delegates
