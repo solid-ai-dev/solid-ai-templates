@@ -77,6 +77,8 @@ Releases up to 2.63.0 are listed in
   sign-in probe items become neutral ([#2296])
 - The docs template drops its markdownlint width check and the Mermaid and
   narrow generator rules ([#2298])
+- The git template drops submodules, numbered documents, bidirectional artifacts
+  and its gh check-watch loop ([#2300])
 
 ### Added
 
@@ -351,6 +353,7 @@ Releases up to 2.63.0 are listed in
 [#2289]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2289
 [#2296]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2296
 [#2298]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2298
+[#2300]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2300
 
 ## [2.90.0] - 2026-09-12
 
