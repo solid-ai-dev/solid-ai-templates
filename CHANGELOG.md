@@ -95,6 +95,8 @@ Releases up to 2.63.0 are listed in
   contract rules cover every contract kind ([#2312])
 - The observability template drops HTTP status codes, health paths and the
   OpenTelemetry mandate for neutral rules ([#2320])
+- The jobs template drops its database and HTTP-call bans and names no
+  vendor ([#2326])
 
 ### Added
 
@@ -393,6 +395,7 @@ Releases up to 2.63.0 are listed in
 [#2320]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2320
 [#2322]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2322
 [#2323]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2323
+[#2326]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2326
 
 ## [2.90.0] - 2026-09-12
 
