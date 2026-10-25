@@ -28,43 +28,43 @@ log level and the recovery:
 
 ## Propagation through layers
 
-- Raise typed errors from data-access code (`RecordNotFound`,
-  `ConnectionError`); never expose ORM or driver exceptions above it
-- Re-raise them as domain errors with business context (`OrderNotFound`,
+- Raise or return typed errors from data-access code (`RecordNotFound`,
+  `ConnectionError`); never expose a storage library's errors above it
+- Translate them into domain errors with business context (`OrderNotFound`,
   `PaymentServiceUnavailable`)
-- Map domain errors to HTTP responses in one central mapper; no ad-hoc
-  `try/except` per route
-- Log an error once, at the handler or middleware boundary
+- Map domain errors to responses in one central mapper; never map them in
+  each handler
 
 ## Recovery and graceful degradation
 
-- Put a timeout on every outbound call (HTTP, DB, cache, queue)
-- Wrap repeated calls to an external service in a circuit breaker: fail
-  fast past a failure threshold, recover after a cool-down
-- Serve a reduced response when a non-critical dependency is down, such as
-  cached data, rather than fail the request
+- Wrap repeated calls to an external service in a circuit breaker
+- Make the breaker fail fast past a failure threshold and recover after a
+  cool-down
+- Serve a reduced response, such as cached data, when a non-critical
+  dependency is down
 - Leave the system consistent when a non-idempotent operation fails midway
   (MUST): use transactions or compensating actions
 
 ## External service failures
 
-- Never pass a third-party error message to the caller; translate it into
-  a domain error with a message you control
+- Never pass a third-party error message to the caller
+- Translate a third-party error into a domain error with a message you
+  control
+- Log a handled external error at ERROR, with the provider's full error
+  and its context
 - Return 504 when an external call times out and 502 when it is refused
-- Log the full external error at ERROR level; return the caller only a
-  safe, generic message
 - Retry a transient external failure with exponential backoff and jitter,
   only where repeating the call is safe
-- Treat a call as safe to repeat when it is idempotent, or when every
-  attempt reuses one idempotency key the destination honours for the
-  whole retry window
+- Treat an idempotent call as safe to repeat
+- Treat any other call as safe to repeat only when every attempt reuses
+  one idempotency key
+- Count that key only where the destination honours it for the whole
+  retry window
 - Never retry an external 4xx other than 408 or 429
 - Wait at least as long as a `Retry-After` header asks
 
 ## Unexpected errors
 
-- Catch every unhandled exception at the outermost middleware (MUST); none
+- Catch every unhandled error at the outermost handler layer (MUST); none
   reaches the framework's default handler
-- Return a generic 500 with a trace ID; never a stack trace, internal path
-  or message that reveals implementation details
-- Treat every unexpected error as a bug — create a ticket, do not suppress
+- Treat every unexpected error as a bug to fix; never suppress it

@@ -117,6 +117,3 @@ A banner looks like this:
      `python3 tools/generator.py --check` to verify the committed
      file is up to date. -->
 ```
-
-A generator with a hardcoded field list fails both ways at once: it renders
-dead columns for fields the data lacks, and silently omits fields it has.
