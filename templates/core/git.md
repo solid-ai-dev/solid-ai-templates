@@ -178,5 +178,5 @@ pre-commit run report-off-limits-paths --hook-stage manual --all-files --verbose
   `--base` defaults to `origin/main`
 - State every off-limits line in the summary as an escalation; it is not
   a failure
-- Run it after committing: on the base with a clean tree it prints
-  `not applicable`, and a base that does not resolve fails it
+- Run it after committing: at or behind the base with a clean tree it
+  prints `not applicable`, and a base that does not resolve fails it

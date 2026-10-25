@@ -205,6 +205,8 @@ Releases up to 2.63.0 are listed in
   interceptor ([#2250])
 - Sign-up, sign-in and account-recovery writes may run without an identity, with
   abuse controls ([#2247])
+- The off-limits and test-edit hooks read a commit behind the base as no change
+  to review ([#2274])
 
 [#1841]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1841
 [#1940]: https://github.com/solid-ai-dev/solid-ai-templates/pull/1940
@@ -304,6 +306,7 @@ Releases up to 2.63.0 are listed in
 [#2246]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2246
 [#2250]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2250
 [#2247]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2247
+[#2274]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2274
 
 ## [2.90.0] - 2026-09-12
 
