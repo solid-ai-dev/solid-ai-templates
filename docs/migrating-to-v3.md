@@ -70,8 +70,8 @@ receives nothing (ADR-051).
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
 | The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | stays in `base-git`, with the `check-heading-numbers` hook; the playbook keeps this repository's own form |
 | The in-process server, `testing-in-process-server` | `base-testing` | `frontend-quality`, ID kept |
-| The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | `base-quality-gates`, IDs kept |
-| The module-split procedure | `base-quality` | `base-quality-gates`; the general module rules stay |
+| The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | the fingerprint moves to `base-quality-gates`, ID kept; the other two are removed, IDs included |
+| The module-split procedure | `base-quality` | removed; the stable import paths and the untouched suite join Refactors in `base-quality-gates`, and the general module rules stay |
 | Hierarchies: variadic overrides, the override checker and its contract test | `base-quality` | `base-oop` |
 | Citing the software | `base-docs` | `base-measurement` |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | mask and allowlist removed; the submodule update and a neutral editor-settings rule remain |
@@ -79,6 +79,7 @@ receives nothing (ADR-051).
 | Revisit triggers, `quality-revisit-trigger`; spike bars; the data directory; flag-selected rule sets; the package error hierarchy and its raise-walking test; return-type shims; extraction-ready modules; exact ports; auto-detect variants; `.editorconfig` and the old-checkout refresh; the citation test and audit; comment layout; probe naming; `scripts/` | `base-quality` | removed, ID included; the `check-comment-layout` and `find-unreferenced-scripts` hooks still ship |
 | Self-match and the verdict rules from "Check trust" | `base-quality` | `base-quality-gates`, under "Running a check" |
 | Container e2e and test tiers, `testing-container-e2e` and `testing-tier-by-directory`; system, end-to-end and acceptance obligations; the regression cadence and budgets; integration-test naming | `base-testing` | removed, IDs included; a fork's stack can carry them. Doubles cover boundary-crossing dependencies only, and the deadline-wait rule joins Isolation |
+| The secondary-toolchain rule, the auto-merge rule, the hierarchy control in a freeze retirement and ASCII-only output | `base-quality-gates` | removed; byte-exact test inputs, the aggregate CI job and the formatter ignore list are restated tool-neutrally |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
