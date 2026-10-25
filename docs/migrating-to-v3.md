@@ -58,7 +58,7 @@ receives nothing (ADR-051).
 | The ruff rule-family sizing block | `base-quality-gates` | removed; the rule stays |
 | `quality-exemption-doc-duty`, the exit-3 and readings rules, the immutable-corpus sweep | `base-quality` | this repository's playbook |
 | Language porting rules; `inspect.getattr_static`; Python `__init__` and extras wording | `base-quality` | removed or neutral; one cross-language port rule remains |
-| The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once, DAST before production and artifact promotion remain |
+| The eight-stage pipeline order, its push and tag triggers, the three-environment minimum, the post-publish deploy hook | `base-cicd` | removed; the gates, packaging once and artifact promotion remain; DAST before production is in `base-devsecops` |
 | Kubernetes: namespaces, two replicas per service, probes, PodDisruptionBudget, ConfigMap secrets | `base-containers` | removed; resources as code and the readiness gate remain, orchestrator-neutral |
 | Exact names: plural snake_case tables, `is_` booleans, `<table>_id` keys, alphabetical junctions, `ix_` and `ux_` indexes | `base-data-modeling` | one convention per store, recorded in the context file; relational rules say so |
 | Per-target product choices: managed CAs, `step-ca`, F5 and MetalLB, Route 53 and Consul, Harbor and Athens, Vault topologies | `base-deployment` | removed; each section keeps its ID and the rules that hold on any target |
