@@ -15,8 +15,9 @@
 
 - Run containers as a non-root user (MUST): create and switch to a
   dedicated application user in the image build
-- Set the container's root filesystem to read-only; mount writable
-  storage only at the paths the application writes
+- Set the container's root filesystem to read-only where the platform
+  supports it
+- Mount writable storage only at the paths the application writes
 - Never run containers in privileged mode unless absolutely required and
   explicitly justified
 - Drop all Linux capabilities and add back only those required
@@ -59,8 +60,8 @@ ships a runtime no gate tested.
 
 ## Deployment
 
-- Define how containers are deployed, such as the orchestrator's
-  resources, as code; never apply it by hand in production
+- Define every orchestrator resource as code; never apply one by hand in
+  production
 - Route traffic to a container only after its readiness check passes (MUST)
 - Never bind-mount the source into a container in CI or production, where
   the image is the artifact a mount would shadow
