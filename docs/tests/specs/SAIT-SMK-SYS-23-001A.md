@@ -61,7 +61,8 @@ tags: [tooling, hooks, checks, compatibility]
 5. Run `report-off-limits-paths` on a branch touching a declared path, on
    one touching none, on one renaming a declared file out of its directory,
    on one adding a declared file whose name holds a space and an accent,
-   and against a base that does not resolve
+   against a base that does not resolve, and with HEAD one commit behind
+   the base in both modes
 6. Run `find-bare-suppressions` and `check-comment-layout` in both modes in
    a repository whose git config is malformed, and in a directory outside
    any repository
@@ -82,9 +83,12 @@ tags: [tooling, hooks, checks, compatibility]
    both modes, since a missing baseline compares nothing
 9. Assert `report-off-limits-paths` reports the path a rename leaves, and
    a declared path git would print quoted
-10. Assert a hook whose git listing fails exits 1 with one finding in both
+10. Assert `report-off-limits-paths` reads HEAD behind the base as not
+    applicable in both modes: a release tag's pipeline runs there once
+    `main` moves on
+11. Assert a hook whose git listing fails exits 1 with one finding in both
     modes, while a directory outside any repository stays not applicable
-11. Assert the hook, hook-command and planted-case counts are non-zero
+12. Assert the hook, hook-command and planted-case counts are non-zero
 
 ### Negative controls
 
@@ -92,6 +96,9 @@ tags: [tooling, hooks, checks, compatibility]
    fails with "names hook find-unfenced, which no manifest entry ships"
 2. **A blind hook.** `find-bare-suppressions` with its pattern table
    emptied fails the "a suppression naming no rule" case
+3. **A base compared for equality only.** `open_change` reading only
+   HEAD at the base as no change fails the HEAD-behind case, which
+   exits 1 with `files changed: 0`
 
 ## Related
 

@@ -419,8 +419,8 @@ pre-commit run report-test-edits --hook-stage manual --all-files --verbose
   the lenient path (MUST); each line after the counts names an edited test
 - Set the ref with `--base`, by default `origin/main`, and the test root
   with `--tests`
-- Read `not applicable` on a clean base as no change under review; on the
-  base with uncommitted work it asks for a commit
+- Read `not applicable` at or behind the base as no change under review;
+  with uncommitted work there it asks for a commit
 - Read the line counts as a reading, not a verdict; fewer lines can be a
   parameterized test that keeps every case
 - Review the assertions and cases each edited test keeps before accepting
