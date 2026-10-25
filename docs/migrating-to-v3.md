@@ -84,6 +84,7 @@ receives nothing (ADR-051).
 | The structure audit's shared-module rule; the URL-parameter and principal and credential probe items | `base-review` | the shared-module rule removed, as `base-quality`'s DRY rule states it; neutral rules on external input and probe conditions remain |
 | The secondary-toolchain rule, the auto-merge rule, the hierarchy control in a freeze retirement and ASCII-only output | `base-quality-gates` | removed; byte-exact test inputs, the aggregate CI job and the formatter ignore list are restated tool-neutrally |
 | The browser-bundle runtime config file; the per-environment secrets table; the boolean `ENABLE_`/`DISABLE_` and group-prefix naming rules; the development-dependency split | `base-config` | removed; the table's test-stub row stays as a neutral rule |
+| The agent-to-file mapping copy rule, the deprecated reference-model upgrade, the decision-record length rule, the monorepo package files, the brand-voice skeleton section | `base-agents` | removed; a file delivered by reference alone stays forbidden |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

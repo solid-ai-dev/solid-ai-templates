@@ -81,6 +81,8 @@ Releases up to 2.63.0 are listed in
   and its gh check-watch loop ([#2300])
 - The quality gates template drops AST rewrites, contract tests, module splits
   and auto-merge, IDs included ([#2302])
+- The agents template drops monorepo package files, the brand-voice section
+  and the mapping-copy rule ([#2338])
 
 ### Added
 
@@ -360,6 +362,7 @@ Releases up to 2.63.0 are listed in
 [#2300]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2300
 [#2302]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2302
 [#2309]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2309
+[#2338]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2338
 
 ## [2.90.0] - 2026-09-12
 
