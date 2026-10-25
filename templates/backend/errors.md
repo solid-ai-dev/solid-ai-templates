@@ -50,6 +50,8 @@ log level and the recovery:
 - Never pass a third-party error message to the caller
 - Translate a third-party error into a domain error with a message you
   control
+- Log a handled external error at ERROR, with the provider's full error
+  and its context
 - Return 504 when an external call times out and 502 when it is refused
 - Retry a transient external failure with exponential backoff and jitter,
   only where repeating the call is safe
