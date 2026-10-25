@@ -153,25 +153,25 @@ def check_tpl_03():
 
     original = _extract_section(
         os.path.join(ROOT, "templates", "core", "testing.md"),
-        "testing-container-e2e"
+        "testing-verify-the-render"
     )
     override = _extract_section(
         os.path.join(ROOT, "templates", "fixture", "stack.md"),
-        "testing-container-e2e"
+        "testing-verify-the-render"
     )
 
     if not original:
         failures.append(
-            "  core/testing.md [ID: testing-container-e2e] section is empty")
+            "  core/testing.md [ID: testing-verify-the-render] section is empty")
     if not override:
         failures.append(
-            "  fixture/stack.md [OVERRIDE: testing-container-e2e] section is "
+            "  fixture/stack.md [OVERRIDE: testing-verify-the-render] section is "
             "empty"
         )
     if original and override and original == override:
         failures.append(
-            "  [OVERRIDE: testing-container-e2e] content is identical to the "
-            "original [ID: testing-container-e2e] — override has no effect"
+            "  [OVERRIDE: testing-verify-the-render] content is identical to the "
+            "original [ID: testing-verify-the-render] — override has no effect"
         )
 
     seen.count("sections extracted", 2)
