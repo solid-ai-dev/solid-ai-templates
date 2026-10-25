@@ -826,7 +826,7 @@ sys.path.insert(0, "tests")
 from conformance.run import iter_blocks, run_block
 
 body = next(b[3] for b in iter_blocks()
-            if b[0] == "core/docs.md" and any("<find>" in l for l in b[3]))
+            if b[0] == "<file>" and any("<find>" in l for l in b[3]))
 code, out = run_block(body, "bash", tempfile.mkdtemp())
 print("exit %d" % code)
 for line in out:
