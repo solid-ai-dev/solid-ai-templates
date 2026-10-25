@@ -99,6 +99,7 @@ receives nothing (ADR-051).
 | The permission flag type; cohort-before-general and canary-instance rollout steps; the ban on database-stored flags | `backend-features` | removed; a rollout steps by percentage or cohort, and flags come from a source changed at runtime without a deploy |
 | The two-or-three-services heuristic, the gRPC streaming row, the 30-second log search, the central dashboard, per-service SLOs and burn-rate alerts; the outbox, own-storage and field-removal rules its chain already states | `backend-microservices` | removed; the gateway, mesh, Pact, schema-registry and `traceparent` rules remain tool-neutral |
 | The model-choice table with its GIL, Go and async-default rows; race-detector rules; named primitives; the first-argument cancellation token | `backend-concurrency` | removed or restated runtime-neutrally; the ID stays |
+| Structured data, `frontend-content-structured-data`; the content-file table; the static asset directory; frontmatter descriptions; image sizes; H1 keyword repetition; the answer-engine crawler list; named hosts | `frontend-content` | removed, ID included; schema-type matching and the no-false-claim markup rule join SEO, and asset paths, favicons and the host check remain tool-neutral |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

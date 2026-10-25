@@ -107,6 +107,8 @@ Releases up to 2.63.0 are listed in
   runtime primitives ([#2359])
 - The caching template drops Redis key and command specifics, TTL ranges
   and duplicate rules ([#2360])
+- The content template drops its structured-data section, frontmatter, image-size
+  and vendor rules ([#2308])
 
 ### Added
 
@@ -426,6 +428,7 @@ Releases up to 2.63.0 are listed in
 [#2360]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2360
 [#2362]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2362
 [#2363]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2363
+[#2308]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2308
 
 ## [2.90.0] - 2026-09-12
 
