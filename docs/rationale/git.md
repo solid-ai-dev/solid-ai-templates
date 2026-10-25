@@ -6,9 +6,7 @@ section.
 
 ## Commits
 
-Git history and tooling depend on consistent authorship. Tracking the
-shared editor settings versions the setup that mirrors the gates, while
-per-user editor state stays ignored.
+Git history and tooling depend on consistent authorship.
 
 ## CI evidence
 
@@ -18,9 +16,9 @@ second covers what the project ships on. A pipeline check at session start
 is a different moment: it catches a break that predates the work, not one
 the work introduced.
 
-Run straight after a push, before the host registers the workflow,
-`gh pr checks <N> --watch` prints `no checks reported` and exits at once, so
-a merge chained after it goes through with no check run.
+Run straight after a push, before the host registers the workflow, a
+command watching the checks can find none and exit at once, so a merge
+chained after it goes through with no check run.
 
 Evidence in a pull request body is scoped to the base it was produced
 against. A later commit can falsify it with a clean merge and passing
@@ -48,9 +46,7 @@ pass. `--exit-code` is what makes the absence of output a verdict.
 
 A stale artifact is indistinguishable from a regression to the next
 reviewer, which is why regeneration belongs in the fixing change. Silent
-staleness is the failure mode when it is deferred. Regenerating a
-bidirectional artifact from the pipeline it feeds overwrites values a person
-verified.
+staleness is the failure mode when it is deferred.
 
 Line-ending diffs reappear as fake regressions on another OS. A diff that
 ignores all whitespace goes further than line endings: it also ignores a
@@ -69,12 +65,6 @@ metric catches drift.
 Some paths carry consequences a diff does not show; a small diff and a
 green suite say nothing about them. A restriction that lives only in a
 reviewer's head is not one.
-
-The vendored pointer earns its place differently from the rest. The others
-are dangerous for what they execute or hold; a pointer executes nothing, so
-no linter, suite or gate reads it, and the diff is a pair of hashes. One
-line replaces every rule the project binds, a wider blast radius than a
-workflow file, and a malformed workflow at least fails loudly.
 
 The approval is for the plan, not the area. A prose-only diff's rollback is
 `git revert` and its regression coverage is that nothing executes, so a

@@ -1,9 +1,8 @@
 # Base — Data Modeling
 [ID: base-data-modeling]
 
-Rules for schema design, naming, normalization, and relationships. A rule
-that names a relational store applies there only; the rest apply to
-relational databases, document stores and static data files alike.
+Rules for schema design, naming, normalization, and relationships, in any
+store: a relational database, a document store or a static data file.
 
 ## Naming conventions
 [ID: data-modeling-naming]
@@ -18,10 +17,10 @@ relational databases, document stores and static data files alike.
 
 - Give every table or collection a primary key — prefer surrogate keys for
   internal use, natural keys for external-facing APIs
-- Use third normal form (3NF) by default in a relational store —
-  denormalize only when measured read performance requires it
-- Never hold several values in one relational column, as comma-separated
-  values or a JSON array — use a related table
+- Store each fact in one place by default — duplicate it only when
+  measured read performance requires it
+- Never pack several values into one string field, such as
+  comma-separated values — use a list or a related record
 - Replace repeated groups of fields (e.g. `phone1`, `phone2`, `phone3`)
   with a child table or a list
 - Document the rationale when intentionally denormalizing
@@ -29,16 +28,15 @@ relational databases, document stores and static data files alike.
 ## Relationships
 [ID: data-modeling-relationships]
 
-- Define relational foreign keys explicitly — do not rely on
-  application-level enforcement alone
-- Set each foreign key's cascade behavior deliberately:
-  - `CASCADE` for strong ownership (delete parent → delete children)
-  - `SET NULL` for weak references
-  - `RESTRICT` when orphans indicate a bug
-- Use a junction table keyed by both references for a relational
-  many-to-many (MUST)
-- Keep a record in a document or data file apart, referenced by key,
-  unless it has no life outside its parent
+- Never rely on application code alone to keep references valid
+- Enforce valid references with the store's own constraint where it has
+  one, else with a check that every reference resolves
+- Decide for every reference what deleting its target does:
+  - delete the referencing records for strong ownership
+  - clear the reference for a weak one
+  - refuse the delete when an orphan indicates a bug
+- Keep a record apart, referenced by key, unless it has no life outside
+  its parent
 - Document a self-referencing relationship's (e.g. `parent_id`) maximum
   depth and cycle prevention strategy (MUST)
 
@@ -47,14 +45,15 @@ relational databases, document stores and static data files alike.
 
 - Run every schema change through a versioned migration (MUST); never
   change a production schema by hand
-- Prefer additive changes (new column, new table); they stay compatible
-  only when old writers still succeed, so add a column nullable or with a
-  default, never NOT NULL without one on a populated table
-- Give every destructive change (drop column, rename) a migration plan:
+- Prefer additive changes, such as a new field, table or collection
+- Keep an additive change compatible with old writers: add a field
+  optional or with a default, never required without one where records
+  exist
+- Give every destructive change (drop or rename a field) a migration plan:
   add new → migrate data → drop old (MUST)
-- Include both up and down steps in every migration (MUST); where the
-  down step cannot restore the data, say so and get approval before
-  applying it
+- Include both up and down steps in every migration (MUST)
+- Say so where a down step cannot restore the data, and get approval
+  before applying that migration
 - Test migrations against a production-like dataset before deploying
 
 ## Data types

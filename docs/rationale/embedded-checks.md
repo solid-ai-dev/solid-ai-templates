@@ -19,3 +19,7 @@ heading per section ID.
 The continuation locator keeps two counts so its deliberate narrowing to check
 languages stays visible: it once reported two valid continuations inside a
 documented `run:` step for as long as it scanned every language.
+
+The compile hook parses a heredoc only when a Python interpreter opens it,
+so a project whose checks are all shell reads `not applicable`, never a
+pass over checks it compiled.

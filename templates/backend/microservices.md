@@ -12,8 +12,6 @@ Do not apply this template to a monolith or a single-service project.
   different technology, or a team boundary (Conway's Law)
 - Never extract because it feels cleaner or more modern; the operational
   cost is real and front-loaded
-- Treat two or three services as a distributed monolith in waiting, and
-  apply these rules only to an intentionally service-oriented system
 
 ## Service boundaries
 
@@ -29,14 +27,8 @@ Do not apply this template to a monolith or a single-service project.
 
 ## Inter-service communication
 
-Choose the style by the interaction:
-
-| Interaction | Style | Example |
-|---|---|---|
-| Request needs an immediate response | Synchronous (REST or gRPC) | Auth check, price lookup |
-| Caller does not need to wait | Asynchronous (events/messages) | Order placed, user registered |
-| Streaming or bidirectional | gRPC streaming | Live feed, file upload |
-
+- Call another service synchronously only when the caller needs its answer
+  to continue, such as an auth check or a price lookup
 - Prefer async messaging for cross-service workflows; it decouples
   availability and limits cascades
 - Give every synchronous call a timeout and a circuit breaker
@@ -45,14 +37,10 @@ Choose the style by the interaction:
 
 ## Data management
 
-- Give each service its own schema and storage; never reach into another
-  service's database
 - Design UX and business logic for eventual consistency; distributed data
   cannot be both consistent and highly available (CAP)
 - Copy read-only data across boundaries by events, never by joins across
   service databases
-- Use the outbox pattern so a database write and its event record commit
-  together; a relay publishes the event afterwards
 
 ## Distributed transactions
 
@@ -69,11 +57,11 @@ Choose the style by the interaction:
 
 - Give external clients one entry point, an API gateway; never expose
   internal service URLs
-- Route, validate auth tokens, rate-limit, terminate TLS and log requests
-  at the gateway
+- Keep the gateway to edge concerns, such as routing, token validation,
+  rate limiting, TLS termination and request logging
 - Keep business logic out of the gateway
-- Route internal calls around the gateway, through a mesh or direct mutual
-  TLS
+- Route service-to-service calls around the gateway, over a mutually
+  authenticated channel
 
 ## Service discovery
 
@@ -85,7 +73,6 @@ Choose the style by the interaction:
 ## Contract testing
 
 - Test each producer and consumer pair with consumer-driven contract tests
-  (e.g. Pact)
 - Never break a published contract without a versioned migration path
   (MUST NOT); a failing contract test blocks the producer's deployment
 - Run contract tests in CI on both sides
@@ -95,16 +82,12 @@ Choose the style by the interaction:
 - Version and deprecate every service API as a public API, by the API
   template's rules
 - Read tolerantly: consumers ignore unknown fields
-- Add fields; never remove or rename one without a major version bump
-- Hold event schemas to the same rules; enforce compatibility on publish
-  with a schema registry (SHOULD)
+- Enforce event schema compatibility automatically when a schema is
+  published (SHOULD)
 
 ## Observability
 
-- Propagate the `traceparent` header from every service (MUST);
-  distributed tracing is mandatory here
-- Aggregate every service's logs on one platform, searchable by trace ID
-  in under 30 seconds
-- Expose metrics per service, and correlate them on one central dashboard
-- Define an SLO for each public-facing service; alert on SLO burn rate,
-  not just on errors
+- Propagate the trace context through every service call and message
+  (MUST); distributed tracing is mandatory here
+- Collect every service's logs and metrics in one place; make the logs
+  searchable by trace ID

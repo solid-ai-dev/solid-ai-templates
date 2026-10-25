@@ -16,17 +16,12 @@ looks like a clean one.
 
 - Name the agent-runnable check of an output constraint that is
   mechanically checkable: the command to run and the pass condition (MUST)
-- State the check next to the rule, so the two travel together into every
-  generated artifact
+- State the check next to the rule, so the two travel together
 - Put the command in a fenced block; prose carries the pass condition
   beside it
 - Write the command first; a sentence describing an action is not a check
 - Keep a subjective constraint declarative, and never invent a brittle
   check for it
-- Wire a check guarding a committed generated artifact into CI as a
-  required status check (see "Generated-file staleness" below)
-- Test a pattern check against its own source, as "Self-match" below
-  states
 
 A line-length limit of 80, for example, pairs with:
 
@@ -53,20 +48,14 @@ schema output — drift silently without a gate.
 
 - Wire the `--check` invocation from `core/docs.md`, "Generated files",
   into CI as a required status check on the relevant paths
-- Generate hand-written content that reproduces tool output behind a
-  marker, so the gate covers it
+- Generate hand-written content that reproduces tool output, such as a
+  worked example, behind a marker, so the gate covers it
 - Enumerate the derivable blocks inside each artifact, not only the
   artifacts in the repository
-- Generate a worked example of a tool's output too; it drifts first
 - Make a generator fail when its declared destination or marker is missing
-- Treat a banner naming the regenerate command as decorative without the
-  gate
-- Run the gate on the relevant paths; passing because skipped is not
-  passing (see "Gate scope" below)
 - Make the path filter enumerate all three inputs: the generator code, the
   source assets the render consumes, and the committed artifacts
 - Never scope the filter to the generator alone
-- Fail the gate when a committed artifact differs from a fresh render
 
 ## Procedure steps
 
@@ -108,8 +97,7 @@ informally.
 - Report every finding before exiting; where a check cannot continue past
   one, say so
 - Report an empty result as a failure where emptiness means drift
-- Emit ASCII only, and print an offending character's code point, never
-  the character
+- Print an offending character's code point, never the character
 - Triage a violation count far larger than expected as a possible defect
   in the check before working it as a backlog
 
@@ -200,9 +188,6 @@ informally.
 
 [ID: quality-gates-check-selection]
 
-A check can exit zero while reporting on the wrong thing, broken by a
-change in another file whose reviewer has no reason to look.
-
 - Select a check's subject by what is under test — the commit, the ref,
   the artifact name — never by recency or position
 - Never filter on a property the violation can change
@@ -222,10 +207,8 @@ the PR gate skips work, an aggregate job passes on skipped checks.
 
 - Make the formatter and linter ignore lists and the CI path filter cover
   the same set of paths
-- Verify a secondary toolchain with its own test runner, and document the
-  split in the CI docs
-- Exclude captured fixtures, scraped HTML or JSON of real external bytes,
-  from the formatter
+- Exclude byte-exact test inputs, such as captured fixtures, from the
+  formatter
 - Record, for a gate scoped by an explicit path list, why each candidate
   is off the list
 - Ask first which candidate someone else runs; it is the likeliest omission
@@ -236,15 +219,14 @@ When a generator emits into a directory a commit-time formatter walks, all
 three MUST hold:
 
 - List the emitted path in the formatter's ignore list
-  (`.prettierignore`, black `force-exclude`, or equivalent)
 - Run a CI staleness gate (`<generator> --check`) on the same paths (see
   "Generated-file staleness" above)
 - Land both in the same pull request
 
 ### Skipped jobs
 
-- Never let the aggregate `gate` job report success when a code-touching
-  change skipped the build through a path filter
+- Never let an aggregate CI job report success when a code-touching change
+  skipped the build through a path filter
 - Distinguish "skipped because out of scope", a pass, from "skipped
   erroneously", a gap
 - Encode that difference in the workflow, never in reviewer attention
@@ -329,8 +311,6 @@ slice 3   ROOTS = ("src", "tests", ...)       tests/ cleaned
 
 ### Retiring a freeze
 
-The table is the backlog, and shrinking it is the migration.
-
 - Retire a freeze whose findings are raised where they are fixed in any
   order; cheapest first is a fair heuristic
 - Retire a freeze whose findings are raised at the caller, such as a strict
@@ -354,8 +334,6 @@ The table is the backlog, and shrinking it is the migration.
 - Where retiring an entry changes what code catches, accepts or returns,
   name the test that fails if the change goes too far
 - Never count a suite that passed before the slice as that test
-- Control the whole hierarchy: build every class with a value the
-  interface cannot carry, and assert the error type it declares comes back
 
 ### Site-local suppressions
 
@@ -385,42 +363,10 @@ pre-commit run find-bare-suppressions --all-files --verbose
 - Seed every nondeterministic source before taking the hash
 - Discard the hash once the refactor lands; commit invariant property tests
   instead
-
-## Rewrites
-
-[ID: testing-ast-equivalence]
-
-- Compare syntax trees before and after a whole-tree rewrite, such as a
-  formatter adoption, with the language's own parser
-- State the normalisation applied before the comparison
-- Require the compared count to equal the number of files the rewrite
-  touched
-- Inspect and account for every file whose tree changed
-
-## Contract tests
-
-[ID: testing-ast-contract]
-
-- Enforce the public-API contract with a test that parses each module: every
-  public parameter and return annotated, every public function documented
-- Report each failure as `file:line name(param)`
-- Roll the test out behind an allowlist, module by module, and flip the
-  global gate last
-
-## Module splits
-
-- Split an oversized module into a package behind its existing import path,
-  re-exporting from the package's entry module, and leave the test suite
-  untouched as the regression oracle
-- Split along a cohesive seam, each submodule importing only earlier
-  stages and never the package's entry module
-- Reshape first, then split mechanically, where a split would change a
-  signature
-- Search the suite for code that reads module identity before splitting
-- Run the static gates (undefined names, an import smoke check, test
-  collection) before the full suite
-- Prove a split neutral with the untouched suite and a byte-identical
-  output diff
+- When a refactor moves code between modules, keep its existing import
+  paths
+- Leave the test suite untouched through such a move; it is the regression
+  oracle
 
 ## Test edits
 
@@ -436,8 +382,6 @@ and takes a person.
 - When a change deliberately loosens a gate, add an assertion for the case
   the loosening admits, in the same change
 - Name in that assertion's message why the case is admitted
-- Where merges ride on green CI, remove auto-merge from a diff touching an
-  existing test file; a diff only adding test files keeps it
 - Put invariants that must not be renegotiated — safety, authentication,
   authorisation — under code ownership
 - Fetch the base before classifying a change; a base that does not resolve

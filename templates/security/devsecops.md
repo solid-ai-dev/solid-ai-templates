@@ -8,8 +8,8 @@ build, review and release, never after deployment.
 ## Dependency hygiene
 
 - Keep dependencies up to date, and remove unused ones promptly
-- Pin third-party CI steps to an immutable reference such as a commit SHA,
-  with the version in a comment so the update bot still bumps them
+- Pin each third-party CI step to an immutable reference, such as a
+  commit SHA, never to a tag that can move
 
 ## Licence compliance
 
@@ -34,8 +34,8 @@ build, review and release, never after deployment.
 - Run the scanner as a pre-commit hook as well as in CI
 - Never put a sensitive value in a commit message, an issue or pull
   request comment, or documentation (MUST NOT)
-- Fetch runtime secrets from a vault at startup; never write them to disk
-  or commit them (MUST NOT)
+- Never write a runtime secret to disk or commit it; read it from a
+  secret store (MUST NOT)
 
 ## SAST
 
@@ -58,15 +58,15 @@ build, review and release, never after deployment.
 ## SCA
 
 - Track every dependency for known vulnerabilities (MUST)
-- Run SCA on every deployment to QA, staging and production (MUST)
-- Block the merge on findings you own: SCA over your own dependencies,
-  such as `pip-audit`, `npm audit` or `govulncheck` (MUST)
-- Block a fixable critical or high image finding (MUST)
-- Report an unfixable base-layer finding with an SBOM, without blocking
+- Run SCA on every deployment and every release (MUST)
+- Block the merge on a finding in a dependency the project declares
+  (MUST)
+- Block a fixable critical or high finding in an artifact you ship, such
+  as a container image (MUST)
+- Report an unfixable finding in a layer you do not control, such as a
+  base image, with an SBOM, without blocking
 - Keep a scan that runs only on a tag or release job advisory, and off the
   deploy's dependency path
-- Track the base image with a dependency bot, so an available base update
-  arrives as a pull request rather than a standing finding
 
 ## SBOM
 
@@ -75,33 +75,12 @@ build, review and release, never after deployment.
   artifact into a clean environment and scan that (MUST)
 - Match each SBOM package and version to the delivered package and its
   expected runtime dependency set before attaching it (MUST)
-- List exactly one component for a library with no runtime dependencies,
-  whether in `metadata.component` or under `components`
 - Generate it reproducibly where the tool supports it, so anyone can
   rebuild the SBOM for a tag and compare it byte for byte
 - Attach it to the per-tag release record, never only to a CI artifact
   that expires
 - Upload it from a non-blocking job that tolerates a missing release or
   SBOM, so a scan failure never blocks or erases the release
-
-```bash
-set -e -o pipefail
-SBOM=<sbom.json>
-# CycloneDX records the delivered package in metadata.component; a tool that
-# also lists it under components is counted once. Identity keeps the group,
-# so @alpha/client and @beta/client stay two packages.
-listed='[.metadata.component // empty, (.components // [])[]]
-  | map("\(.group // "" | if . == "" then "" else . + "/" end)\(.name) \(.version // "-")") | unique'
-count=$(jq "$listed | length" "$SBOM")
-echo "components: $count"
-jq -r "$listed | .[]" "$SBOM"
-[ "$count" -gt 0 ]
-```
-
-Pass condition: the listed packages and versions equal the delivered
-package plus its expected runtime dependency set. A zero count exits
-non-zero, since it means no components were recorded, and so does a
-document jq cannot read.
 
 ## DAST
 

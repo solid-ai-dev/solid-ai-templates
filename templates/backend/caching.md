@@ -2,7 +2,7 @@
 [ID: backend-caching]
 
 Cross-cutting caching rules for any backend service. Applies regardless of
-cache technology (Redis, Memcached, in-process).
+cache technology (in-process, Redis, Memcached, CDN).
 
 ## When to cache
 
@@ -31,8 +31,9 @@ cache technology (Redis, Memcached, in-process).
 
 ## Keys
 
-- Namespace keys as `<service>:<entity>:<id>` — e.g. `users:profile:42`
-- Include a version segment when the cached schema changes:
+- Namespace every key by service and entity, such as `users:profile:42`,
+  so entries from different owners never collide
+- Include a version segment when the cached schema changes, such as
   `users:v2:profile:42`
 - Document the key schema — undocumented keys become orphaned entries
 - Never construct keys from unvalidated user input — risk of cache poisoning
@@ -40,28 +41,22 @@ cache technology (Redis, Memcached, in-process).
 ## TTL and expiry
 
 - Give every cached entry a TTL (MUST) — no indefinite caching
-- Set TTL based on acceptable staleness, not convenience
-- Use shorter TTLs (seconds–minutes) for frequently changing data;
-  longer TTLs (hours–days) for reference data
-- Use cache tags or explicit invalidation for data that must expire on write,
-  not just on timeout
+- State the stale window each cached key tolerates
+- Set the key's TTL no longer than that window; the TTL bounds an entry's
+  age, not how stale its value was when cached
 
 ## Invalidation
 
 - Invalidate cache entries on write, not only on TTL expiry
-- State the stale window each cached key tolerates
-- Set the key's TTL no longer than that window; the TTL bounds an entry's
-  age, not how stale its value was when cached
 - Populate the cache from the source of truth, never a lagging replica
 - Guard a write-back on a miss against a concurrent invalidation, such as
   with a version check, or count that race in the stale window
 - Expect no atomic invalidation across a separate cache and database: an
   outbox consumer can lag, and a pub/sub subscriber can miss a message
-- Invalidate through an outbox or pub/sub to cut typical staleness, never
-  as the bound
-- Bypass the cache for data that tolerates no stale window
-- Prefer targeted invalidation (`DEL users:profile:42`) over broad flush
-  (`FLUSHDB`) — a cache flush is an outage in disguise
+- Treat asynchronous invalidation, such as an outbox or pub/sub, as cutting
+  typical staleness, never as the bound
+- Prefer targeted invalidation of the affected keys over a broad flush — a
+  cache flush is an outage in disguise
 - Document which code path owns invalidation for each cache key
 
 ## Resilience
@@ -72,15 +67,15 @@ cache technology (Redis, Memcached, in-process).
 - On cache miss or error, fall through to the source of truth
 - Use circuit breakers or timeouts on cache calls — a slow cache is
   worse than no cache
-- Protect against cache stampede (thundering herd): use probabilistic early
-  expiry, a mutex/lock on population, or a background refresh
+- Protect against cache stampede (thundering herd), such as with
+  probabilistic early expiry, a lock on population, or a background refresh
 
 ## Observability
 
 - Instrument cache hit rate, miss rate, and eviction rate
 - Alert if hit rate drops significantly below baseline — the drop indicates
   misconfigured TTL or an invalidation bug
-- Log cache errors at WARN level; log stampede events at INFO
+- Log cache errors at WARN level
 
 ## Testing
 [EXTEND: base-testing]
