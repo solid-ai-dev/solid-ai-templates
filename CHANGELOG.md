@@ -105,6 +105,8 @@ Releases up to 2.63.0 are listed in
   its rules are broker-neutral ([#2352])
 - The concurrency template drops its model table, race-detector rules and named
   runtime primitives ([#2359])
+- The caching template drops Redis key and command specifics, TTL ranges
+  and duplicate rules ([#2360])
 
 ### Added
 
@@ -417,6 +419,7 @@ Releases up to 2.63.0 are listed in
 [#2352]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2352
 [#2353]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2353
 [#2359]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2359
+[#2360]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2360
 
 ## [2.90.0] - 2026-09-12
 
