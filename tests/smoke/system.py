@@ -6,10 +6,11 @@ import os
 import re
 import subprocess
 import sys
+from collections import Counter
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
-from resolve_chain import entry_sections
+from resolve_chain import entry_sections, is_fixture
 
 from testkit import ROOT, repository_files, template_files
 from .common import (
@@ -1623,3 +1624,296 @@ def check_sys_22():
     for finding in deprecation_findings(data):
         failures.append(f"  {finding}")
     return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-24 -- a new section ID never splits a frozen section
+# ---------------------------------------------------------------------------
+
+# A section runs from its tags to the next `[ID:]`, so an ID inserted inside
+# a shipped section shrinks it, and a fork's OVERRIDE of that section stops
+# covering the lines split off -- silently, since every ID still resolves.
+# A minor adds a section ID only on new content (spec, chapter 8.7).
+#
+# The baseline is the newest release tag of the frozen major reachable from
+# HEAD. Each line a frozen section held there -- a heading, a rule, a line
+# of an example -- that the tree still carries must still sit in that
+# section. A line deleted or reworded is prose, which is free, so only one
+# present on both sides is compared. The fixture is test input, outside the
+# frozen surface, and is not compared. Until the first release of the major
+# is tagged nothing is frozen, so planted texts and planted repositories
+# exercise the failing path on every run.
+
+FROZEN_MAJOR = 3
+FROZEN_TAG = re.compile(rf"v{FROZEN_MAJOR}\.\d+\.\d+")
+HEADING_LINE = re.compile(r"^#{1,6}\s+(.+?)\s*$")
+DIRECTIVE_LINE = re.compile(r"^\s*\[[A-Z][A-Z ]*:")
+FENCE_RUN = re.compile(r"^\s*(`{3,}|~{3,})")
+CONTENT = re.compile(r"\w")
+
+
+def line_owners(text):
+    """Map each content line's text to the IDs of the sections holding it.
+
+    A content line is any line with a letter or digit other than a
+    directive or a fence delimiter. A heading followed by nothing but blank
+    and directive lines before an `[ID:]` belongs to that ID's section; a
+    line above the first ID belongs to none.
+    """
+    declared = {n: sid for sid, n in iter_id_declarations(text)}
+    owners, current, pending, fence = {}, None, None, None
+    for number, line in enumerate(text.splitlines(), start=1):
+        if number in declared:
+            current = declared[number]
+            if pending:
+                owners[pending][-1] = current
+            pending = None
+            continue
+
+        # A `#` line inside a fence is a shell comment, not a heading.
+        # The delimiters repeat in every section, so they say nothing about
+        # which one a line belongs to.
+        run = FENCE_RUN.match(line)
+        if run:
+            mark = run.group(1)
+            if fence is None:
+                fence = mark
+            elif mark[0] == fence[0] and len(mark) >= len(fence):
+                fence = None
+            pending = None
+            continue
+        if fence is not None:
+            if CONTENT.search(line):
+                owners.setdefault(line.strip(), []).append(current)
+            continue
+
+        if DIRECTIVE_LINE.match(line) or not line.strip():
+            continue
+        heading = HEADING_LINE.match(line)
+        key = heading.group(1) if heading else line.strip()
+        if CONTENT.search(key):
+            owners.setdefault(key, []).append(current)
+        pending = key if heading else None
+    return owners
+
+
+def section_splits(was, now):
+    """Each section that lost lines to another, as one finding.
+
+    A finding names the two sections, the count of lines moved and the
+    first of them, so one inserted ID reads as one split.
+    """
+    before, after = line_owners(was), line_owners(now)
+    moved = {}
+    for line, held in before.items():
+        if line not in after:
+            continue
+
+        # Counted, not compared in order: a line repeated across sections
+        # is a split only when one section loses it while another gains it.
+        lost = Counter(o for o in held if o) - Counter(after[line])
+        gained = Counter(after[line]) - Counter(held)
+        if not gained:
+            continue
+        taker = ", ".join(sorted(str(o) for o in gained))
+        for owner in sorted(lost):
+            moved.setdefault((owner, taker), []).append(line)
+    found = []
+    for (owner, taker), lines in moved.items():
+        first = lines[0] if len(lines[0]) <= 60 else lines[0][:57] + "..."
+        found.append(f"{len(lines)} line(s) left {owner} for {taker}, "
+                     f"from '{first}'")
+    return found
+
+
+SPLIT_BASE = """# Base
+
+[ID: base-a]
+
+## Rules
+
+- Rule one
+
+## Checks
+
+- Check one
+"""
+
+# Each case is a later text of SPLIT_BASE and the findings it owes. The
+# append, the rewording and the fence are the controls: a check that flagged
+# them would fail every minor that does what chapter 8.7 allows. The split
+# between two rules is the one a heading-only comparison passed.
+SPLIT_CASES = [
+    ("a section appended after the last frozen line",
+     SPLIT_BASE + "\n## Extra\n\n[ID: base-b]\n\n- New rule\n", []),
+    ("a heading reworded and a rule added",
+     SPLIT_BASE.replace("## Checks", "## Gates") + "- Rule two\n", []),
+    ("a heading-like line inside a fence after a new ID",
+     SPLIT_BASE + "\n## Extra\n\n[ID: base-b]\n\n```bash\n# Checks\n```\n",
+     []),
+    ("an ID inserted above a frozen heading",
+     SPLIT_BASE.replace("## Checks", "## Checks\n\n[ID: base-b]"),
+     ["2 line(s) left base-a for base-b, from 'Checks'"]),
+    ("an ID inserted between a frozen heading and its rule",
+     SPLIT_BASE.replace("- Check one\n",
+                        "## Late\n\n[ID: base-b]\n\n- Check one\n"),
+     ["1 line(s) left base-a for base-b, from '- Check one'"]),
+    ("a frozen heading moved under a later ID",
+     SPLIT_BASE.replace("## Checks\n\n- Check one\n", "") +
+     "\n## Extra\n\n[ID: base-b]\n\n## Checks\n\n- Check one\n",
+     ["2 line(s) left base-a for base-b, from 'Checks'"]),
+]
+
+# The text the planted repositories commit over SPLIT_BASE: a split.
+SPLIT_TEXT = SPLIT_CASES[3][1]
+
+
+def frozen_baseline(repo):
+    """The newest frozen release tag reachable from HEAD in `repo`.
+
+    Returns (tag, refusal). Both are None when no release of the frozen
+    major is reachable yet, so nothing is frozen.
+    """
+
+    # A shallow or tagless clone reads as "nothing released", which would
+    # pass every split, so each is refused rather than read as no baseline.
+    shallow = _git(repo, "rev-parse", "--is-shallow-repository")
+    if shallow.stdout.strip() == "true":
+        return None, ("the clone is shallow, so its release tags may not "
+                      "be reachable; fetch the full history")
+    listed = _git(repo, "tag", "--merged", "HEAD", "--sort=-v:refname")
+    tags = listed.stdout.split()
+    if listed.returncode != 0 or not tags:
+        return None, ("no release tag is reachable from HEAD, so the tags "
+                      "were not fetched; fetch them")
+    frozen = [t for t in tags if FROZEN_TAG.fullmatch(t)]
+    return (frozen[0] if frozen else None), None
+
+
+def frozen_splits(repo, files):
+    """Compare `files` in the working tree of `repo` with the baseline.
+
+    Returns (findings, basis, refusal, compared): each split as
+    "path: finding", a line naming the baseline, a refusal naming why none
+    exists, and the count of files present on both sides.
+    """
+    tag, refused = frozen_baseline(repo)
+    if refused:
+        return [], None, refused, 0
+    if tag is None:
+        return [], (f"  baseline: no v{FROZEN_MAJOR}.x release is reachable "
+                    f"from HEAD, so no section is frozen yet"), None, 0
+    found, compared = [], 0
+    for rel in files:
+        shown = _git(repo, "show", f"{tag}:{rel}")
+        if shown.returncode != 0:
+            continue
+        compared += 1
+        with io.open(os.path.join(repo, rel), encoding="utf-8") as handle:
+            now = handle.read()
+        found += [f"{rel}: {f}" for f in section_splits(shown.stdout, now)]
+    return found, f"  baseline: the release tag {tag}", None, compared
+
+
+# The tag path, planted. Each case is (label, the tags on the base commit,
+# the findings or the refusal owed), run against a throwaway repository
+# whose base commit holds SPLIT_BASE and whose HEAD holds SPLIT_TEXT.
+TAG_CASES = [
+    ("a frozen release behind HEAD", ["v2.9.0", f"v{FROZEN_MAJOR}.0.0"],
+     SPLIT_CASES[3][2]),
+    ("only an earlier major's release", ["v2.9.0"], []),
+    ("no tag at all", [], "were not fetched"),
+]
+
+
+def frozen_files(files, entries):
+    """`files` less those a fixture entry holds, which are test input."""
+    exempt = {e["file"] for e in entries if is_fixture(e)}
+    return [f for f in files if f not in exempt]
+
+
+# The exemption, planted: a fixture entry's file is dropped and a template's
+# kept, so an exemption that dropped nothing or everything fails here.
+FIXTURE_ENTRIES = [
+    {"id": "base-a", "file": "templates/core/a.md"},
+    {"id": "stack-fixture", "file": "templates/stack/fixture.md",
+     "fixture": True},
+]
+
+
+def _tag_cases():
+    """Run TAG_CASES; return a failure line per case that missed."""
+    import tempfile
+
+    rel = "templates/core/a.md"
+    failures = []
+    for label, tags, owed in TAG_CASES:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
+            _git(repo, "init", "-q")
+            for key, value in (("core.autocrlf", "false"),
+                               ("user.name", "smoke"),
+                               ("user.email", "smoke@localhost")):
+                _git(repo, "config", key, value)
+            path = os.path.join(repo, rel)
+            os.makedirs(os.path.dirname(path))
+            for text, message in ((SPLIT_BASE, "base"),
+                                  (SPLIT_TEXT, "split")):
+                with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+                    f.write(text)
+                _git(repo, "add", rel)
+                done = _git(repo, "commit", "-q", "-m", message)
+                if done.returncode != 0:
+                    raise RuntimeError(f"planted commit {message!r} failed: "
+                                       f"{done.stderr.strip()}")
+                if message == "base":
+                    for tag in tags:
+                        _git(repo, "tag", tag)
+
+            found, _, refused, _ = frozen_splits(repo, [rel])
+            if isinstance(owed, str):
+                if not refused or owed not in refused:
+                    failures.append(f"  planted tags, {label}: refused "
+                                    f"{refused!r}, owed {owed!r}")
+            elif refused or found != [f"{rel}: {f}" for f in owed]:
+                failures.append(f"  planted tags, {label}: found {found}, "
+                                f"refused {refused!r}, owed {owed}")
+    return failures
+
+
+def check_sys_24():
+    seen = Inspected()
+    failures = []
+
+    seen.count("planted texts", SPLIT_CASES)
+    for label, text, want in SPLIT_CASES:
+        got = section_splits(SPLIT_BASE, text)
+        if got != want:
+            failures.append(f"  planted, {label}: found {got}, owed {want}")
+
+    seen.count("planted repositories", TAG_CASES)
+    failures += _tag_cases()
+
+    planted = ["templates/core/a.md", "templates/stack/fixture.md"]
+    kept = frozen_files(planted, FIXTURE_ENTRIES)
+    if kept != planted[:1]:
+        failures.append(f"  planted fixture exemption: kept {kept}, owed "
+                        f"{planted[:1]}")
+
+    if not HAS_YAML:
+        return seen.failures() + failures + [MISSING_YAML], seen.notes()
+    _, entries, _ = _load_manifest()
+    files = template_files()
+    frozen = frozen_files(files, entries.values())
+    seen.count("fixture templates exempt", len(files) - len(frozen),
+               floor=0)
+
+    found, basis, refused, compared = frozen_splits(ROOT, frozen)
+    if refused:
+        failures.append(f"  {refused}")
+        return seen.failures() + failures, seen.notes()
+    seen.count("templates compared with the baseline", compared, floor=0)
+    for finding in found:
+        failures.append(
+            f"  {finding}: a minor adds a section ID only on new content, "
+            f"never in front of lines a frozen section holds")
+    return seen.failures() + failures, seen.notes() + [basis]

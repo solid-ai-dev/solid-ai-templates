@@ -124,6 +124,9 @@ labels are terminal, applied when closing without action: `duplicate`
 - Give a section an `[ID: ...]` when something references it: another
   template EXTENDs or OVERRIDEs it, or a rule names it. Never remove or
   rename an existing ID — shipped IDs are frozen surface (spec, chapter 8.7)
+- Add a new ID only on new content: a new file, or a heading after the
+  last line a shipped section holds. An ID inserted inside a section
+  shrinks it, and SYS-24 fails it
 - Optional sections are marked `(if applicable)` in the heading
 - Keep line length under 88 characters, the width declared in
   `.editorconfig` for Markdown and Python —
