@@ -190,6 +190,8 @@ Releases up to 2.63.0 are listed in
   boolean prefixes; test secrets are stubs ([#2309])
 - The object-oriented design template states its override and type-family rules for any
   language ([#2340])
+- The auth template drops JWT, vendor and gRPC specifics and states each rule
+  token-neutrally ([#2322])
 
 ### Deprecated
 
@@ -387,6 +389,7 @@ Releases up to 2.63.0 are listed in
 [#2313]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2313
 [#2312]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2312
 [#2320]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2320
+[#2322]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2322
 
 ## [2.90.0] - 2026-09-12
 
