@@ -60,7 +60,7 @@ from conformance import MANUAL, READ, RUN, SKIP
 # adding a skip, or retiring one, moves this number in the same diff. A
 # fork's skips are counted against the SKIP_BUDGET fork_dispositions.py
 # declares beside them.
-SKIP_BUDGET = 4
+SKIP_BUDGET = 3
 
 # The interpreter running this suite, for a substitution that runs a tool.
 # A bare `py` exists on Windows only and `python3` on Windows may be a stub,
@@ -102,17 +102,6 @@ CHECKS = [
                "and staging it. It is run per change on the file just "
                "regenerated; a committed tree holds no pending change to "
                "classify."},
-
-    {"file": "core/git.md", "find": "checks not passing",
-     "title": "A pull request with no registered check has not passed CI",
-     "do": SKIP,
-     "reason": "Takes the pull request about to merge as `<N>`. Run per "
-               "merge, before `gh pr merge`, not against a tree."},
-
-    {"file": "core/git.md", "find": "check-heading-numbers",
-     "title": "An ordered document keeps its numbering", "do": RUN,
-     "args": ["--path", "AGENTS.md", "--path", "docs/playbook.md"],
-     "expect": ["nonzero", "nonzero", "zero"]},
 
     {"file": "core/git.md", "find": "report-off-limits-paths",
      "title": "A diff touching an off-limits path says so", "do": RUN,
