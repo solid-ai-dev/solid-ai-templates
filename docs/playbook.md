@@ -36,8 +36,9 @@ and layer templates only.
 
 A check script over 15 lines leaves its template and ships as a pre-commit
 hook (ADR-055). A shipped hook ID is frozen, so choose it with the owner:
-verb-object, `check-` for a verdict, `find-` for a list of violations,
-`report-` for a reading.
+verb-object, with the verb that names what the hook does. Keep `report-`
+for a hook whose output is a reading a person judges: its findings never
+gate, but an incomplete or failed scan still fails.
 
 1. Add `hooks/solid_ai_checks/<hook_id>.py` with `main(argv, report)`. Print
    the inspected counts through `report.count`, each violation through
