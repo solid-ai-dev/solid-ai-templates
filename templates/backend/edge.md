@@ -3,18 +3,14 @@
 [DEPENDS ON: templates/backend/http.md, templates/security/security.md, templates/backend/observability.md]
 
 Rules for the reverse proxy, load balancer or gateway in front of an
-application exposed to untrusted networks. The edge terminates TLS, routes
-and shields the application; keep business logic out of it. A gateway
-inside a service mesh follows the microservices rules instead.
+application exposed to untrusted networks. A gateway inside a service
+mesh follows the microservices rules instead.
 
 ## TLS termination
 
 - Terminate TLS at the edge and redirect plain HTTP to HTTPS
 - Never let the application be reachable over cleartext outside local
   development (MUST NOT)
-- Serve only TLS 1.2+; disable legacy protocol and cipher versions
-- Set HSTS (`Strict-Transport-Security`) at the edge so browsers refuse
-  to downgrade
 - Re-encrypt to every upstream with TLS, or mTLS where the upstream
   authenticates the edge; a private network is no exception
 - Send plaintext to an upstream only in local development, never in
@@ -24,21 +20,21 @@ inside a service mesh follows the microservices rules instead.
 
 - Forward the originating client over `Forwarded` (RFC 7239) or the
   de-facto `X-Forwarded-For` / `X-Forwarded-Proto` / `X-Forwarded-Host`
-- Strip inbound forwarded headers from external callers before
-  appending your own — never trust a client-supplied `X-Forwarded-For`
-- Limit the application's trusted-proxy list to hops you control; an
-  over-broad list lets callers spoof their IP and dodge rate limits
+- Strip inbound forwarded headers from any caller outside the
+  trusted-proxy list before appending your own
+- Never trust a client-supplied `X-Forwarded-For`
+- Limit the application's trusted-proxy list to the known proxy hops in
+  front of it; an over-broad list lets callers spoof their IP and dodge
+  rate limits
 - Propagate or originate a correlation/request ID at the edge so a
   request is traceable end to end (see `backend/observability.md`,
   "Distributed tracing")
 
 ## Routing and upstreams
 
-- Route by host and path to upstream pools; keep routing declarative,
-  not code
+- Keep business logic out of the edge; it only terminates TLS, routes
+  and shields the application
 - Remove a failing instance from rotation by health check
-- Balance across instances (round-robin or least-connections) and
-  spread upstreams across availability zones
 - Drain connections on deploy — stop sending new requests to an
   instance before it shuts down so in-flight work completes
 
@@ -55,8 +51,6 @@ inside a service mesh follows the microservices rules instead.
 
 ## Edge security
 
-- Enforce rate limiting, IP/geo allow-or-deny, and WAF rules at the
-  edge — shed abusive traffic before it reaches the application
 - Do not leak upstream identity: strip `Server`, `X-Powered-By`, and
   internal hostnames from responses
 - Restrict admin, metrics, and health endpoints to internal networks —
