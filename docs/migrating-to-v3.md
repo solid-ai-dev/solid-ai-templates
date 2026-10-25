@@ -107,6 +107,7 @@ receives nothing (ADR-051).
 | The completeness score and publishing threshold, the scoring scale, filter booleans, the agent-assisted ground-truth workflow, one data change per commit | `base-data-quality` | removed, IDs kept; derived values, the data change record and schema validation restated tool-neutrally |
 | Relational-only rules: third normal form, explicit foreign keys, `CASCADE`, `SET NULL` and `RESTRICT`, junction tables, the JSON-array column ban | `base-data-modeling` | store-neutral rules: each fact in one place, enforced references, a decided delete behavior; junction tables and the JSON-array ban removed, IDs kept |
 | Environment separation, staging that mirrors production, zero-downtime rollouts, health-check routing, DAST before production, periodic environment rebuilds, deploying small and often, IaC tool names | `base-cicd` | removed; `base-devsecops` keeps DAST, `base-config` keeps environment values out of the artifact, and packaging once now covers promotion |
+| Docker Compose; one-step `RUN` instructions and `&&` chaining; the memory limit-versus-request rule; registry pruning; the type-checker target and the version matrix | `base-containers` | removed; the no-source-mount rule joins Deployment, and the read-only filesystem rule names writable mounts in place of "where possible" |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

@@ -117,6 +117,8 @@ Releases up to 2.63.0 are listed in
   drops junction tables ([#2337])
 - The cicd template drops environment separation, zero-downtime rollouts, health-check
   routing and DAST ([#2299])
+- The containers template drops Docker Compose, Dockerfile layering and
+  registry pruning; its rules are now runtime-neutral ([#2349])
 
 ### Added
 
@@ -453,6 +455,7 @@ Releases up to 2.63.0 are listed in
 [#2337]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2337
 [#2299]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2299
 [#2335]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2335
+[#2349]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2349
 
 ## [2.90.0] - 2026-09-12
 
