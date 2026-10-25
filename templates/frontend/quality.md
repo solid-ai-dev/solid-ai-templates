@@ -36,7 +36,8 @@ Rules:
 
 ## Linting and formatting
 
-- Configure a linter for all script code the frontend ships (MUST)
+- Configure a linter for all of the frontend's script code, tests and build
+  scripts included (MUST)
 - Merge no PR with a warning or error in the browser console or test
   output (MUST)
 - Lower the lint error count over time, never raise it (SHOULD)

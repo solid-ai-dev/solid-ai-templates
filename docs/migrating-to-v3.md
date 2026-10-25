@@ -66,7 +66,7 @@ receives nothing (ADR-051).
 | `backend-quality`: process lifecycle, admin processes, outbound timeouts, auth before logic, rate limits | `backend-quality` | `backend-http` |
 | `backend-quality`: N+1, async I/O, API deprecation, circuit breaker, outbox | `backend-quality` | already in `backend-database`, `backend-concurrency`, `backend-api`, `backend-errors`, `backend-messaging` |
 | `frontend-static-site`: one stylesheet, BEM naming, system fonts, the `localStorage` theme snippet, the page table, lint and format files | `frontend-static-site` | removed with the template; a fork's static-site stack carries its choices |
-| `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept |
+| `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept; build-time rendering by default is removed |
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
 | The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | stays in `base-git`, with the `check-heading-numbers` hook; the playbook keeps this repository's own form |
 | The in-process server, `testing-in-process-server` | `base-testing` | `frontend-quality`, ID kept |
