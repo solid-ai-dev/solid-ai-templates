@@ -212,8 +212,9 @@ failures, and server-side request forgery.
   multicast and reserved ranges
 - Unwrap an IPv4-mapped IPv6 address (`::ffff:127.0.0.1`) to its IPv4
   form before classifying it
-- Classify with the language's standard address library, never a
-  hand-kept CIDR list
+- Classify with an address library, never a hand-kept CIDR list
+- Use the standard library's address module where the runtime has one,
+  and a maintained external library where it has none
 - Test each excluded category by its own predicate; a library's single
   "is public" test can still admit multicast
 - Resolve the hostname once, validate the IP, and connect only to that
