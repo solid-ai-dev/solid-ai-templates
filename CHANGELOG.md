@@ -220,6 +220,8 @@ Releases up to 2.63.0 are listed in
   or tool ([#2363])
 - The UX template drops Lighthouse, axe-core adapters and lint plugins for one
   neutral accessibility scan ([#2325])
+- The data-governance template drops cross-domain interfaces and named regulations;
+  access is least-privilege ([#2310])
 
 ### Deprecated
 
@@ -435,6 +437,7 @@ Releases up to 2.63.0 are listed in
 [#2308]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2308
 [#2324]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2324
 [#2325]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2325
+[#2310]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2310
 
 ## [2.90.0] - 2026-09-12
 

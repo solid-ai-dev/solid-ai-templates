@@ -19,7 +19,8 @@ data, or regulated information.
     data, health records)
 - Document the classification in the schema or data dictionary (MUST)
 - Match access controls to the classification tier (MUST)
-- Require role-based access for confidential and restricted data
+- Grant confidential and restricted data only to the roles or identities
+  that need it
 
 ## PII handling
 [ID: data-governance-pii]
@@ -28,8 +29,8 @@ data, or regulated information.
   in the schema — name, email, phone, address, IP, device IDs
 - Encrypt PII at rest and in transit (MUST)
 - Minimize PII collection — do not store what you do not need
-- Provide a mechanism for data deletion (right to erasure) —
-  hard delete or anonymize, never just soft-delete PII
+- Provide a mechanism to delete PII — hard delete or anonymize, never
+  just soft-delete it
 - Never put PII in application logs, error messages, or stack traces
   (MUST NOT); the audit trail is a separate store, not a log
 - Keep the client IP, the one PII field a security log may hold, in that
@@ -41,8 +42,8 @@ data, or regulated information.
 
 - Define a retention policy for each data category — document
   how long data is kept and when it is purged
-- Comply with applicable regulations (GDPR, CCPA, HIPAA,
-  industry-specific) in every retention period (MUST)
+- Meet every regulation that applies to the data in each retention
+  period (MUST)
 - Implement automated purging — do not rely on manual cleanup
 - Apply retention policies to audit logs and backups too
 - Never retain backups indefinitely
@@ -56,8 +57,6 @@ data, or regulated information.
   (MUST) — a team or individual accountable for quality, access, and
   lifecycle
 - Have the data owner approve schema changes and access grants
-- Route cross-domain data access through defined interfaces (APIs,
-  views), not direct table access (MUST)
 - Document data ownership in the schema or data dictionary
 
 ## Audit trail
@@ -71,6 +70,5 @@ data, or regulated information.
   with access restricted to the tier of the data it records
 - Make audit logs append-only (MUST); never let application code edit
   or delete them
-- Retain audit logs according to the retention policy (MUST)
 - Include the actor (user ID or service identity), timestamp,
   action (create, update, delete), and affected record

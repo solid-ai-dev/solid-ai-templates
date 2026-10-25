@@ -102,6 +102,7 @@ receives nothing (ADR-051).
 | The two-or-three-services heuristic, the gRPC streaming row, the 30-second log search, the central dashboard, per-service SLOs and burn-rate alerts; the outbox, own-storage and field-removal rules its chain already states | `backend-microservices` | removed; the gateway, mesh, Pact, schema-registry and `traceparent` rules remain tool-neutral |
 | The model-choice table with its GIL, Go and async-default rows; race-detector rules; named primitives; the first-argument cancellation token | `backend-concurrency` | removed or restated runtime-neutrally; the ID stays |
 | Structured data, `frontend-content-structured-data`; the content-file table; the static asset directory; frontmatter descriptions; image sizes; H1 keyword repetition; the answer-engine crawler list; named hosts | `frontend-content` | removed, ID included; schema-type matching and the no-false-claim markup rule join SEO, and asset paths, favicons and the host check remain tool-neutral |
+| Cross-domain access through APIs or views only; the named regulations (GDPR, CCPA, HIPAA), role-based access and the right-to-erasure label; the audit-log retention bullet | `base-data-governance` | removed, IDs kept; least-privilege access, a PII deletion mechanism and applicable regulations remain, and Retention already covers audit logs |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the
