@@ -169,7 +169,7 @@ Releases up to 2.63.0 are listed in
 ### Fixed
 
 - Hook installs keep building after setuptools drops the old licence
-  field
+  field ([#2279])
 - Rules the rewrites made mandatory are SHOULD or MAY again, as before
   ([#2078])
 - Four rules that contradicted others in the same chain now agree
@@ -329,6 +329,7 @@ Releases up to 2.63.0 are listed in
 [#2274]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2274
 [#2277]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2277
 [#2278]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2278
+[#2279]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2279
 
 ## [2.90.0] - 2026-09-12
 
