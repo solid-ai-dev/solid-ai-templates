@@ -33,7 +33,7 @@ receives nothing (ADR-051).
 | Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed; one diagnostic-view rule remains |
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
-| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries |
+| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries; the Mermaid-note rule, stale-entry counts and schema-derived fields are removed |
 | Verifying a filed issue in full, its shapes and checks | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
@@ -44,10 +44,12 @@ receives nothing (ADR-051).
 | Where a licence notice sits inside an image | `base-devsecops` | `base-containers` |
 | Penetration testing, a periodic engagement rather than a pipeline step | `base-devsecops` | removed; a fork's process template can carry it |
 | The list of IaC misconfigurations to detect, and the "widely adopted" dependency preference | `base-devsecops` | removed; the scanner's configured policy covers the first |
+| The CycloneDX component check and the one-component library rule; the base-image dependency bot; the version comment on a pinned CI step; `pip-audit`, `npm audit` and `govulncheck` | `base-devsecops` | removed; image findings, deploy-time SCA and the vault rule are restated tool-neutrally |
 | GitHub Actions specifics of the release record and the deploy skip; the hand-built side image | `base-cicd` | neutral rules remain |
 | Python editable installs under Compose, `run --rm` write loss, the linter target-version exception | `base-containers` | removed |
 | Figure cropping, the research scrape cache, the lens-catalogue examples | `base-data-quality` | removed; neutral rules remain |
 | MySQL online-DDL tool names; the host MIME-registry example | `base-data-migration`, `base-security` | neutral rules remain |
+| Multi-factor authentication, internal mTLS, the CORS preflight cache, `.env` files; vendor, library and shell-command examples | `base-security` | removed; neutral rules remain and every ID stays |
 | React hooks and render props, the CSS line-width note, the no-consent-banner choice | `frontend-quality` | removed |
 | Cloudflare crawl control, SEO audit thresholds, AEO measurement, the FAQPage fact; answer-engine crawlers now MAY | `frontend-static-site`, `frontend-quality` | removed or relaxed |
 | `public/` paths, ESLint and Prettier file names, the homepage-sections note | `frontend-static-site` | removed; `frontend-content` keeps a neutral asset-path rule |
@@ -65,21 +67,40 @@ receives nothing (ADR-051).
 | `backend-quality`: the handler, service and repository layering and its pattern catalogue | `backend-quality` | removed with the template; declare a stack's own architecture in a fork |
 | `backend-quality`: process lifecycle, admin processes, outbound timeouts, auth before logic, rate limits | `backend-quality` | `backend-http` |
 | `backend-quality`: N+1, async I/O, API deprecation, circuit breaker, outbox | `backend-quality` | already in `backend-database`, `backend-concurrency`, `backend-api`, `backend-errors`, `backend-messaging` |
+| The broker selection table; the schema registry for Kafka; the pointers to the jobs and concurrency templates; per-broker metric names | `backend-messaging` | removed; broker-neutral rules remain, ID kept |
 | `frontend-static-site`: one stylesheet, BEM naming, system fonts, the `localStorage` theme snippet, the page table, lint and format files | `frontend-static-site` | removed with the template; a fork's static-site stack carries its choices |
 | `static-site-theme`, `static-site-trailing-slash`, the custom 404 page, build-time rendering by default | `frontend-static-site` | `frontend-quality` and `frontend-content`, IDs kept; build-time rendering by default is removed |
 | `base-oop`: SOLID, object design, patterns, cross-cutting concerns | the core tier | opt-in by `Extras`; the GoF catalogue and the AOP-framework ban are cut |
-| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | stays in `base-git`, with the `check-heading-numbers` hook; the playbook keeps this repository's own form |
+| The numbered-document check after concurrent merges, the first-CI-run rule for a check on its own change | `base-git` | the numbered-document check is removed, and the `check-heading-numbers` hook still ships; the first-CI-run rule stays in `base-git`; the playbook keeps this repository's own form |
 | The in-process server, `testing-in-process-server` | `base-testing` | `frontend-quality`, ID kept |
-| The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | `base-quality-gates`, IDs kept |
-| The module-split procedure | `base-quality` | `base-quality-gates`; the general module rules stay |
+| The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | the fingerprint moves to `base-quality-gates`, ID kept; the other two are removed, IDs included |
+| The module-split procedure | `base-quality` | removed; the stable import paths and the untouched suite join Refactors in `base-quality-gates`, and the general module rules stay |
 | Hierarchies: variadic overrides, the override checker and its contract test | `base-quality` | `base-oop` |
-| Citing the software | `base-docs` | `base-measurement` |
-| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | mask and allowlist removed; the submodule update and a neutral editor-settings rule remain |
+| Citing the software | `base-docs` | removed |
+| The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | all removed, the neutral editor-settings rule that replaced the allowlist included |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-quality` | neutral rules remain |
 | Revisit triggers, `quality-revisit-trigger`; spike bars; the data directory; flag-selected rule sets; the package error hierarchy and its raise-walking test; return-type shims; extraction-ready modules; exact ports; auto-detect variants; `.editorconfig` and the old-checkout refresh; the citation test and audit; comment layout; probe naming; `scripts/` | `base-quality` | removed, ID included; the `check-comment-layout` and `find-unreferenced-scripts` hooks still ship |
 | Self-match and the verdict rules from "Check trust" | `base-quality` | `base-quality-gates`, under "Running a check" |
+| The markdownlint line-width check and its line-of-its-own setting; the Mermaid note characters; uniform node shapes; the bulk-emit stale count; per-field generators reading the schema | `base-docs` | removed; the width rules stay tool-neutral, with Mermaid only as an example |
+| The work-email rule; the `gh` check-watch loop; bidirectional artifacts; the vendored-pointer default | `base-git` | removed; tool-neutral rules on registered checks and branch updates remain |
+| The ORM-or-query-builder preference; partial indexes; the staging slow-query-log review; read committed for OLTP; ORM, pool and engine examples | `backend-database` | removed; the query, index, transaction and pool rules remain, engine-neutral |
 | The per-case pattern list; container and presentational components, compound components, optimistic updates, the event-bus ban; store slices; the on-save lint rule; build or server rendering by default; the shared serving helper | `frontend-quality` | removed; JS/TS linting and the server-state cache rule are restated tool-neutrally |
 | Container e2e and test tiers, `testing-container-e2e` and `testing-tier-by-directory`; system, end-to-end and acceptance obligations; the regression cadence and budgets; integration-test naming | `base-testing` | removed, IDs included; a fork's stack can carry them. Doubles cover boundary-crossing dependencies only, and the deadline-wait rule joins Isolation |
+| The structure audit's shared-module rule; the URL-parameter and principal and credential probe items | `base-review` | the shared-module rule removed, as `base-quality`'s DRY rule states it; neutral rules on external input and probe conditions remain |
+| The secondary-toolchain rule, the auto-merge rule, the hierarchy control in a freeze retirement and ASCII-only output | `base-quality-gates` | removed; byte-exact test inputs, the aggregate CI job and the formatter ignore list are restated tool-neutrally |
+| The browser-bundle runtime config file; the per-environment secrets table; the boolean `ENABLE_`/`DISABLE_` and group-prefix naming rules; the development-dependency split | `base-config` | removed; the table's test-stub row stays as a neutral rule |
+| The agent-to-file mapping copy rule, the deprecated reference-model upgrade, the decision-record length rule, the monorepo package files, the brand-voice skeleton section | `base-agents` | removed; a file delivered by reference alone stays forbidden |
+| The memory budget and checkpoints; the convergence escalation ladder; the spike deliverable; citing the software | `base-measurement` | removed; the convergence check, approximations, calibration and source silence remain, IDs kept |
+| URI design; HATEOAS; query-parameter naming and reserved names; header-name spelling; the methods table; JSON by default; RFC 9457 errors; JWT by name; a port the process opens itself | `backend-http` | removed; malformed query values, header case, safe and idempotent methods and the JSON number rules remain, tool-neutral |
+| The hand-authored spec served verbatim, the Schemathesis example, the SOAP rule, the duplicate deprecation-header block | `backend-api` | removed; the contract rules now cover every contract kind, and any second API style in one service needs a decision record, except REST for external and ops endpoints combined with gRPC for internal hot paths |
+| The log-level table; HTTP status codes, `/health` paths and the `Trace-Id` header; OpenTelemetry and its collector as the required tool | `backend-observability` | removed; protocol- and vendor-neutral rules remain |
+| The status page, example alert thresholds, dashboards as code, business-KPI dashboards; the P1/P2, 4xx/5xx and CPU, memory and disk wording | `backend-monitoring` | removed; severity, error and saturation rules remain, vendor-neutral |
+| Load-balancing algorithms and availability zones, declarative routing, WAF and geo rules; the TLS-version and HSTS bullets | `backend-edge` | removed; `base-security` already carries TLS and HSTS. Forwarded headers now trust any known proxy hop, a CDN's included |
+| When to use gRPC; mutual TLS and certificate rotation; Prometheus metric names and port; `buf`; the test naming pattern | `backend-grpc` | removed, IDs kept; tool-neutral rules for metrics, proto lint and breaking-change checks remain |
+| The permission flag type; cohort-before-general and canary-instance rollout steps; the ban on database-stored flags | `backend-features` | removed; a rollout steps by percentage or cohort, and flags come from a source changed at runtime without a deploy |
+| The two-or-three-services heuristic, the gRPC streaming row, the 30-second log search, the central dashboard, per-service SLOs and burn-rate alerts; the outbox, own-storage and field-removal rules its chain already states | `backend-microservices` | removed; the gateway, mesh, Pact, schema-registry and `traceparent` rules remain tool-neutral |
+| The model-choice table with its GIL, Go and async-default rows; race-detector rules; named primitives; the first-argument cancellation token | `backend-concurrency` | removed or restated runtime-neutrally; the ID stays |
+| Structured data, `frontend-content-structured-data`; the content-file table; the static asset directory; frontmatter descriptions; image sizes; H1 keyword repetition; the answer-engine crawler list; named hosts | `frontend-content` | removed, ID included; schema-type matching and the no-false-claim markup rule join SEO, and asset paths, favicons and the host check remain tool-neutral |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

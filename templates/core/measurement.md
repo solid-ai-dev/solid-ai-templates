@@ -16,13 +16,11 @@ answer rather than an error.
 
 - Wrap a routine whose convergence flag the caller may ignore in one helper
   that checks the flag (MUST)
-- Escalate an unconverged run through stronger, slower stabilisations,
-  cheapest first, then raise an error naming what did not converge
-- Fire the escalation only on non-convergence, so a converging path is
-  untouched
-- Keep each stabilisation step a small function, and the escalation
-  driver pure orchestration
-- Exercise every rung with a stub that scripts convergence per attempt
+- Raise an error naming what did not converge when no retry converges
+- Fire any retry or stabilisation only on non-convergence, so a
+  converging path is untouched
+- Exercise the non-convergence path with a stub that scripts convergence
+  per attempt
 
 ### Approximations
 
@@ -30,23 +28,6 @@ answer rather than an error.
   approximation or a coarser grid, to off (MUST)
 - Carry it as a per-run field beside the run's other parameters, so the
   run reproduces itself
-
-### Memory budget
-
-- Detect the real memory budget: an environment override, then the
-  container limit, then physical memory, scaled for headroom
-- Estimate the large intermediate first; keep it in memory while it fits,
-  stream it to disk beyond that, and refuse past a hard ceiling
-- Spill to real disk, never a RAM-backed tmpfs (MUST)
-
-### Checkpoints
-
-- Persist the reusable internal state of an expensive computation, not
-  only the scalar this caller needed
-- Make the checkpoint opt-in, default off, and store it with the other
-  regenerable artifacts
-- Round-trip a checkpoint on a small case before a long batch trusts it,
-  through every wrapper around the engine
 
 ## Calibration
 
@@ -61,13 +42,13 @@ answer rather than an error.
   value beside each entry
 - Prefer a small hand-built set from raw artifacts to a large one carried
   over from a suspect pipeline
-- Sweep, in the change that replaces seeded reference values with verified
-  ones, every comment, guard and threshold whose rationale cites the old
-  values; re-verify each or file an issue
+- Sweep, in the change that corrects a reference value, every comment,
+  guard and threshold whose reasoning cites the old value
+- Re-verify each one the sweep finds, or record it as open work
 
 ### Honest absence
 
-- Keep an honest absence (`None`, empty) where the source carries no
+- Keep an honest absence (null, empty) where the source carries no
   value; never recover a wrong value in its place
 - Re-mark a prior expected value at that point as extrapolation, in the
   same change (MUST)
@@ -97,11 +78,11 @@ answer rather than an error.
 
 ### Reference provenance
 
-- Record on each reference entry who produced it (`source: agent | user |
-  external`) and whether a person reviewed it (`verified: true | false`)
+- Record on each reference entry who produced it: an agent, a person or
+  an external source (MUST)
+- Record on each entry whether a person reviewed it (MUST)
+- Mark a value an agent produced as unverified until a person reviews it
   (MUST)
-- Mark a value an agent produced `source: agent`, `verified: false` until
-  a person reviews it (MUST)
 - Report verified coverage beside every metric computed against the set,
   such as `verified: 12/40` (MUST)
 - Leave synthetic test inputs out of scope; the rule covers reference
@@ -123,10 +104,10 @@ answer rather than an error.
 - Prefer preserving the cheap result, so an unavailable fallback degrades
   to a result plus a warning
 
-### Spikes
+### Evidence
 
-- Count as evidence only the cases captured independently of the rule
-- State that "here is what would have to be captured" is the deliverable
+- Count as evidence for a rule only the cases captured independently of
+  the rule
 
 ### Calibration aids
 
@@ -147,14 +128,3 @@ answer rather than an error.
   source silence skips the comparison (MUST)
 - Keep stored-default conventions (`absent = false`, `null = unknown`)
   intact
-
-## Citing the software (if applicable)
-
-- Cite a persistent identifier as the citation of record, never a URL
-  (MUST)
-- Archive each release, mint an identifier, and cite the one that resolves
-  to the latest version (SHOULD)
-- Ship a machine-readable citation file at the repository root that records
-  the identifier (SHOULD)
-- Never present a project domain or vanity URL as the citation of record
-  (MUST NOT)
