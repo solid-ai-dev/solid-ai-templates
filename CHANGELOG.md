@@ -176,6 +176,8 @@ Releases up to 2.63.0 are listed in
   kept ([#2174])
 - The config template drops the browser-bundle rule, the secrets table and
   boolean prefixes; test secrets are stubs ([#2309])
+- The object-oriented design template states its override and type-family rules for any
+  language ([#2340])
 
 ### Deprecated
 
@@ -363,6 +365,7 @@ Releases up to 2.63.0 are listed in
 [#2302]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2302
 [#2309]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2309
 [#2338]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2338
+[#2340]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2340
 
 ## [2.90.0] - 2026-09-12
 
