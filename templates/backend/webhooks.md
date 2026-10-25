@@ -40,8 +40,10 @@ messaging rules for idempotency, retries, DLQs and backpressure.
 ## Testing
 [EXTEND: base-testing]
 
-- Test authentication rejection: a tampered body or a missing or invalid
-  credential MUST be rejected before any side effect occurs
+- Test authentication rejection: a missing or invalid credential MUST be
+  rejected before any side effect occurs
+- Test tamper rejection where authentication binds the body, such as a
+  body signature: a changed body MUST be rejected too
 - Test idempotency: deliver the same event twice and assert a single effect
 - Test the fast-ack path: the handler returns 2xx without waiting for
   downstream processing to complete
