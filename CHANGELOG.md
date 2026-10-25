@@ -192,6 +192,8 @@ Releases up to 2.63.0 are listed in
   language ([#2340])
 - The auth template drops JWT, vendor and gRPC specifics and states each rule
   token-neutrally ([#2322])
+- The monitoring template drops the status page and dashboards as code; metrics and
+  severities are vendor-neutral ([#2323])
 
 ### Deprecated
 
@@ -390,6 +392,7 @@ Releases up to 2.63.0 are listed in
 [#2312]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2312
 [#2320]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2320
 [#2322]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2322
+[#2323]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2323
 
 ## [2.90.0] - 2026-09-12
 
