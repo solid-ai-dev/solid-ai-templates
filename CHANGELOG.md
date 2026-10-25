@@ -93,6 +93,8 @@ Releases up to 2.63.0 are listed in
   JSON errors; neutral rules remain ([#2313])
 - The API template drops the hand-authored spec, Schemathesis and SOAP rules;
   contract rules cover every contract kind ([#2312])
+- The observability template drops HTTP status codes, health paths and the
+  OpenTelemetry mandate for neutral rules ([#2320])
 
 ### Added
 
@@ -384,6 +386,7 @@ Releases up to 2.63.0 are listed in
 [#2339]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2339
 [#2313]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2313
 [#2312]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2312
+[#2320]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2320
 
 ## [2.90.0] - 2026-09-12
 
