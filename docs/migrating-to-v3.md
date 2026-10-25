@@ -73,12 +73,13 @@ receives nothing (ADR-051).
 | The refactor fingerprint, AST equivalence and public-API contract tests: `testing-characterization-fingerprint`, `testing-ast-equivalence`, `testing-ast-contract` | `base-testing` | `base-quality-gates`, IDs kept |
 | The module-split procedure | `base-quality` | `base-quality-gates`; the general module rules stay |
 | Hierarchies: variadic overrides, the override checker and its contract test | `base-quality` | `base-oop` |
-| Citing the software | `base-docs` | `base-measurement` |
+| Citing the software | `base-docs` | removed |
 | The submodule update after a pin bump, the base64 bundle mask, the `.vscode` allowlist | `base-git` | mask and allowlist removed; the submodule update and a neutral editor-settings rule remain |
 | Factory classmethods; `*-overlay.png` naming | `base-oop`, `base-quality` | neutral rules remain |
 | Revisit triggers, `quality-revisit-trigger`; spike bars; the data directory; flag-selected rule sets; the package error hierarchy and its raise-walking test; return-type shims; extraction-ready modules; exact ports; auto-detect variants; `.editorconfig` and the old-checkout refresh; the citation test and audit; comment layout; probe naming; `scripts/` | `base-quality` | removed, ID included; the `check-comment-layout` and `find-unreferenced-scripts` hooks still ship |
 | Self-match and the verdict rules from "Check trust" | `base-quality` | `base-quality-gates`, under "Running a check" |
 | Container e2e and test tiers, `testing-container-e2e` and `testing-tier-by-directory`; system, end-to-end and acceptance obligations; the regression cadence and budgets; integration-test naming | `base-testing` | removed, IDs included; a fork's stack can carry them. Doubles cover boundary-crossing dependencies only, and the deadline-wait rule joins Isolation |
+| The memory budget and checkpoints; the convergence escalation ladder; the spike deliverable; citing the software | `base-measurement` | removed; the convergence check, approximations, calibration and source silence remain, IDs kept |
 
 The core tier requires three documents only: `README.md`, `AGENTS.md` and
 `CLAUDE.md`, both agent files on every project. Their layout is the

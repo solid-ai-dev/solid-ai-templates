@@ -88,7 +88,7 @@ base:
     depends_on: [base-quality-gates]
   - id: base-measurement
     file: templates/core/measurement.md
-    description: Numerical routines, calibration against reference data, source silence, citing the software
+    description: Numerical routines, calibration against reference data, source silence
     depends_on: [base-quality]
 platform:
   - id: platform-fixture
