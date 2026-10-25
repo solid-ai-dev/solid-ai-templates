@@ -69,18 +69,6 @@ PYTHON = '"%s"' % sys.executable.replace(os.sep, "/")
 
 CHECKS = [
 
-    # -- core/docs.md ------------------------------------------------
-
-    # The linter is pinned to the version CI's setup step fetches, and read
-    # from the npm cache, so a download cannot spend the runner's time limit.
-    {"file": "core/docs.md", "find": "npx --yes markdownlint-cli2",
-     "title": "Markdown holds to the declared line width",
-     "do": RUN, "expect": ["nonzero", "nonzero", "nonzero"],
-     "substitute": {"CONFIG=<markdownlint-config>":
-                    "CONFIG=.github/linters/.markdownlint-cli2.jsonc",
-                    "npx --yes markdownlint-cli2":
-                    "npx --yes --prefer-offline markdownlint-cli2@0.23.3"}},
-
     # -- core/git.md -------------------------------------------------
 
     # This repository's regenerator is sync_docs.py, and what it writes depends

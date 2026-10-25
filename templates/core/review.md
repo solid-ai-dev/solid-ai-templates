@@ -34,8 +34,9 @@ items 2 to 4.
 - [ ] Every changed section was re-read whole, not only the changed line
 - [ ] Every claim changed text makes about itself, such as a count or "all",
       was checked by counting with a tool
-- [ ] URL parameters and query strings are validated as untrusted input
-      before they are destructured, indexed or used as keys
+- [ ] Input from outside the process, such as a URL parameter, is
+      validated as untrusted before it is destructured, indexed or used as
+      a key
 - [ ] A refactor preserves behaviour on every path: each case, direction and
       mode, including null handling, sort order and boundary values
 
@@ -68,8 +69,6 @@ items 2 to 4.
   `.gitignore`) and in the project's layer and stack templates
 - Verify each sub-clause of a MUST separately; a rule requiring examples and
   their output is two checks
-- Extract a shared module where sibling components share the same code
-  (SHOULD)
 
 ## Picking up an issue
 
@@ -135,12 +134,10 @@ items 2 to 4.
 
 ### From a probe
 
-- [ ] The probe ran as the principal the finding is about: anonymous, a
-      signed-in user, a service account or a CI runner
-- [ ] The credential type matches the consumer's: cookie, bearer token,
-      signed URL or mTLS
-- [ ] A claim the probe cannot make as that principal is scoped to the one
-      it tested
+- [ ] The probe ran under the conditions the finding is about, such as its
+      user, credential and environment
+- [ ] A claim the probe cannot make under those conditions is scoped to the
+      ones it tested
 
 ### From an agent
 
