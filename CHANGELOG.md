@@ -40,8 +40,8 @@ Releases up to 2.63.0 are listed in
 - Rules for writing checks leave the testing template for the playbook;
   Python-only test rules go, and one pipeline-diagnostic rule remains
   ([#2069])
-- The docs template drops its line-width and figure scripts and most of its
-  Mermaid and generator rules ([#2071])
+- The docs template drops its line-width and figure scripts; its Mermaid and
+  generator rules stay, condensed ([#2071])
 - The review template drops its full issue-verification procedure and its
   numerical-gate items ([#2072])
 - The config template drops the in-process config model and the dependency

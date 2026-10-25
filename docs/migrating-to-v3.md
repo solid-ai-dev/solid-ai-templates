@@ -33,7 +33,7 @@ receives nothing (ADR-051).
 | Pipeline diagnostics, `testing-diagnostic-production-path` and `testing-identical-metrics` | `base-testing` | removed; one diagnostic-view rule remains |
 | The Markdown line-width and documentation-figure scripts | `base-docs` | the Markdown linter's line-length rule; the figure check is this repository's own tool |
 | Rules for retiring a document and for changing one other repositories carry | `base-docs` | this repository's playbook |
-| Mermaid parser quirks, bulk-emit and round-trip generator rules | `base-docs` | removed; one rule each on Mermaid notes, stale counts and refresh remains |
+| The Mermaid-note rule and the generator rules: banner, `--check`, re-rendering, formatter exclusion, regeneration, round-trip refresh, stale-entry counts, schema-derived fields | `base-docs` | condensed in `base-docs`; a bulk-emit script's `--check` is now the SHOULD every generator carries |
 | Verifying a filed issue in full, its shapes and checks | `base-review` | this repository's playbook; a short form stays |
 | Review of shared browser and framework state | `base-review` | `frontend-quality` |
 | Numerical-gate and score-component review items | `base-review` | removed |
