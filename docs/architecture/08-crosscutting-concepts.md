@@ -160,6 +160,11 @@ lists it under `Deprecated` in the changelog.
 The entry still resolves. SYS-22 fails a `deprecated` that names no entry,
 or one that is itself deprecated. Removal waits for the next major.
 
+A shipped hook that no template prescribes any more is deprecated the same
+way. Its `name` in `.pre-commit-hooks.yaml` starts with `Deprecated:`, and
+the changelog lists it under `Deprecated`. It keeps its frozen behaviour
+(8.7) until the next major removes it.
+
 ## 8.9 Rule language and naming
 
 A rule is a plain imperative, read as MUST or MUST NOT, or carries an RFC

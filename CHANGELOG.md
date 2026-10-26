@@ -237,6 +237,8 @@ Releases up to 2.63.0 are listed in
 
 ### Deprecated
 
+- Three hooks no template prescribes are deprecated: comment layout, unreferenced
+  scripts, heading numbers ([#2369])
 - The reference delivery model; generate inline or hybrid files instead
   ([#1959])
 
@@ -456,6 +458,7 @@ Releases up to 2.63.0 are listed in
 [#2299]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2299
 [#2335]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2335
 [#2349]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2349
+[#2369]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2369
 
 ## [2.90.0] - 2026-09-12
 
