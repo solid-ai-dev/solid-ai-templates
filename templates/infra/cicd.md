@@ -8,6 +8,7 @@
   humans approve, machines execute
 
 ## Quality gates
+[LOAD: add-check]
 
 - Run the project's own gates in the lint, test and security-scan stages
 - Treat which gates run, and at which thresholds, as the project's choice
@@ -16,6 +17,7 @@
   nothing
 
 ## Patterns
+[LOAD: add-check]
 
 - Select the patterns the project's workflow needs (MAY): gate job, path
   filtering, fan-out/fan-in, artifact promotion, caching, matrix builds,
@@ -63,6 +65,7 @@ only publish artifacts. For the release job:
 - Grant it write permission at **job** scope only
 
 ## Pipeline as code
+[LOAD: add-check]
 
 - Keep pipeline definitions in the repository alongside the application
   code (MUST)
