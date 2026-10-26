@@ -8,7 +8,10 @@ cache technology (in-process, Redis, Memcached, CDN).
 
 - Cache data that is expensive to compute or retrieve and changes infrequently
 - Do NOT cache data that MUST be real-time (e.g. account balances, stock levels)
-- Do NOT cache secrets, credentials, tokens, or PII — even temporarily
+- Do NOT cache secrets, credentials, or tokens — even temporarily
+- Serve cached personal data (PII) only past the access check its source
+  enforces
+- Evict a cached PII entry when its source record is deleted or anonymized
 - Prefer no cache over a stale cache for safety-critical or financial data
 
 ## Patterns
