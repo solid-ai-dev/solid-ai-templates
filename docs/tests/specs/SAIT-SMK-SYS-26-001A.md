@@ -1,0 +1,77 @@
+---
+id: SAIT-SMK-SYS-26-001A
+title: The emitter places each section by its load, the same every run
+product: sait
+type: smoke
+area: SYS
+priority: p1
+status: ready
+environment: [local, ci]
+automatable: yes
+created: 2026-10-26
+author: Branimir Georgiev
+product-version: "3.x"
+tags: [tooling, composition, delivery, determinism]
+---
+
+## Short description
+
+> **Given** a chain whose sections carry load directives
+> **When** `resolve_chain.py --emit` builds the root file and the skills
+> **Then** every-turn rules stay in the root file, a task's procedure moves
+> to its skill, a checked section keeps only its command, a declined
+> section is left out, and two runs give byte-identical files, because the
+> same templates must give every project the same files
+
+## Results
+
+| Result | Condition |
+|--------|-----------|
+| PASSED | Both planted placements are right, and two runs of the core chain under different hash seeds write the same bytes |
+| FAILED | A planted placement is wrong, in either mode |
+| FAILED | The two runs differ, or the emitter exits non-zero |
+| SKIPPED | — |
+| BLOCKED | — |
+| ERROR | — |
+
+## Steps
+
+### Prerequisites
+
+- Repository cloned locally
+- Python 3
+
+### Setup
+
+— (operates on a planted template and on `base-quality`'s chain, written
+to a temporary directory that is removed afterwards)
+
+### Execution
+
+1. Build the planted template with skills, then with skills inlined
+2. Run `resolve_chain.py --emit` on `base-quality` twice, with
+   `PYTHONHASHSEED` 1 and 2, mirroring the skills into `.claude/skills`
+3. Compare the two output trees byte for byte
+
+### Assertions
+
+1. Assert the every-turn rule is in the root file in both modes
+2. Assert the checked section keeps its command and drops its rule
+3. Assert the declined section is absent
+4. Assert, with skills, the procedure is in its skill and the trigger
+   table, and not in the root file
+5. Assert, inlined, the procedure is in the root file and no skill file is
+   written
+6. Assert the two runs write the same files with the same bytes
+
+### Negative controls
+
+1. **Procedures kept in the root file.** With the emitter's task branch
+   sending rows to the root file, the planted placement with skills fails
+2. **A non-deterministic run.** With the skills table ordered by a set, two
+   runs under different hash seeds differ
+
+## Related
+
+- ADR-058: templates place each rule, and task procedures load on demand
+- The spec, chapter 8.1: the load directive

@@ -4,12 +4,15 @@
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from collections import Counter
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
+from emit_context import build as emit_build
 from resolve_chain import (
     LOAD_CHECK, entry_sections, is_fixture, load_directives, parse_manifest,
     task_kinds)
@@ -2004,4 +2007,96 @@ def check_sys_25():
         directives += len(load_directives(text))
         failures.extend(f"  {f}" for f in load_findings(rel, text, kinds))
     seen.count("load directives in the templates", directives, floor=0)
+    return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-26 -- the emitter places each section by its load, the same every run
+# ---------------------------------------------------------------------------
+
+# The emitter builds a project's root file and skills from its chain, so two
+# projects on the same templates get the same files. A procedure left in the
+# root file costs every turn; a rule moved out of it is one an agent may
+# never read; and output that changes between runs is the variance the
+# emitter exists to remove. A planted template exercises each placement, and
+# two runs of the real chain under different hash seeds must agree.
+
+EMIT_TEMPLATE = (
+    "# Base — Demo\n[ID: base-demo]\n\n## Naming\n\n- Name every turn\n\n"
+    "## Releases\n[LOAD: release]\n\n- Tag in the skill\n\n"
+    "## Lint\n[LOAD: check]\n\nRun it:\n\n```bash\nruff check .\n```\n\n"
+    "- Rule the check enforces\n\n## Optional\n\n- Declined rule\n")
+EMIT_KINDS = {"release": "Preparing a release"}
+EMIT_DECLINED = ["templates/core/demo.md#Optional"]
+
+
+def emit_findings(emitted, inline):
+    """What the planted template's emitted files get wrong, one per line."""
+    root = emitted.get("AGENTS.md", "")
+    skill = emitted.get(".agents/skills/release/SKILL.md")
+    owed = [("the every-turn rule is in the root file",
+             "Name every turn" in root),
+            ("the checked section keeps its command",
+             "ruff check ." in root),
+            ("the checked section's rule is left to its check",
+             "Rule the check enforces" not in root),
+            ("the declined section is out", "Declined rule" not in root)]
+    if inline:
+        owed += [("the procedure is inlined", "Tag in the skill" in root),
+                 ("no skill file is written", skill is None)]
+    else:
+        owed += [("the procedure is out of the root file",
+                  "Tag in the skill" not in root),
+                 ("the procedure is in its skill",
+                  skill is not None and "Tag in the skill" in skill),
+                 ("the trigger table names the skill",
+                  "| release | Preparing a release |" in root)]
+    return [label for label, ok in owed if not ok]
+
+
+def emitted_tree(out):
+    """Every emitted file's bytes, keyed by its path under `out`."""
+    tree = {}
+    for folder, _, names in os.walk(out):
+        for name in names:
+            path = os.path.join(folder, name)
+            with io.open(path, "rb") as handle:
+                tree[os.path.relpath(path, out)] = handle.read()
+    return tree
+
+
+def check_sys_26():
+    seen = Inspected()
+    failures = []
+    files = [("templates/core/demo.md", EMIT_TEMPLATE)]
+    for inline in (False, True):
+        got = emit_findings(
+            emit_build(files, EMIT_KINDS, EMIT_DECLINED, inline), inline)
+        mode = "inline" if inline else "with skills"
+        failures.extend(f"  planted, {mode}: {label} fails" for label in got)
+    seen.count("planted placements", 2)
+
+    trees = []
+    work = tempfile.mkdtemp(prefix="sait-emit-")
+    try:
+        for seed in ("1", "2"):
+            out = os.path.join(work, seed)
+            env = dict(os.environ, PYTHONHASHSEED=seed)
+            proc = subprocess.run(
+                [sys.executable, os.path.join(ROOT, "tools", "resolve_chain.py"),
+                 "--emit", out, "base-quality", "--mirror", ".claude/skills"],
+                capture_output=True, text=True, encoding="utf-8", env=env)
+            if proc.returncode != 0:
+                failures.append(f"  emit exited {proc.returncode}: "
+                                f"{(proc.stdout + proc.stderr).strip()}")
+                return seen.failures() + failures, seen.notes()
+            trees.append(emitted_tree(out))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    seen.count("files emitted for the core chain", trees[0])
+    if trees[0] != trees[1]:
+        differ = sorted(set(trees[0]) ^ set(trees[1]) | {
+            k for k in set(trees[0]) & set(trees[1])
+            if trees[0][k] != trees[1][k]})
+        failures.append(f"  two runs differ in: {', '.join(differ)}")
     return seen.failures() + failures, seen.notes()

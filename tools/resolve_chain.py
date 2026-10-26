@@ -9,6 +9,8 @@ Usage:
     py tools/resolve_chain.py --generate            # cache all stacks to generated/
     py tools/resolve_chain.py --list                # list available stack IDs
     py tools/resolve_chain.py --roots               # list every root a project picks
+    py tools/resolve_chain.py --emit <dir> <root>...  # build the root file and skills
+        [--declined <file>] [--inline-skills] [--mirror <dir>]
 
 The resolution algorithm follows ADR-004:
   1. Add all core tier IDs
@@ -473,7 +475,57 @@ def check_generated(core_ids, entries, stacks):
 
 # ---- CLI ----
 
-KNOWN_FLAGS = {"--help", "--list", "--roots", "--generate", "--check", "--concat"}
+KNOWN_FLAGS = {"--help", "--list", "--roots", "--generate", "--check", "--concat",
+               "--emit", "--declined", "--inline-skills", "--mirror"}
+
+# The flags that take a value, so the value is not read as a root.
+VALUE_FLAGS = ("--emit", "--declined", "--mirror")
+
+
+def _emit(args, core_ids, entries):
+    """--emit: build a project's root file and skills from its roots.
+
+    A project picks several roots, so the chain is their union in
+    resolution order, each file once (ADR-058).
+    """
+    import emit_context
+
+    values, roots, i = {}, [], 0
+    while i < len(args):
+        if args[i] in VALUE_FLAGS:
+            if i + 1 >= len(args):
+                raise ResolveError(f"{args[i]} needs a value")
+            values.setdefault(args[i], []).append(args[i + 1])
+            i += 2
+            continue
+        if not args[i].startswith("--"):
+            roots.append(args[i])
+        i += 1
+    if not roots:
+        raise ResolveError("--emit needs at least one root; run with "
+                           "--roots to see what a project can pick")
+    unknown = [r for r in roots if r not in entries]
+    if unknown:
+        raise ResolveError("Unknown root: " + ", ".join(unknown))
+    files = []
+    for root in roots:
+        for path in resolve_chain(root, core_ids, entries):
+            if path not in files:
+                files.append(path)
+    kinds = task_kinds(parse_manifest(io.open(MANIFEST, encoding="utf-8").read()))
+    declined = emit_context.read_declined(
+        (values.get("--declined") or [None])[0])
+    emitted = emit_context.build(
+        [(path, read_file(path)) for path in files], kinds, declined,
+        inline_skills="--inline-skills" in args)
+    out_dir = values["--emit"][0]
+    written = emit_context.write(out_dir, emitted, values.get("--mirror", []))
+    for rel in written:
+        text = emitted[rel]
+        print(f"  {rel}: {len(text.splitlines())} lines, "
+              f"{len(text.split())} words")
+    print(f"{len(written)} file(s) emitted from {len(files)} templates "
+          f"into {out_dir}.")
 
 
 def _check(core_ids, offered, catalogue, stacks):
@@ -546,6 +598,10 @@ def _cli(args):
 
     if "--check" in args:
         _check(core_ids, offered, catalogue, stacks)
+
+    if "--emit" in args:
+        _emit(args, core_ids, entries)
+        sys.exit(0)
 
     do_concat = "--concat" in args
 
