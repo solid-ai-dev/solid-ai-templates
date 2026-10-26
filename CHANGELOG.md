@@ -152,7 +152,7 @@ Releases up to 2.63.0 are listed in
 
 ### Changed
 
-- Templates drop eleven rules capable agents follow unprompted, such as generic
+- Templates drop fourteen rules capable agents follow unprompted, such as generic
   naming advice ([#2389])
 - Template sections carry load directives, marking procedures that belong to
   one kind of task ([#2386])
