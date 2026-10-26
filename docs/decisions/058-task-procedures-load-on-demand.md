@@ -48,17 +48,23 @@ What is settled:
 
 - No rule is left to a reference alone. Nothing loads a referenced file,
   and a consumer's agent missed a gate that lived only there (#712).
-- Hybrid adhered to project conventions best in round 3 and scored
-  highest on the judge's security rows in round 4. The rules that carry
-  that apply on every task.
-- Length costs. In the 2026-10-17 round every file made the app 40–160%
-  bigger, and with a weaker model every generated file lowered the share
-  of hidden tests passed.
 - A skill loads from its description when a task matches it. The format is
   an open standard, published in December 2025, that several coding
   agents report reading, most from `.agents/skills/`.
 - A hand-written project in daily use keeps 563 words in its root file and
   about 7,650 in nine skills.
+
+Not yet measured: whether any delivery improves the code an agent writes.
+The benchmark rounds of September and October 2026 ran while the benchmark
+itself was being built, so their results do not compare one option with
+another under one ruler:
+
+- Hybrid adhered to project conventions best in round 3 and scored
+  highest on the judge's security rows in round 4.
+- In the 2026-10-17 round every file made the app 40–160% bigger, and with
+  a weaker model every generated file lowered the share of hidden tests
+  passed.
+- No round has run a root file with skills.
 
 ## Decision
 
@@ -78,8 +84,9 @@ project the same files.
   security rules stay in context, and no rule is left to a reference.
 - One format for every agent: the open skill format, with the procedures
   inlined where an agent cannot load skills.
-- Scored: 77 of 100. The same split decided by each generator scores 62,
-  and today's hybrid file 61 (Scoring).
+- Scored: 84 of 100. The same split decided by each generator scores 66,
+  and today's hybrid file 60 (Scoring). No option is scored on outcomes,
+  which no benchmark has yet measured under one ruler.
 
 ## Design
 
@@ -118,13 +125,13 @@ score out of 100 (Scoring):
 
 | # | Alternative | Score | Outcome |
 | - | ----------- | ----- | ------- |
-| A | Templates declare each section's load, and a tool builds the root file and skills | 77 | Chosen: the same templates give the same files, and procedures leave every turn |
-| B | The same split, decided by each generating agent | 62 | Two generators placed the same rules differently, so results vary by agent and run |
-| C | Hybrid, as today | 61 | Measured at 70–76% of the chain, and the generator still judges what to inline |
-| D | Inline everything | 61 | Up to 90% of the chain on every turn; the full inline file did worse than no file in the 2026-10-17 round |
-| E | A hard size budget, such as 40 lines | 61 | The rules for every task alone exceed it, so what to cut is left to each generator |
-| F | Plain references with a trigger table | 56 | A plain reference has no loading mechanism, and the consumer failure shows what that costs |
-| G | Rules scoped by file path | 50 | Loads on the files touched, not the task started, and the mechanism differs per agent |
+| A | Templates declare each section's load, and a tool builds the root file and skills | 84 | Chosen: the same templates give the same files, and procedures leave every turn |
+| B | The same split, decided by each generating agent | 66 | Two generators placed the same rules differently, so results vary by agent and run |
+| C | Hybrid, as today | 60 | Measured at 70–76% of the chain, and the generator still judges what to inline |
+| D | Inline everything | 64 | Up to 90% of the chain on every turn, and the generator still judges what applies |
+| E | A hard size budget, such as 40 lines | 60 | The rules for every task alone exceed it, so what to cut is left to each generator |
+| F | Plain references with a trigger table | 61 | A plain reference has no loading mechanism, and the consumer failure shows what that costs |
+| G | Rules scoped by file path | 56 | Loads on the files touched, not the task started, and the mechanism differs per agent |
 
 ## Consequences
 
@@ -136,7 +143,8 @@ score out of 100 (Scoring):
 | Tool | The resolver gains a mode that builds the root file's rules and the skills from a chain and an adopted list; a smoke check asserts two runs give identical files |
 | `agents.md` | States the load directive, the trigger table and the skill rules, and its model table shows root and skills. It closes the gaps the 2026-10-26 generators filled by invention: a checkable rule with no tool, a missing end-of-session checklist, an override order for a single rule source |
 | Documentation | A generated table of root-file and skill words per root |
-| Forks | The interview records the adopted list and the facts. A benchmark round compares root and skills with hybrid and with no file, scored by the spread across runs and projects as well as the mean; worse than hybrid on adherence or on the judge's security and data-protection rows reopens this record |
+| Forks | The interview records the adopted list and the facts |
+| Benchmark | The benchmark moves to a repository of its own, so one ruler measures upstream and fork refs alike. A fresh run of every arm, none, hybrid, inline, and root and skills, scores each by its spread across runs and projects as well as its mean. Accepting this record waits for that run; worse than hybrid on adherence or on the judge's security and data-protection rows rejects it |
 
 ## Compatibility
 
@@ -160,14 +168,15 @@ inline generates today.
 
 Each option was scored 1 (poor) to 5 (good) per criterion, by the author's
 judgement against the measurements in Context. Its score is the sum of
-weight times score, divided by 5, so 100 is the best.
+weight times score, divided by 5, so 100 is the best. No criterion scores
+outcomes: no benchmark has measured them under one ruler, and the fresh run
+in Consequences is what will.
 
 | Criterion | Weight | Why it weighs this much |
 | --------- | ------ | ----------------------- |
-| Consistency | 25 | The maintainer's goal: the same templates give the same files and the same grade, whichever team or agent generates them |
-| Context per turn | 20 | The agent's view: the words it reads before the task, which the benchmark shows cost size and correctness |
-| Rules that must not be missed | 20 | The project's view: rules for every task and security rules in context with no cue needed |
-| Evidence | 15 | How far a measured result supports the option |
+| Consistency | 30 | The maintainer's goal: the same templates give the same files and the same grade, whichever team or agent generates them |
+| Context per turn | 25 | The agent's view: the words it reads before the task |
+| Rules that must not be missed | 25 | The project's view: rules for every task and security rules in context with no cue needed |
 | Works with every agent | 10 | The consumer's view: one generated set serves whichever agent a team uses |
 | Maintenance | 10 | What it costs to keep templates, the tool and generated files in step |
 
@@ -175,34 +184,31 @@ The score matrix, one column per alternative, A being this decision:
 
 | Criterion | Weight | A | B | C | D | E | F | G |
 | --------- | ------ | - | - | - | - | - | - | - |
-| Consistency | 25 | 5 | 2 | 2 | 3 | 2 | 3 | 3 |
-| Context per turn | 20 | 4 | 4 | 1 | 1 | 5 | 4 | 3 |
-| Rules that must not be missed | 20 | 4 | 4 | 5 | 5 | 1 | 1 | 3 |
-| Evidence | 15 | 2 | 2 | 3 | 2 | 3 | 1 | 1 |
+| Consistency | 30 | 5 | 2 | 2 | 3 | 2 | 3 | 3 |
+| Context per turn | 25 | 4 | 4 | 1 | 1 | 5 | 4 | 3 |
+| Rules that must not be missed | 25 | 4 | 4 | 5 | 5 | 1 | 1 | 3 |
 | Works with every agent | 10 | 4 | 4 | 5 | 5 | 5 | 5 | 2 |
 | Maintenance | 10 | 3 | 3 | 4 | 3 | 4 | 4 | 2 |
-| Score, of 100 | | 77 | 62 | 61 | 61 | 61 | 56 | 50 |
+| Score, of 100 | | 84 | 66 | 60 | 64 | 60 | 61 | 56 |
 
 Sensitivity: each row raises one criterion's weight and lowers the other
-five in proportion, so the weights still total 100.
+four in proportion, so the weights still total 100.
 
 | Alternative | Where it beats A | Weight now | It wins above |
 | ----------- | ---------------- | ---------- | ------------- |
 | B | — | — | Never: it scores no higher than A on any criterion |
-| C | Rules that must not be missed | 20 | About 56 |
-| C | Evidence | 15 | About 53 |
-| C | Works with every agent | 10 | About 50 |
-| C | Maintenance | 10 | About 50 |
-| D | Rules that must not be missed | 20 | About 56 |
-| D | Works with every agent | 10 | About 50 |
-| E | Context per turn | 20 | About 56 |
-| E | Evidence | 15 | About 53 |
-| E | Works with every agent | 10 | About 50 |
-| E | Maintenance | 10 | About 50 |
-| F | Works with every agent | 10 | About 56 |
-| F | Maintenance | 10 | About 56 |
+| C | Rules that must not be missed | 25 | About 66 |
+| C | Works with every agent | 10 | About 59 |
+| C | Maintenance | 10 | About 59 |
+| D | Rules that must not be missed | 25 | About 63 |
+| D | Works with every agent | 10 | About 55 |
+| E | Context per turn | 25 | About 66 |
+| E | Works with every agent | 10 | About 59 |
+| E | Maintenance | 10 | About 59 |
+| F | Works with every agent | 10 | About 58 |
+| F | Maintenance | 10 | About 58 |
 | G | — | — | Never: it scores no higher than A on any criterion |
 
 No alternative is close: each needs one criterion weighed more than twice
-what it is. The weakest score of A is its evidence, which a benchmark
-round that measures it settles.
+what it is. The scores rate design, not outcomes; the fresh benchmark run
+decides whether the design delivers.
