@@ -9,8 +9,6 @@ store: a relational database, a document store or a static data file.
 
 - Use one naming convention per store for every table or collection,
   field, key and index; record it in the project's context file
-- Name a boolean field as a predicate (e.g. `is_active`, `has_discount`)
-- Name a reference field after the record it points to (e.g. `user_id`)
 
 ## Normalization
 [ID: data-modeling-normalization]
@@ -21,8 +19,6 @@ store: a relational database, a document store or a static data file.
   measured read performance requires it
 - Never pack several values into one string field, such as
   comma-separated values — use a list or a related record
-- Replace repeated groups of fields (e.g. `phone1`, `phone2`, `phone3`)
-  with a child table or a list
 - Document the rationale when intentionally denormalizing
 
 ## Relationships
