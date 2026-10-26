@@ -6,7 +6,6 @@ cache technology (in-process, Redis, Memcached, CDN).
 
 ## When to cache
 
-- Cache data that is expensive to compute or retrieve and changes infrequently
 - Do NOT cache data that MUST be real-time (e.g. account balances, stock levels)
 - Do NOT cache secrets, credentials, or tokens — even temporarily
 - Serve cached personal data (PII) only past the access check its source

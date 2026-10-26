@@ -8,8 +8,6 @@ Applies with any queue or scheduler.
 
 - Move into a job any work that need not complete before the request's
   response
-- Do NOT use jobs for work that the caller needs the result of immediately;
-  do it in the request path instead
 - Do NOT use jobs to paper over a slow synchronous path; fix the root cause
   first
 
