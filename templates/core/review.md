@@ -24,6 +24,13 @@ items 2 to 4.
    boolean flag parameters
 4. **Conventions**: deviations from the project's agreed patterns
 
+The order above is by area; weigh each finding separately.
+
+- Label each finding a demonstrated defect, a deviation from a policy the
+  project adopted, or a suggestion
+- Block a merge only on a defect or a policy deviation; leave a
+  suggestion to the author
+
 ## MUST checklist
 
 - [ ] No credential, token or sensitive value appears in a committed file

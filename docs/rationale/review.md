@@ -10,6 +10,11 @@ A security exposure costs more than a wrong result, and a wrong result more
 than an unclear name, so a review that runs out of time should have spent it
 in that order.
 
+Area and weight are separate. A clarity finding can be a demonstrated
+defect, and a security note can be a suggestion. A review that blocks on
+every suggestion makes the author redo work the task never needed, which
+is the calibration gap the 2026-10-24 agent-perspective review named.
+
 ## MUST checklist
 
 A sentence is correct only in relation to its neighbours, and each one reads
