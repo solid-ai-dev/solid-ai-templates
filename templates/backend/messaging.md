@@ -64,6 +64,7 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
   not the receive endpoint's latency, to find the real saturation point
 
 ## Schema and contracts
+[LOAD: change-api]
 
 - Define message schemas explicitly, in a format such as JSON Schema, Avro or Protobuf
 - Keep schema changes backward-compatible (MUST): add fields, never remove

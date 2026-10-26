@@ -71,6 +71,7 @@ Do not apply this template to a monolith or a single-service project.
   healthy instances
 
 ## Contract testing
+[LOAD: change-api]
 
 - Test each producer and consumer pair with consumer-driven contract tests
 - Never break a published contract without a versioned migration path
@@ -79,9 +80,13 @@ Do not apply this template to a monolith or a single-service project.
 
 ## Backward compatibility
 
+- Read tolerantly: consumers ignore unknown fields
+
+### Versioning service APIs and event schemas
+[LOAD: change-api]
+
 - Version and deprecate every service API as a public API, by the API
   template's rules
-- Read tolerantly: consumers ignore unknown fields
 - Enforce event schema compatibility automatically when a schema is
   published (SHOULD)
 
