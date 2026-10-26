@@ -155,6 +155,7 @@ never consulted.
 ## Fault injection
 
 [ID: testing-platform-fault-injection]
+[LOAD: write-tests]
 
 - Reproduce a fault that depends on the OS, filesystem, locale or
   interpreter with a double at the real call's seam; never wait for the
@@ -169,6 +170,7 @@ never consulted.
 ## Unique resources
 
 [ID: testing-unique-resource-allocation]
+[LOAD: write-tests]
 
 - Allocate a per-test port, directory, database or queue from a
   module-level counter or a fixture, never from a counter on a class other
@@ -177,6 +179,7 @@ never consulted.
 ## Worker leaks
 
 [ID: testing-worker-leak-guard]
+[LOAD: write-tests]
 
 - Assert after every test that no thread, subprocess or server the suite
   started survives it (MUST)

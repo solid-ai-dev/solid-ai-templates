@@ -14,6 +14,8 @@ How a change is reviewed, and how a finding is proven before it is reported.
 
 ## Priority order
 
+[LOAD: review]
+
 Review in this order, most critical first. `templates/core/quality.md`, and
 any language quality template the project carries, is the standard for
 items 2 to 4.
@@ -79,6 +81,8 @@ The order above is by area; weigh each finding separately.
 
 ## Picking up an issue
 
+[LOAD: start-issue]
+
 - Re-read the target for existing coverage before writing anything; an
   issue describes the tree on its filing date
 - Verify everything the issue cites as existing, and run what it proposes
@@ -115,11 +119,15 @@ The order above is by area; weigh each finding separately.
 
 ### From reading
 
+[LOAD: verify-finding]
+
 - [ ] Reproduce the defect before reporting it: run the path
 - [ ] Read a passing test that contradicts the reproduction before blaming
       the code; it may pin a decision
 
 ### From a measurement
+
+[LOAD: verify-finding]
 
 - [ ] The tool measures the rule's unit: bytes are not characters
 - [ ] The tool measured the claimed scope, not a diff, sample or partition;
@@ -133,6 +141,8 @@ The order above is by area; weigh each finding separately.
 
 ### From an extraction
 
+[LOAD: verify-finding]
+
 - [ ] An element reported absent was checked against the raw artifact
 - [ ] Extracted size was compared with the raw artifact, and known elements
       survived the round trip
@@ -140,6 +150,8 @@ The order above is by area; weigh each finding separately.
       extract", never "missing"
 
 ### From a probe
+
+[LOAD: verify-finding]
 
 - [ ] The probe ran under the conditions the finding is about, such as its
       user, credential and environment

@@ -20,6 +20,8 @@ Which documents a project keeps, and how they stay true.
 
 ## Standard documents
 
+[LOAD: write-docs]
+
 - Carry these three in every project (MUST); their layout is the project's
   own, and `templates/core/agents.md` offers a default for the agent files
 
@@ -61,6 +63,8 @@ Which documents a project keeps, and how they stay true.
 
 ## Adopting shared rules
 
+[LOAD: generate-context]
+
 - Treat template rules as candidates; the project chooses what it adopts
 - Adopt a rule when it addresses a named local defect, a requirement or a
   credible material risk; a preventive security control needs no incident
@@ -80,6 +84,11 @@ Which documents a project keeps, and how they stay true.
 
 - Wrap Markdown at the width the project declares, never at one written
   into a rule
+
+### Enforcing the width
+
+[LOAD: add-check]
+
 - Declare the width as the line-length setting in the Markdown linter's
   configuration (MUST); the linter reads no other file, so a width set only
   for editors goes unenforced
@@ -123,6 +132,8 @@ Which documents a project keeps, and how they stay true.
 
 ## Diagrams and assets
 
+[LOAD: write-docs]
+
 - Commit every editable source beside its rendered output; never commit a
   binary-only diagram
 - Give a committed artefact one authority: commit its editable source or
@@ -133,10 +144,14 @@ Which documents a project keeps, and how they stay true.
 
 ## Docs as code
 
+[LOAD: write-docs]
+
 - Keep technical documentation in the repository, in Markdown, under the
   same review as code
 
 ## Generated files
+
+[LOAD: regenerate]
 
 - Start every generated file with a banner naming the tool that wrote it
   and the command that refreshes it (SHOULD)
@@ -151,6 +166,8 @@ Which documents a project keeps, and how they stay true.
   naming what would be discarded (MUST)
 
 ## Output file by agent
+
+[LOAD: generate-context]
 
 | Agent | Context file |
 | --- | --- |

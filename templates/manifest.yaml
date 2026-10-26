@@ -41,7 +41,7 @@ tasks:
   write-docs: Writing or restructuring documentation, a decision record or a diagram
   verify-finding: Reporting a defect, a measurement or a claim, or acting on another agent's finding
   review: Reviewing a pull request or a diff, or judging whether it is ready to merge
-  release: Preparing, tagging or publishing a release, or auditing a project's structure before one
+  release: Preparing, tagging or publishing a release
   generate-context: Generating or regenerating the project's agent context files
 
 base:
