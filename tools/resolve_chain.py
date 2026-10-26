@@ -519,7 +519,11 @@ def _emit(args, core_ids, entries):
         [(path, read_file(path)) for path in files], kinds, declined,
         inline_skills="--inline-skills" in args)
     out_dir = values["--emit"][0]
-    written = emit_context.write(out_dir, emitted, values.get("--mirror", []))
+    try:
+        written = emit_context.write(out_dir, emitted,
+                                     values.get("--mirror", []))
+    except emit_context.EmitError as error:
+        raise ResolveError(f"refused: {error}")
     for rel in written:
         text = emitted[rel]
         print(f"  {rel}: {len(text.splitlines())} lines, "
