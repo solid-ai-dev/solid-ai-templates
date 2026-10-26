@@ -25,6 +25,7 @@ no tool enforces, and almost every template rule is both.
 | A hand-written shape | A private project in daily use keeps a 563-word root file and nine skills of about 7,650 words, each loaded only when its task starts: about 8% of its material is in context per turn |
 | No loading mechanism | A referenced file is read only when the agent decides to open it. Under a reference-only file a consumer's agent never opened its deferred templates in a whole session, and a gate that lived only there was missed (#712) |
 | A loading mechanism | A skill is loaded from its description when a task matches it. That is the mechanism a plain reference lacks; no benchmark round has tested it |
+| Several agents | The skill format was published as an open standard in December 2025, and several coding agents report reading it, most from `.agents/skills/`. That folder is a convention, not part of the standard |
 | Adherence and security | Hybrid adhered to project conventions best of every arm in round 3, and scored highest on the judge's security rows in round 4. Rules that apply on every task are what carry that, and they stay in context |
 
 ## Decision
@@ -86,6 +87,15 @@ that task starts, and leaves out practice a capable agent follows unprompted.
     templates, a referenced rule points to the tool and the configuration
     that enforce it.
 16. **The model's name** — The overview states `Model: root and skills`.
+17. **One skill format** — A skill MUST follow the open Agent Skills format:
+    a folder holding `SKILL.md`, whose frontmatter carries `name` and a
+    `description` naming the task that triggers it. Its body MUST name no
+    agent-specific mechanism.
+18. **One source, mirrored** — Each skill MUST be generated once, under
+    `.agents/skills/<name>/`. Where an agent reads only a folder of its
+    own, such as `.claude/skills/`, the skill is copied there unchanged;
+    a copy MUST NOT be edited by hand, and a change to one is a change to
+    both.
 
 | A rule that... | Goes |
 | -------------- | ---- |
