@@ -22,6 +22,7 @@ tool drives it.
 - Keep deterministic in-process collaborators real
 - Use the real dependency for the boundary an integration test covers; you
   MAY double the unrelated ones
+- Add a regression test for every fixed defect (SHOULD)
 
 ## Coverage
 
