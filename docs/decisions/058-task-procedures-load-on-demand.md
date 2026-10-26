@@ -90,7 +90,7 @@ project the same files.
 
 ## Design
 
-![Where a generated file puts a rule: a template section declares its load. A section with no mark goes in the root file, in context on every turn; a section marked with a task, such as a release, goes in that task's skill, listed in the root file's trigger table; a section marked as checked is referenced with the check that enforces it. A tool builds the root file and the skills from the adopted rules, and the generating agent fills only the project's facts; an agent without skills gets the skills inlined in the root file](../diagrams/task-skills.png)
+![Where a generated file puts a rule: a template section declares its load. A section with no mark goes in the root file, in context on every turn; a section marked with a task, such as a release, goes in that task's skill, listed in the root file's trigger table; a section marked as checked is referenced with the check that enforces it; a section that guards data, credentials or auth carries no directive. A tool builds the root file and the skills from the adopted rules, and the generating agent fills only the project's facts; an agent without skills gets the skills inlined in the root file](../diagrams/task-skills.png)
 
 In the templates:
 
@@ -99,7 +99,7 @@ In the templates:
 | 1 | The load directive | A section MAY carry a load directive under its heading, naming a kind of task, such as `release`, or `check` for a section a check enforces. A section without one loads on every turn |
 | 2 | One vocabulary | The manifest lists the kinds of task, each with the description its skill carries. A load directive names only a listed kind (MUST); a fork MAY add kinds of its own |
 | 3 | One load per section | A section that mixes rules for every turn with a procedure for one task is split, so each section has one load (MUST) |
-| 4 | Security stays | A section whose breaking exposes data, credentials or an unauthenticated path carries no task directive (MUST NOT) |
+| 4 | Security stays | A section whose breaking exposes data, credentials or an unauthenticated path carries no load directive, `check` included (MUST NOT), so its rules are in the root file on every turn even where a check also enforces them |
 | 5 | No unprompted practice | A rule an agent follows unprompted is removed from the template in review, never left out by a generator |
 
 In the generated files:
@@ -157,8 +157,8 @@ inline generates today.
 ## Security
 
 - Protects: a section that guards data, credentials or authentication
-  carries no task directive, so it is in context on every turn and depends
-  on no skill loading.
+  carries no load directive, `check` included, so it is in context on
+  every turn and depends on no skill loading.
 - Exposes: a procedure in a skill whose trigger is missed is not read for
   that task. The trigger table and the kind's description guard it.
 - Trust boundary: a skill is a file in the project's tree, built by the
