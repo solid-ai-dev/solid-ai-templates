@@ -14,6 +14,7 @@ Run it through the resolver:
         [--declined <file>] [--inline-skills] [--mirror <dir>]
 """
 
+import hashlib
 import io
 import os
 import re
@@ -25,9 +26,16 @@ SKILLS_DIR = ".agents/skills"
 ROOT_FILE = "AGENTS.md"
 RULES_HEADING = "## Rules"
 
-# Every file the emitter wrote last time, so a rerun can remove a skill it
-# no longer emits without touching a file it never wrote.
+# Every file the emitter wrote last time, with the hash of what it wrote,
+# so a rerun removes a skill it no longer emits and nothing else: not a
+# file it never wrote, and not one edited since.
 RECORD = ".agents/emitted.txt"
+
+# The first line under `## Rules`, which only the emitter writes. With the
+# record listing the root file, it is what shows a root file is the
+# emitter's to rebuild.
+BUILT_LINE = ("Built by `resolve_chain.py --emit`; change the templates, "
+              "not the rules below.")
 
 BULLET_LINE = re.compile(r"^(\s*)(?:[-*+]|\d+\.)\s")
 ID_TAG = re.compile(r"^\[ID:\s*([^\]]+?)\s*\]$")
@@ -107,15 +115,15 @@ def _blocks(text):
     return out
 
 
-def _overridden(files):
-    """The section IDs some template in the chain overrides."""
-    ids = set()
-    for _, text in files:
-        for line in text.splitlines():
-            match = OVERRIDE_TAG.match(line.strip())
-            if match:
-                ids.add(match.group(1))
-    return ids
+def _overridden(parsed):
+    """The section IDs an adopted override replaces.
+
+    Only a tag line counts, so an example in a fence overrides nothing, and
+    an override the project declined leaves its base section in place.
+    """
+    return {match.group(1)
+            for rows in parsed for row in rows if row["tag"]
+            for match in [OVERRIDE_TAG.match(row["line"].strip())] if match}
 
 
 def _declined(row, path, declined):
@@ -174,23 +182,32 @@ def _units(rows):
 
 def _checked(rows):
     """What a checked section keeps: its headings, its fenced commands, its
-    prose, and every bullet next to a command, which states the command
-    or its pass condition. The other bullets are the rules the check
-    enforces, and the check reports them."""
+    prose, the bullet that introduces a command, and the whole list that
+    follows one, which states its pass condition. The other bullets are
+    the rules the check enforces, and the check reports them.
+
+    A list after a command is kept whole, rules and all: dropping a rule
+    costs nothing the check does not report, and dropping half a pass
+    condition loses what the check means."""
     units = _units(rows)
+    near = set()
+    for i, unit in enumerate(units):
+        if unit["kind"] != "fence":
+            continue
+        j = i - 1
+        while j >= 0 and units[j]["kind"] == "blank":
+            j -= 1
+        if j >= 0 and units[j]["kind"] == "bullet":
+            near.add(j)
+        j = i + 1
+        while j < len(units) and units[j]["kind"] in ("blank", "bullet"):
+            if units[j]["kind"] == "bullet":
+                near.add(j)
+            j += 1
     keep = []
     for i, unit in enumerate(units):
-        if unit["kind"] == "bullet":
-            near = False
-            for step in (-1, 1):
-                j = i + step
-                while 0 <= j < len(units) and units[j]["kind"] == "blank":
-                    j += step
-                if 0 <= j < len(units) and units[j]["kind"] == "fence":
-                    near = True
-            if not near:
-                continue
-        keep.extend(unit["rows"])
+        if unit["kind"] != "bullet" or i in near:
+            keep.extend(unit["rows"])
     return keep
 
 
@@ -225,12 +242,14 @@ def _tidy(lines):
 
 def _place(files, declined):
     """Split the chain into the root file's rows and each kind's rows."""
-    overridden = _overridden(files)
+    parsed = [[row for row in _blocks(text)
+               if not _declined(row, path, declined)]
+              for path, text in files]
+    overridden = _overridden(parsed)
     root, skills = [], {}
-    for path, text in files:
-        rows = [row for row in _blocks(text)
-                if not row["tag"] and row["section"] not in overridden
-                and not _declined(row, path, declined)]
+    for adopted in parsed:
+        rows = [row for row in adopted
+                if not row["tag"] and row["section"] not in overridden]
         i = 0
         while i < len(rows):
             load = rows[i]["load"]
@@ -266,8 +285,8 @@ def build(files, kinds, declined=(), inline_skills=False):
     used = [kind for kind in kinds if kind in skills]
 
     head = [FACTS.rstrip("\n"), ""]
-    rules = [RULES_HEADING, "", "The adopted rules that apply on every task.",
-             ""] + root
+    rules = [RULES_HEADING, "", BUILT_LINE, "",
+             "The adopted rules that apply on every task.", ""] + root
     table = []
     if used and not inline_skills:
         table = ["## Skills", "",
@@ -314,20 +333,52 @@ def _read(path):
         return handle.read()
 
 
-def _keep_facts(previous, emitted):
+def _hash(text):
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _read_record(out_dir):
+    """The previous run's {path: hash}, one tab-separated entry a line."""
+    entries = {}
+    for line in (_read(os.path.join(out_dir, RECORD)) or "").splitlines():
+        digest, sep, rel = line.partition("\t")
+        if sep and rel:
+            entries[rel] = digest
+    return entries
+
+
+def _keep_facts(previous, emitted, recorded):
     """The emitted root file with the facts a previous one filled in.
 
-    The facts are everything above `## Rules`. A previous file without that
-    heading was not built here, and overwriting it would lose it.
+    The facts are everything above `## Rules`. A previous file is the
+    emitter's only when the record lists it and its rules open on the line
+    only the emitter writes; any other file is the project's, and
+    overwriting it would lose it.
     """
     marker = "\n" + RULES_HEADING + "\n"
-    if marker not in "\n" + previous:
-        raise EmitError(f"{ROOT_FILE} exists and has no `{RULES_HEADING}` "
-                        f"heading, so it was not built by --emit; move it "
-                        f"aside, or merge its facts into a fresh build")
+    owned = (ROOT_FILE in recorded
+             and marker + "\n" + BUILT_LINE + "\n" in "\n" + previous)
+    if not owned:
+        raise EmitError(f"{ROOT_FILE} exists and was not built by --emit; "
+                        f"move it aside, or merge its facts into a fresh "
+                        f"build")
     facts = ("\n" + previous).split(marker, 1)[0][1:]
     rules = ("\n" + emitted).split(marker, 1)[1]
     return facts + marker[1:] + rules
+
+
+def _owned_stale(out_dir, rel, digest):
+    """The full path of a recorded file to remove, or None to keep it: it
+    must stay inside the output directory and still hold what was written.
+    """
+    full = os.path.normpath(os.path.join(out_dir, rel))
+    base = os.path.normpath(out_dir)
+    if os.path.isabs(rel) or not full.startswith(base + os.sep):
+        return None
+    current = _read(full) if os.path.isfile(full) else None
+    if current is None or _hash(current) != digest:
+        return None
+    return full
 
 
 def write(out_dir, emitted, mirrors=()):
@@ -335,9 +386,10 @@ def write(out_dir, emitted, mirrors=()):
     facts a previous root file filled in, and remove what a previous run
     wrote that this one does not."""
     files = dict(emitted)
+    recorded = _read_record(out_dir)
     previous = _read(os.path.join(out_dir, ROOT_FILE))
     if previous is not None:
-        files[ROOT_FILE] = _keep_facts(previous, files[ROOT_FILE])
+        files[ROOT_FILE] = _keep_facts(previous, files[ROOT_FILE], recorded)
     targets = {}
     for rel, text in files.items():
         targets[rel] = text
@@ -347,11 +399,11 @@ def write(out_dir, emitted, mirrors=()):
                 targets[copy] = text
 
     record = os.path.join(out_dir, RECORD)
-    stale = set((_read(record) or "").split()) - set(targets)
-    for rel in sorted(stale):
-        full = os.path.join(out_dir, rel)
-        if os.path.isfile(full):
-            os.remove(full)
+    for rel in sorted(set(recorded) - set(targets)):
+        full = _owned_stale(out_dir, rel, recorded[rel])
+        if full is None:
+            continue
+        os.remove(full)
         folder = os.path.dirname(full)
         while folder and os.path.abspath(folder) != os.path.abspath(out_dir):
             if os.path.isdir(folder) and not os.listdir(folder):
@@ -365,5 +417,6 @@ def write(out_dir, emitted, mirrors=()):
             handle.write(text)
     os.makedirs(os.path.dirname(record), exist_ok=True)
     with io.open(record, "w", encoding="utf-8", newline="\n") as handle:
-        handle.write("\n".join(sorted(targets)) + "\n")
+        handle.write("".join(f"{_hash(targets[rel])}\t{rel}\n"
+                             for rel in sorted(targets)))
     return sorted(files)

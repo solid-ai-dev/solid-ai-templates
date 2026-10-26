@@ -2026,11 +2026,14 @@ def check_sys_25():
 # these, and two runs of the real chain under different hash seeds agree.
 
 EMIT_TEMPLATE = (
-    "# Base — Demo\n[ID: base-demo]\n\n## Naming\n\n- Name every turn\n\n"
+    "# Base — Demo\n[ID: base-demo]\n\n## Naming\n[ID: demo-naming]\n\n"
+    "- Name every turn\n\nAn override reads:\n\n```markdown\n"
+    "[OVERRIDE: demo-naming]\n```\n\n"
     "## Releases\n[LOAD: release]\n\n- Tag in the skill\n\n"
     "## Lint\n[LOAD: check]\n\n- Rule the check enforces, wrapped\n"
     "  onto a second line\n\n- Run the linter:\n\n```bash\nruff check .\n"
-    "```\n\n- It passes on exit 0; a warning\n  counts as a failure\n\n"
+    "```\n\n- It passes on exit 0; a warning\n  counts as a failure\n"
+    "- Require violations zero\n\n"
     "## Optional\n\n- Declined rule\n\n"
     "## Render\n[ID: demo-render]\n\n- Overridden rule\n")
 EMIT_STACK = ("# Stack — Demo\n\n## Render\n[OVERRIDE: demo-render]\n\n"
@@ -2050,7 +2053,10 @@ def emit_findings(emitted, inline):
             ("the checked section keeps its command",
              "ruff check ." in root),
             ("the checked section keeps its whole pass condition",
-             "It passes on exit 0; a warning\n  counts as a failure" in root),
+             "It passes on exit 0; a warning\n  counts as a failure" in root
+             and "Require violations zero" in root),
+            ("a fenced override example overrides nothing",
+             "Name every turn" in root),
             ("the checked section's rule is left to its check, whole",
              "Rule the check enforces" not in root
              and "onto a second line" not in root),
@@ -2073,8 +2079,11 @@ def emit_findings(emitted, inline):
 def rewrite_findings(work):
     """What a rerun of the emitter gets wrong about what a project kept."""
     out = os.path.join(work, "rerun")
-    mirror = ".claude/skills"
+    mirror = "my skills"
     emit_write(out, emit_build(EMIT_FILES, EMIT_KINDS), [mirror])
+    unrelated = os.path.join(out, "my")
+    with io.open(unrelated, "w", encoding="utf-8") as handle:
+        handle.write("not the emitter's\n")
     root = os.path.join(out, "AGENTS.md")
     with io.open(root, encoding="utf-8") as handle:
         filled = handle.read().replace("{{owner}}", "Example Org")
@@ -2088,7 +2097,7 @@ def rewrite_findings(work):
     os.makedirs(hand)
     with io.open(os.path.join(hand, "AGENTS.md"), "w",
                  encoding="utf-8") as handle:
-        handle.write("# Hand-written\n")
+        handle.write("# Hand-written\n\n## Rules\n\n- A project policy\n")
     try:
         emit_write(hand, emit_build(EMIT_FILES, EMIT_KINDS))
         refused = False
@@ -2099,8 +2108,9 @@ def rewrite_findings(work):
              not os.path.exists(os.path.join(
                  out, ".agents", "skills", "release"))),
             ("its mirror is removed too",
-             not os.path.exists(os.path.join(out, ".claude", "skills",
-                                             "release"))),
+             not os.path.exists(os.path.join(out, mirror, "release"))),
+            ("a file the emitter never wrote survives",
+             os.path.exists(unrelated)),
             ("a root file the emitter did not build is not overwritten",
              refused)]
     return [label for label, ok in owed if not ok]
@@ -2126,6 +2136,13 @@ def check_sys_26():
         mode = "inline" if inline else "with skills"
         failures.extend(f"  planted, {mode}: {label} fails" for label in got)
     seen.count("planted placements", 2)
+
+    # An override the project declines leaves the section it replaced.
+    root = emit_build(EMIT_FILES, EMIT_KINDS,
+                      ["templates/fixture/stack.md#Render"])["AGENTS.md"]
+    if "Overridden rule" not in root or "Overriding rule" in root:
+        failures.append("  planted: a declined override still replaces its "
+                        "base section")
 
     trees = []
     work = tempfile.mkdtemp(prefix="sait-emit-")
