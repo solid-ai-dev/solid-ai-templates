@@ -24,6 +24,7 @@ py tools/sync_docs.py              # regenerate generated sections
 py tools/sync_docs.py --check      # exit 1 if any is stale
 py tools/resolve_chain.py --roots   # every root a project can pick
 py tools/resolve_chain.py <id>      # one root's resolved file list
+py tools/resolve_chain.py --emit <dir> <root>...   # root file and task skills
 py tests/run.py smoke         # structure and resolution
 py tests/run.py conformance   # the templates' own checks, run here
 py tests/run.py fork_sync     # the change merged into a simulated fork
