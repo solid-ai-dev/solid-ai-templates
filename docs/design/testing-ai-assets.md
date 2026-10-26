@@ -12,7 +12,7 @@ set, runs the old and new asset as the only difference, repeats each run to
 separate the asset's effect from the model's run-to-run noise, and scores
 the outputs with a layered judge that stays honest by calibrating against
 human readings. The conclusion is a checklist any asset change can run, plus
-a hand-off to this library's own measurement, `efficacy-benchmark.md`.
+a hand-off to this library's own measurement, the efficacy benchmark.
 
 ## Question
 
@@ -300,7 +300,7 @@ checklist above and the calibration rules that keep it honest.
 ## Hand-off - the solid-ai-templates measurement
 
 The concrete application of this method to the template library itself is
-`efficacy-benchmark.md` in this directory, the experiment
+the efficacy benchmark in `solid-ai-dev/solid-ai-benchmark`, the experiment
 that was blocked until this generic method concluded. This document hands
 it the design, and the benchmark supplies the parts this one leaves
 generic.

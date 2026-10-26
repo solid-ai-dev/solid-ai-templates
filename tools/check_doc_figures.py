@@ -61,9 +61,8 @@ FENCE = re.compile(r"^\s*```")
 HISTORY = ("CHANGELOG.md", "docs/dev-journal.md", "docs/decisions/",
            "docs/audits/")
 
-# Roots whose numerals are the subject matter, not measurements. A fork
-# carrying the efficacy benchmark keeps generator output under its arms.
-SOURCES = ("templates/", "generated/", "examples/", "tests/efficacy/arms/")
+# Roots whose numerals are the subject matter, not measurements.
+SOURCES = ("templates/", "generated/", "examples/")
 
 
 def figures(lines):

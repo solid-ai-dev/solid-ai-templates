@@ -588,9 +588,11 @@ commit trailer `Fork-merge: ours`. Fork sync then merges it the way a fork
 must, with `git merge -s ours`, moves the fork's templates out of
 upstream's manifest keys into its own, and runs smoke on the result.
 
-The e2e suite and the efficacy benchmark read what the templates generate,
-so they live in the forks with the stacks and the interview (ADR-049).
-Smoke and conformance read the templates themselves.
+The e2e suite reads what the templates generate, so it lives in the forks
+with the stacks and the interview (ADR-049). The efficacy benchmark lives in
+its own repository, `solid-ai-dev/solid-ai-benchmark`, and measures upstream
+and fork refs with one ruler. Smoke and conformance read the templates
+themselves.
 
 See `docs/tests/codification.md` for the ID scheme and `docs/tests/index.md` for the
 full list of specs. Setup, PyYAML included, is in `CONTRIBUTING.md`, "Set up".
