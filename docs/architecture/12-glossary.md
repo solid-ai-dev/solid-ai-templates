@@ -7,7 +7,7 @@
 | Context file | The file an agent reads at startup: `AGENTS.md`, `CLAUDE.md` or an agent's own format |
 | Core tier | The templates seeded into every chain: `core:`, then a fork's `fork_core:` |
 | Declaration block | The target header in a generated file naming its stack, extras and platform |
-| Directive | A tag line a tool reads: `[ID:]`, `[DEPENDS ON:]`, `[EXTEND:]`, `[OVERRIDE:]` |
+| Directive | A tag line a tool reads: `[ID:]`, `[DEPENDS ON:]`, `[EXTEND:]`, `[OVERRIDE:]`, `[LOAD:]` |
 | Extra | An orthogonal template a project picks beside its stack |
 | Fixture | The stack and platform under `templates/fixture/`, test input only |
 | Fork | A GitHub fork of this repository carrying stacks, platforms, process rules and the interview |
@@ -15,6 +15,7 @@
 | Hybrid | A context file that copies in the rules that matter and names the rest as files to read |
 | Inline | A context file that copies in every rule |
 | Interview | A fork's questions an agent asks before generating a context file |
+| Load | Where a heading's rules are delivered: every turn, or in the skill for one kind of task (chapter 8.1) |
 | Layer template | A template under `frontend/` or `backend/` |
 | Manifest | `templates/manifest.yaml`, the dependency graph and single source of truth |
 | Opt-in | A template that reaches a chain only when a stack declares it |
@@ -23,4 +24,5 @@
 | Profile | The context file generated for one project |
 | Root | A template a project picks directly: a stack, a platform or an extra |
 | Stack | A fork's technology-specific template, the main root of a chain |
+| Task kind | A kind of task, such as `release`, that a load directive names and a skill serves; the manifest's `tasks:` lists them |
 | Upstream | This repository |

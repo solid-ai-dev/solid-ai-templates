@@ -10,7 +10,9 @@ from collections import Counter
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
-from resolve_chain import entry_sections, is_fixture
+from resolve_chain import (
+    LOAD_CHECK, entry_sections, is_fixture, load_directives, parse_manifest,
+    task_kinds)
 
 from testkit import ROOT, repository_files, template_files
 from .common import (
@@ -1917,3 +1919,89 @@ def check_sys_24():
             f"  {finding}: a minor adds a section ID only on new content, "
             f"never in front of lines a frozen section holds")
     return seen.failures() + failures, seen.notes() + [basis]
+
+
+# ---------------------------------------------------------------------------
+# SYS-25 -- a load directive names a listed task, in its heading's tags
+# ---------------------------------------------------------------------------
+
+# A section's load directive decides whether its rules are in context on
+# every turn or only during one kind of task. A kind no task lists gives the
+# section to no skill, a directive after a rule governs nothing a reader can
+# see, and a second directive or one under a loaded heading leaves the load
+# ambiguous. A template that guards data, credentials or authentication
+# carries none, so none of its rules depends on a skill loading. Templates
+# carry few directives, so planted texts exercise every failing path on
+# every run.
+
+GUARDED_TEMPLATES = ("templates/security/", "templates/backend/auth.md")
+PLANTED_KINDS = {"release": "Cutting a release"}
+LOAD_CASES = [
+    ("a listed kind", "templates/core/x.md",
+     "# T\n## A\n[ID: a]\n[LOAD: release]\n- rule\n",
+     []),
+    ("the check load", "templates/core/x.md",
+     "# T\n## A\n[LOAD: check]\n- rule\n",
+     []),
+    ("a kind no task lists", "templates/core/x.md",
+     "# T\n## A\n[LOAD: nowhere]\n- rule\n",
+     ["templates/core/x.md:3: names nowhere, which no task lists"]),
+    ("a directive after a rule", "templates/core/x.md",
+     "# T\n## A\n- rule\n[LOAD: release]\n",
+     ["templates/core/x.md:4: sits outside its heading's tags"]),
+    ("two directives under one heading", "templates/core/x.md",
+     "# T\n## A\n[LOAD: release]\n[LOAD: check]\n- rule\n",
+     ["templates/core/x.md:4: a second load for one heading"]),
+    ("a directive under a loaded heading", "templates/core/x.md",
+     "# T\n## A\n[LOAD: release]\n### B\n[LOAD: check]\n- rule\n",
+     ["templates/core/x.md:5: under a heading that loads as release"]),
+    ("a directive in a fence", "templates/core/x.md",
+     "# T\n## A\n```\n[LOAD: nowhere]\n```\n",
+     []),
+    ("a guarded template", "templates/security/x.md",
+     "# T\n## A\n[LOAD: check]\n- rule\n",
+     ["templates/security/x.md:3: a template that guards data, credentials "
+      "or authentication carries no load directive"]),
+]
+
+
+def load_findings(rel, text, kinds):
+    """Each misplaced or unknown load directive in one template."""
+    found = []
+    for d in load_directives(text):
+        where = f"{rel}:{d['line']}"
+        if rel.startswith(GUARDED_TEMPLATES) or rel in GUARDED_TEMPLATES:
+            found.append(f"{where}: a template that guards data, credentials "
+                         f"or authentication carries no load directive")
+        elif not d["placed"]:
+            found.append(f"{where}: sits outside its heading's tags")
+        elif d["second"]:
+            found.append(f"{where}: a second load for one heading")
+        elif d["inside"]:
+            found.append(f"{where}: under a heading that loads as "
+                         f"{d['inside']}")
+        elif d["kind"] != LOAD_CHECK and d["kind"] not in kinds:
+            found.append(f"{where}: names {d['kind']}, which no task lists")
+    return found
+
+
+def check_sys_25():
+    seen = Inspected()
+    failures = []
+    seen.count("planted templates", LOAD_CASES)
+    for label, rel, text, want in LOAD_CASES:
+        got = load_findings(rel, text, PLANTED_KINDS)
+        if got != want:
+            failures.append(f"  planted, {label}: found {got}, owed {want}")
+
+    manifest = os.path.join(ROOT, "templates", "manifest.yaml")
+    kinds = task_kinds(parse_manifest(read(manifest)))
+    seen.count("kinds of task in the manifest", kinds)
+    directives = 0
+    for path in all_template_files():
+        rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
+        text = read(path)
+        directives += len(load_directives(text))
+        failures.extend(f"  {f}" for f in load_findings(rel, text, kinds))
+    seen.count("load directives in the templates", directives, floor=0)
+    return seen.failures() + failures, seen.notes()

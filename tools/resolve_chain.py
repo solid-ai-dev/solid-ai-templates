@@ -48,7 +48,8 @@ GENERATED = ROOT / "generated"
 # ---- minimal YAML parser (shared with sync_docs.py) ----
 
 def parse_manifest(text):
-    """Parse manifest.yaml into {section: [entries]}."""
+    """Parse manifest.yaml into {section: [entries]}, and each task key into
+    {kind: description}."""
     sections = {}
     current_section = None
     current_entry = None
@@ -65,9 +66,17 @@ def parse_manifest(text):
             if key == "version":
                 continue
             current_section = key
-            sections.setdefault(current_section, [])
+            sections.setdefault(current_section,
+                                {} if key in TASK_KEYS else [])
             current_entry = None
             list_key = None
+            continue
+
+        # A task key is a mapping of kind to description, one per line.
+        if current_section in TASK_KEYS and raw_line.startswith(" "):
+            m = re.match(r'^\s+([a-z][a-z0-9-]*):\s+"?(.+?)"?\s*$', raw_line)
+            if m:
+                sections[current_section][m.group(1)] = m.group(2)
             continue
 
         # top-level inline list: core: [a, b, c]
@@ -139,7 +148,12 @@ def parse_manifest(text):
 # The top-level keys that hold something other than template entries. Every
 # other key is a section of entries, so a fork's templates resolve from a key
 # of its own, beside upstream's, without any tool knowing its name.
-NON_ENTRY_KEYS = ("version", "core", "fork_core")
+# The keys that list the kinds of task a load directive may name, each a
+# mapping of kind to the description its skill carries: upstream's `tasks`,
+# then a fork's `fork_tasks`.
+TASK_KEYS = ("tasks", "fork_tasks")
+
+NON_ENTRY_KEYS = ("version", "core", "fork_core") + TASK_KEYS
 
 
 def entry_sections(manifest):
@@ -157,6 +171,71 @@ def core_tier(manifest):
     """
     return list(manifest.get("core") or []) + list(
         manifest.get("fork_core") or [])
+
+
+def task_kinds(manifest):
+    """Every kind of task a load directive may name, with the description its
+    skill carries: upstream's, then a fork's."""
+    kinds = {}
+    for key in TASK_KEYS:
+        kinds.update(manifest.get(key) or {})
+    return kinds
+
+
+# A load directive is one tag line under a heading, naming where the
+# heading's rules load: a kind of task, or `check` for rules a check
+# enforces. A heading without one loads on every turn (spec, chapter 8.1).
+LOAD_CHECK = "check"
+LOAD_LINE = re.compile(r"^\[LOAD:\s*([^\]]*?)\s*\]\s*$")
+TAG_LINE = re.compile(r"^\[[A-Z][A-Z ]*:[^\]]*\]\s*$")
+HEADING_LINE = re.compile(r"^(#{1,6})\s+\S")
+FENCE_LINE = re.compile(r"^\s*(`{3,}|~{3,})")
+
+
+def load_directives(text):
+    """Each load directive in a template, in order, as a dict: `line`, its
+    `kind`, the `heading` line it governs or None, and the findings about
+    its place: `placed` is False after a content line or under no heading,
+    `second` is True for a heading's second directive, and `inside` names
+    the kind an enclosing heading already loads as."""
+    found, stack, in_tags, fence = [], [], False, None
+    for number, line in enumerate(text.splitlines(), start=1):
+        run = FENCE_LINE.match(line)
+        if run:
+            mark = run.group(1)
+            if fence is None:
+                fence = mark
+            elif mark[0] == fence[0] and len(mark) >= len(fence):
+                fence = None
+            in_tags = False
+            continue
+        if fence is not None:
+            continue
+        heading = HEADING_LINE.match(line)
+        if heading:
+            level = len(heading.group(1))
+            while stack and stack[-1]["level"] >= level:
+                stack.pop()
+            stack.append({"level": level, "line": number, "kind": None})
+            in_tags = True
+            continue
+        load = LOAD_LINE.match(line.strip())
+        if load:
+            own = stack[-1] if stack and in_tags else None
+            enclosing = [h["kind"] for h in stack[:-1] if h["kind"]]
+            found.append({
+                "line": number, "kind": load.group(1),
+                "heading": own["line"] if own else None,
+                "placed": own is not None,
+                "second": bool(own and own["kind"]),
+                "inside": enclosing[-1] if enclosing and own else None})
+            if own and not own["kind"]:
+                own["kind"] = load.group(1)
+            continue
+        if not line.strip() or TAG_LINE.match(line.strip()):
+            continue
+        in_tags = False
+    return found
 
 
 def load_manifest():

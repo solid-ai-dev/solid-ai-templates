@@ -24,12 +24,20 @@ A heading may carry several tag lines:
 [ID: section-id]
 [DEPENDS ON: path/to/dep.md, path/to/other.md]
 [EXTEND: parent-id]
+[LOAD: release]
 ```
 
 - `[ID:]` names the section and comes first
 - `[DEPENDS ON:]` declares file-level dependencies; it is metadata, not
   content, and may be split over several lines to keep the width
 - `[EXTEND:]` or `[OVERRIDE:]` declares the relationship to a parent
+- `[LOAD:]` says where the heading's rules load: a kind of task the
+  manifest's `tasks:` lists, such as `release`, or `check` for rules a
+  check enforces. A heading without one loads on every turn, and a
+  heading's subheadings take its load (ADR-058)
+- A heading carries one load at most, among its tags; a template that
+  guards data, credentials or authentication carries none, and SYS-25
+  checks all three
 - A section runs from its tags to the next `[ID:]` or the end of the file,
   and is never empty
 - Shipped IDs are frozen: never removed, renamed or moved to another file
@@ -129,6 +137,7 @@ and deprecate one by naming its replacement (8.8).
 | Manifest schema | The fields the header comment of `templates/manifest.yaml` lists, and their meaning; a minor adds only optional fields | ADR-051 |
 | Core-tier membership | The IDs under `core:`; a new template is reached by declaring it, never by joining the core | ADR-051 |
 | Check exit codes | 0 passes, 1 fails, 3 does not apply | ADR-051 |
+| Task kinds | The kinds under the manifest's `tasks:`, which a load directive names | ADR-058 |
 | Hooks | A shipped hook ID, its direct exit codes, its `not applicable` line and its violation codes | ADR-055 |
 | Hook arguments | The name and default of each argument a consumer writes into its config, such as `--path`, `--forbid` and `--base`; a minor adds only arguments whose default keeps the hook's behaviour | ADR-051, applied to hooks |
 | Fork entry points | The fork-owned module names (8.6), and what upstream reads from them: `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |

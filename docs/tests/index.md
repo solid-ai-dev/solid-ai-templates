@@ -48,6 +48,7 @@ restated in each.
 | `SAIT-SMK-SYS-22-001A` | SMK | P1 | A deprecation names a live replacement |
 | `SAIT-SMK-SYS-23-001A` | SMK | P1 | A hook a template names is shipped and catches its plant |
 | `SAIT-SMK-SYS-24-001A` | SMK | P1 | A new section ID never splits a frozen section |
+| `SAIT-SMK-SYS-25-001A` | SMK | P1 | A load directive names a listed task, in its heading's tags |
 | `SAIT-SMK-TPL-04-001A` | SMK | P1 | All EXTEND and OVERRIDE directives reference existing IDs |
 | `SAIT-INT-TPL-01-001A` | INT | P0 | DEPENDS ON chain assembles a complete rule set |
 | `SAIT-INT-TPL-02-001A` | INT | P1 | EXTEND adds rules without removing base rules |
