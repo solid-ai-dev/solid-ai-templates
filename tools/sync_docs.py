@@ -103,6 +103,35 @@ def _readme_extras(core_ids, entries, stacks):
     return "\n".join(lines)
 
 
+def _spec_context_cost(core_ids, entries, stacks):
+    """Generate the words each root puts in context, per load.
+
+    The emitter places every section by its load, so what a root costs on
+    every turn and what waits in its skills is measured here; a template
+    change that moves either shows in --check (ADR-058).
+    """
+    import emit_context
+    from resolve_chain import (
+        opt_in_roots, parse_manifest, resolve_chain, task_kinds)
+
+    kinds = task_kinds(parse_manifest(io.open(MANIFEST,
+                                               encoding="utf-8").read()))
+    roots = [s["id"] for s in stacks] + opt_in_roots(core_ids, entries,
+                                                      stacks)
+    lines = ["| Root | Every turn, words | Skills | Skill words |",
+             "|------|-------------------|--------|-------------|"]
+    for root in roots:
+        files = resolve_chain(root, core_ids, entries)
+        emitted = emit_context.build(
+            [(f, io.open(ROOT / f, encoding="utf-8").read()) for f in files],
+            kinds)
+        skills = [text for rel, text in emitted.items() if rel != "AGENTS.md"]
+        lines.append("| `%s` | %d | %d | %d |" % (
+            root, len(emitted["AGENTS.md"].split()), len(skills),
+            sum(len(text.split()) for text in skills)))
+    return "\n".join(lines)
+
+
 def _readme_root_counts(core_ids, entries, stacks):
     """Generate the README's measured statement of the root model.
 
@@ -484,6 +513,7 @@ def main():
 
     core_ids, entries, stacks = load_catalogue()
     spec_core_tier = _spec_core_tier(core_ids, entries)
+    context_cost = _spec_context_cost(core_ids, entries, stacks)
     readme_extras = _readme_extras(core_ids, entries, stacks)
     readme_root_counts = _readme_root_counts(core_ids, entries, stacks)
 
@@ -528,6 +558,8 @@ def main():
     # --check passes with nothing checked.
     targets = [
         (spec_doc, spec_blocks, True),
+        (ROOT / "docs" / "architecture" / "08-crosscutting-concepts.md",
+         {"spec-context-cost": context_cost}, True),
         (ROOT / "README.md", readme_blocks, True),
         (ROOT / "templates" / "INTERVIEW.md",
          {"interview-stacks": interview_content}, False),

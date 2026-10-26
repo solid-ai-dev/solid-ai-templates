@@ -124,6 +124,8 @@ Releases up to 2.63.0 are listed in
 
 - A template section can name where its rules load, a task kind or check
   ([#2385])
+- The resolver emits a project's root context file and task skills, the same
+  every run ([#2387])
 - A completion rule says when a task is done and when added work is justified
   ([#2374])
 - Review labels each finding a defect, policy deviation or suggestion; only the
@@ -480,6 +482,7 @@ Releases up to 2.63.0 are listed in
 [#2381]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2381
 [#2385]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2385
 [#2386]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2386
+[#2387]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2387
 
 ## [2.90.0] - 2026-09-12
 

@@ -202,3 +202,51 @@ tier must record it in `tests/smoke/context-tiers.txt` in the same change
   context size and startup design affect latency and quality
 - [template-content-quality.md](../design/template-content-quality.md): the
   measured criteria `tools/score_templates.py` scores
+
+What each root puts in context, as `resolve_chain.py --emit` builds it:
+the root file an agent reads on every turn, and the skills that load only
+when their task starts (ADR-058). The root file counts its fact slots too.
+
+<!-- generated:spec-context-cost -->
+| Root | Every turn, words | Skills | Skill words |
+|------|-------------------|--------|-------------|
+| `backend-api` | 5801 | 11 | 2721 |
+| `backend-auth` | 7853 | 10 | 2101 |
+| `backend-caching` | 5473 | 10 | 2101 |
+| `backend-concurrency` | 5307 | 10 | 2101 |
+| `backend-database` | 5267 | 11 | 2180 |
+| `backend-edge` | 8189 | 10 | 2101 |
+| `backend-errors` | 6706 | 10 | 2101 |
+| `backend-features` | 5318 | 10 | 2101 |
+| `backend-grpc` | 8965 | 11 | 2257 |
+| `backend-http` | 5734 | 10 | 2101 |
+| `backend-jobs` | 5262 | 10 | 2101 |
+| `backend-messaging` | 5544 | 11 | 2195 |
+| `backend-microservices` | 6941 | 11 | 2860 |
+| `backend-monitoring` | 5599 | 10 | 2101 |
+| `backend-observability` | 5346 | 10 | 2101 |
+| `backend-webhooks` | 8726 | 11 | 2195 |
+| `base-agents` | 4868 | 10 | 3194 |
+| `base-cicd` | 5156 | 10 | 2221 |
+| `base-config` | 5330 | 10 | 2131 |
+| `base-containers` | 5209 | 10 | 2201 |
+| `base-data-governance` | 5806 | 10 | 2101 |
+| `base-data-migration` | 5479 | 11 | 2473 |
+| `base-data-modeling` | 5318 | 10 | 2101 |
+| `base-data-quality` | 6073 | 11 | 2150 |
+| `base-deployment` | 5146 | 10 | 2160 |
+| `base-devsecops` | 5454 | 10 | 2101 |
+| `base-docs` | 4852 | 10 | 2101 |
+| `base-embedded-checks` | 6106 | 11 | 4382 |
+| `base-git` | 4852 | 10 | 2101 |
+| `base-measurement` | 5579 | 10 | 2101 |
+| `base-oop` | 5405 | 10 | 2101 |
+| `base-quality` | 4852 | 10 | 2101 |
+| `base-quality-gates` | 6085 | 11 | 4139 |
+| `base-review` | 4852 | 10 | 2101 |
+| `base-security` | 6383 | 10 | 2101 |
+| `base-testing` | 4852 | 10 | 2101 |
+| `frontend-content` | 5247 | 10 | 2101 |
+| `frontend-quality` | 5272 | 10 | 2176 |
+| `frontend-ux` | 5368 | 10 | 2101 |
+<!-- /generated:spec-context-cost -->

@@ -4,12 +4,17 @@
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from collections import Counter
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
+from emit_context import EmitError
+from emit_context import build as emit_build
+from emit_context import write as emit_write
 from resolve_chain import (
     LOAD_CHECK, entry_sections, is_fixture, load_directives, parse_manifest,
     task_kinds)
@@ -2004,4 +2009,180 @@ def check_sys_25():
         directives += len(load_directives(text))
         failures.extend(f"  {f}" for f in load_findings(rel, text, kinds))
     seen.count("load directives in the templates", directives, floor=0)
+    return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-26 -- the emitter places each section by its load, the same every run
+# ---------------------------------------------------------------------------
+
+# The emitter builds a project's root file and skills from its chain, so two
+# projects on the same templates get the same files. A procedure left in the
+# root file costs every turn; a rule moved out of it is one an agent may
+# never read; an overridden rule kept beside its override contradicts it; a
+# rerun that drops filled-in facts or keeps a declined skill undoes the
+# project's own choices; and output that changes between runs is the
+# variance the emitter exists to remove. Planted templates exercise each of
+# these, and two runs of the real chain under different hash seeds agree.
+
+EMIT_TEMPLATE = (
+    "# Base — Demo\n[ID: base-demo]\n\n## Naming\n[ID: demo-naming]\n\n"
+    "- Name every turn\n\nAn override reads:\n\n```markdown\n"
+    "[OVERRIDE: demo-naming]\n```\n\n"
+    "## Releases\n[LOAD: release]\n\n- Tag in the skill\n\n"
+    "## Lint\n[LOAD: check]\n\n- Rule the check enforces, wrapped\n"
+    "  onto a second line\n\n- Run the linter:\n\n```bash\nruff check .\n"
+    "```\n\n- It passes on exit 0; a warning\n  counts as a failure\n"
+    "- Require violations zero\n\n"
+    "## Optional\n\n- Declined rule\n\n"
+    "## Render\n[ID: demo-render]\n\n- Overridden rule\n")
+EMIT_STACK = ("# Stack — Demo\n\n## Render\n[OVERRIDE: demo-render]\n\n"
+              "- Overriding rule\n")
+EMIT_KINDS = {"release": "Preparing a release"}
+EMIT_DECLINED = ["templates/core/demo.md#Optional"]
+EMIT_FILES = [("templates/core/demo.md", EMIT_TEMPLATE),
+              ("templates/fixture/stack.md", EMIT_STACK)]
+
+
+def emit_findings(emitted, inline):
+    """What the planted templates' emitted files get wrong, one per line."""
+    root = emitted.get("AGENTS.md", "")
+    skill = emitted.get(".agents/skills/release/SKILL.md")
+    owed = [("the every-turn rule is in the root file",
+             "Name every turn" in root),
+            ("the checked section keeps its command",
+             "ruff check ." in root),
+            ("the checked section keeps its whole pass condition",
+             "It passes on exit 0; a warning\n  counts as a failure" in root
+             and "Require violations zero" in root),
+            ("a fenced override example overrides nothing",
+             "Name every turn" in root),
+            ("the checked section's rule is left to its check, whole",
+             "Rule the check enforces" not in root
+             and "onto a second line" not in root),
+            ("the overridden rule is replaced",
+             "Overridden rule" not in root and "Overriding rule" in root),
+            ("the declined section is out", "Declined rule" not in root)]
+    if inline:
+        owed += [("the procedure is inlined", "Tag in the skill" in root),
+                 ("no skill file is written", skill is None)]
+    else:
+        owed += [("the procedure is out of the root file",
+                  "Tag in the skill" not in root),
+                 ("the procedure is in its skill",
+                  skill is not None and "Tag in the skill" in skill),
+                 ("the trigger table names the skill",
+                  "| release | Preparing a release |" in root)]
+    return [label for label, ok in owed if not ok]
+
+
+def rewrite_findings(work):
+    """What a rerun of the emitter gets wrong about what a project kept."""
+    out = os.path.join(work, "rerun")
+    mirror = "my skills"
+    emit_write(out, emit_build(EMIT_FILES, EMIT_KINDS), [mirror])
+    unrelated = os.path.join(out, "my")
+    with io.open(unrelated, "w", encoding="utf-8") as handle:
+        handle.write("not the emitter's\n")
+    root = os.path.join(out, "AGENTS.md")
+    with io.open(root, encoding="utf-8") as handle:
+        filled = handle.read().replace("{{owner}}", "Example Org")
+    with io.open(root, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(filled)
+    declined = ["templates/core/demo.md#Releases"]
+    emit_write(out, emit_build(EMIT_FILES, EMIT_KINDS, declined), [mirror])
+    with io.open(root, encoding="utf-8") as handle:
+        rerun = handle.read()
+    hand = os.path.join(work, "hand")
+    os.makedirs(hand)
+    with io.open(os.path.join(hand, "AGENTS.md"), "w",
+                 encoding="utf-8") as handle:
+        handle.write("# Hand-written\n\n## Rules\n\n- A project policy\n")
+    try:
+        emit_write(hand, emit_build(EMIT_FILES, EMIT_KINDS))
+        refused = False
+    except EmitError:
+        refused = True
+
+    # The output directory a project passes most often is `.`.
+    here, dot = os.getcwd(), os.path.join(work, "dot")
+    os.makedirs(dot)
+    try:
+        os.chdir(dot)
+        emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS), [mirror])
+        emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS, declined),
+                   [mirror])
+    finally:
+        os.chdir(here)
+    dot_cleaned = not any(os.path.exists(os.path.join(dot, *parts))
+                          for parts in ((".agents", "skills", "release"),
+                                        (mirror, "release")))
+    owed = [("a filled-in fact survives a rerun", "Example Org" in rerun),
+            ("a declined skill is removed",
+             not os.path.exists(os.path.join(
+                 out, ".agents", "skills", "release"))),
+            ("its mirror is removed too",
+             not os.path.exists(os.path.join(out, mirror, "release"))),
+            ("a file the emitter never wrote survives",
+             os.path.exists(unrelated)),
+            ("a declined skill and its mirror are removed from `.`",
+             dot_cleaned),
+            ("a root file the emitter did not build is not overwritten",
+             refused)]
+    return [label for label, ok in owed if not ok]
+
+
+def emitted_tree(out):
+    """Every emitted file's bytes, keyed by its path under `out`."""
+    tree = {}
+    for folder, _, names in os.walk(out):
+        for name in names:
+            path = os.path.join(folder, name)
+            with io.open(path, "rb") as handle:
+                tree[os.path.relpath(path, out)] = handle.read()
+    return tree
+
+
+def check_sys_26():
+    seen = Inspected()
+    failures = []
+    for inline in (False, True):
+        got = emit_findings(
+            emit_build(EMIT_FILES, EMIT_KINDS, EMIT_DECLINED, inline), inline)
+        mode = "inline" if inline else "with skills"
+        failures.extend(f"  planted, {mode}: {label} fails" for label in got)
+    seen.count("planted placements", 2)
+
+    # An override the project declines leaves the section it replaced.
+    root = emit_build(EMIT_FILES, EMIT_KINDS,
+                      ["templates/fixture/stack.md#Render"])["AGENTS.md"]
+    if "Overridden rule" not in root or "Overriding rule" in root:
+        failures.append("  planted: a declined override still replaces its "
+                        "base section")
+
+    trees = []
+    work = tempfile.mkdtemp(prefix="sait-emit-")
+    try:
+        failures.extend(f"  planted rerun: {label} fails"
+                        for label in rewrite_findings(work))
+        for seed in ("1", "2"):
+            out = os.path.join(work, seed)
+            env = dict(os.environ, PYTHONHASHSEED=seed)
+            proc = subprocess.run(
+                [sys.executable, os.path.join(ROOT, "tools", "resolve_chain.py"),
+                 "--emit", out, "base-quality", "--mirror", ".claude/skills"],
+                capture_output=True, text=True, encoding="utf-8", env=env)
+            if proc.returncode != 0:
+                failures.append(f"  emit exited {proc.returncode}: "
+                                f"{(proc.stdout + proc.stderr).strip()}")
+                return seen.failures() + failures, seen.notes()
+            trees.append(emitted_tree(out))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    seen.count("files emitted for the core chain", trees[0])
+    if trees[0] != trees[1]:
+        differ = sorted(set(trees[0]) ^ set(trees[1]) | {
+            k for k in set(trees[0]) & set(trees[1])
+            if trees[0][k] != trees[1][k]})
+        failures.append(f"  two runs differ in: {', '.join(differ)}")
     return seen.failures() + failures, seen.notes()
