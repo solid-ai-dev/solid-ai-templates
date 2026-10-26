@@ -6,6 +6,8 @@ How a project's agent context files are structured and written.
 
 ## Output files
 
+[LOAD: generate-context]
+
 | File | Role |
 | --- | --- |
 | `AGENTS.md` | The cross-agent file, read by any agent without a native file |
@@ -18,6 +20,8 @@ How a project's agent context files are structured and written.
 - Add an agent's native context file of another name beside the two
 
 ## Choosing a model
+
+[LOAD: generate-context]
 
 | | Inline | Hybrid |
 | --- | --- | --- |
@@ -33,6 +37,8 @@ How a project's agent context files are structured and written.
 
 ## Placing a rule
 
+[LOAD: generate-context]
+
 | Breaking the rule... | A test, linter or CI step enforces it | Nothing enforces it |
 | --- | --- | --- |
 | shows an error | MAY reference | MAY reference |
@@ -43,6 +49,8 @@ How a project's agent context files are structured and written.
 - Reference any other rule by naming the template that holds it (MAY)
 
 ## Quality bar
+
+[LOAD: generate-context]
 
 - Make every line a rule the agent applies on the next turn; no changelog,
   architecture notes or progress log
@@ -73,6 +81,7 @@ not a note.
 ## Required parts
 
 [ID: agents-project-questions]
+[LOAD: generate-context]
 
 - Carry each part, in any order, numbering or naming (MUST): the project's
   identity, structure and commands; the rules it adopts; how a change is
@@ -88,6 +97,8 @@ not a note.
   or skipping any; never paraphrase it into a shorter list (MUST NOT)
 
 ## Inline model
+
+[LOAD: generate-context]
 
 - Inline every rule the project adopts, so the file is self-contained; a
   template rule it has not adopted stays out
@@ -125,6 +136,8 @@ not a note.
 ```
 
 ## Hybrid model
+
+[LOAD: generate-context]
 
 - Inline every rule "Placing a rule" marks MUST inline, and reference the
   templates for the rest
@@ -174,6 +187,8 @@ Key references:
 
 ## Formatting
 
+[LOAD: generate-context]
+
 - Put every command and code sample in a fenced block with a language tag
 - Write rules as bullet lists; avoid prose paragraphs inside rule sections
   (SHOULD)
@@ -181,6 +196,8 @@ Key references:
 - Use Markdown only; no HTML
 
 ## Tone
+
+[LOAD: generate-context]
 
 - Write imperatives: "Use X", "Never do Y", "Always Z"
 - Add explanatory prose only where a rule needs context to be followed

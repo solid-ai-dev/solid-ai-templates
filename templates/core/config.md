@@ -72,6 +72,8 @@ Sources override in this order, highest last:
 
 ## Dependencies
 
+[LOAD: add-dependency]
+
 - Declare every dependency in a manifest, such as `package.json`,
   `pyproject.toml`, `go.mod` or `Cargo.toml`
 - Run with only the declared dependencies installed; never rely on
