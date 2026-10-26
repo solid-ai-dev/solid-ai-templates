@@ -148,6 +148,8 @@ Releases up to 2.63.0 are listed in
 
 ### Changed
 
+- Template sections carry load directives, marking procedures that belong to
+  one kind of task ([#2386])
 - The docs template no longer prefers a text diagram to a drawn one
   ([#2381])
 - The docs are reorganised around an arc42 specification ([#2036],
@@ -474,6 +476,7 @@ Releases up to 2.63.0 are listed in
 [#2374]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2374
 [#2375]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2375
 [#2381]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2381
+[#2386]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2386
 
 ## [2.90.0] - 2026-09-12
 
