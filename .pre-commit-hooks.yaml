@@ -1,5 +1,6 @@
 # The checks the templates prescribe, as pre-commit hooks. A hook ID is
-# frozen once shipped, like a section ID.
+# frozen once shipped, like a section ID. A hook no template prescribes any
+# more keeps running, its name marked deprecated, until the next major.
 #
 # Every hook reads the tracked tree itself, so pre-commit passes it no file
 # names and runs it on every commit. verbose shows a passing hook's
@@ -58,7 +59,7 @@
   verbose: true
 
 - id: check-comment-layout
-  name: Check Python comments sit above what they document
+  name: "Deprecated: check Python comments sit above what they document"
   entry: solid-ai-checks check-comment-layout --pre-commit
   language: python
   pass_filenames: false
@@ -74,7 +75,7 @@
   verbose: true
 
 - id: find-unreferenced-scripts
-  name: Find maintained scripts nothing refers to
+  name: "Deprecated: find maintained scripts nothing refers to"
   entry: solid-ai-checks find-unreferenced-scripts --pre-commit
   language: python
   pass_filenames: false
@@ -82,7 +83,7 @@
   verbose: true
 
 - id: check-heading-numbers
-  name: Check numbered documents for repeated or skipped ordinals
+  name: "Deprecated: check numbered documents for repeated or skipped ordinals"
   entry: solid-ai-checks check-heading-numbers --pre-commit
   language: python
   pass_filenames: false

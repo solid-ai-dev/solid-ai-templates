@@ -237,11 +237,15 @@ Releases up to 2.63.0 are listed in
 
 ### Deprecated
 
+- Three hooks no template prescribes are deprecated: comment layout, unreferenced
+  scripts, heading numbers ([#2369])
 - The reference delivery model; generate inline or hybrid files instead
   ([#1959])
 
 ### Fixed
 
+- Cached personal data follows its source's access and deletion rules instead
+  of being banned ([#2370])
 - The audit trail records that a PII field changed, not its values, so
   deletion leaves no copy ([#2371])
 - The embedded-checks template says its compile check reads Python heredocs
@@ -458,6 +462,8 @@ Releases up to 2.63.0 are listed in
 [#2299]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2299
 [#2335]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2335
 [#2349]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2349
+[#2369]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2369
+[#2370]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2370
 [#2371]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2371
 
 ## [2.90.0] - 2026-09-12
