@@ -105,7 +105,6 @@ Which documents a project keeps, and how they stay true.
 
 ## Writing style
 
-- Use full, grammatically correct sentences; lists are exempt
 - Use bold and italic sparingly: never bold inline code or a whole
   sentence, and use at most one short bold label per list item
 - Code-format only identifiers: file names, paths, environment variables
