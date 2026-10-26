@@ -202,3 +202,51 @@ tier must record it in `tests/smoke/context-tiers.txt` in the same change
   context size and startup design affect latency and quality
 - [template-content-quality.md](../design/template-content-quality.md): the
   measured criteria `tools/score_templates.py` scores
+
+What each root puts in context, as `resolve_chain.py --emit` builds it:
+the root file an agent reads on every turn, and the skills that load only
+when their task starts (ADR-058). The root file counts its fact slots too.
+
+<!-- generated:spec-context-cost -->
+| Root | Every turn, words | Skills | Skill words |
+|------|-------------------|--------|-------------|
+| `backend-api` | 7956 | 0 | 0 |
+| `backend-auth` | 9440 | 0 | 0 |
+| `backend-caching` | 7060 | 0 | 0 |
+| `backend-concurrency` | 6894 | 0 | 0 |
+| `backend-database` | 6887 | 0 | 0 |
+| `backend-edge` | 9776 | 0 | 0 |
+| `backend-errors` | 8293 | 0 | 0 |
+| `backend-features` | 6905 | 0 | 0 |
+| `backend-grpc` | 10656 | 0 | 0 |
+| `backend-http` | 7321 | 0 | 0 |
+| `backend-jobs` | 6849 | 0 | 0 |
+| `backend-messaging` | 7173 | 0 | 0 |
+| `backend-microservices` | 9228 | 0 | 0 |
+| `backend-monitoring` | 7186 | 0 | 0 |
+| `backend-observability` | 6933 | 0 | 0 |
+| `backend-webhooks` | 10355 | 0 | 0 |
+| `base-agents` | 7548 | 0 | 0 |
+| `base-cicd` | 6863 | 0 | 0 |
+| `base-config` | 6947 | 0 | 0 |
+| `base-containers` | 6896 | 0 | 0 |
+| `base-data-governance` | 7393 | 0 | 0 |
+| `base-data-migration` | 7392 | 0 | 0 |
+| `base-data-modeling` | 6905 | 0 | 0 |
+| `base-data-quality` | 7658 | 0 | 0 |
+| `base-deployment` | 6788 | 0 | 0 |
+| `base-devsecops` | 7041 | 0 | 0 |
+| `base-docs` | 6439 | 0 | 0 |
+| `base-embedded-checks` | 9926 | 0 | 0 |
+| `base-git` | 6439 | 0 | 0 |
+| `base-measurement` | 7166 | 0 | 0 |
+| `base-oop` | 6992 | 0 | 0 |
+| `base-quality` | 6439 | 0 | 0 |
+| `base-quality-gates` | 9662 | 0 | 0 |
+| `base-review` | 6439 | 0 | 0 |
+| `base-security` | 7970 | 0 | 0 |
+| `base-testing` | 6439 | 0 | 0 |
+| `frontend-content` | 6834 | 0 | 0 |
+| `frontend-quality` | 6930 | 0 | 0 |
+| `frontend-ux` | 6955 | 0 | 0 |
+<!-- /generated:spec-context-cost -->

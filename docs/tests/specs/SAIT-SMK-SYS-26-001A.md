@@ -68,8 +68,8 @@ to a temporary directory that is removed afterwards)
 
 1. **Procedures kept in the root file.** With the emitter's task branch
    sending rows to the root file, the planted placement with skills fails
-2. **A non-deterministic run.** With the skills table ordered by a set, two
-   runs under different hash seeds differ
+2. **A non-deterministic run.** With the root file opening on a string's
+   hash, which changes with the seed, the two runs differ in `AGENTS.md`
 
 ## Related
 
