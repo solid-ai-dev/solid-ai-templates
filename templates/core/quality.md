@@ -62,8 +62,18 @@ How code is designed, kept clean, swept and checked.
   (SHOULD)
 - Reach a heavy, native or platform-limited dependency through one module
   that owns its import and names the install command when it is missing
+
+### Optional dependencies
+
+[LOAD: add-dependency]
+
 - Where a dependency is optional, run one CI leg without it installed,
   importing the package (MUST)
+
+### Import bans
+
+[LOAD: add-check]
+
 - Declare a directional import ban where one part of the tree must not
   import another (MAY), and check every ban declared
 
@@ -90,6 +100,8 @@ declared.
   the filter, or assert the precondition inside the function
 
 ## Deprecation and renames
+
+[LOAD: deprecate]
 
 - Deprecate a public symbol, naming its replacement, before a later change
   removes it
@@ -198,6 +210,7 @@ stray carriage return, filed `i/-text` with no NUL byte, still fails.
 ## New constraints
 
 [ID: quality-constraint-corpus-sweep]
+[LOAD: add-check]
 
 - Run a new constraint (a rule, a check, a tightened bound, a narrowed
   exemption) against the existing corpus before it merges (MUST)
@@ -237,9 +250,14 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 ## Enforcement
 
 - Enforce these conventions through the gates: editor, pre-commit, CI
+- Merge to `main` only with passing tests
+
+### Generated output
+
+[LOAD: regenerate]
+
 - Make a generator emit output that passes the linters natively; a needed
   `lint --fix` is a generator bug (MUST)
-- Merge to `main` only with passing tests
 
 ## Completion
 

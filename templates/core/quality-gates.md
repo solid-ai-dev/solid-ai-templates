@@ -10,6 +10,7 @@ and at which thresholds, is the project's choice.
 ## Paired checks
 
 [ID: quality-gates-pair-check]
+[LOAD: add-check]
 
 A stated constraint without its check is decorative: a violating artifact
 looks like a clean one.
@@ -35,6 +36,7 @@ the limit, and the check then exits non-zero.
 ## Conventions as tests
 
 [ID: quality-gates-convention-as-test]
+[LOAD: add-check]
 
 - Encode an "if X then Y" convention whose Y is mechanically comparable as
   a test, and name the pair that broke it in the failure
@@ -42,6 +44,7 @@ the limit, and the check then exits non-zero.
 ## Generated-file staleness
 
 [ID: quality-gates-staleness]
+[LOAD: regenerate]
 
 Committed generated artifacts — rendered docs, configs, resolved chains,
 schema output — drift silently without a gate.
@@ -60,6 +63,7 @@ schema output — drift silently without a gate.
 ## Procedure steps
 
 [ID: quality-gates-procedure-steps]
+[LOAD: add-check]
 
 - Audit a procedure step by step, recording against each step the check
   that enforces it, or that nothing does
@@ -70,6 +74,7 @@ schema output — drift silently without a gate.
 ## Tier promotion
 
 [ID: base-quality-gates-tier-promotion]
+[LOAD: fix-defect]
 
 Gated tiers fail the build; ungated ones are spot-checked or verified
 informally.
@@ -87,6 +92,8 @@ informally.
 
 ### Reporting
 
+[LOAD: add-check]
+
 - Run a check in the form it ships before merging the rule
 - Run a check whose subject is the change under review in the environment
   that builds its tree
@@ -102,6 +109,8 @@ informally.
   in the check before working it as a backlog
 
 ### Verdicts and readings
+
+[LOAD: add-check]
 
 - Verify a measurement against an independent check before tuning a gate
   or budget threshold it disagrees with
@@ -128,6 +137,8 @@ informally.
 
 ### Controls
 
+[LOAD: add-check]
+
 - Negative-control a check before merge: plant each break mode, confirm it
   is flagged, and confirm a valid input is not
 - Plant behavioural breaks that keep the interface intact
@@ -144,6 +155,8 @@ informally.
   check is a comparison (SHOULD)
 
 ### Self-match
+
+[LOAD: add-check]
 
 - Test a check whose scan can reach its own source by running it from a
   tree with and without that source
@@ -179,6 +192,11 @@ informally.
 - Run a check after the change it gates, never before
 - Where the check's subject is committed history, run it after committing,
   not after editing
+
+### Writing a timed check
+
+[LOAD: add-check]
+
 - Fix a check that alters its own subject to inspect without mutating
 - State the moment in the pass condition beside the command
 - List "the change is not in the subject yet" among the causes of an empty
@@ -187,6 +205,7 @@ informally.
 ## Check subject
 
 [ID: quality-gates-check-selection]
+[LOAD: add-check]
 
 - Select a check's subject by what is under test — the commit, the ref,
   the artifact name — never by recency or position
@@ -199,6 +218,7 @@ informally.
 ## Gate scope
 
 [ID: quality-gates-scope-agreement]
+[LOAD: add-check]
 
 A gate breaks silently three ways: the formatter walks the wrong files,
 the PR gate skips work, an aggregate job passes on skipped checks.
@@ -285,12 +305,16 @@ clean one and fails on a laptop.
 
 ### Linters
 
+[LOAD: add-check]
+
 - Adopt a linter with its full rule selection and a per-file ignore table
   generated from its own output, never written by hand
 - Pin the linter to a minor range; the table records one version's findings
 - Never add a file to the table, or widen an entry, to make a gate pass
 
 ### Per-slice corpus
+
+[LOAD: add-check]
 
 A gate with no per-file ignore, such as a test that enumerates its own
 corpus, widens that corpus one cleaned slice at a time instead:
@@ -310,6 +334,8 @@ slice 3   ROOTS = ("src", "tests", ...)       tests/ cleaned
   each call site
 
 ### Retiring a freeze
+
+[LOAD: add-check]
 
 - Retire a freeze whose findings are raised where they are fixed in any
   order; cheapest first is a fair heuristic
