@@ -3,6 +3,7 @@
 [DEPENDS ON: templates/backend/http.md]
 
 ## API-first
+[LOAD: change-api]
 - Design API-first (MUST): agree and document the public contract before
   implementation begins (MUST), so client teams work in parallel and the
   API is testable without a frontend
@@ -11,6 +12,7 @@
 
 ## Protocol selection
 [ID: backend-api-protocols]
+[LOAD: change-api]
 
 | Protocol  | Use when                                                                                            |
 |-----------|-----------------------------------------------------------------------------------------------------|
@@ -28,6 +30,7 @@
 - Never use gRPC as the primary interface for browser clients
 
 ## API contract
+[LOAD: change-api]
 - Give every API the machine-readable contract of its kind, even when it
   runs over HTTP (MUST):
   - an OpenAPI specification for REST
@@ -48,6 +51,7 @@
   included; never bump it for a release that leaves the contract unchanged
 
 ## Versioning
+[LOAD: change-api]
 - Keep every API version backward compatible (MUST)
 - Version the API in the URI path prefix: `/v1/`, `/v2/`
 - Start at `v1`; introduce `v2` only when a breaking change is unavoidable
@@ -56,6 +60,7 @@
 - Never version through the media type (MUST NOT)
 
 ## Backward compatibility
+[LOAD: change-api]
 - Release a new API version for every breaking change: a removed or
   renamed response field, a changed field type, a switched auth scheme
 - Treat as breaking, too, a changed verb or path, wire protocol or
@@ -65,6 +70,7 @@
   only the contract revision
 
 ## Deprecation strategy
+[LOAD: deprecate]
 When a breaking change is introduced:
 
 1. Deploy the new version alongside the old one
@@ -86,6 +92,7 @@ When a breaking change is introduced:
   the API service
 
 ## Pagination
+[LOAD: change-api]
 - Paginate every collection endpoint (MUST); never return an unbounded list
 - Use `limit` and `offset` (or cursor-based) pagination
 - Include navigation links or cursors (`next`, `prev`) in the response

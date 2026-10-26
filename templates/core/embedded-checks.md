@@ -9,6 +9,7 @@ files, runbooks, rule templates.
 ## Extraction
 
 [ID: embedded-checks-extraction]
+[LOAD: add-check]
 
 - Never indent a fenced check deeper than its code's first indentation; put
   it flush and point to it from the step
@@ -20,6 +21,8 @@ files, runbooks, rule templates.
 - Extract a check from the committed file and run it before merging its rule
 
 ## Checks
+
+[LOAD: add-check]
 
 - Find every check stated outside a fence; the hook matches whole
   paragraphs, since prose wraps:

@@ -8,6 +8,7 @@ template.
 
 ## Deployment targets
 [ID: base-deployment-targets]
+[LOAD: generate-context]
 
 - Declare each deployment target in the project's context file: cloud,
   hybrid, offline (air-gapped), or another the project names
@@ -61,10 +62,14 @@ template.
 ## Network assumptions
 [ID: base-deployment-network]
 
-- Document network assumptions in the project's context file: which
-  segments reach the internet, and the internal endpoints a service needs
-  (DNS, NTP, registry, CA, OCSP)
 - Route traffic that crosses a network boundary through a defined ingress
   or egress point
 - Keep firewall rules in version control beside the service
 - Make every required endpoint reachable before the service starts
+
+### Recording network assumptions
+[LOAD: generate-context]
+
+- Document network assumptions in the project's context file: which
+  segments reach the internet, and the internal endpoints a service needs
+  (DNS, NTP, registry, CA, OCSP)

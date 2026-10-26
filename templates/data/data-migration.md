@@ -7,6 +7,7 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 
 ## Migration versioning
 [ID: data-migration-versioning]
+[LOAD: migrate-data]
 
 - Give every migration a unique identifier and a fixed position in the
   order of application (MUST)
@@ -21,6 +22,7 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 
 ## Migration structure
 [ID: data-migration-structure]
+[LOAD: migrate-data]
 
 - Make a migration's reversal undo its forward change exactly where
   reversal is possible (MUST)
@@ -41,6 +43,7 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 
 ## Zero-downtime migrations
 [ID: data-migration-zero-downtime]
+[LOAD: migrate-data]
 
 - Prefer the expand-and-contract pattern for breaking changes:
   1. **Expand** — add the new field or table, deploy code that writes
@@ -72,6 +75,7 @@ Covers versioned migrations, bulk transfers, and rollback strategies.
 
 ## Post-migration checks
 [ID: base-testing-data-validation]
+[LOAD: migrate-data]
 
 - Assert, after a bulk migration whose destination keys derive from the
   source, that the written keys equal the keys derived independently from

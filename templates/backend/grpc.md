@@ -8,6 +8,7 @@ file with runtime conventions, project structure, and tooling.
 
 ## Proto design
 [ID: grpc-proto]
+[LOAD: change-api]
 
 - Package all protos under a versioned namespace: `package [org].[service].v1`
 - Keep one proto file per service — do not mix unrelated services in one

@@ -45,6 +45,7 @@
   no mount can shadow, such as `/licenses/`
 
 ## Runtime version coherence
+[LOAD: add-dependency]
 
 The base image pins the runtime version that ships, and the packaging
 floor declares the oldest one supported; a bump that no CI job follows

@@ -95,6 +95,10 @@ detect.
 - When an input to a derived value changes, note that the value will
   change
 - Do not batch unrelated data changes into a single change
+
+### Recording a bulk import
+[LOAD: migrate-data]
+
 - Record the source and method of a bulk import or migration with it
 
 ## Identity and deduplication
