@@ -171,3 +171,13 @@ green stops describing the defect it was written for.
 A `lint --fix` pass at the consumer end hides the generator's
 responsibility, makes every re-emit a noisy diff, and confuses contributors
 who regenerate and see unexplained changes.
+
+## quality-completion
+
+Without a stopping rule an agent keeps improving: an abstraction for a
+second caller that never comes, a refactor of nearby code, a process step
+nobody asked for. Each looks like quality. Together they grow the diff a
+reviewer must read and the risk of breaking what the task never touched.
+The entry-point clause guards the opposite failure, a unit that passes
+while the feature stays unreachable. The 2026-10-24 agent-perspective
+review scored calibration to good enough 6/10 for the missing rule.
