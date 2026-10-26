@@ -43,7 +43,6 @@ template.
 
 ## Artifact registries
 [ID: base-deployment-registries]
-[LOAD: release]
 
 - Sign every deployable artifact and scan it for vulnerabilities before
   promotion to production

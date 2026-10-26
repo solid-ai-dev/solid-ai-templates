@@ -71,8 +71,6 @@ The order above is by area; weigh each finding separately.
 
 ## Structure audit
 
-[LOAD: release]
-
 - Run a structure audit, which checks project completeness rather than
   changed files, after a new project setup, a framework or stack migration,
   a new major layer, and before a release milestone

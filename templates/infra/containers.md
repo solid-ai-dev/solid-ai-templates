@@ -33,7 +33,6 @@
   do not guess
 
 ## Image hygiene
-[LOAD: release]
 
 - Scan all images for vulnerabilities in CI before pushing to a registry
 - Never push an image with **fixable** critical or high vulnerabilities
