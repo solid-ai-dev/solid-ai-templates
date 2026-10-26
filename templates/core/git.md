@@ -55,10 +55,17 @@ How changes are committed, reviewed, verified and merged.
 - Never force-push, including with `--force-with-lease` (MUST NOT)
 - Bring a branch up to date by merging the base into it; never rebase and
   force-push
+
+### Regenerating after a merge
+
+[LOAD: regenerate]
+
 - Regenerate derived artifacts and re-run the staleness comparison after
   every such merge, and stage what they produce
 
 ## Regenerated artifacts
+
+[LOAD: regenerate]
 
 - Regenerate a derived artifact in the change that edits its source, and
   stage both together (MUST)
