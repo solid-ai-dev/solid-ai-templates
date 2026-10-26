@@ -18,10 +18,31 @@
 # Every top-level list of entries is a section, so a fork keeps its own
 # templates under a key of its own. `core` is upstream's core tier; a fork
 # adds to it under `fork_core`, which every chain takes after `core`.
+#
+# `tasks` maps each kind of task a section's load directive may name to the
+# description its skill carries, which an agent matches to load the skill
+# (docs/architecture/08-crosscutting-concepts.md, 8.1). A fork adds kinds
+# under `fork_tasks`.
 
 version: "1.0"
 
 core: [base-quality, base-git, base-docs, base-testing, base-review]
+
+tasks:
+  start-issue: Starting work on an issue, a ticket or a bug report
+  fix-defect: Fixing a reported defect, from reproducing it to proving the fix
+  write-tests: Writing or changing tests, fixtures or assertions
+  add-check: Adding or tightening a check, such as a linter rule, a CI step, a hook or a threshold
+  add-dependency: Adding, upgrading or removing a dependency
+  regenerate: Editing a generated file's source, writing a generator, or merging the base branch into a branch that carries generated files
+  change-api: Adding or changing an endpoint, a field, an error response or the API contract
+  deprecate: Deprecating, renaming or removing a public name, an endpoint or a template
+  migrate-data: Writing or running a schema migration, a data fix or a backfill
+  write-docs: Writing or restructuring documentation, a decision record or a diagram
+  verify-finding: Reporting a defect, a measurement or a claim, or acting on another agent's finding
+  review: Reviewing a pull request or a diff, or judging whether it is ready to merge
+  release: Preparing, tagging or publishing a release, or auditing a project's structure before one
+  generate-context: Generating or regenerating the project's agent context files
 
 base:
   - id: base-git

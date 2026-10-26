@@ -450,7 +450,7 @@ def check_tpl_08():
 def check_tpl_09():
     failures = []
     seen = Inspected()
-    meta_pattern = re.compile(r'^\[(DEPENDS ON|EXTEND|OVERRIDE):')
+    meta_pattern = re.compile(r'^\[(DEPENDS ON|EXTEND|OVERRIDE|LOAD):')
     next_id_pattern = re.compile(r'^\s*\[ID:')
 
     sections = 0
@@ -470,7 +470,7 @@ def check_tpl_09():
             sections += 1
 
             # Check for any non-blank content before the next [ID:]
-            # tag. Skip metadata lines ([DEPENDS ON:], [EXTEND:],
+            # tag. Skip metadata lines ([DEPENDS ON:], [EXTEND:], [LOAD:],
             # [OVERRIDE:]) that accompany this section's [ID:].
             # Sub-headings count as content.
             has_content = False

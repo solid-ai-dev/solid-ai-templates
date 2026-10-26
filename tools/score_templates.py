@@ -112,7 +112,7 @@ SUBJECT_KEYWORD = frozenset("MUST SHOULD SHALL MAY".split())
 # ...") names the rule; the instruction starts after it.
 RULE_LABEL = re.compile(r"^(?:\*\*[^*]+\*\*|`[^`]+`)\s*(?::|—|-)\s+")
 
-DIRECTIVE_LINE = re.compile(r"^\[(?:ID|EXTEND|OVERRIDE|DEPENDS ON)\b")
+DIRECTIVE_LINE = re.compile(r"^\[(?:ID|EXTEND|OVERRIDE|DEPENDS ON|LOAD)\b")
 BULLET = re.compile(r"^(\s*)(?:[-*+]|\d+\.)\s+(.*)$")
 FENCE = re.compile(r"^\s*(```|~~~)")
 
