@@ -230,10 +230,10 @@ when their task starts (ADR-058). The root file counts its fact slots too.
 | `base-cicd` | 5156 | 10 | 2221 |
 | `base-config` | 5330 | 10 | 2131 |
 | `base-containers` | 5209 | 10 | 2201 |
-| `base-data-governance` | 5806 | 10 | 2101 |
-| `base-data-migration` | 5479 | 11 | 2473 |
-| `base-data-modeling` | 5318 | 10 | 2101 |
-| `base-data-quality` | 6073 | 11 | 2150 |
+| `base-data-governance` | 5765 | 10 | 2101 |
+| `base-data-migration` | 5438 | 11 | 2473 |
+| `base-data-modeling` | 5277 | 10 | 2101 |
+| `base-data-quality` | 6032 | 11 | 2150 |
 | `base-deployment` | 5146 | 10 | 2160 |
 | `base-devsecops` | 5454 | 10 | 2101 |
 | `base-docs` | 4852 | 10 | 2101 |
@@ -248,5 +248,5 @@ when their task starts (ADR-058). The root file counts its fact slots too.
 | `base-testing` | 4852 | 10 | 2101 |
 | `frontend-content` | 5247 | 10 | 2101 |
 | `frontend-quality` | 5272 | 10 | 2176 |
-| `frontend-ux` | 5368 | 10 | 2101 |
+| `frontend-ux` | 5354 | 10 | 2101 |
 <!-- /generated:spec-context-cost -->

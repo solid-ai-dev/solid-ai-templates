@@ -71,8 +71,6 @@ A feature is not complete until:
   component that duplicates one of its patterns
 - Take design tokens (colours, spacing, typography, radii, breakpoints)
   from the design system (MUST); never hardcode a visual value
-- Build UI as a hierarchy of reusable, self-contained components, never a
-  monolithic view
 
 ## Browser support
 
