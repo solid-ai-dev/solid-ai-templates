@@ -12,7 +12,9 @@ from collections import Counter
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
+from emit_context import EmitError
 from emit_context import build as emit_build
+from emit_context import write as emit_write
 from resolve_chain import (
     LOAD_CHECK, entry_sections, is_fixture, load_directives, parse_manifest,
     task_kinds)
@@ -2017,29 +2019,43 @@ def check_sys_25():
 # The emitter builds a project's root file and skills from its chain, so two
 # projects on the same templates get the same files. A procedure left in the
 # root file costs every turn; a rule moved out of it is one an agent may
-# never read; and output that changes between runs is the variance the
-# emitter exists to remove. A planted template exercises each placement, and
-# two runs of the real chain under different hash seeds must agree.
+# never read; an overridden rule kept beside its override contradicts it; a
+# rerun that drops filled-in facts or keeps a declined skill undoes the
+# project's own choices; and output that changes between runs is the
+# variance the emitter exists to remove. Planted templates exercise each of
+# these, and two runs of the real chain under different hash seeds agree.
 
 EMIT_TEMPLATE = (
     "# Base — Demo\n[ID: base-demo]\n\n## Naming\n\n- Name every turn\n\n"
     "## Releases\n[LOAD: release]\n\n- Tag in the skill\n\n"
-    "## Lint\n[LOAD: check]\n\nRun it:\n\n```bash\nruff check .\n```\n\n"
-    "- Rule the check enforces\n\n## Optional\n\n- Declined rule\n")
+    "## Lint\n[LOAD: check]\n\n- Rule the check enforces, wrapped\n"
+    "  onto a second line\n\n- Run the linter:\n\n```bash\nruff check .\n"
+    "```\n\n- It passes on exit 0; a warning\n  counts as a failure\n\n"
+    "## Optional\n\n- Declined rule\n\n"
+    "## Render\n[ID: demo-render]\n\n- Overridden rule\n")
+EMIT_STACK = ("# Stack — Demo\n\n## Render\n[OVERRIDE: demo-render]\n\n"
+              "- Overriding rule\n")
 EMIT_KINDS = {"release": "Preparing a release"}
 EMIT_DECLINED = ["templates/core/demo.md#Optional"]
+EMIT_FILES = [("templates/core/demo.md", EMIT_TEMPLATE),
+              ("templates/fixture/stack.md", EMIT_STACK)]
 
 
 def emit_findings(emitted, inline):
-    """What the planted template's emitted files get wrong, one per line."""
+    """What the planted templates' emitted files get wrong, one per line."""
     root = emitted.get("AGENTS.md", "")
     skill = emitted.get(".agents/skills/release/SKILL.md")
     owed = [("the every-turn rule is in the root file",
              "Name every turn" in root),
             ("the checked section keeps its command",
              "ruff check ." in root),
-            ("the checked section's rule is left to its check",
-             "Rule the check enforces" not in root),
+            ("the checked section keeps its whole pass condition",
+             "It passes on exit 0; a warning\n  counts as a failure" in root),
+            ("the checked section's rule is left to its check, whole",
+             "Rule the check enforces" not in root
+             and "onto a second line" not in root),
+            ("the overridden rule is replaced",
+             "Overridden rule" not in root and "Overriding rule" in root),
             ("the declined section is out", "Declined rule" not in root)]
     if inline:
         owed += [("the procedure is inlined", "Tag in the skill" in root),
@@ -2051,6 +2067,42 @@ def emit_findings(emitted, inline):
                   skill is not None and "Tag in the skill" in skill),
                  ("the trigger table names the skill",
                   "| release | Preparing a release |" in root)]
+    return [label for label, ok in owed if not ok]
+
+
+def rewrite_findings(work):
+    """What a rerun of the emitter gets wrong about what a project kept."""
+    out = os.path.join(work, "rerun")
+    mirror = ".claude/skills"
+    emit_write(out, emit_build(EMIT_FILES, EMIT_KINDS), [mirror])
+    root = os.path.join(out, "AGENTS.md")
+    with io.open(root, encoding="utf-8") as handle:
+        filled = handle.read().replace("{{owner}}", "Example Org")
+    with io.open(root, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(filled)
+    declined = ["templates/core/demo.md#Releases"]
+    emit_write(out, emit_build(EMIT_FILES, EMIT_KINDS, declined), [mirror])
+    with io.open(root, encoding="utf-8") as handle:
+        rerun = handle.read()
+    hand = os.path.join(work, "hand")
+    os.makedirs(hand)
+    with io.open(os.path.join(hand, "AGENTS.md"), "w",
+                 encoding="utf-8") as handle:
+        handle.write("# Hand-written\n")
+    try:
+        emit_write(hand, emit_build(EMIT_FILES, EMIT_KINDS))
+        refused = False
+    except EmitError:
+        refused = True
+    owed = [("a filled-in fact survives a rerun", "Example Org" in rerun),
+            ("a declined skill is removed",
+             not os.path.exists(os.path.join(
+                 out, ".agents", "skills", "release"))),
+            ("its mirror is removed too",
+             not os.path.exists(os.path.join(out, ".claude", "skills",
+                                             "release"))),
+            ("a root file the emitter did not build is not overwritten",
+             refused)]
     return [label for label, ok in owed if not ok]
 
 
@@ -2068,10 +2120,9 @@ def emitted_tree(out):
 def check_sys_26():
     seen = Inspected()
     failures = []
-    files = [("templates/core/demo.md", EMIT_TEMPLATE)]
     for inline in (False, True):
         got = emit_findings(
-            emit_build(files, EMIT_KINDS, EMIT_DECLINED, inline), inline)
+            emit_build(EMIT_FILES, EMIT_KINDS, EMIT_DECLINED, inline), inline)
         mode = "inline" if inline else "with skills"
         failures.extend(f"  planted, {mode}: {label} fails" for label in got)
     seen.count("planted placements", 2)
@@ -2079,6 +2130,8 @@ def check_sys_26():
     trees = []
     work = tempfile.mkdtemp(prefix="sait-emit-")
     try:
+        failures.extend(f"  planted rerun: {label} fails"
+                        for label in rewrite_findings(work))
         for seed in ("1", "2"):
             out = os.path.join(work, seed)
             env = dict(os.environ, PYTHONHASHSEED=seed)
