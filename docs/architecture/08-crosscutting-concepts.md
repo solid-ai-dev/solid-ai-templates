@@ -212,7 +212,7 @@ when their task starts (ADR-058). The root file counts its fact slots too.
 |------|-------------------|--------|-------------|
 | `backend-api` | 5801 | 11 | 2721 |
 | `backend-auth` | 7853 | 10 | 2101 |
-| `backend-caching` | 5473 | 10 | 2101 |
+| `backend-caching` | 5460 | 10 | 2101 |
 | `backend-concurrency` | 5307 | 10 | 2101 |
 | `backend-database` | 5267 | 11 | 2180 |
 | `backend-edge` | 8189 | 10 | 2101 |
@@ -220,12 +220,12 @@ when their task starts (ADR-058). The root file counts its fact slots too.
 | `backend-features` | 5318 | 10 | 2101 |
 | `backend-grpc` | 8965 | 11 | 2257 |
 | `backend-http` | 5734 | 10 | 2101 |
-| `backend-jobs` | 5262 | 10 | 2101 |
-| `backend-messaging` | 5544 | 11 | 2195 |
-| `backend-microservices` | 6941 | 11 | 2860 |
+| `backend-jobs` | 5240 | 10 | 2101 |
+| `backend-messaging` | 5526 | 11 | 2195 |
+| `backend-microservices` | 6923 | 11 | 2860 |
 | `backend-monitoring` | 5599 | 10 | 2101 |
 | `backend-observability` | 5346 | 10 | 2101 |
-| `backend-webhooks` | 8726 | 11 | 2195 |
+| `backend-webhooks` | 8708 | 11 | 2195 |
 | `base-agents` | 4868 | 10 | 3194 |
 | `base-cicd` | 5156 | 10 | 2221 |
 | `base-config` | 5330 | 10 | 2131 |
