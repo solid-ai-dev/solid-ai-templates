@@ -22,7 +22,6 @@ tool drives it.
 - Keep deterministic in-process collaborators real
 - Use the real dependency for the boundary an integration test covers; you
   MAY double the unrelated ones
-- Add a regression test for every fixed defect (SHOULD)
 
 ## Coverage
 
@@ -53,7 +52,6 @@ tool drives it.
 [ID: base-testing-general]
 
 - Test behaviour, not implementation details
-- Keep each test independent, with no shared mutable state
 - Set or clear every environment variable a test depends on, in that test;
   never rely on the ambient process state
 - Treat a test that passes or fails by run order as an isolation bug
