@@ -25,6 +25,7 @@
   query per row in a loop (N+1)
 
 ## Indexing
+[LOAD: migrate-data]
 
 - Index every foreign key column — not every engine does so automatically
 - Add composite indexes for common multi-column filter + sort combinations
