@@ -49,6 +49,8 @@ that task starts, and leaves out practice a capable agent follows unprompted.
 
 ## Design
 
+![Where a generated file puts a rule: a project fact or a guard on data, credentials or auth goes in the root file; a rule a test, linter or CI step enforces is referenced; a rule followed unprompted and never seen broken is left out; a rule for every task goes in the root file, and one for one kind of task goes in that task's skill, listed in the trigger table. The root file is in context every turn, a skill loads when a task matches its description, and an agent without skills gets the procedures inlined](../diagrams/task-skills.png)
+
 1. **The floor** — Generation MUST NOT produce a file that delivers its
    rules by reference alone.
 2. **Always in context** — The root file MUST hold the project's facts and
