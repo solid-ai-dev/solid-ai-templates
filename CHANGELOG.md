@@ -124,6 +124,8 @@ Releases up to 2.63.0 are listed in
 
 - A completion rule says when a task is done and when added work is justified
   ([#2374])
+- Review labels each finding a defect, policy deviation or suggestion; only the
+  first two block ([#2375])
 - A fork keeps its own templates apart from upstream's ([#1970])
 - A replaced template can be marked deprecated, with its successor ([#1984])
 - A guide for moving a 2.x project or fork to 3.0 ([#1983])
@@ -468,6 +470,7 @@ Releases up to 2.63.0 are listed in
 [#2370]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2370
 [#2371]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2371
 [#2374]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2374
+[#2375]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2375
 
 ## [2.90.0] - 2026-09-12
 
