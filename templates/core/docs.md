@@ -123,7 +123,6 @@ Which documents a project keeps, and how they stay true.
 
 ## Diagrams and assets
 
-- Prefer a diagram written as text, such as Mermaid, to a drawn one
 - Commit every editable source beside its rendered output; never commit a
   binary-only diagram
 - Give a committed artefact one authority: commit its editable source or

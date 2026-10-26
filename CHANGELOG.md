@@ -148,6 +148,8 @@ Releases up to 2.63.0 are listed in
 
 ### Changed
 
+- The docs template no longer prefers a text diagram to a drawn one
+  ([#2381])
 - The docs are reorganised around an arc42 specification ([#2036],
   [#2037])
 - The wiki pages are removed ([#2039])
@@ -471,6 +473,7 @@ Releases up to 2.63.0 are listed in
 [#2371]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2371
 [#2374]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2374
 [#2375]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2375
+[#2381]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2381
 
 ## [2.90.0] - 2026-09-12
 
