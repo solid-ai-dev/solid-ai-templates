@@ -69,6 +69,23 @@ that task starts, and leaves out practice a capable agent follows unprompted.
    referenced rather than inlined.
 9. **Length** — The generator MUST report the root file's line and word
    count. This record sets no size limit.
+10. **Every task or one kind** — An obligation that holds for every change,
+    such as testing what changed, goes in the root file. The technique for
+    meeting it, such as how to isolate a test, goes in the skill for the
+    task that uses it.
+11. **One home** — A rule MUST sit in one place: the root file or one skill.
+    A skill MAY point to a root-file rule, never restate it.
+12. **Group procedures** — A skill MUST cover one kind of task, never a
+    single rule; a one-line procedure joins the skill for its task.
+13. **Left out means left out** — A rule rule 7 leaves out goes in no skill
+    either.
+14. **Checks by command** — The root file and every skill MUST state a
+    check by its command and pass condition, never by copying a script
+    body.
+15. **No templates in the tree** — Where the project does not vendor the
+    templates, a referenced rule points to the tool and the configuration
+    that enforce it.
+16. **The model's name** — The overview states `Model: root and skills`.
 
 | A rule that... | Goes |
 | -------------- | ---- |
@@ -98,7 +115,7 @@ that task starts, and leaves out practice a capable agent follows unprompted.
 | The four 2026-10-26 files are regenerated under this record and their counts recorded beside the baseline | #2376 |
 | The interview in the forks applies the placement table | fork |
 | A benchmark round compares root file plus skills with hybrid and with no file. If it is worse than hybrid on adherence or on the judge's security and data-protection rows, this record is reopened | fork |
-| Which rules count as unprompted practice is a generator's judgement until a round measures it | — |
+| Which rules count as unprompted practice is a generator's judgement until a round measures it. Two generators given the same rules on 2026-10-26 put 2,437 and 2,198 words in their root files, the larger for the smaller project | #2376 |
 
 ## Compatibility
 
