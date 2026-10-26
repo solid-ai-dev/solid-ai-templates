@@ -61,17 +61,19 @@ to a temporary directory that is removed afterwards)
 ### Assertions
 
 1. Assert the every-turn rule is in the root file in both modes
-2. Assert the checked section keeps its command and its bullet-form pass
-   condition with its wrapped line, and drops its rule with its wrapped
-   line
-3. Assert the overridden rule is absent and its override present, and the
-   declined section is absent
+2. Assert the checked section keeps its command and the whole list after
+   it, wrapped lines included, and drops its rule with its wrapped line
+3. Assert the overridden rule is absent and its override present, the
+   declined section is absent, an override shown in a fence overrides
+   nothing, and a declined override leaves its base section
 4. Assert, with skills, the procedure is in its skill and the trigger
    table, and not in the root file
 5. Assert, inlined, the procedure is in the root file and no skill file is
    written
 6. Assert the rerun keeps the filled-in fact, removes the declined skill
-   and its mirror, and refuses the hand-written root file
+   and its mirror (a folder named with a space), leaves a file it never
+   wrote, and refuses a hand-written root file that has a `## Rules`
+   heading
 7. Assert the two runs write the same files with the same bytes
 
 ### Negative controls
@@ -83,7 +85,13 @@ to a temporary directory that is removed afterwards)
 3. **Facts not kept.** With the previous root file's facts not carried
    over, the rerun fails on the filled-in fact and on the hand-written
    file
-4. **A non-deterministic run.** With the root file opening on a string's
+4. **Declines applied after overrides.** The declined override still
+   replaces its base section, and the planted case fails
+5. **Ownership read from the heading.** The hand-written root file is
+   overwritten, and the rerun case fails
+6. **Fenced tags read.** The fenced example suppresses the section, and
+   the every-turn rule goes missing
+7. **A non-deterministic run.** With the root file opening on a string's
    hash, which changes with the seed, the two runs differ in `AGENTS.md`
 
 ## Related
