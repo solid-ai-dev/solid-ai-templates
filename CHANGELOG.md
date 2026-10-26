@@ -242,6 +242,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- Cached personal data follows its source's access and deletion rules instead
+  of being banned ([#2370])
 - The embedded-checks template says its compile check reads Python heredocs
   only, so not applicable is no pass ([#2361])
 - Webhook rules hold for any provider: any credential, not only a signature,
@@ -456,6 +458,7 @@ Releases up to 2.63.0 are listed in
 [#2299]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2299
 [#2335]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2335
 [#2349]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2349
+[#2370]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2370
 
 ## [2.90.0] - 2026-09-12
 
