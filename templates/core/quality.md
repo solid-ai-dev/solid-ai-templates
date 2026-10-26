@@ -28,10 +28,6 @@ How code is designed, kept clean, swept and checked.
 - Name a function with a verb, a class or module with a noun, and a boolean
   with `is`, `has` or `can`
 - Rename a name that needs a comment to explain it
-- Name a function so a call site reads without its body
-- Use a single-letter name only for a loop counter or an ecosystem
-  convention such as `err` or `e`
-- Abbreviate only what the domain abbreviates universally (`url`, `id`)
 - Use the same name for the same concept in every module
 - Name a public enum member, CLI flag or result discriminator for the
   capability it offers, never the library behind it: `Transport.HEADED`,
@@ -41,7 +37,6 @@ How code is designed, kept clean, swept and checked.
 
 - Keep cognitive complexity at or under 15 per function
 - Nest at most three levels; use guard clauses and early returns
-- Prefer a positive condition (`if is_enabled`) to a negated one
 - Replace a boolean flag that selects behaviour with an enum or two named
   functions
 - Name every magic number and magic string as a constant

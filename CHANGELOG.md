@@ -152,6 +152,8 @@ Releases up to 2.63.0 are listed in
 
 ### Changed
 
+- Templates drop fourteen rules capable agents follow unprompted, such as generic
+  naming advice ([#2389])
 - Template sections carry load directives, marking procedures that belong to
   one kind of task ([#2386])
 - The docs template no longer prefers a text diagram to a drawn one
@@ -483,6 +485,7 @@ Releases up to 2.63.0 are listed in
 [#2385]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2385
 [#2386]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2386
 [#2387]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2387
+[#2389]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2389
 
 ## [2.90.0] - 2026-09-12
 

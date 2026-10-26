@@ -21,8 +21,6 @@ Apply SOLID at the class, module and service level:
 
 - Prefer composition over inheritance; inherit only for a true is-a
   relationship
-- Encapsulate state and implementation; expose behaviour through a public
-  interface
 - Treat a hierarchy deeper than two levels as a signal to refactor toward
   composition
 - Model a closed type family, every variant known when the type is

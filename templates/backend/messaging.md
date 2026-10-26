@@ -10,8 +10,6 @@ Applies regardless of message broker (Kafka, RabbitMQ, SQS, or equivalent).
 - Use messaging for workloads that must survive producer restarts —
   fire-and-forget with durability
 - Use messaging to decouple services that scale independently
-- Do NOT use messaging when the caller needs a synchronous result — use HTTP or
-  gRPC instead
 - Do NOT replace a simple job queue within one service with a broker
 
 ## Producer rules
