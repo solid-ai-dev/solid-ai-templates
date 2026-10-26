@@ -2103,6 +2103,20 @@ def rewrite_findings(work):
         refused = False
     except EmitError:
         refused = True
+
+    # The output directory a project passes most often is `.`.
+    here, dot = os.getcwd(), os.path.join(work, "dot")
+    os.makedirs(dot)
+    try:
+        os.chdir(dot)
+        emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS), [mirror])
+        emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS, declined),
+                   [mirror])
+    finally:
+        os.chdir(here)
+    dot_cleaned = not any(os.path.exists(os.path.join(dot, *parts))
+                          for parts in ((".agents", "skills", "release"),
+                                        (mirror, "release")))
     owed = [("a filled-in fact survives a rerun", "Example Org" in rerun),
             ("a declined skill is removed",
              not os.path.exists(os.path.join(
@@ -2111,6 +2125,8 @@ def rewrite_findings(work):
              not os.path.exists(os.path.join(out, mirror, "release"))),
             ("a file the emitter never wrote survives",
              os.path.exists(unrelated)),
+            ("a declined skill and its mirror are removed from `.`",
+             dot_cleaned),
             ("a root file the emitter did not build is not overwritten",
              refused)]
     return [label for label, ok in owed if not ok]

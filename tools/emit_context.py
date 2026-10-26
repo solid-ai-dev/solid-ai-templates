@@ -371,9 +371,11 @@ def _owned_stale(out_dir, rel, digest):
     """The full path of a recorded file to remove, or None to keep it: it
     must stay inside the output directory and still hold what was written.
     """
-    full = os.path.normpath(os.path.join(out_dir, rel))
-    base = os.path.normpath(out_dir)
-    if os.path.isabs(rel) or not full.startswith(base + os.sep):
+    # Absolute on both sides, so `.` contains `./x` as any folder contains
+    # its files.
+    full = os.path.abspath(os.path.join(out_dir, rel))
+    base = os.path.abspath(out_dir)
+    if os.path.isabs(rel) or not full.startswith(base.rstrip(os.sep) + os.sep):
         return None
     current = _read(full) if os.path.isfile(full) else None
     if current is None or _hash(current) != digest:
