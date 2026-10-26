@@ -33,6 +33,7 @@
   do not guess
 
 ## Image hygiene
+[LOAD: release]
 
 - Scan all images for vulnerabilities in CI before pushing to a registry
 - Never push an image with **fixable** critical or high vulnerabilities
@@ -45,6 +46,7 @@
   no mount can shadow, such as `/licenses/`
 
 ## Runtime version coherence
+[LOAD: add-dependency]
 
 The base image pins the runtime version that ships, and the packaging
 floor declares the oldest one supported; a bump that no CI job follows

@@ -36,11 +36,15 @@ Rules:
 
 ## Linting and formatting
 
-- Configure a linter for all of the frontend's script code, tests and build
-  scripts included (MUST)
 - Merge no PR with a warning or error in the browser console or test
   output (MUST)
 - Lower the lint error count over time, never raise it (SHOULD)
+
+### Configuring the linter
+[LOAD: add-check]
+
+- Configure a linter for all of the frontend's script code, tests and build
+  scripts included (MUST)
 
 ## CSS
 
@@ -60,6 +64,7 @@ Rules:
 ## In-process server
 
 [ID: testing-in-process-server]
+[LOAD: write-tests]
 
 - Run browser-driven UI journeys against the real app, served in-process
   on port 0 and driven over real HTTP (SHOULD)
