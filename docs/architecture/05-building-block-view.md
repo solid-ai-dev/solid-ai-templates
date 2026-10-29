@@ -115,4 +115,3 @@ its ID scheme.
 | `tools/check_doc_figures.py` | Finds a count about the tree outside a generated block, as a local pre-commit hook | - |
 | `tools/check_horizontal_rules.py` | Finds a horizontal rule in tracked Markdown, as a local pre-commit hook | - |
 | `tools/ask_reviewers.py` | Asks several models to review the templates against the project goal and score them | - |
-
