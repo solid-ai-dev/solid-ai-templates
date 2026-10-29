@@ -12,8 +12,9 @@ The business goals in chapter 1 each have one measure.
   repair. An accepted change meets independently defined acceptance
   criteria, not an agent's claim that it is finished. Failed or unfinished
   tasks are reported beside it.
-- **Time, tokens and cost per accepted change** count the whole delivery on
-  the chosen model, against the time limit set for the task.
+- **Time, tokens and cost per accepted change** count the total delivery
+  cost, specification and a share of setup and maintenance included, on the
+  chosen model and against the time limit set for the task.
 - **Readability findings per accepted change** count what a person or the
   reviewing agent flags as hard to follow. It is not yet measured.
 - **Severe failures and regressions** count lost data, missing

@@ -289,8 +289,8 @@ foundation rather than introduce a competing score.
 
 The architecture already identifies rework per accepted change, in human
 time and tokens, as the measure of the first business goal. Evaluate the
-proposed applications against it, including specification, supervision, review,
-repair and ongoing policy cost.
+proposed applications against it, and against total delivery cost, which
+adds specification and ongoing policy cost.
 
 For the maintenance pilot, examine:
 
