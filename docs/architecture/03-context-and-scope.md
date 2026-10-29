@@ -36,7 +36,7 @@ Each exchange of 3.1, the channel that carries it and who opens it.
 
 ## 3.3 Out of scope
 
-The library states what software must satisfy. It does not own:
+Upstream leaves these to the team and to other tools.
 
 - product requirements or feature specification
 - issue tracking or project management
