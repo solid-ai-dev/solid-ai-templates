@@ -5,6 +5,13 @@ fewer recurring mistakes, at an affordable cost to understand, run, adopt
 and maintain. Structural correctness is necessary and does not establish
 useful behaviour.
 
+The business goal in chapter 1 has one primary measure, human effort per
+accepted change. It counts specification, supervision, review and repair
+time, plus a share of setup and maintenance. An accepted change meets
+independently defined acceptance criteria, not an agent's claim that it is
+finished. Total delivery cost, regressions in a follow-up window, and failed
+or unfinished tasks are reported beside it.
+
 ## 10.1 Quality tree
 
 Each goal from chapter 1 names its instrument and the baseline measured so

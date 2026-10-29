@@ -36,18 +36,13 @@ Who is responsible:
 - Upstream owns the shared policy.
 - A fork owns its stacks, platforms, process rules and interview.
 
-## 1.1 Customer outcome
+## 1.1 Business goal
 
 > Enable small teams to delegate coding and routine code review to agents
 > while concentrating on specifications, architecture, tests, and acceptance
 > of behaviour.
 
-Human effort per accepted change is the primary measure. It counts
-specification, supervision, review and repair time, plus a share of setup
-and maintenance. An accepted change meets independently defined acceptance
-criteria, not an agent's claim that it is finished. Total delivery cost,
-regressions in a follow-up window, and failed or unfinished tasks are
-reported beside it.
+Its measure is human effort per accepted change, defined in chapter 10.
 
 ## 1.2 Requirements overview
 
