@@ -11,8 +11,7 @@ interview, and stay current by merging upstream (chapter 3).
 
 What it does:
 
-- Gives agents shared rules for quality, Git, documentation, testing and
-  review, plus opt-in rules for security, CI/CD, data and APIs.
+- Gives agents shared engineering rules.
 - Resolves the templates a project picks into one ordered chain.
 - Builds the root file an agent reads on every turn and the skills it loads
   for one task.
