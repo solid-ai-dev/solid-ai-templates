@@ -121,7 +121,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
-| QG-03-02 | Replaceability | Every release shall pass the changelog cut and SemVer step checks. | Chapter 5.4 | `check_release.py` |
+| QG-03-02 | Replaceability | Every release shall pass the changelog cut and SemVer step checks. | Chapter 5.6 | `check_release.py` |
 
 ### 04. Maintainability
 
