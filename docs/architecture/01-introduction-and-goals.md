@@ -20,7 +20,7 @@ their code and tests never redefine the intended behaviour.
 
 This repository is upstream. It holds the composition engine and the policy
 every team shares. Forks carry the stacks, platforms, process rules and the
-interview, and stay current by merging upstream (chapter 3).
+interview, and stay current by merging upstream.
 
 ## 1.1 Business goals
 
@@ -38,7 +38,7 @@ interview, and stay current by merging upstream (chapter 3).
 
 ## 1.2 Requirements overview
 
-What upstream provides to a fork and, through the fork, to a project. Each
+What upstream provides to a fork and to a project. Each
 capability is detailed in [requirements.md](../requirements.md), where every
 requirement has an ID to cite. Terms are defined in the
 [glossary](12-glossary.md).
@@ -73,7 +73,7 @@ baselines and scenarios.
 
 | Stakeholder | Expectation |
 |-------------|-------------|
-| Team using agents | Through a fork, hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
+| Team using agents | Hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
 | Fork maintainer | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict. Imbra's private fork is the first |
 | Upstream contributor | Change a shared rule with evidence that it helps, at a cost every chain carrying it can afford |
 | Coding agent | Rules in its context file it can apply without guessing, at a context cost proportionate to the task |
