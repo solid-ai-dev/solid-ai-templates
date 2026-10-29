@@ -13,7 +13,7 @@ What it does:
 
 - Gives agents shared engineering rules.
 - Resolves the templates a project picks into one ordered chain.
-- Builds the root file an agent reads on every turn and the skills it loads
+- Builds the context file an agent reads on every turn and the skills it loads
   for one task.
 - Ships checks for its rules, run as pre-commit hooks in a project's CI.
 - Lets a fork add and override rules without editing upstream's files.
@@ -61,7 +61,7 @@ are defined in the [glossary](12-glossary.md).
 | 03 | Manifest | Registers every template once, with its dependencies and its tier, so every tool reads the same graph. |
 | 04 | Composition | Resolves a project's chosen roots into one ordered chain and applies each template's extensions and overrides in a defined precedence. |
 | 05 | Context generation | Gives an agent the chain and the output format, from which it writes the project's context file with the answers to the fork's interview. |
-| 06 | Root file and task skills | Splits a chain into a root file read on every turn and skills loaded only when their task starts. |
+| 06 | Context file and task skills | Splits a chain into a context file read on every turn and skills loaded only when their task starts. |
 | 07 | Shipped checks | States each mechanically checkable rule with a command and a pass condition, and ships the longer checks as pre-commit hooks. |
 | 08 | Fork extension | Lets a fork add stacks, platforms, process rules and its interview under keys of its own, and take upstream's changes by merge. |
 | 09 | Versioned releases | Releases with a changelog and semantic versions, keeps section and hook IDs stable, and changes no project's rules until it adopts a release. |
