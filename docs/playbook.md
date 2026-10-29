@@ -733,8 +733,8 @@ this way on every upstream pull request.
 
 ## Vendor the templates in a project
 
-A hybrid project vendors its fork as a submodule, never upstream, which
-ships no stack. It asks two questions of it, and they need different
+A hybrid project vendors upstream as a submodule, or a fork when it needs
+the fork's stacks. It asks two questions of it, and they need different
 revisions, which coincide only when the pin equals HEAD.
 
 - Answer "has this already been raised?" against the upstream issue list

@@ -85,7 +85,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | FR-08-01 | The system shall let a fork stay current by merging upstream, never by copying files. | Chapter 8.6 | - |
 | FR-08-02 | The system shall keep a fork's entries under `stacks:`, `platform:` and keys of its own, never under `core:`, `base:`, `backend:` or `frontend:`. | Chapter 8.6 | SYS-20 |
 | FR-08-03 | The system shall let a `fork_core:` entry depend only on core-tier IDs. | Chapter 8.6 | SYS-21 |
-| FR-08-04 | The system shall let a project take its fork's rules by cloning the fork, or as a submodule pinned to a released tag. | Playbook, "Vendor the templates in a project" | - |
+| FR-08-04 | The system shall let a project take its rules from upstream, or from a fork for its stacks, by clone or as a submodule pinned to a released tag. | Playbook, "Vendor the templates in a project" | - |
 
 ### 09. Versioned releases
 

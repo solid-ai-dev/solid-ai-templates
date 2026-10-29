@@ -5,13 +5,13 @@
 Upstream as one box, with the people and systems on its boundary. In and
 out are seen from upstream.
 
-![Upstream as one box with its neighbours. A fork maintainer sends reports and proposals in and takes the engine, templates and checks out by merge. An upstream contributor sends rule changes with evidence in and gets admission or a reasoned decline. A team using agents gets a context file, through a fork, by clone or submodule. A coding agent gets the chain, the output contract and the task skills. solid-ai-dirigent takes the rules as a pinned submodule. solid-ai-benchmark takes a tagged ref and returns efficacy results. pre-commit in a project's CI takes the shipped hooks. GitHub holds the repository and returns issues, pull requests and CI runs](../diagrams/context-business.png)
+![Upstream as one box with its neighbours. A fork maintainer sends reports and proposals in and takes the engine, templates and checks out by merge. An upstream contributor sends rule changes with evidence in and gets admission or a reasoned decline. A team using agents gets a context file, from upstream or a fork, by clone or submodule. A coding agent gets the chain, the output contract and the task skills. solid-ai-dirigent takes the rules as a pinned submodule. solid-ai-benchmark takes a tagged ref and returns efficacy results. pre-commit in a project's CI takes the shipped hooks. GitHub holds the repository and returns issues, pull requests and CI runs](../diagrams/context-business.png)
 
 | Neighbour | Gives upstream | Gets from upstream | Source |
 |-----------|----------------|--------------------|--------|
 | Fork maintainer | Reports and proposals for shared rules | The engine, the shared templates and the checks, by merge | FR-08-01, FR-08-02, ADR-049 |
 | Upstream contributor | A rule change with evidence that it helps | Admission, or a decline with its reason | FR-10-01, FR-10-02 |
-| Team using agents | Nothing directly; it works through a fork | A context file, by clone or submodule | FR-05-01, FR-08-04 |
+| Team using agents | - | A context file, from upstream or from a fork for its stacks, by clone or submodule | FR-05-01, FR-08-04 |
 | Coding agent | - | The chain, the output contract and the task skills | FR-05-02, FR-05-04, FR-06-04 |
 | solid-ai-dirigent | - | The rules its developer and reviewer agents follow, as a pinned submodule | FR-08-04 |
 | solid-ai-benchmark | Efficacy results for a release | A tagged ref to measure | QG-01-02 |
@@ -27,11 +27,11 @@ The channel to each neighbour, and who opens it.
 | Interface | Between | Channel | Opened by | Source |
 |-----------|---------|---------|-----------|--------|
 | Merge | Upstream and a fork | `git merge upstream/main` | The fork maintainer | FR-08-01, ADR-049 |
-| Clone | A fork and a project | The fork cloned next to the project, to try it | The project's agent | FR-08-04 |
-| Submodule | A fork and a project | The fork as a submodule pinned to a released tag, moved to adopt a release | The project | FR-08-04, FR-09-03 |
+| Clone | Upstream or a fork, and a project | A clone next to the project, to try it | The project's agent | FR-08-04 |
+| Submodule | Upstream or a fork, and a project | A submodule pinned to a released tag, moved to adopt a release | The project | FR-08-04, FR-09-03 |
 | Resolver | An agent or tool and the manifest | `tools/resolve_chain.py`, a root in and a file list, chain or emitted files out | The caller | FR-04-01, FR-06-03 |
 | Hooks | A project's CI and upstream | pre-commit, reading `.pre-commit-hooks.yaml` at a pinned revision | The project's pre-commit | FR-07-02, ADR-055 |
-| Benchmark | solid-ai-benchmark and upstream | A checkout of a tagged ref | The benchmark | QG-01-02 |
+| Benchmark | solid-ai-benchmark, and upstream or a fork | A clone at the release registered for the round | The benchmark | QG-01-02 |
 | GitHub | Upstream and GitHub | Issues, pull requests and Actions | The maintainer and CI | Chapter 2, 2.3 #4 |
 
 ## 3.3 What upstream owns
