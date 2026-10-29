@@ -5,6 +5,15 @@ reads them to write a project's context files, `AGENTS.md` and `CLAUDE.md`.
 Each template covers one concern, extends others without editing them, and
 composes into a chain for one stack.
 
+The templates are one of three parts of the solid-ai-dev group, which aims
+at autonomous development with little technical supervision.
+
+| Part | Repository | Role |
+|------|------------|------|
+| Templates | solid-ai-templates | Rules that get an agent to good enough code on the first attempt |
+| Orchestrator | solid-ai-dirigent | Runs one agent that develops and a second that reviews |
+| Skills | solid-ai-skills | Procedures an agent loads for one kind of task |
+
 This repository is upstream. It holds the composition engine and the policy
 every team shares. Forks carry the stacks, platforms, process rules and the
 interview, and stay current by merging upstream (chapter 3).
@@ -29,8 +38,8 @@ How it is built:
 
 Who is responsible:
 
-- The team owns the specification, the architecture, the test expectations
-  and acceptance.
+- The team owns the high-level design, the specifications, the test
+  expectations, acceptance and dogfooding.
 - Agents implement and review. Their code and tests never redefine the
   intended behaviour.
 - Upstream owns the shared policy.
@@ -38,16 +47,17 @@ Who is responsible:
 
 ## 1.1 Business goals
 
-> Enable small teams to delegate coding and routine code review to agents
-> while concentrating on specifications, architecture, tests, and acceptance
-> of behaviour.
+> Agents produce good enough (B grade) code on the first attempt, at a
+> bounded cost, readable by people and fit for production.
 
 | # | Goal | Outcome | Measure |
 | - | ---- | ------- | ------- |
-| 1 | Delegate routine coding and review | Less human effort per accepted change | Effort per accepted change |
-| 2 | A dependable quality floor | Fewer severe failures, such as lost data or missing authorization | Severe failures and regressions in a follow-up window |
-| 3 | Cheap adoption | Releases adopted without rework | Adoption effort per release |
-| 4 | Portable policy | The same rules survive a change of stack or agent | Shared rules a project keeps after changing stack or agent |
+| 1 | Good enough first time | Changes accepted with little or no rework | Rework per accepted change, in human time and tokens |
+| 2 | Bounded cost | Each change fits a time limit on the chosen model | Time, tokens and cost per accepted change |
+| 3 | Readable by people | A person follows a change without asking the agent | Readability findings per accepted change |
+| 4 | Fit for production | No severe failure, such as lost data or missing authorization | Severe failures and regressions in a follow-up window |
+| 5 | Cheap adoption | Releases adopted without rework | Adoption effort per release |
+| 6 | Portable policy | The same rules survive a change of stack or agent | Shared rules a project keeps after changing stack or agent |
 
 ## 1.2 Requirements overview
 
@@ -88,7 +98,7 @@ not justify a shared rule.
 
 | Stakeholder | Expectation |
 |-------------|-------------|
-| Small engineering team already using coding agents, through a fork | Delegate routine implementation and review without continuous supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
+| Small engineering team already using coding agents, through a fork | Hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
 | Fork maintainer, with Imbra's private fork the first | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict |
 | Upstream contributor | Change a shared rule with evidence that it helps, at a cost every chain carrying it can afford |
 | Coding agents reading a generated file | Rules they can apply without guessing, at a context cost proportionate to the task |

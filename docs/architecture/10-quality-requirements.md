@@ -7,11 +7,15 @@ useful behaviour.
 
 The business goals in chapter 1 each have one measure.
 
-- **Effort per accepted change** counts specification, supervision, review
-  and repair time, plus a share of setup and maintenance. An accepted change
-  meets independently defined acceptance criteria, not an agent's claim that
-  it is finished. Total delivery cost and failed or unfinished tasks are
-  reported beside it.
+- **Rework per accepted change** counts the human time and the tokens spent
+  after the first attempt to reach acceptance, in supervision, review and
+  repair. An accepted change meets independently defined acceptance
+  criteria, not an agent's claim that it is finished. Failed or unfinished
+  tasks are reported beside it.
+- **Time, tokens and cost per accepted change** count the whole delivery on
+  the chosen model, against the time limit set for the task.
+- **Readability findings per accepted change** count what a person or the
+  reviewing agent flags as hard to follow. It is not yet measured.
 - **Severe failures and regressions** count lost data, missing
   authorization, destructive cleanup, fabricated evidence and regressions in
   a follow-up window. Each is reported on its own, never folded into an

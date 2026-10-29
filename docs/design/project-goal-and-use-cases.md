@@ -287,9 +287,9 @@ foundation rather than introduce a competing score.
 
 ## Success measures
 
-The architecture already identifies human effort per accepted change as the
-primary measure of the first business goal. Evaluate the proposed
-applications against it, including specification, supervision, review,
+The architecture already identifies rework per accepted change, in human
+time and tokens, as the measure of the first business goal. Evaluate the
+proposed applications against it, including specification, supervision, review,
 repair and ongoing policy cost.
 
 For the maintenance pilot, examine:
