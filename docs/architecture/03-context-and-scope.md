@@ -11,7 +11,13 @@
 | Coding agent | — | The chain and the output contract in `templates/core/agents.md` |
 
 A project uses a fork, or forks upstream to make its own. Upstream alone
-ships no stack and no interview.
+ships no stack and no interview. A project takes the fork's rules in one of
+two ways.
+
+| Way | When | How |
+|-----|------|-----|
+| Clone | To try it | The agent clones the fork next to the project and generates the context file from it |
+| Submodule | To use it | The project adds the fork as a submodule pinned to a released tag, and moves the pin to adopt a release (playbook, "Vendor the templates in a project") |
 
 ## 3.2 What upstream owns
 

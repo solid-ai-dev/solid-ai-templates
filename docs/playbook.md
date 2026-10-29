@@ -733,9 +733,9 @@ this way on every upstream pull request.
 
 ## Vendor the templates in a project
 
-A hybrid project vendors this repository as a submodule. It asks two
-questions of upstream, and they need different revisions, which coincide
-only when the pin equals HEAD.
+A hybrid project vendors its fork as a submodule, never upstream, which
+ships no stack. It asks two questions of it, and they need different
+revisions, which coincide only when the pin equals HEAD.
 
 - Answer "has this already been raised?" against the upstream issue list
   at HEAD. The pinned file answers whether a rule exists in the revision

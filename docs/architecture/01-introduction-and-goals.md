@@ -69,16 +69,12 @@ baselines and scenarios.
 | 3 | Flexibility | A version change has an explainable effect and a manageable migration, and the shared rules survive a change of stack or agent |
 | 4 | Maintainability | Few recurring defects and little policy-induced work for maintainers and consumers |
 
-A change is admitted when it improves a demonstrated outcome enough to
-justify the cost every affected consumer carries. One team's preference does
-not justify a shared rule.
-
 ## 1.4 Stakeholders
 
 | Stakeholder | Expectation |
 |-------------|-------------|
-| Small engineering team already using coding agents, through a fork | Hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
-| Fork maintainer, with Imbra's private fork the first | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict |
+| Team using agents | Through a fork, hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
+| Fork maintainer | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict. Imbra's private fork is the first |
 | Upstream contributor | Change a shared rule with evidence that it helps, at a cost every chain carrying it can afford |
-| Coding agents reading a generated file | Rules they can apply without guessing, at a context cost proportionate to the task |
-| Imbra Ltd, Branimir Georgiev (owner and maintainer) | A library that is cheap to keep correct |
+| Coding agent | Rules in its context file it can apply without guessing, at a context cost proportionate to the task |
+| Owner and maintainer | A library that is cheap to keep correct |

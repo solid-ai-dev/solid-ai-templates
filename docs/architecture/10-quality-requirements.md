@@ -5,6 +5,10 @@ fewer recurring mistakes, at an affordable cost to understand, run, adopt
 and maintain. Structural correctness is necessary and does not establish
 useful behaviour.
 
+A change is admitted when it improves a demonstrated outcome enough to
+justify the cost every affected consumer carries. One team's preference does
+not justify a shared rule.
+
 The business goals in chapter 1 each have one measure.
 
 - **Rework per accepted change** counts the human time and the tokens spent
