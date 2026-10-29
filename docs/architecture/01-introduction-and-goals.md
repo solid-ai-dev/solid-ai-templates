@@ -36,13 +36,20 @@ Who is responsible:
 - Upstream owns the shared policy.
 - A fork owns its stacks, platforms, process rules and interview.
 
-## 1.1 Business goal
+## 1.1 Business goals
 
 > Enable small teams to delegate coding and routine code review to agents
 > while concentrating on specifications, architecture, tests, and acceptance
 > of behaviour.
 
-Its measure is human effort per accepted change, defined in chapter 10.
+Each goal has an outcome that shows it is met, and a measure chapter 10
+defines.
+
+| # | Goal | Outcome | Measure |
+| - | ---- | ------- | ------- |
+| 1 | Delegate routine coding and review | Less human effort per accepted change | Effort per accepted change |
+| 2 | A dependable quality floor | Fewer severe failures, such as lost data or missing authorization | Severe failures and regressions in a follow-up window |
+| 3 | Cheap adoption | Releases adopted without rework | Adoption effort per release, not yet measured |
 
 ## 1.2 Requirements overview
 

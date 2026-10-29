@@ -7,7 +7,7 @@ goal. Individually plausible solutions can vary substantially in correctness,
 maintainability, verification and operational readiness. Shared guidance can help
 teams make these expectations explicit and evaluate whether agent work meets them.
 
-The authoritative business goal and prioritized goals are in
+The authoritative business goals and prioritized quality goals are in
 [Introduction and goals](../architecture/01-introduction-and-goals.md).
 [Quality requirements](../architecture/10-quality-requirements.md) defines the
 instruments, baselines and evaluation scenarios. This proposal explores their
@@ -288,8 +288,9 @@ foundation rather than introduce a competing score.
 ## Success measures
 
 The architecture already identifies human effort per accepted change as the
-primary measure of the business goal. Evaluate the proposed applications against it,
-including specification, supervision, review, repair and ongoing policy cost.
+primary measure of the first business goal. Evaluate the proposed
+applications against it, including specification, supervision, review,
+repair and ongoing policy cost.
 
 For the maintenance pilot, examine:
 

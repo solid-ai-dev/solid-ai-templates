@@ -5,12 +5,20 @@ fewer recurring mistakes, at an affordable cost to understand, run, adopt
 and maintain. Structural correctness is necessary and does not establish
 useful behaviour.
 
-The business goal in chapter 1 has one primary measure, human effort per
-accepted change. It counts specification, supervision, review and repair
-time, plus a share of setup and maintenance. An accepted change meets
-independently defined acceptance criteria, not an agent's claim that it is
-finished. Total delivery cost, regressions in a follow-up window, and failed
-or unfinished tasks are reported beside it.
+The business goals in chapter 1 each have one measure.
+
+- **Effort per accepted change** counts specification, supervision, review
+  and repair time, plus a share of setup and maintenance. An accepted change
+  meets independently defined acceptance criteria, not an agent's claim that
+  it is finished. Total delivery cost and failed or unfinished tasks are
+  reported beside it.
+- **Severe failures and regressions** count lost data, missing
+  authorization, destructive cleanup, fabricated evidence and regressions in
+  a follow-up window. Each is reported on its own, never folded into an
+  average (10.1).
+- **Adoption effort per release** counts the work a fork or project spends
+  to take a release, conflicts and migrations included. It is not yet
+  measured.
 
 ## 10.1 Quality tree
 
