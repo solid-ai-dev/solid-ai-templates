@@ -116,32 +116,3 @@ its ID scheme.
 | `tools/check_horizontal_rules.py` | Finds a horizontal rule in tracked Markdown, as a local pre-commit hook | - |
 | `tools/ask_reviewers.py` | Asks several models to review the templates against the project goal and score them | - |
 
-## 5.7 Project structure
-
-```text
-templates/                  the shared rules
-  core/                     the core tier, opt-in core files, the output contract
-  security/  infra/  data/  opt-in base templates
-  backend/  frontend/       the layers
-  fixture/                  test input only
-  manifest.yaml             the dependency graph every tool reads
-tools/                      resolver, emitter, doc sync, maintenance tools
-hooks/solid_ai_checks/      the shipped hooks
-.pre-commit-hooks.yaml      the shipped hook IDs
-pyproject.toml              packages the hooks for pre-commit
-tests/                      suite runner, smoke, conformance, fork sync, test kit
-docs/
-  spec.md                   index of the architecture
-  architecture/             the arc42 chapters
-  requirements.md           functional and quality requirements
-  decisions/                decision records
-  playbook.md               procedures
-  design/  rationale/       proposals, and the reasons behind templates
-  audits/                   dated reviews and benchmark reports
-  tests/                    the check index and its specifications
-  diagrams/                 draw.io sources and their PNG exports
-.github/                    workflows, issue forms and linter configuration
-```
-
-A fork adds its own directories, such as `templates/stack/` and
-`templates/platform/`, and never adds a file under one of upstream's.
