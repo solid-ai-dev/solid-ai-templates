@@ -14,36 +14,13 @@ at autonomous development with little technical supervision.
 | Orchestrator | solid-ai-dirigent | Runs one agent that develops and a second that reviews |
 | Skills | solid-ai-skills | Procedures an agent loads for one kind of task |
 
+The team owns the high-level design, the specifications, the test
+expectations, acceptance and dogfooding. Agents implement and review, and
+their code and tests never redefine the intended behaviour.
+
 This repository is upstream. It holds the composition engine and the policy
 every team shares. Forks carry the stacks, platforms, process rules and the
 interview, and stay current by merging upstream (chapter 3).
-
-What it does:
-
-- Gives agents shared engineering rules.
-- Resolves the templates a project picks into one ordered chain.
-- Builds the context file an agent reads on every turn and the skills it loads
-  for one task.
-- Ships checks for its rules, run as pre-commit hooks in a project's CI.
-- Lets a fork add and override rules without editing upstream's files.
-
-How it is built:
-
-- Markdown templates, one concern each, registered in
-  `templates/manifest.yaml`.
-- Directives in the templates declare dependencies, extensions and
-  overrides.
-- Python tools resolve chains, regenerate derived docs and check releases.
-- Test runners check the templates' structure and run their shipped checks.
-
-Who is responsible:
-
-- The team owns the high-level design, the specifications, the test
-  expectations, acceptance and dogfooding.
-- Agents implement and review. Their code and tests never redefine the
-  intended behaviour.
-- Upstream owns the shared policy.
-- A fork owns its stacks, platforms, process rules and interview.
 
 ## 1.1 Business goals
 
