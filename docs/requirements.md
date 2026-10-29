@@ -8,7 +8,7 @@ of the [specification](spec.md) gives the capabilities and quality goals.
 | Convention | Rule |
 |------------|------|
 | IDs | `FR-<capability>-<n>` or `QG-<goal>-<n>`; cite a requirement by its ID |
-| Numbering | A new requirement takes the next free number, and a removed ID is never reused |
+| Numbering | A new requirement takes the next free number. A removed or moved ID is never reused, and the Removed table names where it went |
 | Source | Where the requirement is stated today. A filled cluster moves the text here, and the source cites the ID |
 | Checked by | The check that enforces it, short form; `docs/tests/index.md` gives the full ID. A dash is a gap, and "partial" names the part a check covers |
 
@@ -113,16 +113,25 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
-| QG-02-01 | Resource utilization | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 10.1 | - |
+| QG-02-02 | Resource utilization | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 10.1 | - |
 
 ### 03. Flexibility
 
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
-| QG-03-01 | Replaceability | Every release shall pass the changelog cut and SemVer step checks. | Chapter 5.4 | `check_release.py` |
+| QG-03-02 | Replaceability | Every release shall pass the changelog cut and SemVer step checks. | Chapter 5.4 | `check_release.py` |
 
 ### 04. Maintainability
 
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
-| QG-04-01 | Modifiability | No template shall score below its baseline. | Chapter 10.1 | score ratchet |
+| QG-04-02 | Modifiability | No template shall score below its baseline. | Chapter 10.1 | score ratchet |
+
+### Removed
+
+| ID | Now |
+|----|-----|
+| QG-02-01 | QG-01-02, when the goals took their ISO names |
+| QG-03-01 | QG-02-02, when the goals took their ISO names |
+| QG-04-01 | QG-03-02, when the goals took their ISO names |
+| QG-05-01 | QG-04-02, when the goals took their ISO names |
