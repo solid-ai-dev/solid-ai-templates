@@ -63,9 +63,9 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 |----|-------------|--------|------------|
 | FR-06-01 | The system shall load a heading without a load directive on every turn, and give its subheadings its load. | Chapter 8.1, ADR-058 | - |
 | FR-06-02 | The system shall load every rule of a template that guards data, credentials or authentication on every turn. | Chapter 8.1, ADR-058 | SYS-25 |
-| FR-06-03 | The system shall build the root file and the skills from the resolved chain, leaving out overridden rules and the sections the project declines, and copy each remaining rule's text unchanged. | ADR-058 | - |
+| FR-06-03 | The system shall build the root file and the skills from the resolved chain, leaving out overridden rules and the sections the project declines, and copy each remaining rule's text unchanged. | ADR-058 |SYS-26, partial, on a planted fixture |
 | FR-06-04 | The system shall list each skill in the root file with the task that triggers it. | ADR-058 | SYS-26 |
-| FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 | - |
+| FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 |SYS-26, partial, on a planted fixture |
 | FR-06-06 | The system shall build byte-identical files from the same input. | ADR-058 | SYS-26 |
 
 ### 07. Shipped checks
