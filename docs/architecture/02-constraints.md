@@ -7,7 +7,7 @@ The givens the design accepts rather than chooses.
 | # | Constraint | In practice | Source |
 |---|------------|-------------|--------|
 | 1 | Plain Markdown, no build step | A template is read as written; nothing compiles or packages it. Python is needed only for the tools and checks | ADR-007, FR-05-01 |
-| 2 | Agent-agnostic | Any agent that reads a Markdown context file can use the output, such as Claude Code, Codex CLI, Cursor or GitHub Copilot | `templates/core/docs.md`, "Output file by agent" |
+| 2 | Agent-agnostic | Any agent that reads a Markdown context file can use the output, such as Claude Code, Codex CLI, Cursor or GitHub Copilot | FR-05-04 |
 | 3 | Generation is an agent reading Markdown | No compiler sits between the fork and the context file; instructions use neutral wording ("ask the user") | ADR-007, FR-05-01 |
 | 4 | Context windows are finite | Every rule in a widely resolved file is read by every project on that chain, on every turn | ADR-041, ADR-058, QG-02-02 |
 
