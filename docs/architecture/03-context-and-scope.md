@@ -33,13 +33,3 @@ Each exchange of 3.1, the channel that carries it and who opens it.
 | A release to the benchmark | A clone of upstream or a fork at the release registered for the round | The benchmark |
 | Efficacy results to upstream | A pull request adding the round's report under `docs/audits/` | The maintainer |
 | Repository and CI runs | `git push` to GitHub, and Actions on every pull request and push to `main` | The maintainer and CI |
-
-## 3.3 Out of scope
-
-Upstream leaves these to the team and to other tools.
-
-- product requirements or feature specification
-- issue tracking or project management
-- task decomposition, agent planning or multi-agent orchestration
-- general-purpose prompt libraries
-- CI infrastructure itself
