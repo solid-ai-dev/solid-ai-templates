@@ -23,6 +23,7 @@
 | Platform | A fork's template mapping CI and security tools to one hosting platform |
 | Profile | The context file generated for one project |
 | Root | A template a project picks directly: a stack, a platform or an extra |
+| Root file | The context file at a project's root, read on every turn, which lists the task skills that load on demand |
 | Stack | A fork's technology-specific template, the main root of a chain |
 | Task kind | A kind of task, such as `release`, that a load directive names and a skill serves; the manifest's `tasks:` lists them |
 | Upstream | This repository |

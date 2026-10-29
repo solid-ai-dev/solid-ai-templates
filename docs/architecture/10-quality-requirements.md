@@ -5,6 +5,29 @@ fewer recurring mistakes, at an affordable cost to understand, run, adopt
 and maintain. Structural correctness is necessary and does not establish
 useful behaviour.
 
+The business goals in chapter 1 each have one measure.
+
+- **Rework per accepted change** counts the human time and the tokens spent
+  after the first attempt to reach acceptance, in supervision, review and
+  repair. An accepted change meets independently defined acceptance
+  criteria, not an agent's claim that it is finished. Failed or unfinished
+  tasks are reported beside it.
+- **Time, tokens and cost per accepted change** count the total delivery
+  cost, specification and a share of setup and maintenance included, on the
+  chosen model and against the time limit set for the task.
+- **Readability findings per accepted change** count what a person or the
+  reviewing agent flags as hard to follow. It is not yet measured.
+- **Severe failures and regressions** count lost data, missing
+  authorization, destructive cleanup, fabricated evidence and regressions in
+  a follow-up window. Each is reported on its own, never folded into an
+  average (10.1).
+- **Adoption effort per release** counts the work a fork or project spends
+  to take a release, conflicts and migrations included. It is not yet
+  measured.
+- **Shared rules kept** counts the shared rules a project still applies
+  after it changes stack or agent, against those it applied before. It is
+  not yet measured.
+
 ## 10.1 Quality tree
 
 Each goal from chapter 1 names its instrument and the baseline measured so
