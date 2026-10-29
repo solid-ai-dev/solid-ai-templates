@@ -1,6 +1,7 @@
 # Requirements
 
-What upstream must do, by capability, and how well, by quality goal. Terms
+What upstream must do, by capability, and how well, by quality goal and its
+ISO/IEC 25010:2023 characteristic. Terms
 are defined in the [glossary](architecture/12-glossary.md), and chapter 1
 of the [specification](spec.md) gives the capabilities and quality goals.
 
@@ -101,25 +102,25 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 ## Quality requirements
 
-### 01. Correctness
+### 01. Functional suitability (correctness)
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | QG-01-01 | Smoke, conformance, fork sync and the redundancy audit shall pass on `main`. | Chapter 10.1 | CI |
 
-### 02. Effectiveness
+### 02. Functional suitability (appropriateness)
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | QG-02-01 | An agent given a generated file shall complete representative tasks at least as well as without one. | Chapter 1.3 | Efficacy benchmark |
 
-### 03. Efficiency
+### 03. Performance efficiency
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | QG-03-01 | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 10.1 | - |
 
-### 04. Predictability
+### 04. Flexibility (replaceability, adaptability)
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
