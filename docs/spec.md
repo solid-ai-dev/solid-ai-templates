@@ -17,5 +17,6 @@ The architecture, one arc42 chapter per file.
 | 11. Risks and technical debt | [11-risks-and-technical-debt.md](architecture/11-risks-and-technical-debt.md) |
 | 12. Glossary | [12-glossary.md](architecture/12-glossary.md) |
 
+Requirements, each with an ID to cite, are in [requirements.md](requirements.md).
 Design documents that go deeper than a chapter are in [design/](design/).
 Dated audits and benchmark reports are in [audits/](audits/).

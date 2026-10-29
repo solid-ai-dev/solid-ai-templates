@@ -38,8 +38,10 @@ interview, and stay current by merging upstream (chapter 3).
 
 ## 1.2 Requirements overview
 
-What upstream provides to a fork and, through the fork, to a project. Terms
-are defined in the [glossary](12-glossary.md).
+What upstream provides to a fork and, through the fork, to a project. Each
+capability is detailed in [requirements.md](../requirements.md), where every
+requirement has an ID to cite. Terms are defined in the
+[glossary](12-glossary.md).
 
 | # | Capability | What the system does |
 | - | ---------- | -------------------- |
