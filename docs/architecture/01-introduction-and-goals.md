@@ -77,4 +77,4 @@ baselines and scenarios.
 | Fork maintainer | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict. Imbra's private fork is the first |
 | Upstream contributor | Change a shared rule with evidence that it helps, at a cost every chain carrying it can afford |
 | Coding agent | Rules in its context file it can apply without guessing, at a context cost proportionate to the task |
-| Imbra (owner and maintainer) | A library that is cheap to keep correct |
+| Owner and maintainer | A library that is cheap to keep correct |
