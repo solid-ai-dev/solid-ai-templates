@@ -48,6 +48,33 @@ py tests/run.py smoke
 | `docs/playbook.md` | How to make each kind of change |
 | `AGENTS.md` | The rules an agent applies in this repository |
 
+The repository, folder by folder.
+
+```text
+templates/                  the shared rules
+  core/                     the core tier, opt-in core files, the output contract
+  security/  infra/  data/  opt-in base templates
+  backend/  frontend/       the layers
+  fixture/                  test input only
+  manifest.yaml             the dependency graph every tool reads
+tools/                      resolver, emitter, doc sync, maintenance tools
+hooks/solid_ai_checks/      the shipped hooks
+.pre-commit-hooks.yaml      the shipped hook IDs
+pyproject.toml              packages the hooks for pre-commit
+tests/                      suite runner, smoke, conformance, fork sync, test kit
+docs/
+  spec.md                   index of the architecture
+  architecture/             the arc42 chapters
+  requirements.md           functional and quality requirements
+  decisions/                decision records
+  playbook.md               procedures
+  design/  rationale/       proposals, and the reasons behind templates
+  audits/                   dated reviews and benchmark reports
+  tests/                    the check index and its specifications
+  diagrams/                 draw.io sources and their PNG exports
+.github/                    workflows, issue forms and linter configuration
+```
+
 `py tools/resolve_chain.py --roots` lists every root, and
 `py tools/resolve_chain.py <id>` prints the chain a root resolves to.
 
