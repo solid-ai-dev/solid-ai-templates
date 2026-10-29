@@ -20,51 +20,26 @@ out are seen from upstream.
 
 ## 3.2 Technical context
 
-Each exchange of 3.1, the channel that carries it and what the receiver
-then does with it locally.
+Each exchange of 3.1, the channel that carries it and who opens it.
 
-![Upstream holds the engine and shared policy; three forks, Imbra's among them, fetch it and merge it with git merge upstream/main; each fork hands a project's agent the interview and a resolved chain](../diagrams/fork-model.png)
+| Exchange | Transport | Opened by |
+|----------|-----------|-----------|
+| Upstream changes to a fork | `git fetch upstream` from GitHub | The fork maintainer |
+| Reports and proposals | An issue on GitHub, through an issue form | The reporter |
+| A rule change with evidence | A pull request on GitHub | The contributor |
+| Templates and tools to a project, solid-ai-dirigent among them | A clone, or a submodule pinned to a released tag, from upstream or a fork | The project |
+| Chain and task skills to an agent | Files in the project's checkout, read through `tools/resolve_chain.py` | The agent |
+| Hooks to a project's CI | pre-commit fetches upstream at a pinned revision | The project's pre-commit |
+| A release to the benchmark | A clone of upstream or a fork at the release registered for the round | The benchmark |
+| Efficacy results to upstream | A pull request adding the round's report under `docs/audits/` | The maintainer |
+| Repository and CI runs | `git push` to GitHub, and Actions on every pull request and push to `main` | The maintainer and CI |
 
-| Exchange | Transport | Local step | Opened by | Source |
-|----------|-----------|------------|-----------|--------|
-| Upstream changes to a fork | `git fetch upstream` from GitHub | `git merge upstream/main` in the fork, then smoke | The fork maintainer | FR-08-01, ADR-049 |
-| Reports and proposals | An issue on GitHub, through an issue form | Triage labels it, or closes it with the reason | The reporter | Chapter 2, 2.3 #4 |
-| A rule change with evidence | A pull request on GitHub | CI runs the self-checks; the maintainer merges it or closes it with the reason | The contributor | FR-10-01, Chapter 2, 2.3 #1 |
-| Templates and tools to a project, solid-ai-dirigent among them | A clone, or a submodule pinned to a released tag, from upstream or a fork | Moving the pin adopts a release | The project | FR-08-04, FR-09-03 |
-| Chain and task skills to an agent | Files in the project's checkout | `tools/resolve_chain.py`, a root in and a file list, chain or emitted files out; the agent writes the context file | The agent | FR-04-01, FR-05-01, FR-06-03 |
-| Hooks to a project's CI | pre-commit fetches upstream at a pinned revision | pre-commit runs the hooks `.pre-commit-hooks.yaml` lists | The project's pre-commit | FR-07-02, ADR-055 |
-| A release to the benchmark | A clone of upstream or a fork at the release registered for the round | The benchmark generates the files and runs its tasks | The benchmark | QG-01-02 |
-| Efficacy results to upstream | A pull request adding the round's report under `docs/audits/` | The maintainer reads it against the quality goals | The maintainer | QG-01-02 |
-| Repository and CI runs | `git push` to GitHub | Actions runs CI on every pull request and push to `main` | The maintainer and CI | FR-10-01, Chapter 2, 2.3 #4 |
+## 3.3 Out of scope
 
-## 3.3 What upstream owns
-
-![Upstream keeps the engine, shared policy, language-neutral rules and the questions; each fork carries stacks, platforms, workflow, process and the answers; git.md, docs.md and quality-gates.md split between the two](../diagrams/template-boundary.png)
-
-| Upstream owns | A fork owns |
-|---------------|-------------|
-| The resolver, sync and the checks (`tools/`, `tests/`) | Stacks and platforms |
-| Shared policy in `core/`, `security/`, `infra/`, `data/`, `backend/`, `frontend/` | Workflow and process rules |
-| The questions every project answers (`core/agents.md`) | The interview and the answers |
-| The fixture stack and platform, test input only | Examples and generated chains |
-| The manifest keys `core`, `base`, `backend`, `frontend` | `stacks`, `platform`, `fork_core` and keys of its own |
-
-ADR-049 sets the fork model and ADR-050 the boundary.
-
-## 3.4 Out of scope
-
-The library states what software must satisfy. It does not own:
-
-- product requirements or feature specification
-- issue tracking or project management
-- task decomposition, agent planning or multi-agent orchestration
-- general-purpose prompt libraries
-- CI infrastructure itself
-
-| Question | Answered by |
-|----------|-------------|
-| What are we building? | Specification and intent |
-| How should an agent perform a task? | A skill or methodology |
-| What rules must the result satisfy? | **These templates** |
-| How is work orchestrated? | Planning and orchestration tooling |
-| Is the result correct? | Tests, CI, security and policy checks |
+| Out of scope | Handled by |
+|--------------|------------|
+| Product requirements and specifications | The team |
+| Issue tracking and project management | GitHub, or the team's own tracker |
+| Task planning and multi-agent orchestration | An orchestrator, such as solid-ai-dirigent |
+| General-purpose procedures and prompt libraries, beyond the task skills built from template rules | A skill set, such as solid-ai-skills |
+| CI infrastructure | The project's CI, such as GitHub Actions |
