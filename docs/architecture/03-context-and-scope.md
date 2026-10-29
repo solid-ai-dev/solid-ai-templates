@@ -33,3 +33,13 @@ Each exchange of 3.1, the channel that carries it and who opens it.
 | A release to the benchmark | A clone of upstream or a fork at the release registered for the round | The benchmark |
 | Efficacy results to upstream | A pull request adding the round's report under `docs/audits/` | The maintainer |
 | Repository and CI runs | `git push` to GitHub, and Actions on every pull request and push to `main` | The maintainer and CI |
+
+## 3.3 Out of scope
+
+| Out of scope | Handled by |
+|--------------|------------|
+| Product requirements and specifications | The team |
+| Issue tracking and project management | GitHub, or the team's own tracker |
+| Task planning and multi-agent orchestration | solid-ai-dirigent |
+| Reusable task procedures and prompts | solid-ai-skills |
+| CI infrastructure | The project's CI, such as GitHub Actions |
