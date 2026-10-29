@@ -7,14 +7,14 @@ labelled with the use.
 
 ## 5.1 Level 1: upstream
 
-![Upstream's building blocks. The coding agent runs the resolver and emitter, which reads the templates and the manifest. The templates name the shipped hooks, which pre-commit in a project's CI runs. Doc sync reads the manifest. The self-checks, which CI runs, check the manifest and the templates, run the templates' own checks and run the shipped hooks. The maintainer runs the maintenance tools, which resolve and score the templates through the manifest](../diagrams/building-blocks-overview.png)
+![Upstream's building blocks. The coding agent runs the resolver and emitter, which reads the templates and the manifest. The templates name the shipped hooks, which pre-commit in a project's CI runs. Doc sync reads the manifest and the templates, and runs the resolver and emitter. The self-checks, which CI runs, check the manifest and the templates, run the templates' own checks and run the shipped hooks. The maintainer runs the maintenance tools, which resolve and score the templates through the manifest](../diagrams/building-blocks-overview.png)
 
 | Block | Responsibility | Implementation | Source |
 |-------|----------------|----------------|--------|
 | Templates | Hold the shared rules, one concern per file | `templates/` | FR-01-01, FR-02-01, ADR-001 |
 | Manifest | Registers every template with its ID and dependencies, the one source of truth for the graph | `templates/manifest.yaml` | FR-03-01, ADR-004 |
 | Resolver and emitter | Turn a root into its ordered chain, and a chain into a root file and task skills | `tools/resolve_chain.py`, `tools/emit_context.py` | FR-04-01, FR-06-03, ADR-058, proposed |
-| Doc sync | Writes the sections of the documentation derived from the manifest, and fails on drift | `tools/sync_docs.py` | - |
+| Doc sync | Writes the sections of the documentation derived from the manifest, the templates and the files the resolver and emitter build, such as context sizes, and fails on drift | `tools/sync_docs.py` | - |
 | Shipped hooks | Run the checks too long for a fence, in a project's CI | `hooks/solid_ai_checks/`, `.pre-commit-hooks.yaml` | FR-07-02, ADR-055 |
 | Self-checks | Check that the templates compose, that this repository obeys them, and that a fork still merges | `tests/` | FR-10-01, FR-10-02, ADR-030 |
 | Maintenance tools | Check a release, audit redundancy and hold each template's score | `tools/` | QG-01-01, QG-03-02, QG-04-02 |
@@ -45,6 +45,7 @@ owns.
 | Kinds of task | Task skills of its own, under `fork_tasks:` | ADR-058, proposed |
 | Interview | The questions its projects answer before generating | ADR-049 |
 | Suites | A test suite under `tests/`, which the suite runner finds | FR-10-02 |
+| Checks, dispositions and examples | `tests/fork_checks.py`, `tests/fork_dispositions.py` and `tools/fork_examples.py`, loaded when present, which register its template directories, conformance dispositions and documentation examples | Chapter 8.6 |
 
 ## 5.3 Level 2: manifest
 
@@ -52,7 +53,7 @@ owns.
 
 | Tier | Members | Reaches a chain | Source |
 |------|---------|-----------------|--------|
-| Core | `core:`, then a fork's `fork_core:` | Seeded into every chain, never declared | FR-03-02 |
+| Core | `core:`, then a fork's `fork_core:` | Seeded into every chain, so it never needs declaring | FR-03-02 |
 | Opt-in | CI (`cicd`, `quality-gates`), security, devsecops, containers, deployment, config, data | Only when a stack's `depends_on` names it | FR-03-03 |
 | Orthogonal | Advanced data templates, embedded checks, measurement, a fork's platforms and workflow choices | Picked in the interview and resolved as a root of its own | FR-04-01 |
 
