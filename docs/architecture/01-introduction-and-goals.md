@@ -58,16 +58,16 @@ requirement has an ID to cite. Terms are defined in the
 
 ## 1.3 Quality goals
 
-The prioritized goals. Chapter 10 names each one's instrument, baseline and
-scenarios.
+The prioritized goals, named by their ISO/IEC 25010:2023 characteristic.
+Chapter 10 breaks each into subcharacteristics, with their instruments,
+baselines and scenarios.
 
 | Priority | Goal | Meaning here |
 |----------|------|--------------|
-| 1 | Correctness | Composition and precedence resolve as specified, with no conflicting instruction and no lost user work |
-| 2 | Effectiveness | An agent given a generated file completes representative tasks at least as well as without one |
-| 3 | Efficiency | Context, time and cost stay proportionate to the outcome. A smaller file is better only if outcomes hold |
-| 4 | Predictability | A version change has an explainable effect and a manageable migration |
-| 5 | Maintainability | Few recurring defects and little policy-induced work for maintainers and consumers |
+| 1 | Functional suitability | Composition and precedence resolve as specified, with no conflicting instruction and no lost user work, and an agent given a generated file completes representative tasks at least as well as without one |
+| 2 | Performance efficiency | Context, time and cost stay proportionate to the outcome. A smaller file is better only if outcomes hold |
+| 3 | Flexibility | A version change has an explainable effect and a manageable migration, and the shared rules survive a change of stack or agent |
+| 4 | Maintainability | Few recurring defects and little policy-induced work for maintainers and consumers |
 
 A change is admitted when it improves a demonstrated outcome enough to
 justify the cost every affected consumer carries. One team's preference does
