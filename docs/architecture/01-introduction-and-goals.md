@@ -42,9 +42,6 @@ Who is responsible:
 > while concentrating on specifications, architecture, tests, and acceptance
 > of behaviour.
 
-Each goal has an outcome that shows it is met, and a measure chapter 10
-defines.
-
 | # | Goal | Outcome | Measure |
 | - | ---- | ------- | ------- |
 | 1 | Delegate routine coding and review | Less human effort per accepted change | Effort per accepted change |
