@@ -20,7 +20,7 @@ their code and tests never redefine the intended behaviour.
 
 This repository is upstream. It holds the composition engine and the policy
 every team shares. Forks carry the stacks, platforms, process rules and the
-interview, and stay current by merging upstream (chapter 3).
+interview, and stay current by merging upstream.
 
 ## 1.1 Business goals
 
