@@ -49,7 +49,8 @@ defines.
 | - | ---- | ------- | ------- |
 | 1 | Delegate routine coding and review | Less human effort per accepted change | Effort per accepted change |
 | 2 | A dependable quality floor | Fewer severe failures, such as lost data or missing authorization | Severe failures and regressions in a follow-up window |
-| 3 | Cheap adoption | Releases adopted without rework | Adoption effort per release, not yet measured |
+| 3 | Cheap adoption | Releases adopted without rework | Adoption effort per release |
+| 4 | Portable policy | The same rules survive a change of stack or agent | Shared rules a project keeps after changing stack or agent |
 
 ## 1.2 Requirements overview
 

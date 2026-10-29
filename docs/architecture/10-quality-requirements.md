@@ -19,6 +19,9 @@ The business goals in chapter 1 each have one measure.
 - **Adoption effort per release** counts the work a fork or project spends
   to take a release, conflicts and migrations included. It is not yet
   measured.
+- **Shared rules kept** counts the shared rules a project still applies
+  after it changes stack or agent, against those it applied before. It is
+  not yet measured.
 
 ## 10.1 Quality tree
 
