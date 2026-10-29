@@ -40,6 +40,6 @@ Each exchange of 3.1, the channel that carries it and who opens it.
 |--------------|------------|
 | Product requirements and specifications | The team |
 | Issue tracking and project management | GitHub, or the team's own tracker |
-| Task planning and multi-agent orchestration | solid-ai-dirigent |
-| Reusable task procedures and prompts | solid-ai-skills |
+| Task planning and multi-agent orchestration | An orchestrator, such as solid-ai-dirigent |
+| Reusable task procedures and prompts | A skill set, such as solid-ai-skills |
 | CI infrastructure | The project's CI, such as GitHub Actions |
