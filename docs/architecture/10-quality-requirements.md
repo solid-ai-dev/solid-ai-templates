@@ -33,14 +33,15 @@ The business goals in chapter 1 each have one measure.
 Each goal from chapter 1 names its instrument and the baseline measured so
 far. A blank baseline is a gap, not a pass.
 
-| Quality | Evidence sought | Instrument | Baseline |
-|---------|-----------------|------------|----------|
-| Functional suitability (correctness) | Valid composition and precedence; no conflicting instructions or lost user work | Smoke, conformance, fork sync and the redundancy audit, in CI on every pull request | All pass on `main`, 2026-10-19 |
-| Functional suitability (appropriateness) | Representative tasks complete correctly | The [efficacy benchmark](../design/efficacy-benchmark.md) (#1184); it runs in `solid-ai-dev/solid-ai-benchmark` | Round 4, 2026-10-17: no template-generated file beat a 39-line hand-written one; under Haiku 4.5 every template file lowered the hidden-test pass rate against no file ([report](../audits/2026-10-17-round-4.md)) |
-| Functional suitability (appropriateness) | Selected policy fits the project and task | Each root's resolved chain; the adoption boundary in `core/agents.md` | Not measured |
-| Performance efficiency | Context, time, retries and adoption effort relative to outcomes | Chain size per stack category; benchmark tokens, turns, time and cost; latency (#368) | Round 4, Sonnet 5: $2.91 per build with no file, $4.57 to $7.25 with one; latency and adoption effort not measured |
-| Flexibility (replaceability) | Changes and overrides have explainable effects and manageable migration | The 3.x frozen surface (chapter 8.7); `tools/check_release.py`; SYS-22; the freeze check (#1992) | Not measured: 3.0.0 is the first frozen release |
-| Maintainability | Fewer recurring defects and less policy-induced work | `tools/score_templates.py` and its ratchet; the intake dispositions in `CONTRIBUTING.md` | 2026-10-19: median 91.7, five `core/` files under 50 ([report](../audits/2026-10-19-template-quality.md)) |
+| Characteristic | Subcharacteristic | Evidence sought | Instrument | Baseline |
+|----------------|-------------------|-----------------|------------|----------|
+| Functional suitability | Functional correctness | Valid composition and precedence; no conflicting instructions or lost user work | Smoke, conformance, fork sync and the redundancy audit, in CI on every pull request | All pass on `main`, 2026-10-19 |
+| Functional suitability | Functional appropriateness | Representative tasks complete correctly | The [efficacy benchmark](../design/efficacy-benchmark.md) (#1184); it runs in `solid-ai-dev/solid-ai-benchmark` | Round 4, 2026-10-17: no template-generated file beat a 39-line hand-written one; under Haiku 4.5 every template file lowered the hidden-test pass rate against no file ([report](../audits/2026-10-17-round-4.md)) |
+| Functional suitability | Functional appropriateness | Selected policy fits the project and task | Each root's resolved chain; the adoption boundary in `core/agents.md` | Not measured |
+| Performance efficiency | Time behaviour, resource utilization | Context, time, retries and adoption effort relative to outcomes | Chain size per stack category; benchmark tokens, turns, time and cost; latency (#368) | Round 4, Sonnet 5: $2.91 per build with no file, $4.57 to $7.25 with one; latency and adoption effort not measured |
+| Flexibility | Replaceability | Changes and overrides have explainable effects and manageable migration | The 3.x frozen surface (chapter 8.7); `tools/check_release.py`; SYS-22; the freeze check (#1992) | Not measured: 3.0.0 is the first frozen release |
+| Flexibility | Adaptability | The shared rules survive a change of stack or agent | None yet | Not measured |
+| Maintainability | Modifiability | Fewer recurring defects and less policy-induced work | `tools/score_templates.py` and its ratchet; the intake dispositions in `CONTRIBUTING.md` | 2026-10-19: median 91.7, five `core/` files under 50 ([report](../audits/2026-10-19-template-quality.md)) |
 
 A severe failure is reported on its own, never folded into an average:
 

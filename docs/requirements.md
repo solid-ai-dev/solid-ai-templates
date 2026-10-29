@@ -102,32 +102,27 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 ## Quality requirements
 
-### 01. Functional suitability (correctness)
+### 01. Functional suitability
 
-| ID | Requirement | Source | Checked by |
-|----|-------------|--------|------------|
-| QG-01-01 | Smoke, conformance, fork sync and the redundancy audit shall pass on `main`. | Chapter 10.1 | CI |
+| ID | Subcharacteristic | Requirement | Source | Checked by |
+|----|-------------------|-------------|--------|------------|
+| QG-01-01 | Functional correctness | Smoke, conformance, fork sync and the redundancy audit shall pass on `main`. | Chapter 10.1 | CI |
+| QG-01-02 | Functional appropriateness | An agent given a generated file shall complete representative tasks at least as well as without one. | Chapter 1.3 | Efficacy benchmark |
 
-### 02. Functional suitability (appropriateness)
+### 02. Performance efficiency
 
-| ID | Requirement | Source | Checked by |
-|----|-------------|--------|------------|
-| QG-02-01 | An agent given a generated file shall complete representative tasks at least as well as without one. | Chapter 1.3 | Efficacy benchmark |
+| ID | Subcharacteristic | Requirement | Source | Checked by |
+|----|-------------------|-------------|--------|------------|
+| QG-02-01 | Resource utilization | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 10.1 | - |
 
-### 03. Performance efficiency
+### 03. Flexibility
 
-| ID | Requirement | Source | Checked by |
-|----|-------------|--------|------------|
-| QG-03-01 | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 10.1 | - |
+| ID | Subcharacteristic | Requirement | Source | Checked by |
+|----|-------------------|-------------|--------|------------|
+| QG-03-01 | Replaceability | Every release shall pass the changelog cut and SemVer step checks. | Chapter 5.4 | `check_release.py` |
 
-### 04. Flexibility (replaceability, adaptability)
+### 04. Maintainability
 
-| ID | Requirement | Source | Checked by |
-|----|-------------|--------|------------|
-| QG-04-01 | Every release shall pass the changelog cut and SemVer step checks. | Chapter 5.4 | `check_release.py` |
-
-### 05. Maintainability
-
-| ID | Requirement | Source | Checked by |
-|----|-------------|--------|------------|
-| QG-05-01 | No template shall score below its baseline. | Chapter 10.1 | score ratchet |
+| ID | Subcharacteristic | Requirement | Source | Checked by |
+|----|-------------------|-------------|--------|------------|
+| QG-04-01 | Modifiability | No template shall score below its baseline. | Chapter 10.1 | score ratchet |
