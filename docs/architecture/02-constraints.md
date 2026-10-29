@@ -23,7 +23,9 @@ The givens the design accepts rather than chooses.
 | # | Constraint | In practice | Source |
 |---|------------|-------------|--------|
 | 1 | One maintainer | Automated checks carry the review load, the maintainer approves every merge, and triage runs in batches | `CONTRIBUTING.md`, "Maintainership" |
-| 2 | Licence | The repository is published under the licence in `LICENSE` | `LICENSE` |
+| 2 | MIT licence | Anyone may fork the templates, use them commercially and keep the fork private, so upstream cannot rely on seeing its forks | `LICENSE` |
+| 3 | Built by agents | Agents develop and review this repository, and the maintainer specifies and approves. Every procedure is one an agent can follow | `AGENTS.md` |
+| 4 | Hosted on GitHub | Issues, pull requests, CI and the fork model all run on GitHub | `AGENTS.md` 2.1, 2.2 |
 
 ## 2.4 Conventions
 
