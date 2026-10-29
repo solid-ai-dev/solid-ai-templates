@@ -34,13 +34,7 @@ Each exchange of 3.1, the channel that carries it and who opens it.
 | Efficacy results to upstream | A pull request adding the round's report under `docs/audits/` | The maintainer |
 | Repository and CI runs | `git push` to GitHub, and Actions on every pull request and push to `main` | The maintainer and CI |
 
-## 3.3 What upstream owns
-
-Upstream supplies the shared policy and the tooling that resolves and
-checks it. Forks supply stacks, platforms, process rules and the
-interview. ADR-049 sets the fork model and ADR-050 the boundary.
-
-## 3.4 Out of scope
+## 3.3 Out of scope
 
 The library states what software must satisfy. It does not own:
 
