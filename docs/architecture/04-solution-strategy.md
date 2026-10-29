@@ -2,8 +2,8 @@
 
 Upstream keeps one set of shared rules and the tools that compose and
 check them, and every stack, platform and team process lives in a fork. A
-project's agent gets its rules copied into its context, never left in a
-file it may not open.
+project's agent gets every rule it could break silently copied into its
+context, and no rule by reference alone.
 
 ## 4.1 Decomposition
 
@@ -12,11 +12,11 @@ file it may not open.
 | One concern per template, which a fork or project extends or overrides by section ID and never edits | A rule changes in one place, and a fork merges upstream without editing it | ADR-001, ADR-004, FR-04-02, FR-04-03 |
 | One manifest holds every template, its ID and its dependencies. A chain gets the core tier and only what its stack declares | One source of truth for the graph, and no rule reaches a project unasked | ADR-004, FR-03-01, FR-03-02, FR-03-03 |
 | Upstream keeps the engine and shared policy; forks carry stacks, platforms, process and the interview, and merge upstream | Shared rules stay generic, and a fork stays current without copying files | ADR-049, ADR-050, FR-08-01, FR-08-02 |
-| A rule reaches the agent copied in, never by reference alone | Nothing loads a referenced file, so a rule left there is missed | ADR-052 |
+| A rule whose breach is silent reaches the agent copied in. A rule that fails visibly, or that a tool enforces, may stay a reference | Nothing loads a referenced file, so a silent rule left there is missed, while a visible one still shows | ADR-052 |
 | Each section declares where its rules load, on every turn or for a named task | The root file stays short, and a procedure loads only when its task starts | ADR-058, proposed; FR-06-01, QG-02-02 |
 | A tool builds the root file and the task skills from the resolved chain | The same templates give every project the same files | ADR-058, proposed; FR-06-03, FR-06-06 |
-| A mechanically checkable rule names its command and pass condition, and this repository runs every such check on itself | A rule upstream ships is one upstream obeys | ADR-030, ADR-031, FR-07-01, QG-01-01 |
-| The 3.x line freezes its contract, and a removal waits for the next major | A project pins a release and moves the pin without rework | ADR-051, FR-09-01, FR-09-02, QG-03-02 |
+| A mechanically checkable rule names its command and pass condition. This repository gives every such check a disposition, and runs each one that applies here | A rule upstream ships is one upstream obeys, and a skip states its reason | ADR-030, ADR-031, FR-07-01, QG-01-01 |
+| The 3.x line freezes its contract, and a removal waits for the next major, except for a security fix | A project pins a release and moves the pin without rework | ADR-051, FR-09-01, FR-09-02, QG-03-02 |
 
 ## 4.2 Delivery
 
@@ -24,7 +24,7 @@ file it may not open.
 
 A rule whose breach is silent, with no test, linter or CI step to catch it,
 is copied into the context file. A rule that fails visibly, or that a tool
-enforces, may also name the file that holds it. ADR-058 proposes the next
+enforces, may stay a reference to the file that holds it. ADR-058 proposes the next
 step, in which each section declares its load and a tool places it.
 
 ## 4.3 Technology decisions
