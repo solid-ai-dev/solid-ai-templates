@@ -22,7 +22,7 @@
 | Composition | File paths act as identity; merging and conflict handling depend on the agent, not a tool |
 | Validation | Extensive structural checks, thin evidence that agents follow the rules |
 | Documentation | Large audit and journal surfaces; ADR density out of proportion to product capability |
-| Product | No installed generator, no stable project configuration, no upgrade or diff workflow; the declaration block is a target (chapter 6) |
+| Product | No installed generator, no stable project configuration, no upgrade or diff workflow; the declaration block is a target (ADR-053) |
 
 ## 11.3 What the evidence does not cover
 
