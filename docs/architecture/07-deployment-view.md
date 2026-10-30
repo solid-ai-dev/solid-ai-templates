@@ -33,9 +33,11 @@ arrow points from the side that opens it.
 
 ## 7.3 Integration models
 
-Every model keeps the generated context files in the project. They differ
-in where the templates live and whether the project's history records the
-pin. A pin names a released tag, never a branch, because a revision
+A submodule, a clone or a copy brings the templates, and the project keeps
+the context files generated from them. These three differ in where the
+templates live and whether the project's history records the pin. Hooks
+only brings no templates and no context files, only the shipped checks,
+run by pre-commit. A pin names a released tag, never a branch, because a revision
 between two releases carries rules no release has cut (playbook, "Vendor
 the templates in a project").
 
