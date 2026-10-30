@@ -33,20 +33,15 @@ arrow points from the side that opens it.
 
 ## 7.3 Integration models
 
-A submodule, a clone or a copy brings the templates, and the project keeps
-the context files generated from them. These three differ in where the
-templates live and whether the project's history records the pin. Hooks
-only brings no templates and no context files, only the shipped checks,
-run by pre-commit. A pin names a released tag, never a branch, because a revision
-between two releases carries rules no release has cut (playbook, "Vendor
-the templates in a project").
+Every model pins a released tag, never a branch (playbook, "Vendor the
+templates in a project").
 
-| Model | The pin | Update | Trade-off | Source |
-|-------|---------|--------|-----------|--------|
-| Submodule | In the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
-| Clone | Outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
-| Copy | In the project's history, as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
-| Hooks only | `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
+| Model | Brings | The pin | Update | Trade-off | Source |
+|-------|--------|---------|--------|-----------|--------|
+| Submodule | Templates and generated context files | In the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
+| Clone | Templates and generated context files | Outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
+| Copy | Templates and generated context files | In the project's history, as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
+| Hooks only | The shipped checks, run by pre-commit | `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
 
 ## 7.4 Version updates
 
