@@ -28,7 +28,7 @@ requirement in [requirements.md](../requirements.md).
 | Orthogonal template | A template no stack declares, resolved as its own root |
 | Pin | The released tag a project takes the templates or the hooks from |
 | Platform | A fork's template mapping CI and security tools to one hosting platform |
-| Root | A template a project picks directly, as a stack, a platform or an extra. Upstream has no stack, so every one of its templates is a root |
+| Root | A template a project picks directly, as a stack, a platform or an extra. Upstream has no stack, so every one of its templates except the fixture is a root |
 | Root file | The context file at a project's root, read on every turn, which lists the task skills that load on demand |
 | Stack | A fork's technology-specific template, the main root of a chain |
 | Task kind | A kind of task, such as `release`, that a load directive names and a skill serves, listed under the manifest's `tasks:` |
