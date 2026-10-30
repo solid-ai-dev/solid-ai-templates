@@ -26,13 +26,10 @@ arrow points from the side that opens it.
 
 ## 7.2 Distribution sources
 
-A fork contains upstream unchanged, so a project moves from upstream to a
-fork without regenerating its context files (FR-08-02, FR-09-01).
-
 | Source | What a project gets | Fits | Source |
 |--------|---------------------|------|--------|
 | Upstream | The core tier, the opt-in base templates and the layers, each of them a root; no stack | A project that wants the shared rules only | ADR-050 |
-| A fork, such as imbra-ai-templates | Upstream, plus the fork's stacks, platforms, process and interview | A team with stacks of its own | ADR-049, ADR-050 |
+| A fork, such as imbra-ai-templates | Upstream unchanged, plus the fork's stacks, platforms, process and interview | A team with stacks of its own. A project on upstream moves to it without regenerating its context files | ADR-049, ADR-050, FR-08-02, FR-09-01 |
 
 ## 7.3 Vendoring models
 
