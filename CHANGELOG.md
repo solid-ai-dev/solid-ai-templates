@@ -258,6 +258,8 @@ Releases up to 2.63.0 are listed in
 
 ### Fixed
 
+- Emitted skills and root files no longer point to template files a
+  project does not carry ([#2415])
 - Cached personal data follows its source's access and deletion rules instead
   of being banned ([#2370])
 - The audit trail records that a PII field changed, not its values, so
@@ -486,6 +488,7 @@ Releases up to 2.63.0 are listed in
 [#2386]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2386
 [#2387]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2387
 [#2389]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2389
+[#2415]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2415
 
 ## [2.90.0] - 2026-09-12
 
