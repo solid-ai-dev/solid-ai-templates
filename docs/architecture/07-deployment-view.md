@@ -33,8 +33,7 @@ arrow points from the side that opens it.
 
 ## 7.3 Integration models
 
-Every model pins a released tag, never a branch (playbook, "Vendor the
-templates in a project").
+Every model pins a released tag, never a branch (FR-08-04).
 
 | Model | Brings | The pin | Update | Trade-off | Source |
 |-------|--------|---------|--------|-----------|--------|

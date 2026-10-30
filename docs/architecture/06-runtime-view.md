@@ -79,8 +79,7 @@ that removes what forks carry is marked `Fork-merge: ours`.
 
 `py tests/run.py fork_sync` runs the same merge on every pull request
 upstream, in a simulated fork that appends a stack and edits its own files
-(FR-10-02). The playbook, "Sync with upstream as a fork", gives the
-commands.
+(FR-10-02).
 
 ## 6.5 Release adoption
 
