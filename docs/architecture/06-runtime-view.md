@@ -12,12 +12,12 @@ not wait. A frame marks a choice (`alt`) or a repeat (`loop`), with its
 condition in brackets. The numbers on the messages are the steps of each
 table.
 
-## 6.1 Generating a project's context
+## 6.1 Context generation
 
 The agent writes the project's context files from the chain the resolver
 orders, placing each rule where the output contract says.
 
-![Generating a project's context. The team asks the coding agent to generate the context for a root. The agent reads the fork's interview questions and asks the team each one, getting the answers and the adopted rules. It runs the resolver, which seeds the core tier and walks depends_on, and gets the ordered file list. For an inline or hybrid file, it reads each template in order, applies overrides then extensions, places each rule, writes AGENTS.md and CLAUDE.md, and runs the self-check. For a root file with skills, it runs the emitter with the declined list, which places each section by its load and returns the root file and task skills with fact slots, and the agent fills the facts. The agent hands the files to the team for review](../diagrams/runtime-generate.png)
+![Context generation. The team asks the coding agent to generate the context for a root. The agent reads the fork's interview questions and asks the team each one, getting the answers and the adopted rules. It runs the resolver, which seeds the core tier and walks depends_on, and gets the ordered file list. For an inline or hybrid file, it reads each template in order, applies overrides then extensions, places each rule, writes AGENTS.md and CLAUDE.md, and runs the self-check. For a root file with skills, it runs the emitter with the declined list, which places each section by its load and returns the root file and task skills with fact slots, and the agent fills the facts. The agent hands the files to the team for review](../diagrams/runtime-generate.png)
 
 | Step | What happens | Source |
 |------|--------------|--------|
@@ -36,12 +36,12 @@ list, then the root's file and every file its dependency lines name,
 transitively. Skipping either list loses rules with no error, because no
 template declares those files.
 
-## 6.2 A task skill loads
+## 6.2 Task skill loading
 
 The root file holds the rules for every turn; a procedure for one kind of
 task loads only when that task starts.
 
-![A task skill loads. At the start of the session the coding agent reads the root file and gets the rules for every turn and the trigger table. The team gives it a task, such as a release, and the agent matches the task to a trigger. If one matches, it loads that skill's SKILL.md and gets the task's procedures; otherwise it works from the root file alone. It applies the rules, does the task, and returns the change with its evidence](../diagrams/runtime-skill.png)
+![Task skill loading. At the start of the session the coding agent reads the root file and gets the rules for every turn and the trigger table. The team gives it a task, such as a release, and the agent matches the task to a trigger. If one matches, it loads that skill's SKILL.md and gets the task's procedures; otherwise it works from the root file alone. It applies the rules, does the task, and returns the change with its evidence](../diagrams/runtime-skill.png)
 
 | Step | What happens | Source |
 |------|--------------|--------|
@@ -50,12 +50,12 @@ task loads only when that task starts.
 | 4 | A skill is one folder under `.agents/skills/`, copied where an agent reads only its own folder | ADR-058, proposed |
 | 5 | An agent that cannot load skills gets them inlined in the root file | ADR-058, proposed |
 
-## 6.3 A shipped hook runs in a project's CI
+## 6.3 Hook execution in CI
 
 A check too long for a fence ships as a hook, which pre-commit runs at the
 revision the project pinned.
 
-![A shipped hook runs in a project's CI. The project's CI runs pre-commit for a hook. pre-commit fetches upstream at the pinned revision and installs the solid-ai-checks command, then runs it with the hook ID. The hook reads the project's tracked files. If the check passes, it exits 0 with the inspected counts; if it finds a breach, it exits 1 with the findings; if it does not apply, it prints a line and exits 0. pre-commit reports pass or fail to CI](../diagrams/runtime-hook.png)
+![Hook execution in CI. The project's CI runs pre-commit for a hook. pre-commit fetches upstream at the pinned revision and installs the solid-ai-checks command, then runs it with the hook ID. The hook reads the project's tracked files. If the check passes, it exits 0 with the inspected counts; if it finds a breach, it exits 1 with the findings; if it does not apply, it prints a line and exits 0. pre-commit reports pass or fail to CI](../diagrams/runtime-hook.png)
 
 | Step | What happens | Source |
 |------|--------------|--------|
@@ -63,12 +63,12 @@ revision the project pinned.
 | 3-4 | Every hook reads the tracked tree itself, so pre-commit passes it no file names | ADR-055 |
 | 5-7 | A check exits 0 on a pass, 1 on a breach and 3 when it does not apply. Under pre-commit, 3 becomes a printed line and exit 0 | FR-07-03 |
 
-## 6.4 A fork takes an upstream change
+## 6.4 Upstream synchronisation
 
 A fork stays current by merging upstream, never by copying files. A commit
 that removes what forks carry is marked `Fork-merge: ours`.
 
-![A fork takes an upstream change. The fork maintainer fetches upstream and lists the commits carrying Fork-merge: ours, oldest first. For each, the maintainer merges its parent, merges the commit with -s ours, keeping the fork's files, then moves the fork's templates to its own keys and restores upstream's text. The maintainer then merges upstream/main and pushes, and the fork's CI runs smoke against upstream/main](../diagrams/runtime-fork-sync.png)
+![Upstream synchronisation. The fork maintainer fetches upstream and lists the commits carrying Fork-merge: ours, oldest first. For each, the maintainer merges its parent, merges the commit with -s ours, keeping the fork's files, then moves the fork's templates to its own keys and restores upstream's text. The maintainer then merges upstream/main and pushes, and the fork's CI runs smoke against upstream/main](../diagrams/runtime-fork-sync.png)
 
 | Step | What happens | Source |
 |------|--------------|--------|
@@ -82,12 +82,12 @@ upstream, in a simulated fork that appends a stack and edits its own files
 (FR-10-02). The playbook, "Sync with upstream as a fork", gives the
 commands.
 
-## 6.5 A project adopts a release
+## 6.5 Release adoption
 
 A newer tag adopts nothing by itself. The team decides what the project
 takes, and only a regeneration or an edit changes its context files.
 
-![A project adopts a release. The team asks the coding agent to assess the release. The agent reads the changelog between the pin and the tag and returns the candidates, with what each addresses. The team names the ones to adopt, and the agent moves the pin to the tag, then regenerates or adopts each rule by hand, and returns the change for review](../diagrams/runtime-adopt.png)
+![Release adoption. The team asks the coding agent to assess the release. The agent reads the changelog between the pin and the tag and returns the candidates, with what each addresses. The team names the ones to adopt, and the agent moves the pin to the tag, then regenerates or adopts each rule by hand, and returns the change for review](../diagrams/runtime-adopt.png)
 
 | Step | What happens | Source |
 |------|--------------|--------|
