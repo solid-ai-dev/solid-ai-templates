@@ -49,9 +49,9 @@ checks, with hooks only.
 
 ## 7.4 Version updates
 
-The team moves the pin, by hand, when a release holds a rule it wants
-(chapter 6.5). A fork may add an updater, a bot that watches releases and
-proposes the move to its projects. Any updater follows these rules.
+The team moves the pin, by hand, when a release holds a rule it wants. A
+fork may add an updater, a bot that watches releases and proposes the move
+to its projects. Any updater follows these rules.
 
 | Rule | Source |
 |------|--------|
