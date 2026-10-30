@@ -2186,3 +2186,76 @@ def check_sys_26():
             if trees[0][k] != trees[1][k]})
         failures.append(f"  two runs differ in: {', '.join(differ)}")
     return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-27 -- an emitted file names no template file
+# ---------------------------------------------------------------------------
+
+# An emitted project carries the rules, not the templates they came from, so
+# a template's path in an emitted file sends the agent to a file it cannot
+# open, and the rules that line calls the standard never reach it. Every
+# root is emitted with skills and inlined, and no line may name a template
+# file, with or without its `templates/` prefix. A planted template naming
+# itself both ways proves the scan finds each form.
+
+PATH_TEMPLATE = ("# Base — Demo\n[ID: base-demo]\n\n## Review\n[LOAD: release]\n\n"
+                 "- `templates/core/demo.md` is the standard\n\n"
+                 "## Naming\n\n- See `core/demo.md`, \"Naming\"\n")
+
+
+def path_findings(emitted, paths):
+    """Each emitted file and line that names one of `paths`, a template's
+    path under the repository."""
+    patterns = [(path, re.compile(
+        r"(?<![\w/.-])(?:templates/)?" + re.escape(path[len("templates/"):])
+        + r"(?![\w/-])")) for path in sorted(paths)]
+    findings = []
+    for rel in sorted(emitted):
+        text = emitted[rel]
+        if isinstance(text, bytes):
+            text = text.decode("utf-8")
+        for number, line in enumerate(text.splitlines(), 1):
+            findings.extend(f"{rel}:{number} names {path}"
+                            for path, pattern in patterns
+                            if pattern.search(line))
+    return findings
+
+
+def check_sys_27():
+    seen = Inspected()
+    failures = []
+    planted = path_findings(
+        emit_build([("templates/core/demo.md", PATH_TEMPLATE)],
+                   {"release": "Preparing a release"}),
+        ["templates/core/demo.md"])
+    if len(planted) != 2:
+        failures.append(f"  planted: {len(planted)} of the 2 named paths "
+                        "found")
+    seen.count("planted paths found", len(planted))
+
+    resolver = os.path.join(ROOT, "tools", "resolve_chain.py")
+    roots = subprocess.run(
+        [sys.executable, resolver, "--roots"], capture_output=True,
+        text=True, encoding="utf-8").stdout.split()
+    seen.count("roots emitted", len(roots))
+    paths = template_files()
+    seen.count("template paths scanned for", len(paths))
+    work = tempfile.mkdtemp(prefix="sait-emit-paths-")
+    try:
+        for mode in ([], ["--inline-skills"]):
+            out = os.path.join(work, "inline" if mode else "skills")
+            proc = subprocess.run(
+                [sys.executable, resolver, "--emit", out] + mode + roots,
+                capture_output=True, text=True, encoding="utf-8")
+            if proc.returncode != 0:
+                failures.append(f"  emit exited {proc.returncode}: "
+                                f"{(proc.stdout + proc.stderr).strip()}")
+                continue
+            tree = emitted_tree(out)
+            seen.count(f"files emitted, {os.path.basename(out)}", len(tree))
+            failures.extend(f"  {os.path.basename(out)}: {finding}"
+                            for finding in path_findings(tree, paths))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return seen.failures() + failures, seen.notes()

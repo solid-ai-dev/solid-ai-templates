@@ -50,6 +50,7 @@ restated in each.
 | `SAIT-SMK-SYS-24-001A` | SMK | P1 | A new section ID never splits a frozen section |
 | `SAIT-SMK-SYS-25-001A` | SMK | P1 | A load directive names a listed task, in its heading's tags |
 | `SAIT-SMK-SYS-26-001A` | SMK | P1 | The emitter places each section by its load, the same every run |
+| `SAIT-SMK-SYS-27-001A` | SMK | P1 | An emitted file names no template file |
 | `SAIT-SMK-TPL-04-001A` | SMK | P1 | All EXTEND and OVERRIDE directives reference existing IDs |
 | `SAIT-INT-TPL-01-001A` | INT | P0 | DEPENDS ON chain assembles a complete rule set |
 | `SAIT-INT-TPL-02-001A` | INT | P1 | EXTEND adds rules without removing base rules |

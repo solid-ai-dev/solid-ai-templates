@@ -16,9 +16,9 @@ How a change is reviewed, and how a finding is proven before it is reported.
 
 [LOAD: review]
 
-Review in this order, most critical first. `templates/core/quality.md`, and
-any language quality template the project carries, is the standard for
-items 2 to 4.
+Review in this order, most critical first. The quality rules, and any
+language quality rules the project carries, are the standard for items 2
+to 4.
 
 1. **Security**: anything exploitable, any credential or licence problem
 2. **Correctness**: wrong results, unhandled failures, race conditions

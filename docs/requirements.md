@@ -69,6 +69,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | FR-06-04 | The system shall list each skill in the root file with the task that triggers it. | ADR-058 | SYS-26 |
 | FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 |SYS-26, partial, on a planted fixture |
 | FR-06-06 | The system shall build byte-identical files from the same input. | ADR-058 | SYS-26 |
+| FR-06-07 | The system shall build files that name no template file, since an emitted project carries no templates. | ADR-058 | SYS-27 |
 
 ### 07. Shipped checks
 
