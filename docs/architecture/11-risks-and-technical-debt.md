@@ -23,7 +23,7 @@ mitigation shows a dash.
 
 | Area | Debt | Source |
 |------|------|--------|
-| Policy | Oversized high-reach templates; too many absolute rules; local incidents generalised globally; procedures mixed into persistent policy. Five `core/` files score under 50 | QG-04-02 |
+| Policy | Oversized high-reach templates; too many absolute rules; local incidents generalised globally; procedures mixed into persistent policy | QG-04-02 |
 | Composition | File paths act as identity. An agent writing an inline or hybrid file applies overrides and settles conflicts itself; only the emitter, still proposed, does it in a tool | ADR-058, proposed |
 | Validation | Extensive structural checks, thin evidence that agents follow the rules | QG-01-02 |
 | Documentation | Large audit and journal surfaces; decision records out of proportion to product capability | - |
