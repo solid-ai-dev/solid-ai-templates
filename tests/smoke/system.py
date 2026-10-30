@@ -16,7 +16,8 @@ from emit_context import EmitError
 from emit_context import build as emit_build
 from emit_context import write as emit_write
 from resolve_chain import (
-    LOAD_CHECK, entry_sections, is_fixture, load_directives, parse_manifest,
+    LOAD_CHECK, entry_sections, is_fixture, load_catalogue, load_directives,
+    load_manifest, opt_in_roots, parse_manifest, read_file, resolve_chain,
     task_kinds)
 
 from testkit import ROOT, repository_files, template_files
@@ -2185,4 +2186,107 @@ def check_sys_26():
             k for k in set(trees[0]) & set(trees[1])
             if trees[0][k] != trees[1][k]})
         failures.append(f"  two runs differ in: {', '.join(differ)}")
+    return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-27 -- an emitted file names no template file
+# ---------------------------------------------------------------------------
+
+# An emitted project carries the rules, not the templates they came from, so
+# a template's path in an emitted file sends the agent to a file it cannot
+# open, and the rules that line calls the standard never reach it. Every
+# root is emitted on its own, with skills and inlined, and no line may name a
+# template file, with or without its `templates/` prefix. Each root gets its
+# own build because a project may pick one root alone: an override another
+# root carries could drop the section that names the path, and a build of
+# every root together would then hide it. A planted template naming itself
+# both ways proves the scan finds each form, and a planted second root that
+# overrides one of those sections proves each root is scanned on its own.
+
+PATH_TEMPLATE = ("# Base — Demo\n[ID: base-demo]\n\n## Review\n[LOAD: release]\n\n"
+                 "- `templates/core/demo.md` is the standard\n\n"
+                 "## Naming\n[ID: demo-naming]\n\n"
+                 "- See `core/demo.md`, \"Naming\"\n")
+PATH_STACK = ("# Stack — Demo\n\n## Naming\n[OVERRIDE: demo-naming]\n\n"
+              "- Name by role\n")
+PATH_KINDS = {"release": "Preparing a release"}
+PATH_CHAINS = {
+    "demo": [("templates/core/demo.md", PATH_TEMPLATE)],
+    "stack": [("templates/core/demo.md", PATH_TEMPLATE),
+              ("templates/fixture/stack.md", PATH_STACK)]}
+
+
+def path_findings(emitted, paths):
+    """Each emitted file and line that names one of `paths`, a template's
+    path under the repository."""
+    patterns = [(path, re.compile(
+        r"(?<![\w/.-])(?:templates/)?" + re.escape(path[len("templates/"):])
+        + r"(?![\w/-])")) for path in sorted(paths)]
+    findings = []
+    for rel in sorted(emitted):
+        text = emitted[rel]
+        if isinstance(text, bytes):
+            text = text.decode("utf-8")
+        for number, line in enumerate(text.splitlines(), 1):
+            findings.extend(f"{rel}:{number} names {path}"
+                            for path, pattern in patterns
+                            if pattern.search(line))
+    return findings
+
+
+def root_path_findings(chains, kinds, paths, emitted_counts=None):
+    """Each root's emitted lines that name one of `paths`, the root built
+    alone with skills and inlined. `chains` maps a root to its (path, text)
+    pairs in resolution order; `emitted_counts`, a Counter, takes the files
+    emitted per mode."""
+    findings = []
+    for root in sorted(chains):
+        for inline in (False, True):
+            mode = "inline" if inline else "skills"
+            emitted = emit_build(chains[root], kinds, inline_skills=inline)
+            if emitted_counts is not None:
+                emitted_counts[mode] += len(emitted)
+            findings.extend(f"{root}, {mode}: {finding}"
+                            for finding in path_findings(emitted, paths))
+    return findings
+
+
+def check_sys_27():
+    seen = Inspected()
+    failures = []
+    planted = ["templates/core/demo.md"]
+    alone = root_path_findings({"demo": PATH_CHAINS["demo"]}, PATH_KINDS,
+                               planted)
+    if len(alone) != 4:
+        failures.append(f"  planted: {len(alone)} of the 4 named paths "
+                        "found, 2 per mode")
+    seen.count("planted paths found", len(alone))
+
+    # Built together, the stack's override drops the Naming line and only
+    # the Review line is left; built per root, the demo root still has both.
+    together = path_findings(
+        emit_build(PATH_CHAINS["stack"], PATH_KINDS), planted)
+    split = root_path_findings(PATH_CHAINS, PATH_KINDS, planted)
+    if len(together) != 1 or len(split) != 6:
+        failures.append(f"  planted override: {len(together)} found built "
+                        f"together, owed 1; {len(split)} per root, owed 6")
+
+    core_ids, entries, _ = load_manifest()
+    _, offered, catalogue = load_catalogue()
+    roots = ([stack["id"] for stack in catalogue]
+             + list(opt_in_roots(core_ids, offered, catalogue)))
+    seen.count("roots emitted", len(roots))
+    paths = template_files()
+    seen.count("template paths scanned for", len(paths))
+    chains = {root: [(path, read_file(path))
+                     for path in resolve_chain(root, core_ids, entries)]
+              for root in roots}
+    kinds = task_kinds(parse_manifest(
+        read(os.path.join(ROOT, "templates", "manifest.yaml"))))
+    emitted = Counter()
+    failures.extend(f"  {finding}" for finding in
+                    root_path_findings(chains, kinds, paths, emitted))
+    for mode in ("skills", "inline"):
+        seen.count(f"files emitted, {mode}", emitted[mode])
     return seen.failures() + failures, seen.notes()

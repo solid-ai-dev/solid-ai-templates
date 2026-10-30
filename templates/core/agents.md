@@ -129,7 +129,7 @@ not a note.
 ### 3.1 Testing
 
 ## 4. Review process
-[Priority order and checklists from templates/core/review.md]
+[Priority order and checklists from the review rules]
 
 ## 5. Session protocol
 [How a session starts, proceeds and ends]

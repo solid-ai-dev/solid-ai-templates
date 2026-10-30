@@ -151,6 +151,9 @@ labels are terminal, applied when closing without action: `duplicate`
 - A check that derives a comparison baseline by running a command MUST
   verify the command produced one and refuse when it did not — the
   refusal is a finding, never exit 3; see `base-quality-gates`
+- Never name a template file's path in a template's prose: an emitted
+  project carries the rules, not the templates. Name the section by its
+  heading instead; SYS-27 checks every root's emitted files
 - Never name another file's section ID in running prose unless that file
   resolves into every chain carrying yours — state the substance inline
   instead; SYS-11 checks it per chain (spec, chapter 8.4)

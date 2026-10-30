@@ -27,8 +27,7 @@ mesh follows the microservices rules instead.
   front of it; an over-broad list lets callers spoof their IP and dodge
   rate limits
 - Propagate or originate a correlation/request ID at the edge so a
-  request is traceable end to end (see `backend/observability.md`,
-  "Distributed tracing")
+  request is traceable end to end (see "Distributed tracing")
 
 ## Routing and upstreams
 

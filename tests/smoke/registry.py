@@ -11,7 +11,7 @@ from .system import (
     check_sys_07, check_sys_09, check_sys_10, check_sys_11, check_sys_13,
     check_sys_14, check_sys_15, check_sys_16, check_sys_17, check_sys_18,
     check_sys_19, check_sys_20, check_sys_21, check_sys_22, check_sys_24,
-    check_sys_25, check_sys_26)
+    check_sys_25, check_sys_26, check_sys_27)
 from .templates import (
     check_tpl_01, check_tpl_02, check_tpl_03, check_tpl_04, check_tpl_06,
     check_tpl_07, check_tpl_08, check_tpl_09, check_tpl_10)
@@ -120,4 +120,7 @@ CHECKS = [
     {"id": "SYS-26", "spec": "SAIT-SMK-SYS-26-001A",
      "title": "The emitter places each section by its load, the same every run",
      "fn": check_sys_26},
+    {"id": "SYS-27", "spec": "SAIT-SMK-SYS-27-001A",
+     "title": "An emitted file names no template file",
+     "fn": check_sys_27},
 ]

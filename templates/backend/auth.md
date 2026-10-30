@@ -4,7 +4,7 @@
 
 Rules for identity verification (authn) and access control (authz).
 Applies to any backend service that has protected resources.
-Extends `security/security.md`, "Authentication" (`security-authn`) and
+Extends the security rules "Authentication" (`security-authn`) and
 "Session management" (`security-sessions`), with backend-specific depth.
 
 ## General principles
