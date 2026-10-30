@@ -33,14 +33,15 @@ arrow points from the side that opens it.
 
 ## 7.3 Integration models
 
-Every model pins a released tag, never a branch (FR-08-04).
+A project takes the templates by submodule, clone or copy. It may opt out
+of the templates and take only the shipped checks, with hooks only.
 
 | Model | Brings | The pin | Update | Trade-off | Source |
 |-------|--------|---------|--------|-----------|--------|
-| Submodule | Templates and generated context files | In the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
-| Clone | Templates and generated context files | Outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
-| Copy | Templates and generated context files | In the project's history, as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
-| Hooks only | The shipped checks, run by pre-commit | `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
+| Submodule | Templates and generated context files | A released tag, in the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
+| Clone | Templates and generated context files | A released tag, outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
+| Copy | Templates and generated context files | A released tag, in the project's history as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
+| Hooks only | The shipped checks, run by pre-commit | A released tag, as `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
 
 ## 7.4 Version updates
 
