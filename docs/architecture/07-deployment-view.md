@@ -12,7 +12,7 @@ as a repository, a machine or an execution environment. An element drawn
 inside a node is deployed on it. A line is a communication path, and its
 arrow points from the side that opens it.
 
-## 7.1 Level 1: from upstream to a project
+## 7.1 Deployment overview
 
 ![From upstream to a project. Upstream, solid-ai-templates, holds the templates and tools and the shipped hooks. A fork, such as imbra-ai-templates, fetches and merges upstream, and adds its stacks and platforms and, optionally, an updater. The project repository pins the templates to a release tag, by submodule, clone or copy, from upstream or from a fork, and holds AGENTS.md and CLAUDE.md, the task skills under .agents/skills, and the pre-commit configuration. The updater opens a pull request with a pin bump to the project. The developer's machine runs the coding agent, which clones the project and commits to it, and pre-commit on each commit. The project's CI checks out the pushed commit and runs pre-commit on each push. Both pre-commit runs fetch the shipped hooks from upstream at the pinned revision](../diagrams/deployment-distribution.png)
 
@@ -24,7 +24,7 @@ arrow points from the side that opens it.
 | Developer's machine | The coding agent, which generates the context files from the project's copy of the templates, and pre-commit, which git's hook runs on each commit for early feedback | FR-05-01, ADR-055 |
 | Project's CI | pre-commit, on each push, the gate every change passes, since a local hook is optional and can be skipped. Both runs fetch the shipped hooks at the revision the project pinned | FR-07-02, ADR-055 |
 
-## 7.2 Source
+## 7.2 Distribution sources
 
 | Source | What a project gets | Fits | Source |
 |--------|---------------------|------|--------|
@@ -39,7 +39,7 @@ A project moves from upstream to a fork without regenerating.
    and no 3.x release removes or renames a frozen ID (FR-08-02, FR-09-01).
 3. It regenerates only to adopt a stack, as any adoption (chapter 6.5).
 
-## 7.3 Attachment
+## 7.3 Vendoring models
 
 Every model keeps the generated context files in the project. They differ
 in where the templates live and whether the project's history records the
@@ -54,7 +54,7 @@ the templates in a project").
 | Copy | In the project's history, as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
 | Hooks only | `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
 
-## 7.4 Update
+## 7.4 Version updates
 
 The team moves the pin, by hand, when a release holds a rule it wants
 (chapter 6.5). A fork may add an updater, a bot that watches releases and
