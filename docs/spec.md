@@ -12,7 +12,7 @@ The architecture, one arc42 chapter per file.
 | 6. Runtime view | [06-runtime-view.md](architecture/06-runtime-view.md) |
 | 7. Deployment view | [07-deployment-view.md](architecture/07-deployment-view.md) |
 | 8. Crosscutting concepts | [08-crosscutting-concepts.md](architecture/08-crosscutting-concepts.md) |
-| 9. Architecture decisions | [decisions/](decisions/) |
+| 9. Architecture decisions | [09-architecture-decisions.md](architecture/09-architecture-decisions.md) |
 | 10. Quality requirements | [10-quality-requirements.md](architecture/10-quality-requirements.md) |
 | 11. Risks and technical debt | [11-risks-and-technical-debt.md](architecture/11-risks-and-technical-debt.md) |
 | 12. Glossary | [12-glossary.md](architecture/12-glossary.md) |
