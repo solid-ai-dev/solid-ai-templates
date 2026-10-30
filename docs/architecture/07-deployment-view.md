@@ -29,18 +29,22 @@ arrow points from the side that opens it.
 | Source | What a project gets | Fits | Source |
 |--------|---------------------|------|--------|
 | Upstream | The core tier, the opt-in base templates and the layers, each of them a root; no stack | A project that wants the shared rules only | ADR-050 |
-| A fork, such as imbra-ai-templates | Upstream unchanged, plus the fork's stacks, platforms, process and interview | A team with stacks of its own. A project on upstream moves to it without regenerating its context files | ADR-049, ADR-050, FR-08-02, FR-09-01 |
+| A fork, such as imbra-ai-templates | Upstream unchanged, plus the fork's stacks, platforms, process and interview | A team with stacks of its own. A project on upstream moves to it without regenerating its context files, if it pins a fork tag that contains its upstream tag. An older fork tag can lack files or sections its context files name | ADR-049, ADR-050, FR-08-02, FR-09-01 |
 
 ## 7.3 Integration models
 
-A project takes the templates by submodule, clone or copy. It may opt out
-of the templates and take only the shipped checks, with hooks only.
+A project holds the templates by submodule, clone or copy, and its coding
+agent generates the context files from them. A project whose context file
+copies in every rule may keep that file alone, without the templates. A
+project may also opt out of the templates and take only the shipped
+checks, with hooks only.
 
 | Model | Brings | The pin | Update | Trade-off | Source |
 |-------|--------|---------|--------|-----------|--------|
-| Submodule | Templates and generated context files | A released tag, in the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
-| Clone | Templates and generated context files | A released tag, outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
-| Copy | Templates and generated context files | A released tag, in the project's history as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
+| Submodule | The templates | A released tag, in the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
+| Clone | The templates | A released tag, outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
+| Copy | The templates | A released tag, in the project's history as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
+| Generated files only | The inline context files, generated once from the templates at a released tag | None in the repository; the tag is the one the files were generated from | Regenerate from a newer tag | Nothing to hold but the context files. A hybrid file cannot do this, since its references point into the templates | FR-05-04, ADR-052 |
 | Hooks only | The shipped checks, run by pre-commit | A released tag, as `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
 
 ## 7.4 Version updates
