@@ -149,7 +149,7 @@ What is not frozen:
 | Element | Why |
 |---------|-----|
 | The wording inside a section | Prose is free while the section keeps its ID (ADR-051) |
-| The declaration block | A target with no producer and no reader (ADR-053, 6.3) |
+| The declaration block | A target with no producer and no reader (ADR-053) |
 | The fixture: `stack-fixture`, `platform-fixture` | Test input; no listing offers it and no project resolves it |
 | The helpers `bind()` hands `fork_checks.py` | Every name in the smoke modules; a change to one is listed in the changelog |
 

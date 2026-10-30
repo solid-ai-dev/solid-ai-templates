@@ -45,7 +45,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-04-01 | The system shall resolve a root to an ordered file list, base then layer then stack, depth-first and deduplicated. | Chapter 6.4 | - |
+| FR-04-01 | The system shall resolve a root to an ordered file list, base then layer then stack, depth-first and deduplicated. | Chapter 6.1 | - |
 | FR-04-02 | Where several templates name one section ID, the system shall apply the higher level, in the order base, layer, stack, interview answers. | Chapter 8.2 | - |
 | FR-04-03 | The system shall apply an override, then every extension of the same ID on top of it. | Chapter 8.3 | - |
 | FR-04-04 | The system shall refuse a chain that overrides one ID twice. | Chapter 8.3 | TPL-10 |
@@ -93,14 +93,14 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 |----|-------------|--------|------------|
 | FR-09-01 | The system shall not remove, rename or change the meaning of a frozen element in a 3.x release, except for a security fix. | Chapter 8.7, ADR-051 | SYS-24, partial, for section splitting only |
 | FR-09-02 | The system shall keep a deprecated template resolving until the next major, naming a live replacement. | Chapter 8.8 | SYS-22 |
-| FR-09-03 | The system shall change nothing in an existing context file when a project moves its pin. | Chapter 6.2 | - |
+| FR-09-03 | The system shall change nothing in an existing context file when a project moves its pin. | Chapter 6.5 | - |
 
 ### 10. Self-checks
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | FR-10-01 | The system shall run smoke, conformance and fork sync on every pull request and on every push to `main`. | `AGENTS.md` 3.1 | CI |
-| FR-10-02 | The system shall merge each change into a simulated fork that appends a stack, and pass smoke there. | Chapter 6.5 | fork sync |
+| FR-10-02 | The system shall merge each change into a simulated fork that appends a stack, and pass smoke there. | Chapter 6.4 | fork sync |
 
 ## Quality requirements
 
