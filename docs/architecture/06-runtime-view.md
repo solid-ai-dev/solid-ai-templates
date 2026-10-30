@@ -26,7 +26,7 @@ orders, placing each rule where the output contract says.
 | 4 | The resolver seeds the core tier, then walks `depends_on` depth-first, without duplicates, base before layer before stack | FR-03-02, FR-04-01 |
 | 5-6 | An override replaces a section, and each extension of the same ID adds to it. An inline file copies in every adopted rule. A hybrid file copies in every rule whose breach is silent and which no tool enforces, and any other rule may stay a reference | FR-04-02, FR-04-03, ADR-052 |
 | 7-8 | The agent writes both files to the output contract, then runs the contract's self-check against them | FR-05-02, FR-05-04 |
-| 9 | The emitter places each section by its load, copies each rule's text unchanged, and builds the same files from the same input | ADR-058, proposed; FR-06-03, FR-06-06 |
+| 9 | The emitter leaves out overridden rules and the sections the project declines, places each remaining section by its load, copies each rule's text unchanged, and builds the same files from the same input | ADR-058, proposed; FR-06-03, FR-06-06 |
 | 10 | The agent fills only the project's facts, such as names, paths and commands; a regeneration keeps them | ADR-058, proposed |
 | 11 | The team reviews the files like any other change | - |
 
@@ -74,7 +74,7 @@ that removes what forks carry is marked `Fork-merge: ours`.
 |------|--------------|--------|
 | 1 | The fork fetches upstream from GitHub | FR-08-01, ADR-049 |
 | 2-5 | An ordinary merge of a marked commit would delete every file the fork left unchanged and upstream removed | ADR-049 |
-| 5 | The fork's templates move out of upstream's keys, into keys of its own | FR-08-02, FR-08-03 |
+| 5 | The fork's templates move out of upstream's keys, into keys of its own, and the core IDs upstream dropped move into `fork_core:` | FR-08-02, FR-08-03 |
 | 6-8 | The fork's smoke reads upstream through `SAIT_UPSTREAM_REF` | FR-08-01 |
 
 `py tests/run.py fork_sync` runs the same merge on every pull request
