@@ -3,8 +3,9 @@
 How the rules reach a project and where they run. Nothing of upstream runs
 as a service. The templates travel as files at a released tag, the coding
 agent reads them on a developer's machine, and pre-commit runs the shipped
-hooks in the project's CI. A project chooses the source it takes the
-rules from, how it holds them, and who moves its pin.
+hooks on that machine and again in the project's CI. A project chooses
+the source it takes the rules from, how it holds them, and who moves its
+pin.
 
 The diagram is a UML deployment diagram. A 3D box is a node, such
 as a repository, a machine or an execution environment. An element drawn
@@ -13,15 +14,15 @@ arrow points from the side that opens it.
 
 ## 7.1 Level 1: from upstream to a project
 
-![From upstream to a project. Upstream, solid-ai-templates, holds the templates and tools and the shipped hooks. A fork, such as imbra-ai-templates, fetches and merges upstream, and adds its stacks and platforms and, optionally, an updater. The project repository pins the templates to a release tag, by submodule, clone or copy, from upstream or from a fork, and holds AGENTS.md and CLAUDE.md, the task skills under .agents/skills, and the pre-commit configuration. The updater opens a pull request with a pin bump to the project. The developer's machine runs the coding agent, which clones the project and commits to it. The project's CI checks out the commit, and pre-commit fetches the shipped hooks from upstream at the pinned revision](../diagrams/deployment-distribution.png)
+![From upstream to a project. Upstream, solid-ai-templates, holds the templates and tools and the shipped hooks. A fork, such as imbra-ai-templates, fetches and merges upstream, and adds its stacks and platforms and, optionally, an updater. The project repository pins the templates to a release tag, by submodule, clone or copy, from upstream or from a fork, and holds AGENTS.md and CLAUDE.md, the task skills under .agents/skills, and the pre-commit configuration. The updater opens a pull request with a pin bump to the project. The developer's machine runs the coding agent, which clones the project and commits to it, and pre-commit on each commit. The project's CI checks out the pushed commit and runs pre-commit on each push. Both pre-commit runs fetch the shipped hooks from upstream at the pinned revision](../diagrams/deployment-distribution.png)
 
 | Node | What it holds | Source |
 |------|---------------|--------|
 | Upstream | The templates, the tools and the shipped hooks, released as tags | FR-09-01 |
 | A fork | Upstream's history, merged, with its own stacks, platforms and process | FR-08-01, ADR-050 |
 | Project | The pinned templates, its context files, its task skills and its pre-commit configuration | FR-08-04, FR-05-04 |
-| Developer's machine | The coding agent, which generates the context files from the project's copy of the templates | FR-05-01 |
-| Project's CI | pre-commit, which fetches the shipped hooks at the revision the project pinned | FR-07-02, ADR-055 |
+| Developer's machine | The coding agent, which generates the context files from the project's copy of the templates, and pre-commit, which git's hook runs on each commit for early feedback | FR-05-01, ADR-055 |
+| Project's CI | pre-commit, on each push, the gate every change passes, since a local hook is optional and can be skipped. Both runs fetch the shipped hooks at the revision the project pinned | FR-07-02, ADR-055 |
 
 ## 7.2 Source
 
