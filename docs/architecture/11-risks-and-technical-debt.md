@@ -28,11 +28,3 @@ mitigation shows a dash.
 | Validation | Extensive structural checks, thin evidence that agents follow the rules | QG-01-02 |
 | Documentation | Large audit and journal surfaces; decision records out of proportion to product capability | - |
 | Product | The emitter runs from a clone of the templates; no stable project configuration exists, and no tool shows what a release changes in a project's files. The declaration block is a target | ADR-053, ADR-058, proposed |
-
-## 11.3 Evidence gaps
-
-The benchmark has run one web application, built in one session, by
-strong and weak models. Thin specifications, cheaper models and many
-sessions over months are only partly tested, and no round has compared a
-reference-only file with a hybrid one. Rounds and their limits are in
-`docs/audits/`.
