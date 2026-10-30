@@ -13,7 +13,7 @@ arrow points from the side that opens it.
 
 ## 7.1 Level 1: from upstream to a project
 
-![From upstream to a project. Upstream, solid-ai-templates, holds the templates and tools and the shipped hooks. A fork, such as imbra-ai-templates, fetches and merges upstream, and adds its stacks and platforms and, optionally, an updater. The project repository pins the templates to a release tag, by submodule, clone or copy, from upstream or from a fork, and holds AGENTS.md and CLAUDE.md, the task skills under .agents/skills, and the pre-commit configuration. The updater opens a pull request with a pin bump to the project. The developer's machine runs the coding agent, which clones the project and commits to it. The project's CI fetches the commit, and pre-commit fetches the shipped hooks from upstream at the pinned revision](../diagrams/deployment-distribution.png)
+![From upstream to a project. Upstream, solid-ai-templates, holds the templates and tools and the shipped hooks. A fork, such as imbra-ai-templates, fetches and merges upstream, and adds its stacks and platforms and, optionally, an updater. The project repository pins the templates to a release tag, by submodule, clone or copy, from upstream or from a fork, and holds AGENTS.md and CLAUDE.md, the task skills under .agents/skills, and the pre-commit configuration. The updater opens a pull request with a pin bump to the project. The developer's machine runs the coding agent, which clones the project and commits to it. The project's CI checks out the commit, and pre-commit fetches the shipped hooks from upstream at the pinned revision](../diagrams/deployment-distribution.png)
 
 | Node | What it holds | Source |
 |------|---------------|--------|
