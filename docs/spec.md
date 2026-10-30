@@ -10,7 +10,7 @@ The architecture, one arc42 chapter per file.
 | 4. Solution strategy | [04-solution-strategy.md](architecture/04-solution-strategy.md) |
 | 5. Building block view | [05-building-block-view.md](architecture/05-building-block-view.md) |
 | 6. Runtime view | [06-runtime-view.md](architecture/06-runtime-view.md) |
-| 7. Deployment view | Not applicable: nothing is deployed; a fork pins and merges upstream (chapter 6) |
+| 7. Deployment view | [07-deployment-view.md](architecture/07-deployment-view.md) |
 | 8. Crosscutting concepts | [08-crosscutting-concepts.md](architecture/08-crosscutting-concepts.md) |
 | 9. Architecture decisions | [decisions/](decisions/) |
 | 10. Quality requirements | [10-quality-requirements.md](architecture/10-quality-requirements.md) |

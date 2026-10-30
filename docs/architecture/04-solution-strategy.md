@@ -18,7 +18,7 @@ catch it, copied into its context; any other rule may stay a reference.
 | A mechanically checkable rule names its command and pass condition. This repository gives every such check a disposition, and runs each one that applies here | A rule upstream ships is one upstream obeys, and a skip states its reason | ADR-030, ADR-031, FR-07-01, QG-01-01 |
 | The 3.x line freezes its contract, and a removal waits for the next major, except for a security fix | A project pins a release and moves the pin without rework | ADR-051, FR-09-01, FR-09-02, QG-03-02 |
 
-## 4.2 Delivery
+## 4.2 Delivery model
 
 ![How one rule is placed: if breaking it is silent and no test, linter or CI step enforces it, it is inlined; if it fails visibly or a tool enforces it, it may be referenced. Inline and hybrid remain; pure reference is deprecated](../diagrams/delivery-model.png)
 
