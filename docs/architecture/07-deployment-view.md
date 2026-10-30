@@ -26,18 +26,13 @@ arrow points from the side that opens it.
 
 ## 7.2 Distribution sources
 
+A fork contains upstream unchanged, so a project moves from upstream to a
+fork without regenerating its context files (FR-08-02, FR-09-01).
+
 | Source | What a project gets | Fits | Source |
 |--------|---------------------|------|--------|
 | Upstream | The core tier, the opt-in base templates and the layers, each of them a root; no stack | A project that wants the shared rules only | ADR-050 |
 | A fork, such as imbra-ai-templates | Upstream, plus the fork's stacks, platforms, process and interview | A team with stacks of its own | ADR-049, ADR-050 |
-
-A project moves from upstream to a fork without regenerating.
-
-1. It points its copy at the fork, at a tag that contains the upstream
-   tag it pins.
-2. Its context files stay valid. A fork never edits a key upstream owns,
-   and no 3.x release removes or renames a frozen ID (FR-08-02, FR-09-01).
-3. It regenerates only to adopt a stack, as any adoption (chapter 6.5).
 
 ## 7.3 Vendoring models
 
