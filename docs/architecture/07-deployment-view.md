@@ -31,7 +31,7 @@ arrow points from the side that opens it.
 | Upstream | The core tier, the opt-in base templates and the layers, each of them a root; no stack | A project that wants the shared rules only | ADR-050 |
 | A fork, such as imbra-ai-templates | Upstream unchanged, plus the fork's stacks, platforms, process and interview | A team with stacks of its own. A project on upstream moves to it without regenerating its context files | ADR-049, ADR-050, FR-08-02, FR-09-01 |
 
-## 7.3 Vendoring models
+## 7.3 Integration models
 
 Every model keeps the generated context files in the project. They differ
 in where the templates live and whether the project's history records the
