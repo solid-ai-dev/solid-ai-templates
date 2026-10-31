@@ -31,6 +31,39 @@ keep your team on design and testing.
 
 2. Review the result before you commit it.
 
+## Use the checks only
+
+A project can run the shipped checks without the templates. Add them to
+`.pre-commit-config.yaml`, pinned to a released tag, and list the hooks it
+wants:
+
+```yaml
+repos:
+  - repo: https://github.com/solid-ai-dev/solid-ai-templates
+    rev: v3.0.0
+    hooks:
+      - id: find-unfenced-checks
+      - id: find-bare-suppressions
+```
+
+<!-- generated:readme-hooks -->
+| Hook | What it does |
+|------|--------------|
+| `find-unfenced-checks` | Find checks stated outside a fenced block |
+| `compile-embedded-checks` | Compile the Python checks embedded in Markdown |
+| `find-line-continuations` | List line continuations in embedded checks |
+| `find-bare-suppressions` | Find lint suppressions that name no rule |
+| `report-test-edits` | Report changes that edit an existing test |
+| `check-ascii-identifiers` | Check Python identifiers are ASCII |
+| `find-import-bans` | Find imports that cross a declared boundary |
+| `report-off-limits-paths` | Report committed changes touching off-limits paths |
+<!-- /generated:readme-hooks -->
+
+Run them on each commit with `pre-commit install`, and in CI with
+`pre-commit run --all-files`. A hook that finds nothing to check prints
+`not applicable: <reason>` and passes; read it as nothing checked, not as
+a pass. `templates/core/quality-gates.md` describes each hook's arguments.
+
 ## Documentation
 
 | Read | For |
