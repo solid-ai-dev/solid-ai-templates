@@ -35,7 +35,8 @@ keep your team on design and testing.
 
 A project can run the shipped checks without the templates. Add them to
 `.pre-commit-config.yaml`, pinned to a released tag, and list the hooks it
-wants:
+wants. The hooks ship from 3.0.0, which is not tagged yet; until it is,
+pin a commit of `main` as `rev:`.
 
 ```yaml
 repos:
@@ -47,22 +48,29 @@ repos:
 ```
 
 <!-- generated:readme-hooks -->
-| Hook | What it does |
-|------|--------------|
-| `find-unfenced-checks` | Find checks stated outside a fenced block |
-| `compile-embedded-checks` | Compile the Python checks embedded in Markdown |
-| `find-line-continuations` | List line continuations in embedded checks |
-| `find-bare-suppressions` | Find lint suppressions that name no rule |
-| `report-test-edits` | Report changes that edit an existing test |
-| `check-ascii-identifiers` | Check Python identifiers are ASCII |
-| `find-import-bans` | Find imports that cross a declared boundary |
-| `report-off-limits-paths` | Report committed changes touching off-limits paths |
+| Hook | What it does | Runs | Rules and arguments |
+|------|--------------|------|---------------------|
+| `find-unfenced-checks` | Find checks stated outside a fenced block | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
+| `compile-embedded-checks` | Compile the Python checks embedded in Markdown | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
+| `find-line-continuations` | List line continuations in embedded checks | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
+| `find-bare-suppressions` | Find lint suppressions that name no rule | On each commit | [core/quality-gates.md](templates/core/quality-gates.md) |
+| `report-test-edits` | Report changes that edit an existing test | On request, after committing | [core/quality-gates.md](templates/core/quality-gates.md) |
+| `check-ascii-identifiers` | Check Python identifiers are ASCII | On each commit | [core/quality.md](templates/core/quality.md) |
+| `find-import-bans` | Find imports that cross a declared boundary | On each commit | [core/quality.md](templates/core/quality.md) |
+| `report-off-limits-paths` | Report committed changes touching off-limits paths | On request, after committing | [core/git.md](templates/core/git.md) |
 <!-- /generated:readme-hooks -->
 
-Run them on each commit with `pre-commit install`, and in CI with
-`pre-commit run --all-files`. A hook that finds nothing to check prints
-`not applicable: <reason>` and passes; read it as nothing checked, not as
-a pass. `templates/core/quality-gates.md` describes each hook's arguments.
+Run the commit hooks on each commit with `pre-commit install`, and in CI
+with `pre-commit run --all-files`. Run a hook marked on request after
+committing, in CI or by hand, since it reads the committed change:
+
+```bash
+pre-commit run report-test-edits --hook-stage manual --all-files
+```
+
+A hook that finds nothing to check prints `not applicable: <reason>` and
+passes; read it as nothing checked, not as a pass. The linked template
+holds each hook's rules and the arguments a project sets.
 
 ## Documentation
 

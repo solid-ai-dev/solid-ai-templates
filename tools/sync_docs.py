@@ -498,20 +498,45 @@ def _readme_hooks():
     starting now has no reason to adopt it, so the table leaves it out.
     """
     text = io.open(ROOT / ".pre-commit-hooks.yaml", encoding="utf-8").read()
-    hooks = re.findall(r"^- id: (\S+)\n\s+name: \"?([^\"\n]+)\"?$", text,
-                       re.MULTILINE)
+    blocks = re.split(r"^(?=- id: )", text, flags=re.MULTILINE)[1:]
 
     # A changed layout in the hook file would parse to nothing here, and an
     # empty table would read as upstream shipping no checks.
-    if not hooks:
+    if not blocks:
         raise SystemExit(
             "sync: .pre-commit-hooks.yaml parsed to zero hooks; refusing to "
             "write an empty README table"
         )
 
-    out = ["| Hook | What it does |", "|------|--------------|"]
-    out += ["| `%s` | %s |" % (hid, name) for hid, name in hooks
-            if not name.startswith("Deprecated:")]
+    templates = {
+        path: io.open(path, encoding="utf-8").read()
+        for path in sorted((ROOT / "templates").rglob("*.md"))}
+    out = ["| Hook | What it does | Runs | Rules and arguments |",
+           "|------|--------------|------|---------------------|"]
+    for block in blocks:
+        hid = re.search(r"^- id: (\S+)", block).group(1)
+        name = re.search(r"^\s+name: \"?([^\"\n]+)\"?$", block,
+                         re.MULTILINE).group(1)
+        if name.startswith("Deprecated:"):
+            continue
+
+        # A manual-stage hook reads committed history, so neither the commit
+        # hook nor `run --all-files` reaches it.
+        manual = re.search(r"^\s+stages: \[manual\]", block, re.MULTILINE)
+        runs = "On request, after committing" if manual else "On each commit"
+
+        # The template that states a hook's command also holds its rules and
+        # the arguments a project sets, so the row links there.
+        homes = [p for p, body in templates.items()
+                 if "pre-commit run %s " % hid in body]
+        if len(homes) != 1:
+            raise SystemExit(
+                "sync: hook %s has its command in %d templates, not one; the "
+                "README cannot link where its arguments are described"
+                % (hid, len(homes)))
+        rel = homes[0].relative_to(ROOT).as_posix()
+        out.append("| `%s` | %s | %s | [%s](%s) |" % (
+            hid, name, runs, rel[len("templates/"):], rel))
     return "\n".join(out)
 
 
