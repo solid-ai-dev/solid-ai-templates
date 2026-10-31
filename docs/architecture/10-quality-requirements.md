@@ -65,11 +65,11 @@ A baseline and a candidate run on the same task, model, settings, fixture
 and permissions, beside a no-template baseline for the value claim, with
 stochastic trials repeated.
 
-| Stimulus | Expected response | Instrument and status |
-|----------|-------------------|-----------------------|
-| A small library requests generated context | Relevant rules present, overridden rules replaced, size recorded | Overrides measured by smoke's TPL checks, and size by the fork's model-limits table. Relevance not measured |
-| An agent receives a bounded code task | Task tests pass; unrelated files and tracker records untouched | Benchmark build task, rounds 1 to 4; a trial reaching outside its workspace is voided and reported |
-| A consumer starts with uncommitted edits | The edits survive; no unsolicited commit or publication | No fixture; not measured |
-| A newer template version is released | Applicability and cost assessed; no automatic compliance work | The adoption boundary in `core/agents.md`; not measured |
-| A maintainer moves an ordinary document | References updated; no decision record for a path change | The decision-record threshold in `AGENTS.md`; not measured |
-| A consequential compatibility choice arises | Alternatives and consequences explained and reviewable | The ADR-01 schema check, measured; reviewability is read by a person |
+| Stimulus | Expected response | Instrument and status | Source |
+|----------|-------------------|-----------------------|--------|
+| A small library requests generated context | Relevant rules present, overridden rules replaced, size recorded | Overrides measured by smoke's TPL checks, and size by the fork's model-limits table. Relevance not measured | FR-04-02, FR-04-03 |
+| An agent receives a bounded code task | Task tests pass; unrelated files and tracker records untouched | Benchmark build task, rounds 1 to 4; a trial reaching outside its workspace is voided and reported | QG-01-02 |
+| A consumer starts with uncommitted edits | The edits survive; no unsolicited commit or publication | No fixture; not measured | - |
+| A newer template version is released | Applicability and cost assessed; no automatic compliance work | The adoption boundary in `core/agents.md`; not measured | FR-09-03 |
+| A maintainer moves an ordinary document | References updated; no decision record for a path change | The decision-record threshold in `AGENTS.md`; not measured | - |
+| A consequential compatibility choice arises | Alternatives and consequences explained and reviewable | The ADR-01 schema check, measured; reviewability is read by a person | ADR-010 |

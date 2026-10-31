@@ -54,7 +54,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-05-01 | The system shall let an agent generate a context file by reading Markdown, with no build step between the fork and the file. | Chapter 6.1 | - |
+| FR-05-01 | The system shall let an agent generate a context file by reading Markdown alone, with no build step required. | Chapter 6.1 | - |
 | FR-05-02 | The system shall have the agent write the file to the output contract in `templates/core/agents.md`. | Chapter 6.1 | - |
 | FR-05-03 | The system shall send a conflict the rules cannot settle to the user, and record the answer in the generated file. | Chapter 6.1 | - |
 | FR-05-04 | The system shall produce a context file that any agent reading Markdown can use, written to the file each agent reads. | `templates/core/docs.md`, "Output file by agent" | - |

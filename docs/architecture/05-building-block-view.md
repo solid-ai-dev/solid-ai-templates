@@ -16,23 +16,23 @@ labelled with the use.
 | Resolver and emitter | Turn a root into its ordered chain, and a chain into a root file and task skills | `tools/resolve_chain.py`, `tools/emit_context.py` | FR-04-01, FR-06-03, ADR-058, proposed |
 | Doc sync | Writes the sections of the documentation derived from the manifest, the templates and the files the resolver and emitter build, such as context sizes, and fails on drift | `tools/sync_docs.py` | - |
 | Shipped hooks | Run the checks too long for a fence, in a project's CI | `hooks/solid_ai_checks/`, `.pre-commit-hooks.yaml` | FR-07-02, ADR-055 |
-| Self-checks | Check that the templates compose, that this repository obeys them, and that a fork still merges | `tests/` | FR-10-01, FR-10-02, ADR-030 |
+| Self-checks | Check that the templates compose, that upstream obeys them, and that a fork still merges | `tests/` | FR-10-01, FR-10-02, ADR-030 |
 | Maintenance tools | Check a release, audit redundancy and hold each template's score | `tools/` | QG-01-01, QG-03-02, QG-04-02 |
 
 ## 5.2 Level 2: templates
 
-![The template groups as they compose. In a fork, stacks depend on the backend and frontend layers and declare the opt-in templates they need, such as security; platforms and the fork core sit beside them. Upstream holds the backend layer, which extends security, the frontend layer, which extends the core tier, the fixture, the security, infrastructure and data groups, the opt-in core files, the core tier, seeded into every chain, and the output contract, which the generator reads](../diagrams/building-blocks-templates.png)
+![The template groups as they compose. In a fork, stacks depend on the backend and frontend layers and declare the opt-in templates they need, such as security; platforms and the fork core sit beside them. Upstream holds the backend layer, which extends security, the frontend layer, which extends the core tier, the fixture, the security, infrastructure and data groups, the opt-in core files, the core tier, seeded into every chain, and the output contract, which the coding agent reads](../diagrams/building-blocks-templates.png)
 
 | Block | Responsibility | Implementation | Source |
 |-------|----------------|----------------|--------|
-| Core tier | The rules every project gets: git, docs, quality, testing and review | `templates/core/`, listed under `core:` | FR-03-02 |
+| Core tier | The rules every project gets, for Git, documentation, quality, testing and review | `templates/core/`, listed under `core:` | FR-03-02 |
 | Opt-in core files | Configuration, quality gates, OOP, embedded checks and measurement, reached only when declared | `templates/core/` | FR-03-03 |
 | Security | Application and pipeline security | `templates/security/` | FR-02-02 |
 | Infrastructure | CI/CD, containers and deployment | `templates/infra/` | FR-03-03 |
 | Data | Data modelling, quality, governance and migration | `templates/data/` | FR-03-03 |
 | Backend layer | Rules every backend shares, from HTTP and APIs to jobs and observability | `templates/backend/` | FR-02-01 |
 | Frontend layer | Rules every frontend shares, for UX, quality and content | `templates/frontend/` | FR-02-01 |
-| Output contract | How the context file is written, read by the generator and not a rule in the chain | `templates/core/agents.md` | FR-05-02 |
+| Output contract | How the context file is written, read by the coding agent and not a rule in the chain | `templates/core/agents.md` | FR-05-02 |
 | Fixture | One stack and one platform the checks read, which no listing offers | `templates/fixture/` | ADR-049 |
 
 A fork extends upstream at these points, and never edits a file upstream
@@ -45,17 +45,17 @@ owns.
 | Kinds of task | Task skills of its own, under `fork_tasks:` | ADR-058, proposed |
 | Interview | The questions its projects answer before generating | ADR-049 |
 | Suites | A test suite under `tests/`, which the suite runner finds | FR-10-02 |
-| Checks, dispositions and examples | `tests/fork_checks.py`, `tests/fork_dispositions.py` and `tools/fork_examples.py`, loaded when present, which register its template directories, conformance dispositions and documentation examples | Chapter 8.6 |
+| Checks, dispositions and examples | `tests/fork_checks.py`, `tests/fork_dispositions.py` and `tools/fork_examples.py`, loaded when present, which register its template directories, conformance dispositions and documentation examples | ADR-050 |
 
 ## 5.3 Level 2: manifest
 
-![How a template reaches a chain. The resolver starts from a stack's root, seeds the core tier, follows depends_on into the opt-in tier and resolves an orthogonal template when the interview picks it. It writes the chain in order, the core tier, the base templates the chain reaches, the layer templates, then the stack. An orthogonal root resolves to a chain of its own in the same way](../diagrams/building-blocks-manifest.png)
+![How a template reaches a chain. The resolver starts from a stack's root, seeds the core tier, follows depends_on into the opt-in tier and resolves an orthogonal template when the project picks it. It writes the chain in order, the core tier, the base templates the chain reaches, the layer templates, then the stack. An orthogonal root resolves to a chain of its own in the same way](../diagrams/building-blocks-manifest.png)
 
 | Tier | Members | Reaches a chain | Source |
 |------|---------|-----------------|--------|
 | Core | `core:`, then a fork's `fork_core:` | Seeded into every chain, so it never needs declaring | FR-03-02 |
 | Opt-in | CI (`cicd`, `quality-gates`), security, devsecops, containers, deployment, config, data | Only when a stack's `depends_on` names it | FR-03-03 |
-| Orthogonal | Advanced data templates, embedded checks, measurement, a fork's platforms and workflow choices | Picked in the interview and resolved as a root of its own | FR-04-01 |
+| Orthogonal | Advanced data templates, embedded checks, measurement, a fork's platforms and workflow choices | Picked by the project, in a fork's interview where it has one, and resolved as a root of its own | FR-04-01 |
 
 Every top-level list of entries except `core` and `fork_core` is a section
 the resolver reads, so a fork keeps its templates under a key of its own
@@ -69,13 +69,12 @@ it today:
 - `templates/core/testing.md`
 - `templates/core/review.md`
 
-Measured: 8 `[DEPENDS ON]` tokens across 5 templates name one of these
-files, and 5 manifest entries name a core id in `depends_on`. Declaring one
-is redundant rather than forbidden — the seeding reaches the file either
-way, and the directive documents a dependency a reader would otherwise
-infer. Reached by the seeding alone: `base-review`. A chain assembled by
-walking the directives does not reach that set and reports nothing about it,
-because nothing declares what is absent.
+8 `[DEPENDS ON]` tokens across 5 templates name one of these files, and 5
+manifest entries name a core id in `depends_on`. Declaring one is redundant
+rather than forbidden, since the seeding reaches the file either way and the
+directive documents a dependency a reader would otherwise infer. Only the
+seeding reaches `base-review`. A chain assembled by walking the directives
+misses it and reports nothing, because nothing declares what is absent.
 <!-- /generated:spec-core-tier -->
 
 ## 5.4 Level 2: resolver and emitter
@@ -95,16 +94,16 @@ because nothing declares what is absent.
 
 ![The suite runner runs smoke, conformance, fork sync and any suite a fork adds. Smoke reads the manifest and the templates. Conformance extracts the checks from the templates and runs the shipped hooks. Fork sync merges the change into a simulated fork and runs smoke there. Every suite writes a timestamped report under tests/reports](../diagrams/building-blocks-checks.png)
 
+`docs/tests/index.md` lists every check, and `docs/tests/codification.md`
+its ID scheme.
+
 | Block | Responsibility | Implementation | Source |
 |-------|----------------|----------------|--------|
 | Suite runner | Runs a suite by name, and finds a fork's suite with no edit | `tests/run.py` | FR-10-01 |
 | Smoke | Checks that references resolve, IDs are unique and chains are valid, one module per family | `tests/smoke/` | FR-10-01 |
-| Conformance | Gives every fenced check the templates ship a disposition, and runs each one that applies here | `tests/conformance/` | ADR-030, FR-07-01 |
+| Conformance | Gives every fenced check the templates ship a disposition, and runs each one that applies to upstream | `tests/conformance/` | ADR-030, FR-07-01 |
 | Fork sync | Merges the change into a simulated fork that appends a stack, and runs smoke there | `tests/fork_sync/` | FR-10-02 |
 | Test kit | The files, verdict words, arguments and report every suite shares | `tests/testkit/` | - |
-
-`docs/tests/index.md` lists every check, and `docs/tests/codification.md`
-its ID scheme.
 
 ## 5.6 Level 2: maintenance tools
 
