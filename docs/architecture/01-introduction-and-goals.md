@@ -3,7 +3,7 @@
 solid-ai-templates is a library of composable rule templates. An LLM agent
 reads them to write a project's context files, `AGENTS.md` and `CLAUDE.md`.
 Each template covers one concern, extends others without editing them, and
-composes into a chain for one stack.
+composes into one chain for the roots a project picks.
 
 The templates are one of three parts of the solid-ai-dev group, which aims
 at autonomous development with little technical supervision.
@@ -18,14 +18,14 @@ The team owns the high-level design, the specifications, the test
 expectations, acceptance and dogfooding. Agents implement and review, and
 their code and tests never redefine the intended behaviour.
 
-This repository is upstream. It holds the composition engine and the policy
-every team shares. Forks carry the stacks, platforms, process rules and the
+solid-ai-templates is upstream. It holds the composition engine and the
+policy every team shares. Forks carry the stacks, platforms, process rules and the
 interview, and stay current by merging upstream.
 
 ## 1.1 Business goals
 
-> Agents produce good enough (B grade) code on the first attempt, at a
-> bounded cost, readable by people and fit for production.
+> Agents produce good enough code on the first attempt, at a bounded
+> cost, readable by people and fit for production.
 
 | # | Goal | Outcome | Measure |
 | - | ---- | ------- | ------- |
@@ -49,7 +49,7 @@ requirement has an ID to cite. Terms are defined in the
 | 02 | Layers | Adds rules shared by one kind of project, such as HTTP and databases for a backend, or UX and static sites for a frontend. |
 | 03 | Manifest | Registers every template once, with its dependencies and its tier, so every tool reads the same graph. |
 | 04 | Composition | Resolves a project's chosen roots into one ordered chain and applies each template's extensions and overrides in a defined precedence. |
-| 05 | Context generation | Gives an agent the chain and the output format, from which it writes the project's context file with the answers to the fork's interview. |
+| 05 | Context generation | Gives an agent the chain and the output format, from which it writes the project's context file, with the answers to a fork's interview where it has one. |
 | 06 | Context file and task skills | Splits a chain into a context file read on every turn and skills loaded only when their task starts. |
 | 07 | Shipped checks | States each mechanically checkable rule with a command and a pass condition, and ships the longer checks as pre-commit hooks. |
 | 08 | Fork extension | Lets a fork add stacks, platforms, process rules and its interview under keys of its own, and take upstream's changes by merge. |
@@ -58,9 +58,9 @@ requirement has an ID to cite. Terms are defined in the
 
 ## 1.3 Quality goals
 
-The prioritized goals, named by their ISO/IEC 25010:2023 characteristic.
-Chapter 10 breaks each into subcharacteristics, with their instruments,
-baselines and scenarios.
+The quality characteristics, as ISO/IEC 25010:2023 names them, that
+matter most, in priority order. The quality goals for each are in
+[requirements.md](../requirements.md).
 
 | Priority | Goal | Meaning here |
 |----------|------|--------------|
@@ -73,8 +73,8 @@ baselines and scenarios.
 
 | Stakeholder | Expectation |
 |-------------|-------------|
-| Team using agents | Hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
-| Fork maintainer | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict. Imbra's private fork is the first |
+| Team | Hand implementation and review to agents with little technical supervision, apply its own standards on top of the shared ones, and adopt releases without rework each time |
+| Fork maintainer | Add stacks, platforms and process rules without editing upstream's files, against a stable contract, and take upstream's changes by merge without conflict. imbra-ai-templates is the first |
 | Upstream contributor | Change a shared rule with evidence that it helps, at a cost every chain carrying it can afford |
 | Coding agent | Rules in its context file it can apply without guessing, at a context cost proportionate to the task |
-| Owner and maintainer | A library that is cheap to keep correct |
+| Maintainer | A library that is cheap to keep correct |
