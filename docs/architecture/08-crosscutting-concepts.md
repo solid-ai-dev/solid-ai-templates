@@ -45,8 +45,8 @@ A heading may carry several tag lines:
   authentication carries none. SYS-25 checks each of these
 - A section runs from its tags to the next `[ID:]` or the end of the file,
   and is never empty
-- Shipped IDs are frozen: never removed, renamed or moved to another file
-  inside a major, and a new ID never splits a shipped section (8.7)
+- Shipped IDs are frozen, never removed, renamed or moved to another
+  file inside a major, and a new ID never splits a shipped section (8.7)
 
 `[DEPENDS ON]` lists direct dependencies only, matching the manifest's
 `depends_on` for the entry. The manifest wins a mismatch, and SYS-04 checks
@@ -143,7 +143,7 @@ elements, and deprecate one by naming its replacement.
 | Task kinds | The kinds under the manifest's `tasks:`, which a load directive names | ADR-058, proposed |
 | Hooks | A shipped hook ID, its direct exit codes, its `not applicable` line and its violation codes | ADR-055 |
 | Hook arguments | The name and default of each argument a consumer writes into its config, such as `--path`, `--forbid` and `--base`; a minor adds only arguments whose default keeps the hook's behaviour | ADR-051, applied to hooks |
-| Fork entry points | The fork-owned module names (8.6), and what upstream reads from them: `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |
+| Fork entry points | The fork-owned module names (8.6), and the names upstream reads from them, `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |
 | Fork baseline | The `SAIT_UPSTREAM_REF` variable smoke reads | ADR-051, applied to forks |
 | Resolver CLI | `tools/resolve_chain.py <id>` and its `--concat`, `--generate`, `--list`, `--roots` and `--check` flags | ADR-051, applied to forks |
 

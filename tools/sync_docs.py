@@ -208,21 +208,22 @@ def _spec_core_tier(core_ids, entries):
     listing = NEWLINE.join("- `%s`" % entries[c]["file"] for c in core_ids)
     if seeded_only:
         tail = (
-            "Reached by the seeding alone: %s. A chain assembled by walking "
-            "the directives does not reach that set and reports nothing "
-            "about it, because nothing declares what is absent."
-            % ", ".join("`%s`" % c for c in seeded_only))
+            "Only the seeding reaches %s. A chain assembled by walking the "
+            "directives misses %s and reports nothing, because nothing "
+            "declares what is absent."
+            % (", ".join("`%s`" % c for c in seeded_only),
+               "it" if len(seeded_only) == 1 else "them"))
     else:
         tail = ("Every core file is declared somewhere as well, so the walk "
                 "happens to reach all of them; the seeding is what "
                 "guarantees it, and a directive being dropped would not "
                 "be reported.")
     sentence = (
-        "Measured: %d `[DEPENDS ON]` tokens across %d templates name one "
-        "of these files, and %d manifest entries name a core id in "
-        "`depends_on`. Declaring one is redundant rather than forbidden "
-        "— the seeding reaches the file either way, and the directive "
-        "documents a dependency a reader would otherwise infer. %s"
+        "%d `[DEPENDS ON]` tokens across %d templates name one of these "
+        "files, and %d manifest entries name a core id in `depends_on`. "
+        "Declaring one is redundant rather than forbidden, since the "
+        "seeding reaches the file either way and the directive documents "
+        "a dependency a reader would otherwise infer. %s"
         % (tokens, len(templates), len(manifest_declarers), tail)
     )
     return listing + NEWLINE + NEWLINE + NEWLINE.join(

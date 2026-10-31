@@ -3,7 +3,7 @@
 The decisions recorded for solid-ai-templates, grouped by the part of the
 system each one shapes. From 3.0 a record is written only when a decision
 changes something a consuming project can observe, the composition model
-above all. Earlier records also cover this repository's own process. Each
+above all. Earlier records also cover upstream's own process. Each
 row gives a record's decision in one line, and the record holds its
 context, the alternatives it beat and its consequences.
 
@@ -90,13 +90,13 @@ How a release is versioned and gated, and what it may change.
 
 ## 9.6 Shipped checks
 
-How a template states a check, how it reports, and how this repository
-runs its own.
+How a template states a check, how it reports, and how upstream runs
+its own.
 
 | Record | Decision | Status |
 | ------ | -------- | ------ |
 | [ADR-019](../decisions/019-redundancy-detection.md) | Redundancy is detected on each resolved chain, and CI fails only on an exact duplicate outside the baseline | Accepted |
-| [ADR-030](../decisions/030-repository-runs-its-own-shipped-checks.md) | This repository runs every check its templates ship, and each one carries a written disposition | Accepted |
+| [ADR-030](../decisions/030-repository-runs-its-own-shipped-checks.md) | Upstream runs every check its templates ship, and each one carries a written disposition | Accepted |
 | [ADR-031](../decisions/031-shipped-check-states-command-in-fence.md) | A shipped check states its command in a fence, with its pass condition beside it | Accepted |
 | [ADR-032](../decisions/032-check-reports-inapplicability-with-status.md) | A check that does not apply exits 3, which a runner counts apart from a pass or a failure | Accepted |
 | [ADR-034](../decisions/034-runner-rejects-a-pass-reporting-no-input.md) | The runner fails a check that passes while reporting no input | Accepted |
@@ -108,7 +108,7 @@ runs its own.
 
 ## 9.7 Process and records
 
-How this repository tracks work and keeps its records.
+How upstream tracks work and keeps its records.
 
 | Record | Decision | Status |
 | ------ | -------- | ------ |
