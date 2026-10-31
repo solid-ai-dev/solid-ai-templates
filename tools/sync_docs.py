@@ -490,6 +490,31 @@ def _readme_agents():
     return "\n".join(out)
 
 
+def _readme_hooks():
+    """Render the README table of shipped hooks a project can run.
+
+    The hook list is written once, in `.pre-commit-hooks.yaml`. A
+    deprecated hook still runs until the next major, but a project
+    starting now has no reason to adopt it, so the table leaves it out.
+    """
+    text = io.open(ROOT / ".pre-commit-hooks.yaml", encoding="utf-8").read()
+    hooks = re.findall(r"^- id: (\S+)\n\s+name: \"?([^\"\n]+)\"?$", text,
+                       re.MULTILINE)
+
+    # A changed layout in the hook file would parse to nothing here, and an
+    # empty table would read as upstream shipping no checks.
+    if not hooks:
+        raise SystemExit(
+            "sync: .pre-commit-hooks.yaml parsed to zero hooks; refusing to "
+            "write an empty README table"
+        )
+
+    out = ["| Hook | What it does |", "|------|--------------|"]
+    out += ["| `%s` | %s |" % (hid, name) for hid, name in hooks
+            if not name.startswith("Deprecated:")]
+    return "\n".join(out)
+
+
 def main():
     check_mode = "--check" in sys.argv
 
@@ -525,6 +550,7 @@ def main():
     has_model_table = "<!-- generated:readme-model-limits -->" in readme_text
     model_limits = _readme_model_limits() if has_model_table else None
     agent_outputs = _readme_agents()
+    readme_hooks = _readme_hooks()
     interview_content = _interview_stacks(manifest)
 
     spec_doc = ROOT / "docs" / "architecture" / "05-building-block-view.md"
@@ -532,9 +558,10 @@ def main():
     examples_doc = ROOT / CHAIN_EXAMPLES_DOC
     example_blocks = {"spec-chain-examples": chain_examples}
 
-    # The README is fork-owned. Upstream's is a short front page with no
-    # generated section; a fork keeps the markers for the tables it shows,
-    # and each pair present is filled, so --check still sees its drift. A
+    # The README is fork-owned. Upstream's is a short front page whose only
+    # generated section is the hook table; a fork keeps the markers for the
+    # tables it shows, and each pair present is filled, so --check still
+    # sees its drift. A
     # section is absent only when both markers are: one marker deleted from
     # a pair would otherwise leave a stale table outside every check.
     readme_blocks = {}
@@ -543,6 +570,7 @@ def main():
             ("readme-extras", readme_extras),
             ("readme-root-counts", readme_root_counts),
             ("readme-agents", agent_outputs),
+            ("readme-hooks", readme_hooks),
             ("readme-model-limits", model_limits)):
         opens = "<!-- generated:%s -->" % marker in readme_text
         closes = "<!-- /generated:%s -->" % marker in readme_text

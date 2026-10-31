@@ -149,6 +149,8 @@ Releases up to 2.63.0 are listed in
 - Rules that compress an incident into one line gain a short example ([#2171])
 - A check that fails when a new section ID splits a section frozen in 3.x
   ([#2278])
+- The README shows how to run the shipped checks without the templates
+  ([#2423])
 
 ### Changed
 
@@ -489,6 +491,7 @@ Releases up to 2.63.0 are listed in
 [#2387]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2387
 [#2389]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2389
 [#2415]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2415
+[#2423]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2423
 
 ## [2.90.0] - 2026-09-12
 
