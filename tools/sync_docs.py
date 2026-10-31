@@ -525,18 +525,19 @@ def _readme_hooks():
         manual = re.search(r"^\s+stages: \[manual\]", block, re.MULTILINE)
         runs = "On request, after committing" if manual else "On each commit"
 
-        # The template that states a hook's command also holds its rules and
-        # the arguments a project sets, so the row links there.
-        homes = [p for p, body in templates.items()
+        # A template that states a hook's command also holds its rules and
+        # the arguments a project sets, so the row links each one. A fork may
+        # prescribe a shipped hook in a template of its own as well.
+        homes = [p.relative_to(ROOT).as_posix()
+                 for p, body in templates.items()
                  if "pre-commit run %s " % hid in body]
-        if len(homes) != 1:
+        if not homes:
             raise SystemExit(
-                "sync: hook %s has its command in %d templates, not one; the "
-                "README cannot link where its arguments are described"
-                % (hid, len(homes)))
-        rel = homes[0].relative_to(ROOT).as_posix()
-        out.append("| `%s` | %s | %s | [%s](%s) |" % (
-            hid, name, runs, rel[len("templates/"):], rel))
+                "sync: no template states the command of hook %s; the README "
+                "cannot link where its arguments are described" % hid)
+        links = ", ".join("[%s](%s)" % (rel[len("templates/"):], rel)
+                          for rel in homes)
+        out.append("| `%s` | %s | %s | %s |" % (hid, name, runs, links))
     return "\n".join(out)
 
 
@@ -575,7 +576,10 @@ def main():
     has_model_table = "<!-- generated:readme-model-limits -->" in readme_text
     model_limits = _readme_model_limits() if has_model_table else None
     agent_outputs = _readme_agents()
-    readme_hooks = _readme_hooks()
+    # Only a README carrying the hook table's markers asks for it, so a
+    # fork whose README drops the table never parses the hook file.
+    has_hook_table = "<!-- generated:readme-hooks -->" in readme_text
+    readme_hooks = _readme_hooks() if has_hook_table else None
     interview_content = _interview_stacks(manifest)
 
     spec_doc = ROOT / "docs" / "architecture" / "05-building-block-view.md"
