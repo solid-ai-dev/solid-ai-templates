@@ -77,7 +77,7 @@ report this project receives.
 | Defect | A shared rule, check or tool that does the wrong thing |
 | Proposal | Changing, removing or adding a shared rule |
 | Question or idea | Something the docs do not answer, or an idea not yet a proposal |
-| Private advisory | A vulnerability, as section 7 says |
+| Private advisory | A vulnerability, reported as [SECURITY.md](SECURITY.md) says, never in a public issue |
 
 ### 6.2 Duplicate search
 
@@ -105,16 +105,3 @@ Triage runs in batches and gives every report one disposition.
 
 Accepted is not scheduled; only a milestone schedules work. A preference
 that suits one project belongs in its own context file or in a fork.
-
-## 7. Security
-
-Report a vulnerability privately, as [SECURITY.md](SECURITY.md) says, never
-in a public issue.
-
-## 8. Maintainership
-
-One maintainer, Branimir Georgiev, triages and reviews in batches, so no
-response time is promised beyond the security acknowledgement in
-[SECURITY.md](SECURITY.md). A report or pull request that sits is not a
-rejection. The spec, the playbook, the decision records and `AGENTS.md`
-hold everything needed to continue the project from the repository alone.
