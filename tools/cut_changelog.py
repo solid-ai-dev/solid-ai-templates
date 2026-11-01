@@ -30,6 +30,7 @@ import json
 import re
 import subprocess
 import sys
+import textwrap
 
 for _stream in (sys.stdout, sys.stderr):
     try:
@@ -59,13 +60,15 @@ ISSUES = re.compile(r"(\s*\(#\d+(?:,\s*#\d+)*\))+\s*$")
 # Same-line text only: a bare `Changelog:` must not take the next line.
 OVERRIDE = re.compile(r"^Changelog:[ \t]*(\S[^\n]*?)[ \t]*$", re.MULTILINE)
 NUMBER = re.compile(r"\(#(\d+)\)\s*$")
-VERSION = re.compile(r"^v(\d+\.\d+\.\d+)$")
+# No leading zeros, so the heading names the version check_release reads.
+VERSION = re.compile(r"^v((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))$")
+WIDTH = 80
 BOTS = {"app/dependabot", "dependabot[bot]", "dependabot"}
 
 
 def entry_text(title, body=""):
     """The plain-words entry for a pull request."""
-    override = OVERRIDE.search(body or "")
+    override = OVERRIDE.search((body or "").replace("\r\n", "\n"))
     text = override.group(1) if override else ISSUES.sub(
         "", PREFIX.sub("", title.strip()))
     return text[:1].upper() + text[1:]
@@ -104,7 +107,9 @@ def add_entries(text, entries):
     lines = text.split("\n")
     start, end = unreleased_span(lines)
     body = lines[start:end]
-    listed = set(re.findall(r"\[#(\d+)\]", text))
+    # An entry is a bullet citing the number; a link definition alone is not.
+    listed = set(re.findall(r"\(\[#(\d+)\]\)", text))
+    defined = set(re.findall(r"^\[#(\d+)\]: ", text, re.MULTILINE))
     links = [i for i, line in enumerate(body) if re.match(r"^\[#\d+\]: ", line)]
     content = body[:links[0]] if links else body
     refs = body[links[0]:] if links else []
@@ -114,7 +119,9 @@ def add_entries(text, entries):
             continue
         listed.add(str(number))
         added.append(number)
-        bullet = "- %s ([#%d])" % (words, number)
+        bullet = textwrap.wrap("- %s ([#%d])" % (words, number), WIDTH,
+                               subsequent_indent="  ", break_long_words=False,
+                               break_on_hyphens=False)
         marker = "### " + heading
         if marker not in content:
             # Place a new heading before the first later one, in order.
@@ -123,7 +130,7 @@ def add_entries(text, entries):
             at = next((i for i, line in enumerate(content)
                        if line[4:] in later and line.startswith("### ")),
                       None)
-            block = [marker, "", bullet, ""]
+            block = [marker, ""] + bullet + [""]
             if at is None:
                 while content and content[-1] == "":
                     content.pop()
@@ -136,12 +143,13 @@ def add_entries(text, entries):
             at += 1
         while content[at - 1] == "":
             at -= 1
-        content.insert(at, bullet)
+        content[at:at] = bullet
     # The section is rebuilt as entries, a blank line, the links and a
     # blank line, so a run that adds nothing leaves the file unchanged.
     while refs and refs[-1] == "":
         refs.pop()
-    refs += ["[#%d]: %s%d" % (n, REPO, n) for n in added]
+    refs += ["[#%d]: %s%d" % (n, REPO, n) for n in added
+             if str(n) not in defined]
     while content and content[-1] == "":
         content.pop()
     tail = [""] + refs + [""] if refs else [""]
@@ -237,6 +245,10 @@ def run(args):
         text = handle.read()
     text, added = add_entries(text, entries)
     print("entries added: %d" % len(added))
+    if options.dry_run:
+        for heading, number, words in entries:
+            if number in added:
+                print("  %s: %s ([#%d])" % (heading, words, number))
     if version:
         try:
             text = cut(text, version, datetime.date.today().isoformat())
@@ -303,6 +315,22 @@ def self_test():
                   refused == ["1.0.0", "1.1.0"]))
     cases.append(("a pull request linked in an earlier section is skipped",
                   add_entries(sample, [("Added", 1, "Again")])[1] == []))
+    orphan = sample.replace("[#11]: ", "[#40]: %s40\n[#11]: " % REPO, 1)
+    text, added = add_entries(orphan, [("Added", 40, "Orphan defined")])
+    cases.append(("a link definition alone is no entry, and is not repeated",
+                  added == [40] and text.count("[#40]: ") == 1))
+    long_title = ("A title long enough that the generated bullet must wrap "
+                  "onto a second line to stay inside the width")
+    text, _ = add_entries(sample, [("Added", 41, long_title)])
+    cases.append(("a long entry wraps inside the width",
+                  all(len(line) <= WIDTH for line in text.split("\n")
+                      if not line.startswith("[#"))
+                  and "\n  " in text.split("## [1.0.0]")[0]))
+    cases.append(("a CRLF body gives a clean override",
+                  entry_text("x", "Changelog: Clean\r\nmore") == "Clean"))
+    cases.append(("a version with a leading zero is refused",
+                  not VERSION.match("v03.0.0")
+                  and bool(VERSION.match("v3.0.10"))))
     cases.append(("a run that adds nothing leaves the file unchanged",
                   add_entries(sample, [])[0] == sample))
     cases.append(("the cut keeps an empty Unreleased above the version",
