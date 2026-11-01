@@ -945,12 +945,12 @@ when a stakeholder needs the whole picture.
   `docs/360-audit.md` history. All audit history lives in the folder.
 - Each report carries a scores table, the issues created, the current
   bottleneck, and per-dimension findings tables with a grade rationale.
-- File a labelled issue for every actionable finding (`AGENTS.md` §2.2)
+- File a labelled issue for every actionable finding (`AGENTS.md` §3)
   and reference it from the report.
 
 ## Submit a pull request
 
-The branch, commit and title forms are in `AGENTS.md` section 2.1; the
+The branch, commit and title forms are in `AGENTS.md` section 2; the
 steps below apply them in order.
 
 1. Ensure you are on a feature branch named per section 2.1

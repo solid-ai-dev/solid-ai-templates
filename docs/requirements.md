@@ -36,7 +36,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-03-01 | The system shall register every template in one manifest entry, with an ID unique across all layers. | `AGENTS.md` 2.3 | SYS-03, MNF-01 |
+| FR-03-01 | The system shall register every template in one manifest entry, with an ID unique across all layers. | `AGENTS.md` 4.1 | SYS-03, MNF-01 |
 | FR-03-02 | The system shall seed the core tier, `core:` then `fork_core:`, into every chain without a declaration. | Chapter 5.3 | - |
 | FR-03-03 | The system shall reach an opt-in template only when a stack's `depends_on` names it. | Chapter 5.3 | - |
 | FR-03-04 | The system shall treat the manifest's `depends_on` as authoritative where a template's dependency line disagrees with it. | Chapter 8.1 | SYS-04 |
@@ -76,7 +76,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | FR-07-01 | The system shall state each mechanically checkable rule with its command in a fence and its pass condition beside it. | Chapter 8.9, ADR-031 | - |
-| FR-07-02 | The system shall ship a check script over 15 lines as a hook listed in `.pre-commit-hooks.yaml`. | `AGENTS.md` 2.4, ADR-055 | - |
+| FR-07-02 | The system shall ship a check script over 15 lines as a hook listed in `.pre-commit-hooks.yaml`. | `AGENTS.md` 4.3, ADR-055 | - |
 | FR-07-03 | The system shall have every check exit 0 on a pass, 1 on a failure and 3 when it does not apply. | Chapter 8.7 | - |
 
 ### 08. Fork extension
@@ -100,7 +100,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-10-01 | The system shall run smoke, conformance and fork sync on every pull request and on every push to `main`. | `AGENTS.md` 3.1 | CI |
+| FR-10-01 | The system shall run smoke, conformance and fork sync on every pull request and on every push to `main`. | `AGENTS.md` 6.1 | CI |
 | FR-10-02 | The system shall merge each change into a simulated fork that appends a stack, and pass smoke there. | Chapter 6.4 | fork sync |
 
 ## Quality requirements

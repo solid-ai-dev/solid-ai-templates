@@ -110,7 +110,7 @@ py tools/sync_docs.py
   resolved chain
 - **Updated documents.** If your change moves the composition model, update
   `docs/architecture/`; if it changes how a project sets up, update
-  `README.md`. `AGENTS.md` section 2.5 lists which document owns what
+  `README.md`. `AGENTS.md` section 5.1 lists which document owns what
 - **A decision record** when the change moves what a consuming project
   observes without reading this repository — the composition model, such as
   a new layer or a change to the override model. Naming, prose style,
@@ -127,7 +127,7 @@ py tools/sync_docs.py
 ## Writing rules
 
 Template content is rules, not prose. The full authoring conventions are in
-`AGENTS.md` section 2.4; the ones contributors most often miss:
+`AGENTS.md` section 4; the ones contributors most often miss:
 
 - Write imperatively: "Use X", "Never Y". An RFC 2119 keyword — MUST,
   SHOULD, MAY — marks a rule's strength where it matters
@@ -146,7 +146,7 @@ Template content is rules, not prose. The full authoring conventions are in
 
 Branch names, the commit and pull-request title form, one concern per pull
 request and the no-force-push rule are in
-[`AGENTS.md` section 2.1](AGENTS.md#21-git). Agents apply them on every
+[`AGENTS.md` section 2](AGENTS.md#2-git-and-pull-requests). Agents apply them on every
 turn, and human contributors follow the same ones.
 [docs/playbook.md, "Submit a pull request"](docs/playbook.md#submit-a-pull-request)
 gives the steps in order.
@@ -170,8 +170,8 @@ The forms ask only for what triage needs: the version, the affected stack
 and template, expected and actual behaviour, and evidence. A rule that
 produced a bad outcome in a real project is the most useful report this
 project receives. Issue titles follow
-[`AGENTS.md` section 2.1](AGENTS.md#21-git); the form applies the type
-label, and triage adds the priority ([section 2.2](AGENTS.md#22-issue-labels)).
+[`AGENTS.md` section 3](AGENTS.md#3-issues); the form applies the type
+label, and triage adds the priority.
 
 ### Search before filing
 
