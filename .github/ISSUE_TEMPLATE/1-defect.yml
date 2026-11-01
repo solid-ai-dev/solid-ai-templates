@@ -13,7 +13,7 @@ body:
         your version and evidence there rather than filing a new one. If a
         closed one matches and your version was released after it closed,
         that is a regression: file it here and name the closed issue below.
-        CONTRIBUTING.md, "Issues", says what happens to a report.
+        CONTRIBUTING.md, "Triage dispositions", says what happens to a report.
   - type: input
     id: version
     attributes:
