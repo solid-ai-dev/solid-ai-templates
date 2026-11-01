@@ -100,8 +100,8 @@ scorer.
 - Add stacks and platforms in a fork, never here; upstream's only stack
   and platform are the fixture, which is test input only
 - Register a fork's templates under `stacks:`, `platform:` or a key of its
-  own, never under `core:`, `base:`, `backend:` or `frontend:` (spec,
-  chapter 8.6)
+  own (spec, chapter 8.6)
+- Never edit `core:`, `base:`, `backend:` or `frontend:` in a fork
 - Give every template file an entry in `templates/manifest.yaml`, with an
   ID unique across all layers and a `depends_on` naming only valid IDs
 - Put base entries under `base:` and layer entries under `backend:` or
@@ -132,9 +132,9 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
   it, or a rule names it
 - Never remove or rename an existing ID; shipped IDs are frozen (spec,
   chapter 8.7)
-- Add a new ID only on new content, a new file or a heading after the
-  last line a shipped section holds; SYS-24 fails an ID inserted inside a
-  section, which shrinks it
+- Add a new ID only on new content, in a new file or under a heading after
+  the last line a shipped section holds; SYS-24 fails an ID inserted inside
+  a section, which shrinks it
 - Mark an optional section `(if applicable)` in its heading
 - Keep lines under 88 characters, the width `.editorconfig` declares for
   Markdown and Python
@@ -219,10 +219,11 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
 - Write a decision record only when a decision changes something a
   consuming project can observe without reading this repository, the
   composition model
-- Write none for prose style, tooling, release procedure, naming or file
-  layout, however consequential they are
-- Let one record cover related choices across several issues or PRs; never
-  require one per implementation concern
+- Owe no record for prose style, tooling, release procedure, naming or
+  file layout, however consequential they are
+- Let one record cover related choices across several issues or PRs when
+  they form one coherent decision; never require one per implementation
+  concern
 - Rewrite or split a record in place only until its first implementation
   merges; from then on it is history
 - Never change the decision in a merged record, the claims in its Context,
