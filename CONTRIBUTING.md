@@ -69,6 +69,7 @@ docs/
   decisions/                decision records
   playbook.md               procedures
   rationale/               the reasons behind templates
+  migrations/              upgrade guides from one major to the next
   audits/                   dated reviews and benchmark reports
   tests/                    the check index and its specifications
   diagrams/                 draw.io sources and their PNG exports

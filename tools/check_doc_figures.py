@@ -5,8 +5,8 @@ is typed and wrong the next time the tree moves. Where a number carries the
 point, `tools/sync_docs.py` emits it into a generated block its `--check` gates;
 elsewhere a document names the thing without counting it.
 
-Scans every tracked Markdown file except dated records (the changelog, the
-journal, decision records, audits) and source material (templates and what is
+Scans every tracked Markdown file except dated records (the changelog,
+decision records, audits) and source material (templates and what is
 generated from them). Skips fenced blocks, table rows, generated blocks and
 passages marked `<!-- measured: YYYY-MM-DD -->` ... `<!-- /measured -->`.
 
@@ -58,8 +58,7 @@ MEASURED_END = re.compile(r"<!--\s*/measured\s*-->")
 FENCE = re.compile(r"^\s*```")
 
 # Dated records state what was true on their date.
-HISTORY = ("CHANGELOG.md", "docs/dev-journal.md", "docs/decisions/",
-           "docs/audits/")
+HISTORY = ("CHANGELOG.md", "docs/decisions/", "docs/audits/")
 
 # Roots whose numerals are the subject matter, not measurements.
 SOURCES = ("templates/", "generated/", "examples/")

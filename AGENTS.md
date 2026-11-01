@@ -48,7 +48,7 @@ scorer.
 - A single-commit PR MUST carry the issue number in the commit subject
   too: GitHub squashes using the PR title only when the branch holds two
   or more commits, and the commit subject when it holds one. A PR that
-  closes no issue — a changelog cut, a journal entry, one part of an
+  closes no issue — a changelog cut, one part of an
   issue split across several PRs — is outside this: the squash appends
   the PR number either way
 - A subject MUST NOT name an issue its PR does not close. The merged-work

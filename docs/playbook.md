@@ -1270,9 +1270,9 @@ Retiring a document does not retire what it says.
 
 - Scope the removal by searching the tree for the content (the incident,
   the identifier, the material), never by deleting the file named for it
-- Search the dev journal first: it is append-only, ordered by date rather
-  than topic, and its entries often restate an incident in more detail than
-  the report that triggered it
+- Search the history as well, with `git log -S <text>`: a retired
+  document often restates an incident in more detail than the report that
+  triggered it
 - Where a surviving copy is sensitive, tell the owner rather than widening
   the deletion; what the repository publishes is the owner's decision
 - The concept-retirement sweep in `templates/core/quality.md` does not
@@ -1317,12 +1317,7 @@ second wrap-up in one session.
     inspect it rather than assume unpushed work
 14. **Flag gaps** — flag to the user anything above that cannot be
     completed
-15. **Dev journal** — add a session entry to `docs/dev-journal.md`: date,
-    tool, key changes, PRs merged, issues closed and created. It comes
-    after item 14 because it records the others, and a flagged gap often
-    turns into a fix. Where the checklist runs twice in a session, only
-    the last pass writes the entry
-16. **Summary** — what was done and what is next
+15. **Summary** — what was done and what is next
 
 ## Release a new version
 
@@ -1360,7 +1355,7 @@ release was named or no previous tag was found, so nothing was compared.
    ```bash
    git log --oneline "$(git describe --tags --abbrev=0)"..HEAD
    ```
-   A commit touching no template carries no entry, so a journal or
+   A commit touching no template carries no entry, so a documentation or
    tooling change is expected in that list with nothing answering it.
    Choose the version from the section before naming it, per ADR-006's
    SemVer: a patch when every entry sits under `### Fixed` or
@@ -1394,18 +1389,7 @@ release was named or no previous tag was found, so nothing was compared.
    ```
 5. Close the release's milestone once the release is published — titled
    `vA.B — <theme>` for a minor and `vA.B.C — <theme>` for a patch
-6. Record that the session owes a `docs/dev-journal.md` entry — do not
-   write it here. The entry is written at the end-of-session audit item
-   that owns it, which is the last item for a reason: it is the only one
-   whose output is a record of the others, and items above it file
-   issues and open pull requests. Written at this point instead, the
-   entry names none of them, and its account is fixed once written, so
-   the repair is a second entry for one session. When the entry is
-   written it is still **separate** — its own `docs(journal): ...` PR
-   with **no milestone**, not part of the release. A release cut without
-   a wrap-up still owes the entry; publishing the release does not
-   discharge it
-7. Verify the release exists before closing the session. This is last
+6. Verify the release exists before closing the session. This is last
    rather than part of step 4 on purpose: a check inside a step is
    skipped whenever the step is:
    ```bash
@@ -1413,8 +1397,8 @@ release was named or no previous tag was found, so nothing was compared.
    ```
    Pass condition: prints the tag, the bare-version title, and `false`.
    `release not found` means step 4 did not happen — and every other
-   artifact of the release, the tag and the closed milestone and the
-   journal entry, is present either way, so nothing else surfaces it
+   artifact of the release, the tag and the closed milestone, is present
+   either way, so nothing else surfaces it
 
 Which of those steps are actually enforced, audited per step as
 `quality-gates-procedure-steps` requires:
@@ -1424,10 +1408,9 @@ Which of those steps are actually enforced, audited per step as
 | 1 | `py tests/run.py smoke`, plus the milestone's own issue list |
 | 2 | `tools/check_release.py`, for the cut and the version; the reconciliation against the commits is read by hand |
 | 3 | `release-gates.yml`, whose first job fails a pushed lightweight `v*` tag |
-| 4 | `release-gates.yml`, which publishes only after its gates pass; step 7 confirms it |
+| 4 | `release-gates.yml`, which publishes only after its gates pass; step 6 confirms it |
 | 5 | nothing — an open milestone after a published release is silent |
-| 6 | nothing — a missing entry surfaces at the next wrap-up, or never. The entry itself is gated by the audit item that writes it |
-| 7 | nothing; it is the closing check, so it is the one to run by hand |
+| 6 | nothing; it is the closing check, so it is the one to run by hand |
 
 Step 4 is the one to protect first, because its omission cannot be
 repaired afterwards: publishing the release later dates it after the

@@ -29,5 +29,5 @@ mitigation shows a dash.
 | Policy | Oversized high-reach templates; too many absolute rules; local incidents generalised globally; procedures mixed into persistent policy | QG-04-02 |
 | Composition | File paths act as identity. An agent writing an inline or hybrid file applies overrides and settles conflicts itself; only the emitter, still proposed, does it in a tool | ADR-058, proposed |
 | Validation | Extensive structural checks, thin evidence that agents follow the rules | QG-01-02 |
-| Documentation | Large audit and journal surfaces; decision records out of proportion to product capability | - |
+| Documentation | A large audit surface; decision records out of proportion to product capability | - |
 | Product | The emitter runs from a clone of the templates; no stable project configuration exists, and no tool shows what a release changes in a project's files. The declaration block is a target | ADR-053, ADR-058, proposed |

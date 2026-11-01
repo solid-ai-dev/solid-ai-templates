@@ -117,7 +117,7 @@ How upstream tracks work and keeps its records.
 | [ADR-010](../decisions/010-adr-governance.md) | A record carries front matter with its ID, status, date, category and two-way supersession links | Accepted |
 | [ADR-011](../decisions/011-provenance-principle.md) | A new rule cites the incident that surfaced it, in the issue proposing it, not in the template | Accepted |
 | [ADR-014](../decisions/014-one-concern-per-adr.md) | Each record addresses one concern | Accepted |
-| [ADR-015](../decisions/015-dev-journal-ordering.md) | Development journal entries run oldest first | Accepted |
+| [ADR-015](../decisions/015-dev-journal-ordering.md) | Development journal entries run oldest first. The journal is no longer kept | Accepted |
 | [ADR-018](../decisions/018-audit-storage-convention.md) | Each assessment is stored as a dated report under `docs/audits/` | Accepted |
 | [ADR-021](../decisions/021-priority-scale-four-severities.md) | Four severities, with `P4` marking deferral | Superseded by ADR-024 |
 | [ADR-023](../decisions/023-no-named-milestone-lanes.md) | No named holding milestone, with deferral and urgency carried on labels | Accepted |
