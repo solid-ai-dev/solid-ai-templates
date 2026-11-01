@@ -186,7 +186,8 @@ content.
 ### 1.4 Replace a template file
 
 A template path is frozen in 3.x (spec, chapter 8.7): no release renames or removes a
-shipped template before 4.0.0. Replace a file instead of renaming it.
+shipped template before 4.0.0, except for a security fix. Replace a file instead of
+renaming it.
 
 1. Add the new template with its own manifest entry, per "Add a new base or layer
    template".
@@ -207,7 +208,8 @@ search that no old reference remains.
 ### 1.5 Change a section ID
 
 A shipped section ID is frozen in 3.x (spec, chapter 8.7): it is never renamed or
-removed before 4.0.0, and its section never moves to another file. The wording inside
+removed before 4.0.0, except for a security fix, and its section never moves to
+another file. The wording inside
 the section is free while it keeps its ID.
 
 1. Keep the existing `[ID: ...]` and every `[EXTEND: ...]` and `[OVERRIDE: ...]` that
@@ -607,7 +609,14 @@ it through a fixture that MUST be reported and one that must not.
    before and after. A pattern with the wrong line endings edits nothing, and an
    assertion that finds the planted value anywhere passes when a sibling already
    carried it.
-5. **Run the single check.** Where the fixture can live outside `templates/`, write
+5. **Replace the placeholder.** For a check that takes an argument — a milestone, a
+   module, a field — replace the placeholder line in `body` before calling
+   `run_block`, and assert it was replaced; a check run with its placeholder in place
+   reads nothing. The placeholder is not always what the issue or the prose calls it,
+   such as `MILESTONE = None` rather than an empty string.
+6. **Force the path under test to run.** A tool that writes nothing to a file already
+   in its target state reports clean because it never ran.
+7. **Run the single check.** Where the fixture can live outside `templates/`, write
    it, run the check by a string from its body, and delete it:
 
    ```bash
@@ -634,13 +643,6 @@ it through a fixture that MUST be reported and one that must not.
    EOF
    ```
 
-6. **Replace the placeholder.** For a check that takes an argument — a milestone, a
-   module, a field — replace the placeholder line in `body` before calling
-   `run_block`, and assert it was replaced; a check run with its placeholder in place
-   reads nothing. The placeholder is not always what the issue or the prose calls it,
-   such as `MILESTONE = None` rather than an empty string.
-7. **Force the path under test to run.** A tool that writes nothing to a file already
-   in its target state reports clean because it never ran.
 8. **Read the pair.** Pass condition: the fixture that must be reported is reported,
    the one that must not is not, and the check's own corpus counts move between the
    two runs. Only a moving count tells a fixture the check never reached from a
@@ -986,8 +988,8 @@ ADR-010 introduced, with `Rejected` and `Withdrawn` added to its three statuses.
    | Decision | One sentence |
    | Rationale | Two to four bullets, each tied to a force |
    | Design | Optional: the numbered rules, with RFC 2119 keywords |
-   | Alternatives considered | What was rejected and why |
-   | Consequences | What follows from the decision |
+   | Alternatives considered | What was rejected and why, or "None" when nothing applies |
+   | Consequences | What follows from the decision, or "None" when nothing applies |
    | Compatibility | What an existing consumer sees, or "None" when no existing interface changes |
    | Security | What it exposes or protects, or "None" when it touches nothing |
 
@@ -1126,7 +1128,8 @@ What enforces each step, audited per step as `quality-gates-procedure-steps` req
 
 Protect step 4 first, because its omission cannot be repaired: publishing a release
 later dates it after the release that followed it, and a mis-ordered release list is
-worse than a visibly absent entry. Leave a missed release unpublished.
+worse than a visibly absent entry. Leave a missed release unpublished once a later
+release is published.
 
 Projects with a version manifest (`package.json`, `pyproject.toml`, etc.) follow the
 branch → bump → PR → merge → tag flow instead; see ADR-006.
