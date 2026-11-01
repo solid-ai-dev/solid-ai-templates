@@ -154,6 +154,8 @@ Releases up to 2.63.0 are listed in
 
 ### Changed
 
+- The development journal is no longer kept, and the 3.0 migration guide
+  moves to docs/migrations ([#2428])
 - Templates drop fourteen rules capable agents follow unprompted, such as generic
   naming advice ([#2389])
 - Template sections carry load directives, marking procedures that belong to
@@ -492,6 +494,7 @@ Releases up to 2.63.0 are listed in
 [#2389]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2389
 [#2415]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2415
 [#2423]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2423
+[#2428]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2428
 
 ## [2.90.0] - 2026-09-12
 
