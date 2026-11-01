@@ -202,9 +202,14 @@ renaming it.
    core tier. Point guidance on what to adopt at the new file, and leave every
    reference to the old one that describes what still resolves.
 
-At 4.0.0 the old file goes: `git mv` or remove it, update every `[DEPENDS ON: ...]`
-header and `file:` field that names the old path, and verify with `git status` and a
-search that no old reference remains.
+At 4.0.0 the old file goes:
+
+1. Remove it and its manifest entry, and move each `depends_on` and core-tier
+   membership that named it to the replacement.
+2. Repoint every `[DEPENDS ON: ...]` header that names the old path, and every
+   `[EXTEND: ...]` and `[OVERRIDE: ...]` that names one of its section IDs.
+3. Run `py tools/sync_docs.py` and `py tests/run.py smoke`, and verify with a search
+   that no old path or section ID remains.
 
 ### 1.5 Change a section ID
 
