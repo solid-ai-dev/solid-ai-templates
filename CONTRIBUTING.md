@@ -68,7 +68,7 @@ docs/
   requirements.md           functional and quality requirements
   decisions/                decision records
   playbook.md               procedures
-  design/  rationale/       proposals, and the reasons behind templates
+  rationale/               the reasons behind templates
   audits/                   dated reviews and benchmark reports
   tests/                    the check index and its specifications
   diagrams/                 draw.io sources and their PNG exports
