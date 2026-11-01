@@ -490,6 +490,57 @@ def _readme_agents():
     return "\n".join(out)
 
 
+def _readme_hooks():
+    """Render the README table of shipped hooks a project can run.
+
+    The hook list is written once, in `.pre-commit-hooks.yaml`. A
+    deprecated hook still runs until the next major, but a project
+    starting now has no reason to adopt it, so the table leaves it out.
+    """
+    text = io.open(ROOT / ".pre-commit-hooks.yaml", encoding="utf-8").read()
+    blocks = re.split(r"^(?=- id: )", text, flags=re.MULTILINE)[1:]
+
+    # A changed layout in the hook file would parse to nothing here, and an
+    # empty table would read as upstream shipping no checks.
+    if not blocks:
+        raise SystemExit(
+            "sync: .pre-commit-hooks.yaml parsed to zero hooks; refusing to "
+            "write an empty README table"
+        )
+
+    templates = {
+        path: io.open(path, encoding="utf-8").read()
+        for path in sorted((ROOT / "templates").rglob("*.md"))}
+    out = ["| Hook | What it does | Runs | Rules and arguments |",
+           "|------|--------------|------|---------------------|"]
+    for block in blocks:
+        hid = re.search(r"^- id: (\S+)", block).group(1)
+        name = re.search(r"^\s+name: \"?([^\"\n]+)\"?$", block,
+                         re.MULTILINE).group(1)
+        if name.startswith("Deprecated:"):
+            continue
+
+        # A manual-stage hook reads committed history, so neither the commit
+        # hook nor `run --all-files` reaches it.
+        manual = re.search(r"^\s+stages: \[manual\]", block, re.MULTILINE)
+        runs = "On request, after committing" if manual else "On each commit"
+
+        # A template that states a hook's command also holds its rules and
+        # the arguments a project sets, so the row links each one. A fork may
+        # prescribe a shipped hook in a template of its own as well.
+        homes = [p.relative_to(ROOT).as_posix()
+                 for p, body in templates.items()
+                 if "pre-commit run %s " % hid in body]
+        if not homes:
+            raise SystemExit(
+                "sync: no template states the command of hook %s; the README "
+                "cannot link where its arguments are described" % hid)
+        links = ", ".join("[%s](%s)" % (rel[len("templates/"):], rel)
+                          for rel in homes)
+        out.append("| `%s` | %s | %s | %s |" % (hid, name, runs, links))
+    return "\n".join(out)
+
+
 def main():
     check_mode = "--check" in sys.argv
 
@@ -525,6 +576,10 @@ def main():
     has_model_table = "<!-- generated:readme-model-limits -->" in readme_text
     model_limits = _readme_model_limits() if has_model_table else None
     agent_outputs = _readme_agents()
+    # Only a README carrying the hook table's markers asks for it, so a
+    # fork whose README drops the table never parses the hook file.
+    has_hook_table = "<!-- generated:readme-hooks -->" in readme_text
+    readme_hooks = _readme_hooks() if has_hook_table else None
     interview_content = _interview_stacks(manifest)
 
     spec_doc = ROOT / "docs" / "architecture" / "05-building-block-view.md"
@@ -532,9 +587,10 @@ def main():
     examples_doc = ROOT / CHAIN_EXAMPLES_DOC
     example_blocks = {"spec-chain-examples": chain_examples}
 
-    # The README is fork-owned. Upstream's is a short front page with no
-    # generated section; a fork keeps the markers for the tables it shows,
-    # and each pair present is filled, so --check still sees its drift. A
+    # The README is fork-owned. Upstream's is a short front page whose only
+    # generated section is the hook table; a fork keeps the markers for the
+    # tables it shows, and each pair present is filled, so --check still
+    # sees its drift. A
     # section is absent only when both markers are: one marker deleted from
     # a pair would otherwise leave a stale table outside every check.
     readme_blocks = {}
@@ -543,6 +599,7 @@ def main():
             ("readme-extras", readme_extras),
             ("readme-root-counts", readme_root_counts),
             ("readme-agents", agent_outputs),
+            ("readme-hooks", readme_hooks),
             ("readme-model-limits", model_limits)):
         opens = "<!-- generated:%s -->" % marker in readme_text
         closes = "<!-- /generated:%s -->" % marker in readme_text
