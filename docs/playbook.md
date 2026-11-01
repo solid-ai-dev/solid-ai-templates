@@ -197,9 +197,10 @@ renaming it.
    it lists the old template under `Deprecated`.
 4. Run `py tests/run.py smoke`. SYS-22 fails a `deprecated` that names no entry, or
    one that is itself deprecated.
-5. Run `py tools/sync_docs.py` for the generated sections, then search `docs/` and
-   `README.md` for the old filename and point each description of the current tree at
-   the new one.
+5. Run `py tools/sync_docs.py` for the generated sections, and leave them as it
+   writes them; the deprecated file still resolves, and a core file stays in the
+   core tier. Point guidance on what to adopt at the new file, and leave every
+   reference to the old one that describes what still resolves.
 
 At 4.0.0 the old file goes: `git mv` or remove it, update every `[DEPENDS ON: ...]`
 header and `file:` field that names the old path, and verify with `git status` and a
