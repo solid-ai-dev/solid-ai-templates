@@ -79,8 +79,7 @@ def section_of(labels):
 
     '' means `changelog:none`; None means no label or more than one.
     """
-    kinds = [n.split(":", 1)[1].strip() for n in labels
-             if n.startswith("changelog:")]
+    kinds = [n.split(":", 1)[1] for n in labels if n.startswith("changelog:")]
     if len(kinds) != 1:
         return None
     if kinds[0] == "none":
@@ -280,6 +279,7 @@ def self_test():
                   section_of(["changelog:none"]) == ""))
     cases.append(("no label, or two, is refused",
                   section_of(["task"]) is None
+                  and section_of(["changelog: none"]) is None
                   and section_of(["changelog:added", "changelog:fixed"])
                   is None))
     text, added = add_entries(sample, [("Added", 20, "New thing"),

@@ -248,10 +248,12 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
 ### 6.1 Checks
 
 - CI runs smoke, conformance, fork sync, `check_release.py --self-test`,
-  `cut_changelog.py --self-test`, the changelog-label gate,
-  `sync_docs.py --check`, `resolve_chain.py --check`, the redundancy audit,
-  the template-quality ratchet, pyflakes, markdownlint, the pre-commit
-  hooks and gitleaks on every PR and on push to `main`
+  `cut_changelog.py --self-test`, `sync_docs.py --check`,
+  `resolve_chain.py --check`, the redundancy audit, the template-quality
+  ratchet, pyflakes, markdownlint, the pre-commit hooks and gitleaks on
+  every PR and on push to `main`
+- The changelog-label gate runs on every upstream PR, except a dependency
+  bump, and fails unless the PR carries exactly one valid `changelog:` label
 - Every runner writes a timestamped report to `tests/reports/`
   (gitignored); `docs/tests/index.md` lists every check
 - Hold every tracked Markdown file to markdownlint; never add an `ignores`
