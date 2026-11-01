@@ -1,0 +1,41 @@
+name: Changelog label
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  # The release cut writes each changelog entry from this label, so a pull
+  # request merged without one would surface only at the cut. A fork keeps
+  # its own changelog and labels, so the gate runs upstream only, and a
+  # dependency bump carries no entry.
+  label:
+    name: Check the pull request carries one changelog label
+    if: >-
+      github.repository == 'solid-ai-dev/solid-ai-templates' &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Count the changelog labels
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        # The accepted suffixes are the sections tools/cut_changelog.py
+        # writes, so a label it cannot place fails here, not at the cut.
+        run: |
+          found=$(echo "$LABELS" | jq -r '.[] | select(startswith("changelog:"))')
+          count=$(echo -n "$found" | grep -c '^' || true)
+          echo "changelog labels: $count ${found//$'\n'/ }"
+          case "$found" in
+            changelog:breaking|changelog:added|changelog:changed) ok=1 ;;
+            changelog:deprecated|changelog:fixed|changelog:security) ok=1 ;;
+            changelog:none) ok=1 ;;
+            *) ok=0 ;;
+          esac
+          if [ "$count" -ne 1 ] || [ "$ok" -ne 1 ]; then
+            echo "Add exactly one of changelog:breaking, added, changed,"
+            echo "deprecated, fixed, security, or none when no project notices it"
+            exit 1
+          fi

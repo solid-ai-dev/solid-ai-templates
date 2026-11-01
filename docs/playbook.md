@@ -506,8 +506,8 @@ skipped.
 
     Re-record a lower row only when the added words are the fix (a restored
     qualifier, the second side of a conflict) and say so in the pull
-    request. Add a migration-guide row for each move or removal, and the
-    CHANGELOG line once the pull request has its number
+    request. Add a migration-guide row for each move or removal, and give
+    the pull request its `changelog:` label
 
 ## Score template quality
 
@@ -958,7 +958,8 @@ steps below apply them in order.
 3. Update all affected documents (`docs/architecture/`, `README.md`,
    `manifest.yaml`) before committing
 4. Commit with a subject in section 2's form
-5. Push and open a PR titled in the same form
+5. Push and open a PR titled in the same form, and give it one
+   `changelog:` label; the `Changelog label` check fails until it has one
 6. Once the maintainer approves the merge, merge with the default squash
    subject — `gh pr merge <number> --squash`, with no `--subject`. GitHub
    composes that subject from the title and appends the pull request
@@ -1350,19 +1351,22 @@ release was named or no previous tag was found, so nothing was compared.
 
 1. Confirm the milestone's issues are all closed and `main` is green
    (`py tests/run.py smoke` passes) and up to date (`git pull`)
-2. Cut `CHANGELOG.md` — reconcile the `Unreleased` section against the
-   commits since the previous tag:
+2. Cut `CHANGELOG.md` — write an entry for each pull request merged since
+   the previous tag from its `changelog:` label:
    ```bash
-   git log --oneline "$(git describe --tags --abbrev=0)"..HEAD
+   py tools/cut_changelog.py
    ```
-   A commit touching no template carries no entry, so a documentation or
-   tooling change is expected in that list with nothing answering it.
+   Pass condition: it prints `entries added:` and no `no changelog label:`
+   line, and exits zero. Label each pull request it lists and run it again.
    Choose the version from the section before naming it, per ADR-006's
    SemVer: a patch when every entry sits under `### Fixed` or
    `### Security`, a major when the section carries
    `### Breaking changes`, a minor otherwise. A patch's milestone is
-   retitled `vA.B.C — <theme>`. Then rename that section to
-   `## [A.B.C] - YYYY-MM-DD` and open an empty `Unreleased` above it.
+   retitled `vA.B.C — <theme>`. Then cut the section, which renames it to
+   `## [A.B.C] - YYYY-MM-DD` and opens an empty `Unreleased` above it:
+   ```bash
+   py tools/cut_changelog.py --cut vA.B.C
+   ```
    This repo has no version manifest to carry the cut, so it is its own
    pull request, and it MUST merge before the tag below — a tag placed
    first names a tree whose changelog does not mention the release. That
@@ -1406,7 +1410,7 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run.py smoke`, plus the milestone's own issue list |
-| 2 | `tools/check_release.py`, for the cut and the version; the reconciliation against the commits is read by hand |
+| 2 | `tools/cut_changelog.py`, which refuses to write while a merged pull request lacks its `changelog:` label; `tools/check_release.py`, for the cut and the version |
 | 3 | `release-gates.yml`, whose first job fails a pushed lightweight `v*` tag |
 | 4 | `release-gates.yml`, which publishes only after its gates pass; step 6 confirms it |
 | 5 | nothing — an open milestone after a published release is silent |

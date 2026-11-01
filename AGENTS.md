@@ -192,11 +192,15 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
     renamed or re-depended
   - `docs/playbook.md` — if a procedure changes
   - `CONTRIBUTING.md` — if prerequisites or first steps change
-  - `CHANGELOG.md` — if a consuming project would notice the change
-- Write a changelog entry under `Unreleased` as one line of about fifteen
-  plain words saying what changed, with no code formatting
-- End the entry with a link to the PR, which holds the why; say in the PR
-  body when a change needs no entry
+- Give every PR exactly one `changelog:` label naming its entry's section,
+  `breaking`, `added`, `changed`, `deprecated`, `fixed` or `security`
+- Label a PR `changelog:none` when a consuming project would not notice it
+- Title a PR in plain words a consuming project understands, since the
+  release cut turns the title into its changelog entry
+- Put a `Changelog:` line in the PR body when the title cannot serve as the
+  entry; its text replaces the title's
+- Leave `CHANGELOG.md` to the release cut, which writes the entries with
+  `tools/cut_changelog.py`
 - Cross-reference instead of duplicating content across documents
 - Never state a count about the tree outside a generated block or a dated
   record; `tools/check_doc_figures.py` gates it as a local pre-commit hook
@@ -244,9 +248,12 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
 ### 6.1 Checks
 
 - CI runs smoke, conformance, fork sync, `check_release.py --self-test`,
-  `sync_docs.py --check`, `resolve_chain.py --check`, the redundancy audit,
-  the template-quality ratchet, pyflakes, markdownlint, the pre-commit
-  hooks and gitleaks on every PR and on push to `main`
+  `cut_changelog.py --self-test`, `sync_docs.py --check`,
+  `resolve_chain.py --check`, the redundancy audit, the template-quality
+  ratchet, pyflakes, markdownlint, the pre-commit hooks and gitleaks on
+  every PR and on push to `main`
+- The changelog-label gate runs on every upstream PR, except a dependency
+  bump, and fails unless the PR carries exactly one valid `changelog:` label
 - Every runner writes a timestamped report to `tests/reports/`
   (gitignored); `docs/tests/index.md` lists every check
 - Hold every tracked Markdown file to markdownlint; never add an `ignores`
