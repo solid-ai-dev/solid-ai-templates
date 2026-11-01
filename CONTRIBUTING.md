@@ -105,5 +105,6 @@ report or pull request that sits is not a rejection.
 | Duplicate | Already tracked by a canonical issue | `duplicate`, closed, linked to the canonical issue |
 | Decline | Out of scope, a local preference, or not worth its cost | `wontdo`, closed with the reason |
 
-Accepted is not scheduled; only a milestone schedules work. A preference
-that suits one project belongs in its own context file or in a fork.
+Accepted is not scheduled; only a milestone schedules work. A proposal can
+be accepted as no change, with the reason stated. A preference that suits
+one project belongs in its own context file or in a fork.
