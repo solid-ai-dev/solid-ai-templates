@@ -311,8 +311,9 @@ rules score 85 or above and essay-like rules 40 or below.
 
 `tests/baselines/template-quality.txt` records each template's score, and
 CI runs `--check` as a ratchet (QG-04-02). It fails a template scoring
-below its row, a new template scoring under 70 with no row, and a row
-naming no template. A change that improves a template re-records its row
+below its row, an upstream template scoring under 95 with or without a
+row, a new template scoring under 70 with no row, and a row naming no
+template. A fork's templates answer to their own rows and the 70 floor. A change that improves a template re-records its row
 with `--update`. A fork records its own templates in
 `tests/baselines/fork-template-quality.txt`, so recording them never edits
 the upstream file.
