@@ -19,7 +19,7 @@ ADR-050).
 | Git | Everything |
 | Python 3 with PyYAML (`pip install pyyaml`) | The tools and checks |
 | GitHub CLI (`gh`), authenticated | The issue, pull-request and release steps |
-| pyflakes 4.0.2, Node.js, pre-commit | Optional, to run CI's linters locally |
+| pyflakes 4.0.2, Node.js, pre-commit | Optional, to run CI's linters locally; `pre-commit install` then runs the hooks on each commit |
 
 The docs write `py`, the Windows launcher; on macOS and Linux run
 `python3`. There is no build step. Clone and run the structural checks
@@ -93,7 +93,9 @@ since that is a regression.
 
 ### 6.3 Triage dispositions
 
-Triage runs in batches and gives every report one disposition.
+Triage runs in batches and gives every report one disposition. No response
+time is promised, except the security acknowledgement in SECURITY.md, and a
+report or pull request that sits is not a rejection.
 
 | Disposition | Meaning | Marked by |
 |-------------|---------|-----------|
