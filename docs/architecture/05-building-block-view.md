@@ -109,6 +109,7 @@ its ID scheme.
 
 | Tool | Responsibility | Source |
 |------|----------------|--------|
+| `tools/cut_changelog.py` | Writes the changelog's entries from the merged pull requests' labels, and cuts a release's section | QG-03-02 |
 | `tools/check_release.py` | Checks a release's changelog cut and SemVer step | QG-03-02 |
 | `tools/audit_redundancy.py` | Finds a rule repeated across the sections of one resolved chain | QG-01-01 |
 | `tools/score_templates.py` | Scores each template and holds it to its baseline | QG-04-02 |

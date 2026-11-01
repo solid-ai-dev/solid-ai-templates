@@ -1,0 +1,32 @@
+name: Changelog label
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  # The release cut writes each changelog entry from this label, so a pull
+  # request merged without one would surface only at the cut. A fork keeps
+  # its own changelog and labels, so the gate runs upstream only, and a
+  # dependency bump carries no entry.
+  label:
+    name: Check the pull request carries one changelog label
+    if: >-
+      github.repository == 'solid-ai-dev/solid-ai-templates' &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Count the changelog labels
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          count=$(echo "$LABELS" | jq '[.[] | select(startswith("changelog:"))] | length')
+          echo "changelog labels: $count"
+          if [ "$count" -ne 1 ]; then
+            echo "Add exactly one changelog: label, such as changelog:added,"
+            echo "changelog:fixed or changelog:none when no project notices it"
+            exit 1
+          fi

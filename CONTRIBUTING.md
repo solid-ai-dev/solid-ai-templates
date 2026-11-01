@@ -108,6 +108,9 @@ py tools/sync_docs.py
 - **Resolvable references.** `[DEPENDS ON: ...]`, `[EXTEND: ...]` and
   `[OVERRIDE: ...]` must name things that exist and are reachable in the
   resolved chain
+- **A changelog label.** One `changelog:` label names the section your
+  pull request's entry goes in, or `changelog:none`; the release cut
+  writes the entry from your title, so title it in plain words
 - **Updated documents.** If your change moves the composition model, update
   `docs/architecture/`; if it changes how a project sets up, update
   `README.md`. `AGENTS.md` section 5.1 lists which document owns what

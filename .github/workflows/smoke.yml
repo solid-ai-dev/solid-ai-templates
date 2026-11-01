@@ -32,6 +32,9 @@ jobs:
           - name: Check the release check still reads its planted cases
             run: python tools/check_release.py --self-test
 
+          - name: Check the changelog cut still writes its planted cases
+            run: python tools/cut_changelog.py --self-test
+
           - name: Check generated docs are up to date
             run: python tools/sync_docs.py --check
 
