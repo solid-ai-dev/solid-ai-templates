@@ -1,5 +1,5 @@
 """Score template documents against the criteria in
-docs/design/template-content-quality.md, "Measured criteria".
+docs/architecture/08-crosscutting-concepts.md, "Template quality".
 
 Usage:
     py tools/score_templates.py                 # score every template

@@ -2,8 +2,9 @@
 
 The concepts that hold across every template, tool and fork. They cover
 how sections combine, which rule wins, how far a reference reaches, what a
-fork may change, what 3.x freezes, how rules are written, and what a root
-costs in context.
+fork may change, what 3.x freezes, how rules are written, what a root
+costs in context, which level owns a rule, and how a template's form is
+scored.
 
 ## 8.1 Sections, IDs and directives
 
@@ -198,12 +199,9 @@ A fork names its own files.
 Every rule in a widely resolved file is read on every turn by every project
 on that chain. A stack category's context-window tier moves only on
 purpose, recorded in `tests/smoke/context-tiers.txt`, and SYS-16 checks it
-(QG-02-02). Two design documents go deeper:
-
-- [agent-context-tradeoffs.md](../design/agent-context-tradeoffs.md), on
-  how context size and startup design affect latency and quality
-- [template-content-quality.md](../design/template-content-quality.md), on
-  the measured criteria `tools/score_templates.py` scores
+(QG-02-02). A rule in context costs attention as well as tokens, so a
+shorter file is better only when every rule it drops is one the agent did
+not need, and the form of each rule matters more than its size (8.12).
 
 The table shows what each root puts in context, as the emitter builds it.
 The root file is read on every turn, and the skills load only when their
@@ -252,3 +250,78 @@ task starts. The root file's count includes its fact slots.
 | `frontend-quality` | 5201 | 10 | 2169 |
 | `frontend-ux` | 5283 | 10 | 2094 |
 <!-- /generated:spec-context-cost -->
+
+## 8.11 Responsibility levels
+
+Six levels own the decisions around a change, from why a product exists to
+the change itself. Upstream is the shared engineering policy, level 4. A
+rule belongs to the level that decides it. Preserving data in a migration
+is shared policy, choosing the migration tool is a project convention, and
+accepting ten minutes of downtime is a requirement. A finding goes to the
+level whose decision it corrects, and may touch several, each with its own
+approver. An agent may gather the evidence and propose a correction, and
+the level's owner approves it.
+
+| Level | Decides | Owner | A finding corrects | Source |
+|-------|---------|-------|--------------------|--------|
+| 1. Purpose and outcomes | Why the product exists and what success means | Business and product leadership | Product goals and success measures | Chapter 1 |
+| 2. Requirements and acceptance | What must work, under which constraints | Product owner and team | Specification and acceptance criteria | Chapter 1, Team |
+| 3. Architecture | System boundaries and the major design choices | Technical leadership | Architecture and decision records | Chapter 1, Team |
+| 4. Shared engineering policy | The standards, safeguards and evidence every project needs | Upstream maintainer | A template and its checks | ADR-050 |
+| 5. Project conventions | Stack, tools, commands and local policy | Fork or project maintainer | A fork template, configuration or context file | ADR-049 |
+| 6. Task execution | Implementing, testing, reviewing and explaining a change | Agents and developers | Code and regression tests | Chapter 1 |
+
+## 8.12 Template quality
+
+A template is a list of rules an agent reads and applies on the next turn.
+A good one states each rule once, briefly, as an instruction, and leaves
+reasons and history to `docs/rationale/`, one file per template and one
+heading per section ID. `tools/score_templates.py` measures that form on
+prose only, leaving out fenced code, tables and section directives. Each
+criterion scores 100 at its good value and 0 at its bad one, linearly
+between, and a file's score is the weighted mean.
+
+| Criterion | Metric | Good | Bad | Weight | Why it matters to an agent |
+|-----------|--------|------|-----|--------|----------------------------|
+| Atomic rules | Median words per bullet | ≤ 15 | ≥ 35 | 2 | A short rule is one signal; a long one carries several the agent must separate |
+| No long rules | Share of bullets over 40 words | ≤ 2 % | ≥ 30 % | 2 | A rule that needs a paragraph is a rule plus its explanation |
+| Rules, not essays | Share of prose words in paragraphs | ≤ 10 % | ≥ 35 % | 1.5 | Paragraphs read as context, not as instructions |
+| Short lead-ins | Longest paragraph, words | ≤ 40 | ≥ 120 | 1 | A long lead-in pushes the rules it introduces out of view |
+| Plain sentences | Mean words per sentence | ≤ 15 | ≥ 22 | 1 | Long sentences hide the condition a rule depends on |
+| One statement per rule | Share of bullets with three or more sentences | ≤ 2 % | ≥ 20 % | 1.5 | The extra sentences are rationale, which belongs in prose docs |
+| Instructions | Share of top-level bullets opening with an imperative or carrying an obligation word | ≥ 75 % | ≤ 40 % | 1 | A bullet that only describes leaves the agent to infer the rule |
+| Verb first | Share of top-level bullets opening with a subject, such as a determiner first, an auxiliary second, or an unbracketed RFC key word within four words | 0 % | 100 % | 0.25 | "Handlers are thin" and "X MUST be" state a fact the agent must turn into an action |
+| Whole wraps | Continuation lines holding only a dash or one word, with more of the rule after them | 0 | ≥ 4 | 0.25 | A wrap broken mid-sentence reads as two fragments |
+| Decidable | Hedge words per 1,000 words, such as "appropriate", "where possible" and "usually" | ≤ 1 | ≥ 5 | 1 | A hedge lets two agents read the same rule two ways |
+| Rules, not history | Dates, "measured in" and "seen during" per 1,000 words | 0 | ≥ 1 | 0.5 | An anecdote is evidence for a rule, not a rule |
+| Retrievable sections | Prose lines in the longest section | ≤ 40 | ≥ 200 | 1 | A heading is a retrieval cue; a section too long to hold weakens it |
+
+A failure severe enough that no average should hide it caps the score.
+
+| Severe failure | Cap |
+|----------------|-----|
+| A ticket or decision-record number cited in template text | 50 |
+| A single bullet over 150 words | 60 |
+
+The bands are calibrated on the corpus, not set up front. "Good" sits near
+the median of the templates outside `core/`, and "bad" near the corpus's
+90th percentile. `--calibrate` prints the distributions, and the planted
+cases of `--self-test` hold the scorer to its intent, so short imperative
+rules score 85 or above and essay-like rules 40 or below.
+
+`tests/baselines/template-quality.txt` records each template's score, and
+CI runs `--check` as a ratchet (QG-04-02). It fails a template scoring
+below its row, an upstream template scoring under 95 with or without a
+row, a new template scoring under 70 with no row, and a row naming no
+template. A drop of 0.1 or less is rounding noise and passes both the row
+and the 95 floor. A change that improves a template re-records its row
+with `--update`. A fork records its own templates in
+`tests/baselines/fork-template-quality.txt`, so recording them never edits
+the upstream file, and they answer to their own rows, or to the 70 floor
+when they have none.
+
+The scores measure form, not usefulness or correctness. A short,
+imperative, wrong rule scores well, and so does a rule shortened by
+dropping the condition it applies under or its main exception. A rule is
+shortened by splitting it, never by dropping either. The scores sit beside
+review and the efficacy benchmark, not in place of them.

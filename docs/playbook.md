@@ -395,7 +395,7 @@ no repository to read.
 ## Audit redundancy
 
 A rule stated in two active sections of the same resolved chain dilutes
-the agent's attention (see `docs/design/template-content-quality.md`). The
+the agent's attention (spec, chapter 8.12). The
 audit scans every root a project can pick -- in a fork, the stacks and the
 orthogonal templates alike -- and reports duplicates, excluding those the
 override model legitimately produces (one section `[OVERRIDE]`s the
@@ -512,7 +512,7 @@ skipped.
 ## Score template quality
 
 `tools/score_templates.py` scores each template's form against the
-criteria in `docs/design/template-content-quality.md`, "Measured criteria":
+criteria in the spec, chapter 8.12:
 rule length, prose share, sentence length, instructions, verb-first rules,
 whole wraps, hedges, history and section size, from 0 to 100.
 
