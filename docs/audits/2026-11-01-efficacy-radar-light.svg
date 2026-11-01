@@ -9,7 +9,7 @@
 <polygon points="250.0,166.0 313.3,196.5 329.0,265.0 285.1,320.0 214.9,320.0 171.0,265.0 186.7,196.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <polygon points="250.0,139.0 334.4,179.7 355.3,271.0 296.9,344.3 203.1,344.3 144.7,271.0 165.6,179.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <line x1="250.0" y1="247.0" x2="250.0" y2="139.0" stroke="#c8c7c0" stroke-width="1"/>
-<text x="250.0" y="121.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Works</text>
+<text x="250.0" y="121.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
 <line x1="250.0" y1="247.0" x2="334.4" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
 <text x="347.9" y="168.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
 <line x1="250.0" y1="247.0" x2="355.3" y2="271.0" stroke="#c8c7c0" stroke-width="1"/>
@@ -36,7 +36,7 @@
 <polygon points="750.0,166.0 813.3,196.5 829.0,265.0 785.1,320.0 714.9,320.0 671.0,265.0 686.7,196.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <polygon points="750.0,139.0 834.4,179.7 855.3,271.0 796.9,344.3 703.1,344.3 644.7,271.0 665.6,179.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <line x1="750.0" y1="247.0" x2="750.0" y2="139.0" stroke="#c8c7c0" stroke-width="1"/>
-<text x="750.0" y="121.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Works</text>
+<text x="750.0" y="121.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
 <line x1="750.0" y1="247.0" x2="834.4" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
 <text x="847.9" y="168.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
 <line x1="750.0" y1="247.0" x2="855.3" y2="271.0" stroke="#c8c7c0" stroke-width="1"/>
@@ -63,7 +63,7 @@
 <polygon points="250.0,536.0 313.3,566.5 329.0,635.0 285.1,690.0 214.9,690.0 171.0,635.0 186.7,566.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <polygon points="250.0,509.0 334.4,549.7 355.3,641.0 296.9,714.3 203.1,714.3 144.7,641.0 165.6,549.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <line x1="250.0" y1="617.0" x2="250.0" y2="509.0" stroke="#c8c7c0" stroke-width="1"/>
-<text x="250.0" y="491.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Works</text>
+<text x="250.0" y="491.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
 <line x1="250.0" y1="617.0" x2="334.4" y2="549.7" stroke="#c8c7c0" stroke-width="1"/>
 <text x="347.9" y="538.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
 <line x1="250.0" y1="617.0" x2="355.3" y2="641.0" stroke="#c8c7c0" stroke-width="1"/>
@@ -90,7 +90,7 @@
 <polygon points="750.0,536.0 813.3,566.5 829.0,635.0 785.1,690.0 714.9,690.0 671.0,635.0 686.7,566.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <polygon points="750.0,509.0 834.4,549.7 855.3,641.0 796.9,714.3 703.1,714.3 644.7,641.0 665.6,549.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <line x1="750.0" y1="617.0" x2="750.0" y2="509.0" stroke="#c8c7c0" stroke-width="1"/>
-<text x="750.0" y="491.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Works</text>
+<text x="750.0" y="491.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
 <line x1="750.0" y1="617.0" x2="834.4" y2="549.7" stroke="#c8c7c0" stroke-width="1"/>
 <text x="847.9" y="538.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
 <line x1="750.0" y1="617.0" x2="855.3" y2="641.0" stroke="#c8c7c0" stroke-width="1"/>
