@@ -2,7 +2,7 @@
 
 Operational reference for common tasks. Each section is a self-contained
 procedure. See `AGENTS.md` for authoring rules and `docs/spec.md` for the
-composition model. Commands use `py`; `CONTRIBUTING.md`, "Set up",
+composition model. Commands use `py`; `CONTRIBUTING.md`, "Setup",
 gives the launcher on macOS and Linux.
 
 ## Add a new base or layer template
@@ -595,7 +595,7 @@ and fork refs with one ruler. Smoke and conformance read the templates
 themselves.
 
 See `docs/tests/codification.md` for the ID scheme and `docs/tests/index.md` for the
-full list of specs. Setup, PyYAML included, is in `CONTRIBUTING.md`, "Set up".
+full list of specs. Setup, PyYAML included, is in `CONTRIBUTING.md`, "Setup".
 
 The runners end with a `VERDICT:` line, printed after the report path so
 that reading the last line alone cannot report success over a failed run.
@@ -1012,7 +1012,7 @@ drifted from its convention.
 
 ## Triage a report
 
-Run this in batches, not on each arrival. `CONTRIBUTING.md`, "Issues",
+Run this in batches, not on each arrival. `CONTRIBUTING.md`, "Triage dispositions",
 defines the five dispositions and what marks each; this is how to apply
 them. Untriaged reports are open issues with no priority label. A report
 waiting for information also has none, so the queue splits on the
