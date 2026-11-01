@@ -44,8 +44,9 @@ scorer.
   `<type>(<scope>): <summary> (#issue)`
 - Put the issue number in the commit subject of a single-commit PR too;
   GitHub squashes with the commit subject when the branch holds one commit
-- Leave the issue number out of a PR that closes none, such as a changelog
-  cut or one part of a split issue; the squash appends the PR number
+- Leave the issue number out of the title and commit subject of a PR that
+  closes none, such as a changelog cut or one part of a split issue; the
+  squash appends the PR number
 - Never name an issue in a subject whose PR does not close it; the
   merged-work sweep fails on every open issue a merged subject names
 - Mark each part PR of a split issue "Part of #N" in its body; only the PR
@@ -106,8 +107,9 @@ scorer.
   ID unique across all layers and a `depends_on` naming only valid IDs
 - Put base entries under `base:` and layer entries under `backend:` or
   `frontend:`; keep the fixture under `stacks:` and `platform:`
-- Follow the playbook to add a base or layer template ("Add a new base or
-  layer template") and to review, rewrite or cut one ("Review a template")
+- Follow the playbook, "Add a new base or layer template", to add one
+- Follow the playbook, "Review a template", to review, rewrite or cut any
+  template
 
 ### 4.2 Rules and sections
 
