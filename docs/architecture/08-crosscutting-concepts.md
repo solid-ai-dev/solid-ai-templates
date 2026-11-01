@@ -313,10 +313,10 @@ rules score 85 or above and essay-like rules 40 or below.
 CI runs `--check` as a ratchet (QG-04-02). It fails a template scoring
 below its row, an upstream template scoring under 95 with or without a
 row, a new template scoring under 70 with no row, and a row naming no
-template. A fork's templates answer to their own rows and the 70 floor. A change that improves a template re-records its row
-with `--update`. A fork records its own templates in
+template. A change that improves a template re-records its row with
+`--update`. A fork records its own templates in
 `tests/baselines/fork-template-quality.txt`, so recording them never edits
-the upstream file.
+the upstream file, and they answer to their own rows and the 70 floor.
 
 The scores measure form, not usefulness or correctness. A short,
 imperative, wrong rule scores well, and so does a rule shortened by
