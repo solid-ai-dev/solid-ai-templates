@@ -1,8 +1,9 @@
 # Contributing
 
 How to set up, what a change has to carry, and how a report is handled.
-`AGENTS.md` holds the rules every change follows, and
-[docs/playbook.md](docs/playbook.md) the step-by-step procedures.
+`AGENTS.md` holds the rules every change follows,
+[docs/playbook.md](docs/playbook.md) the step-by-step procedures, and
+chapter 5 of [docs/spec.md](docs/spec.md) where each part lives.
 
 ## 1. Scope
 
@@ -32,34 +33,7 @@ py tests/run.py smoke
 
 A `VERDICT: PASS` line confirms Python, PyYAML and the checkout.
 
-## 3. Repository layout
-
-```text
-templates/                  the shared rules
-  core/                     the core tier, opt-in core files, the output contract
-  security/  infra/  data/  opt-in base templates
-  backend/  frontend/       the layers
-  fixture/                  test input only
-  manifest.yaml             the dependency graph every tool reads
-tools/                      resolver, emitter, doc sync, maintenance tools
-hooks/solid_ai_checks/      the shipped hooks
-.pre-commit-hooks.yaml      the shipped hook IDs
-tests/                      suite runner, smoke, conformance, fork sync, test kit
-docs/
-  spec.md                   index of the architecture
-  architecture/             the arc42 chapters
-  requirements.md           functional and quality requirements
-  decisions/                decision records
-  playbook.md               procedures
-  rationale/                the reasons behind templates
-  migrations/               upgrade guides from one major to the next
-  audits/                   dated reviews and benchmark reports
-  tests/                    the check index and its specifications
-  diagrams/                 draw.io sources and their PNG exports
-.github/                    workflows, issue forms and linter configuration
-```
-
-## 4. Local checks
+## 3. Local checks
 
 Run every suite CI runs before opening a pull request, and regenerate the
 derived sections after editing anything under `templates/`:
@@ -69,7 +43,7 @@ py tests/run.py all     # smoke, conformance and fork sync
 py tools/sync_docs.py   # commit what it writes with your change
 ```
 
-## 5. Change requirements
+## 4. Change requirements
 
 | Requirement | When | What it means |
 |-------------|------|---------------|
@@ -81,7 +55,7 @@ py tools/sync_docs.py   # commit what it writes with your change
 | Context cost | A rule in a widely resolved file | What the addition is worth, in the pull request; SYS-16 fails a stack category that crosses a context-window tier until `tests/smoke/context-tiers.txt` records it |
 | Decision record | A change to the composition model | A record copied from `docs/decisions/template.md`, as `AGENTS.md` 5.3 says |
 
-## 6. Branches and pull requests
+## 5. Branches and pull requests
 
 Branch names, the commit and title form, one concern per pull request and
 the no-force-push rule are in
@@ -89,9 +63,9 @@ the no-force-push rule are in
 ["Submit a pull request"](docs/playbook.md#submit-a-pull-request), gives
 the steps in order.
 
-## 7. Issues
+## 6. Issues
 
-### 7.1 Issue forms
+### 6.1 Issue forms
 
 Open an issue through a form on the
 [new issue page](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose).
@@ -103,9 +77,9 @@ report this project receives.
 | Defect | A shared rule, check or tool that does the wrong thing |
 | Proposal | Changing, removing or adding a shared rule |
 | Question or idea | Something the docs do not answer, or an idea not yet a proposal |
-| Private advisory | A vulnerability, as section 8 says |
+| Private advisory | A vulnerability, as section 7 says |
 
-### 7.2 Duplicate search
+### 6.2 Duplicate search
 
 Search open and closed issues first, with two or three plain keywords:
 
@@ -117,7 +91,7 @@ Comment on an open match with your version and evidence. File a defect
 naming a closed match when your version was released after it closed,
 since that is a regression.
 
-### 7.3 Triage dispositions
+### 6.3 Triage dispositions
 
 Triage runs in batches and gives every report one disposition.
 
@@ -132,12 +106,12 @@ Triage runs in batches and gives every report one disposition.
 Accepted is not scheduled; only a milestone schedules work. A preference
 that suits one project belongs in its own context file or in a fork.
 
-## 8. Security
+## 7. Security
 
 Report a vulnerability privately, as [SECURITY.md](SECURITY.md) says, never
 in a public issue.
 
-## 9. Maintainership
+## 8. Maintainership
 
 One maintainer, Branimir Georgiev, triages and reviews in batches, so no
 response time is promised beyond the security acknowledgement in
