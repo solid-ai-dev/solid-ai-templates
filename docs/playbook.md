@@ -1410,7 +1410,7 @@ Which of those steps are actually enforced, audited per step as
 | Step | Enforced by |
 | --- | --- |
 | 1 | `py tests/run.py smoke`, plus the milestone's own issue list |
-| 2 | `tools/check_release.py`, for the cut and the version; the reconciliation against the commits is read by hand |
+| 2 | `tools/cut_changelog.py`, which refuses to write while a merged pull request lacks its `changelog:` label; `tools/check_release.py`, for the cut and the version |
 | 3 | `release-gates.yml`, whose first job fails a pushed lightweight `v*` tag |
 | 4 | `release-gates.yml`, which publishes only after its gates pass; step 6 confirms it |
 | 5 | nothing — an open milestone after a published release is silent |
