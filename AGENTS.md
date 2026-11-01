@@ -180,7 +180,8 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
 
 ### 5.1 Keeping documents current
 
-- Update every document a change touches, in the same PR:
+- Update every document a change touches before opening its PR, in that
+  PR:
   - `AGENTS.md` — if a rule agents apply here changes
   - `README.md` — if the features or the quick setup change
   - `docs/architecture/` — if the composition model, inheritance rules
@@ -216,9 +217,9 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
 
 ### 5.3 Decision records
 
-- Write a decision record only when a decision changes something a
-  consuming project can observe without reading this repository, the
-  composition model
+- Write a decision record when a decision changes something a consuming
+  project can observe without reading this repository, the composition
+  model; only such a decision owes one
 - Owe no record for prose style, tooling, release procedure, naming or
   file layout, however consequential they are
 - Let one record cover related choices across several issues or PRs when
