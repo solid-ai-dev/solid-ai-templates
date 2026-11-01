@@ -945,19 +945,19 @@ when a stakeholder needs the whole picture.
   `docs/360-audit.md` history. All audit history lives in the folder.
 - Each report carries a scores table, the issues created, the current
   bottleneck, and per-dimension findings tables with a grade rationale.
-- File a labelled issue for every actionable finding (`AGENTS.md` §2.2)
+- File a labelled issue for every actionable finding (`AGENTS.md` §3)
   and reference it from the report.
 
 ## Submit a pull request
 
-The branch, commit and title forms are in `AGENTS.md` section 2.1; the
+The branch, commit and title forms are in `AGENTS.md` section 2; the
 steps below apply them in order.
 
-1. Ensure you are on a feature branch named per section 2.1
+1. Ensure you are on a feature branch named per section 2
 2. Run the validation steps above for every changed template
 3. Update all affected documents (`docs/architecture/`, `README.md`,
    `manifest.yaml`) before committing
-4. Commit with a subject in section 2.1's form
+4. Commit with a subject in section 2's form
 5. Push and open a PR titled in the same form
 6. Once the maintainer approves the merge, merge with the default squash
    subject — `gh pr merge <number> --squash`, with no `--subject`. GitHub
