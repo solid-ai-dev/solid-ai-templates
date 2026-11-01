@@ -316,7 +316,8 @@ row, a new template scoring under 70 with no row, and a row naming no
 template. A change that improves a template re-records its row with
 `--update`. A fork records its own templates in
 `tests/baselines/fork-template-quality.txt`, so recording them never edits
-the upstream file, and they answer to their own rows and the 70 floor.
+the upstream file, and they answer to their own rows, or to the 70 floor
+when they have none.
 
 The scores measure form, not usefulness or correctness. A short,
 imperative, wrong rule scores well, and so does a rule shortened by

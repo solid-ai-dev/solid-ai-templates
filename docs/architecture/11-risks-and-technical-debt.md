@@ -19,7 +19,7 @@ mitigation shows a dash.
 | R08 | Overcompression | A shorter file drops load-bearing policy | Compression is judged on agent outcomes, not bytes | QG-02-02 |
 | R09 | Lost downstream learning | Consumer observations are discarded instead of weighed | Issue forms ask for the outcome and evidence | - |
 | R10 | Uniform mistakes | A wrong shared rule is wrong in every project that adopts it | A rule is admitted only for a demonstrated outcome, and a project adopts a release deliberately | Chapter 10, FR-09-03 |
-| R11 | Unpredictable exceptions | Projects deviate from a shared rule, each in its own way | A project overrides a section or declines it, and a conflict the rules cannot settle is recorded in the generated file | FR-04-02, FR-06-03, FR-05-03 |
+| R11 | Unpredictable exceptions | Projects deviate from a shared rule, each in its own way | A project overrides a section or declines it, and a conflict the rules cannot settle goes to the user, whose answer is recorded in the generated file | FR-04-02, FR-06-03, FR-05-03 |
 | R12 | Compliance over need | An agent satisfies every rule and misses what the user needed | The team's acceptance criteria stay authoritative over any rule | Chapter 1, Team |
 
 ## 11.2 Technical debt
