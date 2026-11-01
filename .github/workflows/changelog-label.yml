@@ -22,11 +22,20 @@ jobs:
       - name: Count the changelog labels
         env:
           LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        # The accepted suffixes are the sections tools/cut_changelog.py
+        # writes, so a label it cannot place fails here, not at the cut.
         run: |
-          count=$(echo "$LABELS" | jq '[.[] | select(startswith("changelog:"))] | length')
-          echo "changelog labels: $count"
-          if [ "$count" -ne 1 ]; then
-            echo "Add exactly one changelog: label, such as changelog:added,"
-            echo "changelog:fixed or changelog:none when no project notices it"
+          found=$(echo "$LABELS" | jq -r '.[] | select(startswith("changelog:"))')
+          count=$(echo -n "$found" | grep -c '^' || true)
+          echo "changelog labels: $count ${found//$'\n'/ }"
+          case "$found" in
+            changelog:breaking|changelog:added|changelog:changed) ok=1 ;;
+            changelog:deprecated|changelog:fixed|changelog:security) ok=1 ;;
+            changelog:none) ok=1 ;;
+            *) ok=0 ;;
+          esac
+          if [ "$count" -ne 1 ] || [ "$ok" -ne 1 ]; then
+            echo "Add exactly one of changelog:breaking, added, changed,"
+            echo "deprecated, fixed, security, or none when no project notices it"
             exit 1
           fi

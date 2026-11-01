@@ -12,8 +12,10 @@ numbers, or the text of a `Changelog:` line in the body, which overrides it.
 opens an empty `Unreleased` above it; `tools/check_release.py` checks the
 cut and the SemVer step.
 
-Exits 0 when every pull request since the tag is accounted for, 1 when one
-carries no `changelog:` label or two, and 2 when no previous tag exists.
+Exits 0 when every pull request since the tag is accounted for and the file
+is written, 1 when one carries no `changelog:` label or two, or the cut is
+refused, and 2 when no previous tag exists or `--cut` names no vA.B.C.
+Nothing is written on 1 or 2.
 
 Usage:
     py tools/cut_changelog.py                 # add the entries
@@ -22,6 +24,7 @@ Usage:
     py tools/cut_changelog.py --self-test     # the planted cases below
 """
 
+import argparse
 import datetime
 import json
 import re
@@ -53,8 +56,11 @@ SECTIONS = {
 }
 PREFIX = re.compile(r"^[a-z]+(\([^)]*\))?!?:\s*")
 ISSUES = re.compile(r"(\s*\(#\d+(?:,\s*#\d+)*\))+\s*$")
-OVERRIDE = re.compile(r"^Changelog:\s*(.+?)\s*$", re.MULTILINE)
+# Same-line text only: a bare `Changelog:` must not take the next line.
+OVERRIDE = re.compile(r"^Changelog:[ \t]*(\S[^\n]*?)[ \t]*$", re.MULTILINE)
 NUMBER = re.compile(r"\(#(\d+)\)\s*$")
+VERSION = re.compile(r"^v(\d+\.\d+\.\d+)$")
+BOTS = {"app/dependabot", "dependabot[bot]", "dependabot"}
 
 
 def entry_text(title, body=""):
@@ -91,13 +97,14 @@ def unreleased_span(lines):
 def add_entries(text, entries):
     """Add (heading, number, text) entries to `Unreleased`, with their links.
 
-    A pull request already linked in the section is left alone, so a run
-    repeated after new merges adds only what is new.
+    A pull request already linked anywhere in the file is left alone, so a
+    run repeated after new merges, or after a cut not yet tagged, adds only
+    what is new.
     """
     lines = text.split("\n")
     start, end = unreleased_span(lines)
     body = lines[start:end]
-    listed = set(re.findall(r"\[#(\d+)\]", "\n".join(body)))
+    listed = set(re.findall(r"\[#(\d+)\]", text))
     links = [i for i, line in enumerate(body) if re.match(r"^\[#\d+\]: ", line)]
     content = body[:links[0]] if links else body
     refs = body[links[0]:] if links else []
@@ -143,7 +150,17 @@ def add_entries(text, entries):
 
 
 def cut(text, version, day):
-    """Rename `Unreleased` to the version and open an empty one above it."""
+    """Rename `Unreleased` to the version and open an empty one above it.
+
+    Refuses a version already in the file and an `Unreleased` with no
+    entry, which `tools/check_release.py` would refuse at the tag.
+    """
+    if "## [%s]" % version in text:
+        raise ValueError("the changelog already has a %s section" % version)
+    lines = text.split("\n")
+    start, end = unreleased_span(lines)
+    if not any(line.startswith("- ") for line in lines[start:end]):
+        raise ValueError("Unreleased holds no entry to cut")
     return text.replace("## [Unreleased]",
                         "## [Unreleased]\n\n## [%s] - %s" % (version, day), 1)
 
@@ -151,6 +168,9 @@ def cut(text, version, day):
 def merged_since(tag):
     """The pull request numbers the squash subjects since `tag` name."""
     log = subprocess.run(["git", "log", "--format=%s", tag + "..HEAD"], **RUN)
+    if log.returncode != 0:
+        raise SystemExit("cut_changelog: git log %s..HEAD failed: %s"
+                         % (tag, log.stderr.strip()))
     found = []
     for subject in log.stdout.splitlines():
         match = NUMBER.search(subject)
@@ -160,17 +180,35 @@ def merged_since(tag):
 
 
 def fetch(number):
-    """The title, labels and body of a pull request, through `gh`."""
+    """The title, labels and body of a pull request, through `gh`.
+
+    A dependency bump carries no entry, and the label gate exempts its
+    author, so it reads as `changelog:none` here.
+    """
     out = subprocess.run(["gh", "pr", "view", str(number), "--json",
-                          "title,labels,body"], **RUN)
+                          "title,labels,body,author"], **RUN)
     if out.returncode != 0:
         raise SystemExit("cut_changelog: gh pr view %d failed: %s"
                          % (number, out.stderr.strip()))
     data = json.loads(out.stdout)
-    return data["title"], [lab["name"] for lab in data["labels"]], data["body"]
+    labels = [lab["name"] for lab in data["labels"]]
+    if (data.get("author") or {}).get("login") in BOTS:
+        labels = ["changelog:none"]
+    return data["title"], labels, data["body"]
 
 
 def run(args):
+    parser = argparse.ArgumentParser(prog="cut_changelog")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--cut", metavar="vA.B.C")
+    options = parser.parse_args(args)
+    version = None
+    if options.cut is not None:
+        match = VERSION.match(options.cut)
+        if not match:
+            print("cut_changelog: --cut takes vA.B.C, not %r" % options.cut)
+            return 2
+        version = match.group(1)
     tag = subprocess.run(["git", "describe", "--tags", "--abbrev=0",
                           "--match", "v*"], **RUN).stdout.strip()
     if not tag:
@@ -185,21 +223,31 @@ def run(args):
             unlabelled.append("#%d %s" % (number, title))
         elif heading:
             entries.append((heading, number, entry_text(title, body)))
+    print("previous tag: %s" % tag)
+    print("pull requests read: %d" % len(numbers))
+
+    # A cut with an unlabelled pull request would publish a release that
+    # silently lacks its entry, so nothing is written until all are labelled.
+    if unlabelled:
+        for line in unlabelled:
+            print("no changelog label: %s" % line)
+        print("nothing written; label them and run again")
+        return 1
     with open(RECORD, encoding="utf-8") as handle:
         text = handle.read()
     text, added = add_entries(text, entries)
-    if "--cut" in args:
-        version = args[args.index("--cut") + 1].lstrip("v")
-        text = cut(text, version, datetime.date.today().isoformat())
-    print("previous tag: %s" % tag)
-    print("pull requests read: %d" % len(numbers))
     print("entries added: %d" % len(added))
-    for line in unlabelled:
-        print("no changelog label: %s" % line)
-    if "--dry-run" not in args:
+    if version:
+        try:
+            text = cut(text, version, datetime.date.today().isoformat())
+        except ValueError as error:
+            print("cut_changelog: %s; nothing written" % error)
+            return 1
+        print("cut: %s" % version)
+    if not options.dry_run:
         with open(RECORD, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(text)
-    return 1 if unlabelled else 0
+    return 0
 
 
 def self_test():
@@ -240,6 +288,21 @@ def self_test():
     cases.append(("a last section goes after the others",
                   text.index("### Fixed") < text.index("### Security")
                   < text.index("[#10]:")))
+    cases.append(("a bare Changelog line leaves the title as the entry",
+                  entry_text("feat: emit skills (#1)",
+                             "Changelog:\n\nCloses #2") == "Emit skills"))
+    emptied = (sample.replace("- Old entry ([#10])", "")
+               .replace("- Old fix ([#11])", ""))
+    refused = []
+    for text_in, version in ((sample, "1.0.0"), (emptied, "1.1.0")):
+        try:
+            cut(text_in, version, "2026-02-02")
+        except ValueError:
+            refused.append(version)
+    cases.append(("the cut refuses a known version and an empty section",
+                  refused == ["1.0.0", "1.1.0"]))
+    cases.append(("a pull request linked in an earlier section is skipped",
+                  add_entries(sample, [("Added", 1, "Again")])[1] == []))
     cases.append(("a run that adds nothing leaves the file unchanged",
                   add_entries(sample, [])[0] == sample))
     cases.append(("the cut keeps an empty Unreleased above the version",
