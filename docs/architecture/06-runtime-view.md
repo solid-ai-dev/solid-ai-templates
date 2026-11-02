@@ -23,7 +23,7 @@ orders, placing each rule where the output contract says.
 |------|--------------|--------|
 | 1 | The team names a root, such as a stack, and the agent generates its context by reading Markdown | FR-05-01 |
 | 2-3 | The questions live in the fork's interview. A conflict the rules cannot settle goes to the team, and the answer is recorded in the file | ADR-049, FR-05-03 |
-| 4 | The resolver seeds the core tier, then walks `depends_on` depth-first, without duplicates, base before layer before stack | FR-03-02, FR-04-01 |
+| 4 | The resolver seeds the core tier, then walks `depends_on` depth-first, without duplicates, each dependency before what depends on it | FR-03-02, FR-04-01 |
 | 5-6 | An override replaces a section, and each extension of the same ID adds to it. An inline file copies in every adopted rule. A hybrid file copies in every rule whose breach is silent and which no tool enforces, and any other rule may stay a reference | FR-04-02, FR-04-03, ADR-052 |
 | 7-8 | The agent writes both files to the output contract, then runs the contract's self-check against them | FR-05-02, FR-05-04 |
 | 9 | The emitter leaves out overridden rules and the sections the project declines, places each remaining section by its load, copies each rule's text unchanged, and builds the same files from the same input | ADR-058, proposed; FR-06-03, FR-06-06 |
@@ -100,5 +100,5 @@ takes, and only a regeneration or an edit changes its context files.
 | Scenario | What happens | Source |
 |----------|--------------|--------|
 | A pull request upstream | CI runs smoke, conformance and fork sync, and the maintainer approves the merge | FR-10-01, FR-10-02 |
-| Cutting a release | `tools/cut_changelog.py` writes an entry for each merged pull request from its `changelog:` label and cuts the `Unreleased` section into the version, and `tools/check_release.py` checks the section and the SemVer step before the tag | QG-03-02, FR-09-04 |
+| Cutting a release | `tools/cut_changelog.py` writes an entry for each pull request merged since the previous tag, from its `changelog:` label, and cuts the `Unreleased` section into the version, and `tools/check_release.py` checks the section and the SemVer step before the tag | QG-03-02, FR-09-04 |
 | Deprecating a template | It keeps resolving until the next major, naming a live replacement | FR-09-02 |

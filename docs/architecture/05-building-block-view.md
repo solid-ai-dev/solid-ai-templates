@@ -49,7 +49,7 @@ owns.
 
 ## 5.3 Level 2: manifest
 
-![How a template reaches a chain. The resolver starts from a stack's root, seeds the core tier, follows depends_on into the opt-in tier and resolves an orthogonal template when the project picks it. It writes the chain in order, the core tier, the base templates the chain reaches, the layer templates, then the stack. An orthogonal root resolves to a chain of its own in the same way](../diagrams/building-blocks-manifest.png)
+![How a template reaches a chain. The resolver starts from a stack's root, seeds the core tier, follows depends_on into the opt-in tier and resolves an orthogonal template when the project picks it. It writes the chain in order, the core tier first, then each dependency depth-first before what needs it, and the root last. An orthogonal root resolves to a chain of its own in the same way](../diagrams/building-blocks-manifest.png)
 
 | Tier | Members | Reaches a chain | Source |
 |------|---------|-----------------|--------|

@@ -42,8 +42,9 @@ A heading may carry several tag lines:
   check enforces. A heading without one loads on every turn, and a
   heading's subheadings take its load (ADR-058, proposed)
 - A heading carries one load at most, among its tags, and none under a
-  heading that has one. A template that guards data, credentials or
-  authentication carries none. SYS-25 checks each of these
+  heading that has one. A section whose breaking exposes data, credentials
+  or an unauthenticated path carries none. SYS-25 checks each of these, the
+  last for the security templates and `backend/auth.md`
 - A section runs from its tags to the next `[ID:]` or the end of the file,
   and is never empty
 - Shipped IDs are frozen, never removed, renamed or moved to another
