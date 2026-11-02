@@ -49,12 +49,12 @@ owns.
 
 ## 5.3 Level 2: manifest
 
-![How a template reaches a chain. The resolver starts from a stack's root, seeds the core tier, follows depends_on into the opt-in tier and resolves an orthogonal template when the project picks it. It writes the chain in order, the core tier first, then each dependency depth-first before what needs it, and the root last. An orthogonal root resolves to a chain of its own in the same way](../diagrams/building-blocks-manifest.png)
+![How a template reaches a chain. The resolver starts from a stack's root, seeds the core tier, follows depends_on into the opt-in tier and resolves an orthogonal template when the project picks it. It writes the chain in order, the core tier first, then each dependency depth-first before what needs it, and the root last, unless the core tier already holds it. An orthogonal root resolves to a chain of its own in the same way](../diagrams/building-blocks-manifest.png)
 
 | Tier | Members | Reaches a chain | Source |
 |------|---------|-----------------|--------|
 | Core | `core:`, then a fork's `fork_core:` | Seeded into every chain, so it never needs declaring | FR-03-02 |
-| Opt-in | CI (`cicd`, `quality-gates`), security, devsecops, containers, deployment, config, data | Only when a stack's `depends_on` names it | FR-03-03 |
+| Opt-in | CI (`cicd`, `quality-gates`), security, devsecops, containers, deployment, config, data | When a project picks it as a root, or a chosen root's dependency tree names it | FR-03-03 |
 | Orthogonal | Advanced data templates, embedded checks, measurement, a fork's platforms and workflow choices | Picked by the project, in a fork's interview where it has one, and resolved as a root of its own | FR-04-01 |
 
 Every top-level list of entries except `core` and `fork_core` is a section

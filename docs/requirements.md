@@ -23,7 +23,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 |----|-------------|--------|------------|
 | FR-01-01 | The system shall state each rule as a plain imperative, or with an RFC 2119 keyword where strength matters. | Chapter 8.9 | - |
 | FR-01-02 | The system shall give a section an ID when something references it, unique across all templates. | Chapter 8.1 | SYS-02, partial, for uniqueness |
-| FR-01-03 | The system shall name another file's section in prose only where that file is in every chain carrying the rule. | Chapter 8.4 | SYS-11 |
+| FR-01-03 | The system shall name another file's section in prose only where that file is in every chain carrying the rule. | Chapter 8.4 | SYS-11, partial: it skips a root a stack already reaches |
 
 ### 02. Layers
 
