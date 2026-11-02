@@ -10,9 +10,12 @@ post-hoc](2026-11-02-efficacy-posthoc-radar-light.svg#gh-light-mode-only)
 
 One radar per arm, from the cheapest to the dearest. Each axis is the mean of its rows'
 moves against `none`: each row's interval bound nearest zero over the row's full scale,
-from -1 at the centre to +1 at the rim, and 0 where the interval crosses zero. The
-dashed ring is `none`, so outside it is better. A hollow point is an axis with no
-verdict. The rows behind each axis, and every number, are in the sections below.
+from -1 at the centre to +1 at the rim, and 0 where the interval crosses zero. A row's
+full scale is 1 point for a judge score, 20 pp for a share, 20 points for coverage, and
+a factor of 4 for a count or a cost, so a reader can work any axis out from the
+intervals below. The dashed ring is `none`, so outside it is better. A hollow point is
+an axis with no verdict. The rows behind each axis, and every number, are in the
+sections below.
 
 | Axis | `reference` | `skills` | `hybrid` | `inline` | Rows |
 | --- | --- | --- | --- | --- | --- |
