@@ -100,5 +100,5 @@ takes, and only a regeneration or an edit changes its context files.
 | Scenario | What happens | Source |
 |----------|--------------|--------|
 | A pull request upstream | CI runs smoke, conformance and fork sync, and the maintainer approves the merge | FR-10-01, FR-10-02 |
-| Cutting a release | `tools/cut_changelog.py` writes an entry for each merged pull request from its `changelog:` label and cuts the `Unreleased` section into the version, and `tools/check_release.py` checks the section and the SemVer step before the tag | QG-03-02 |
+| Cutting a release | `tools/cut_changelog.py` writes an entry for each merged pull request from its `changelog:` label and cuts the `Unreleased` section into the version, and `tools/check_release.py` checks the section and the SemVer step before the tag | QG-03-02, FR-09-04 |
 | Deprecating a template | It keeps resolving until the next major, naming a live replacement | FR-09-02 |

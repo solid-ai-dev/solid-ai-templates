@@ -65,9 +65,9 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 |----|-------------|--------|------------|
 | FR-06-01 | The system shall load a heading without a load directive on every turn, and give its subheadings its load. | Chapter 8.1, ADR-058 | - |
 | FR-06-02 | The system shall load every rule of a template that guards data, credentials or authentication on every turn. | Chapter 8.1, ADR-058 | SYS-25 |
-| FR-06-03 | The system shall build the root file and the skills from the resolved chain, leaving out overridden rules and the sections the project declines, and copy each remaining rule's text unchanged. | ADR-058 |SYS-26, partial, on a planted fixture |
+| FR-06-03 | The system shall build the root file and the skills from the resolved chain, leaving out overridden rules and the sections the project declines, and copy each remaining rule's text unchanged. | ADR-058 | SYS-26, partial, on a planted fixture |
 | FR-06-04 | The system shall list each skill in the root file with the task that triggers it. | ADR-058 | SYS-26 |
-| FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 |SYS-26, partial, on a planted fixture |
+| FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 | SYS-26, partial, on a planted fixture |
 | FR-06-06 | The system shall build byte-identical files from the same input. | ADR-058 | SYS-26 |
 | FR-06-07 | The system shall build files that name no template file, since an emitted project carries no templates. | ADR-058 | SYS-27 |
 
@@ -86,7 +86,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | FR-08-01 | The system shall let a fork stay current by merging upstream, never by copying files. | Chapter 8.6 | - |
 | FR-08-02 | The system shall keep a fork's entries under `stacks:`, `platform:` and keys of its own, never under `core:`, `base:`, `backend:` or `frontend:`. | Chapter 8.6 | SYS-20 |
 | FR-08-03 | The system shall let a `fork_core:` entry depend only on core-tier IDs. | Chapter 8.6 | SYS-21 |
-| FR-08-04 | The system shall let a project take its rules from upstream, or from a fork for its stacks, by clone or as a submodule pinned to a released tag. | Playbook, "Vendor the templates in a project" | - |
+| FR-08-04 | The system shall let a project take its rules from upstream, or from a fork for its stacks, by submodule, clone or copy pinned to a released tag, or keep only its generated files or only the shipped hooks. | Chapter 7.3 | - |
 
 ### 09. Versioned releases
 
@@ -95,6 +95,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | FR-09-01 | The system shall not remove, rename or change the meaning of a frozen element in a 3.x release, except for a security fix. | Chapter 8.7, ADR-051 | SYS-24, partial, for section splitting only |
 | FR-09-02 | The system shall keep a deprecated template resolving until the next major, naming a live replacement. | Chapter 8.8 | SYS-22 |
 | FR-09-03 | The system shall change nothing in an existing context file when a project moves its pin. | Chapter 6.5 | - |
+| FR-09-04 | The system shall write each release's changelog entries from the labels of the pull requests merged since the previous tag. | Chapter 6.6 | changelog-label gate, `cut_changelog.py --self-test` |
 
 ### 10. Self-checks
 
@@ -130,7 +131,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 |----|-------------------|-------------|--------|------------|
 | QG-04-02 | Modifiability | No template shall score below its baseline. | Chapter 10.1 | score ratchet |
 
-### Removed
+## Removed
 
 | ID | Now |
 |----|-----|
