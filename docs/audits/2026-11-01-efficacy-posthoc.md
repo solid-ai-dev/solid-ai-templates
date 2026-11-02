@@ -1,12 +1,12 @@
-# Efficacy benchmark — 2026-11-02, a post-hoc reading
+# Efficacy benchmark — 2026-11-01, a post-hoc reading
 
 **Post-hoc.** These rules were registered for round 5d, after this round ran. The
 round's registered verdicts stand; this page shows how its trials read under the later
 rules, and decides nothing.
 
-![Radar per arm, post-hoc](2026-11-02-efficacy-posthoc-radar-dark.svg#gh-dark-mode-only)
+![Radar per arm, post-hoc](2026-11-01-efficacy-posthoc-radar-dark.svg#gh-dark-mode-only)
 ![Radar per arm,
-post-hoc](2026-11-02-efficacy-posthoc-radar-light.svg#gh-light-mode-only)
+post-hoc](2026-11-01-efficacy-posthoc-radar-light.svg#gh-light-mode-only)
 
 One radar per arm, from the cheapest to the dearest. Each axis is the mean of its rows'
 moves against `none`: each row's interval bound nearest zero over the row's full scale,

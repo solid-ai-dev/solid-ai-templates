@@ -25,11 +25,11 @@ are in the sections below.
 
 | Axis | `reference` | `skills` | `hybrid` | `inline` | Rows |
 | --- | --- | --- | --- | --- | --- |
-| Reliability | -0.50 | -0.50 | -0.50 | 0.00 | Task success, hidden suite pass rate; Installs in a clean environment |
-| Security | +0.40 | +0.20 | +0.20 | +0.20 | Security, 1-5; Security probe pass rate, of eleven; A post without a token is refused; Stored payload renders inert; Security findings, high and medium, per KLOC |
-| Data protection | 0.00 | +0.50 | +0.50 | 0.00 | Data protection, 1-5; Data-protection probe pass rate, of three |
-| Design | +0.09 | +0.18 | +0.27 | +0.27 | Design (SOLID and patterns), 1-5; SRP, 1-5; OCP, 1-5; LSP, 1-5; ISP, 1-5; DIP, 1-5; Error design, 1-5; Naming and abstraction, 1-5; Patterns missed; Domain modules reaching Flask or the database; Mutually importing module pairs |
-| Maintainability | +0.50 | +0.62 | +0.88 | +0.75 | Maintainability, 1-5; Readability, 1-5; Type errors under --strict, per KLOC; Lint findings per KLOC; Highest cognitive complexity; Functions over complexity 15, per KLOC; Mean cyclomatic complexity; Unused names per KLOC |
+| Reliability | -0.50 | -0.50 | 0.00 | 0.00 | Task success, hidden suite pass rate; Installs in a clean environment |
+| Security | +0.40 | +0.40 | +0.40 | +0.40 | Security, 1-5; Security probe pass rate, of eleven; A post without a token is refused; Stored payload renders inert; Security findings, high and medium, per KLOC |
+| Data protection | 0.00 | +0.50 | +0.50 | +0.50 | Data protection, 1-5; Data-protection probe pass rate, of three |
+| Design | +0.09 | +0.09 | +0.27 | +0.27 | Design (SOLID and patterns), 1-5; SRP, 1-5; OCP, 1-5; LSP, 1-5; ISP, 1-5; DIP, 1-5; Error design, 1-5; Naming and abstraction, 1-5; Patterns missed; Domain modules reaching Flask or the database; Mutually importing module pairs |
+| Maintainability | +0.50 | +0.75 | +0.88 | +0.75 | Maintainability, 1-5; Readability, 1-5; Type errors under --strict, per KLOC; Lint findings per KLOC; Highest cognitive complexity; Functions over complexity 15, per KLOC; Mean cyclomatic complexity; Unused names per KLOC |
 | Tests | +1.00 | +0.50 | +1.00 | +1.00 | Test quality, 1-5; Line coverage of the trial's own tests, % |
 | Economy | -1.00 | -1.00 | -1.00 | -1.00 | Cost, USD; Output tokens; Turns; Wall time, seconds |
 
@@ -37,50 +37,49 @@ are in the sections below.
 | --- | --- | --- | --- | --- | --- | --- |
 | `none` | no file | — | 99 % | 2.4 | 47 % | $4.29 |
 | `reference` | 19 lines | Worse | 88 % ▼ (4 runs low) | 3.5 ▲ | 54 % ▲ | $7.21 ▼ |
-| `skills` | 1,351 lines | Worse | 91 % ▼ (2 runs low) | 3.6 ▲ | 60 % ▲ | $9.30 ▼ |
-| `hybrid` | 511 lines | Worse | 91 % ▼ (2 runs low) | 2.6 | 55 % ▲ | $11.78 ▼ |
-| `inline` | 552 lines | No | 93 % (1 run low) | 3.2 ≈ | 63 % ▲ | $14.18 ▼ |
+| `skills` | 1,351 lines | Worse | 95 % ▼ (2 runs low) | 3.6 ▲ | 60 % ▲ | $9.30 ▼ |
+| `hybrid` | 511 lines | Yes | 97 % (1 run low) | 2.7 | 56 % ▲ | $11.78 ▼ |
+| `inline` | 552 lines | Yes | 99 % ≈ | 3.3 ≈ | 63 % ▲ | $14.18 ▼ |
 
 Each mark reads an arm against `none`. ▲ better and ▼ worse: the interval is clear of
-zero, in the metric's direction. = held, for a row read by its margin, and ≈ no
-difference shown: either way the interval's worse end stays within the row's margin, so
-it is no worse than the margin, which is not the same as equal. ○ no verdict, on
-purpose: a row reported without one, a pair across rounds, or two judges that disagree.
-(not compared): too few complete pairs for an interval. No mark: no difference shown, on
-a row with no margin or past the margin it has.
+zero, in the metric's direction, and under round 5d's rules clear of the row's margin. =
+held, for a row read by its margin, and ≈ no difference shown: either way the interval's
+worse end stays within the row's margin, so it is no worse than the margin, which is not
+the same as equal. ○ no verdict, on purpose: a row reported without one, a pair across
+rounds, or two judges that disagree. (not compared): too few complete pairs for an
+interval. No mark: no difference shown, on a row with no margin or past the margin it
+has.
 
 Runs low on the hidden tests, more than 5 points under `none`'s mean: `reference` 42 %,
-42 %, 70 % and 77 %; `skills` 0 % and 71 %; `hybrid` 0 % and 70 %; `inline` 0 %.
+42 %, 70 % and 77 %; `skills` 71 % and 71 %; `hybrid` 70 %.
 
 **`reference`, Worse.** Two runs of 15 declared its dependencies so that a clean install
 left the app unable to boot. The judge read its code as more secure, more careful with
 personal data and better tested, and its code grew no more than its size margin allows —
 for more turns, tokens, time and cost.
 
-**`skills`, Worse.** One run of 15 left the app unable to boot (`no error recorded`).
-The judge read its code as more secure, more careful with personal data and better
-tested, and its code grew no more than its size margin allows — for more turns, tokens,
-time and cost.
+**`skills`, Worse.** The judge read its code as more readable, more secure, more careful
+with personal data and better tested, and its code grew no more than its size margin
+allows — for more turns, tokens, time and cost.
 
-**`hybrid`, Worse.** One run of 15 left the app unable to boot (`no error recorded`). It
-built more than the task asked for: more files and more code, and took more turns,
-tokens, time and cost to do it. The judge read its code as more readable, more careful
-with personal data and better tested.
+**`hybrid`, Yes.** It built more than the task asked for: more files and more code, and
+took more turns, tokens, time and cost to do it. The judge read its code as more
+readable, more careful with personal data and better tested.
 
-**`inline`, No.** One run of 15 left the app unable to boot (`no error recorded`). It
-built more than the task asked for: more files and more code, and took more turns,
-tokens, time and cost to do it. The judge read its code as better tested.
+**`inline`, Yes.** It built more than the task asked for: more files, more code and more
+public names beyond the spec, and took more turns, tokens, time and cost to do it. The
+judge read its code as more careful with personal data and better tested.
 
 Together, reading the longest file beside the shortest (`skills`, `reference`): neither
 file added quality. K = 15, one project: a signal, not proof.
 
 Between the files, 1 to 10: skills − hybrid 5.9 (6 won, 5 failed); reference − hybrid
-3.8 (6 won, 13 failed); skills − inline 5.1 (5 won, 6 failed). A win or a fail is a
+3.6 (6 won, 15 failed); skills − inline 5.2 (6 won, 7 failed). A win or a fail is a
 metric whose interval separated the pair in its declared direction, each counting once;
 the score is 1 + 9 × wins ÷ (wins + fails), digests the verdict vector at the end, and
 decides nothing.
 
-Caveats: 75 trials, 72 judged; 15 of the 15 blocks round 5 registers complete, with no
+Caveats: 75 trials, 75 judged; 15 of the 15 blocks round 5 registers complete, with no
 escalation; withdrawn: nothing; lost and re-run: hybrid-1, completed; reference-4,
 completed; hybrid-4, completed; inline-7, completed; hybrid-9, completed; skills-11,
 completed; inline-13, completed; skills-15, completed; inline-15, completed; reached
@@ -110,22 +109,22 @@ two probe pass rates. Task success and cost follow.
 
 | Metric | Direction | Margin | none | hybrid | reference | inline | skills | hybrid−none | reference−none | inline−none | skills−none | skills−hybrid | reference−hybrid | skills−inline |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Design (SOLID and patterns), 1-5 | up | 0.3 points | 3 | 3 | 2.978 | 3 | 3 | 0 [0, 0] ‡ ≈ (14 pairs) | -0.022 [-0.133, 0] ≈ | 0 [0, 0] ‡ ≈ (14 pairs) | 0 [0, 0] ‡ ≈ (14 pairs) | 0 [0, 0] ‡ ≈ (13 pairs) | -0.024 [-0.143, 0] ≈ (14 pairs) | 0 [0, 0] ‡ ≈ (13 pairs) |
-| Readability, 1-5 | up | 0.3 points | 2.933 | 3.071 | 3 | 3 | 3.095 | +0.143 [0.024, 0.333] ▲ (14 pairs) | +0.067 [0, 0.200] ≈ | +0.071 [0, 0.214] ≈ (14 pairs) | +0.167 [0, 0.595] ≈ (14 pairs) | +0.026 [-0.154, 0.231] ≈ (13 pairs) | -0.071 [-0.262, -0.024] ▼ (14 pairs) | +0.103 [0, 0.333] ≈ (13 pairs) |
-| Maintainability, 1-5 | up | 0.3 points | 3 | 3 | 3 | 3 | 3 | 0 [0, 0] ‡ ≈ (14 pairs) | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ (14 pairs) | 0 [0, 0] ‡ ≈ (14 pairs) | 0 [0, 0] ‡ ≈ (13 pairs) | 0 [0, 0] ‡ ≈ (14 pairs) | 0 [0, 0] ‡ ≈ (13 pairs) |
-| Security, 1-5 | up | 0.3 points | 2.378 | 2.619 | 3.511 | 3.238 | 3.571 | +0.357 [-0.571, 1.214] (14 pairs) | +1.133 [0.578, 1.600] ▲ | +0.786 [-0.143, 1.738] ≈ (14 pairs) | +1.310 [0.762, 1.833] ▲ (14 pairs) | +1.051 [0.333, 1.718] ▲ (13 pairs) | +0.857 [0.190, 1.524] ▲ (14 pairs) | +0.333 [-0.179, 1.026] ≈ (13 pairs) |
-| Data protection, 1-5 | up | 0.3 points | 2.867 | 3.095 | 3.089 | 3.024 | 3.095 | +0.238 [0.048, 0.667] ▲ (14 pairs) | +0.222 [0.044, 0.711] ▲ | +0.167 [0, 0.619] ≈ (14 pairs) | +0.238 [0.024, 0.833] ▲ (14 pairs) | 0 [-0.205, 0.077] ≈ (13 pairs) | 0 [-0.167, 0.095] ≈ (14 pairs) | +0.051 [-0.051, 0.179] ≈ (13 pairs) |
-| Security probe pass rate, of eleven | up | 2 pp | 0.758 | 0.848 | 0.888 | 0.861 | 0.848 | +0.091 [-0.085, 0.152] | +0.133 [0.091, 0.161] ▲ (13 pairs) | +0.103 [-0.097, 0.170] | +0.091 [-0.073, 0.158] | 0 [-0.145, 0.139] | +0.042 [-0.028, 0.203] (13 pairs) | -0.012 [-0.158, 0.133] |
-| Data-protection probe pass rate, of three | up | 10 pp | 0.667 | 0.622 | 0.578 | 0.644 | 0.622 | -0.044 [-0.267, 0] | -0.089 [-0.356, -0.044] ▼ | -0.022 [-0.200, 0.022] | -0.044 [-0.267, 0] | 0 [-0.178, 0.089] | -0.044 [-0.222, 0.044] | -0.022 [-0.267, 0.089] |
+| Design (SOLID and patterns), 1-5 | up | 0.3 points | 3 | 3 | 2.978 | 3 | 3 | 0 [0, 0] ‡ ≈ | -0.022 [-0.133, 0] ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | -0.022 [-0.133, 0] ≈ | 0 [0, 0] ‡ ≈ |
+| Readability, 1-5 | up | 0.3 points | 2.933 | 3.067 | 3 | 3.044 | 3.111 | +0.133 [0.022, 0.333] ▲ | +0.067 [0, 0.200] ≈ | +0.111 [0, 0.311] ≈ | +0.178 [0.022, 0.622] ▲ | +0.044 [-0.111, 0.244] ≈ | -0.067 [-0.244, -0.022] ▼ | +0.067 [-0.089, 0.244] ≈ |
+| Maintainability, 1-5 | up | 0.3 points | 3 | 3 | 3 | 3 | 3 | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ |
+| Security, 1-5 | up | 0.3 points | 2.378 | 2.711 | 3.511 | 3.267 | 3.556 | +0.333 [-0.489, 1.133] | +1.133 [0.578, 1.600] ▲ | +0.889 [-0.022, 1.756] ≈ | +1.178 [0.600, 1.711] ▲ | +0.844 [0.200, 1.533] ▲ | +0.800 [0.178, 1.422] ▲ | +0.289 [-0.156, 0.889] ≈ |
+| Data protection, 1-5 | up | 0.3 points | 2.867 | 3.111 | 3.089 | 3.044 | 3.089 | +0.244 [0.067, 0.667] ▲ | +0.222 [0.044, 0.711] ▲ | +0.178 [0.022, 0.600] ▲ | +0.222 [0.022, 0.756] ▲ | -0.022 [-0.178, 0.067] ≈ | -0.022 [-0.178, 0.089] ≈ | +0.044 [-0.044, 0.156] ≈ |
+| Security probe pass rate, of eleven | up | 2 pp | 0.758 | 0.897 | 0.888 | 0.909 | 0.897 | +0.139 [0.091, 0.176] ▲ | +0.133 [0.091, 0.161] ▲ (13 pairs) | +0.151 [0.109, 0.200] ▲ | +0.139 [0.085, 0.182] ▲ | 0 [-0.036, 0.036] | -0.014 [-0.056, 0.021] (13 pairs) | -0.012 [-0.067, 0.042] |
+| Data-protection probe pass rate, of three | up | 10 pp | 0.667 | 0.667 | 0.578 | 0.689 | 0.667 | 0 [0, 0] ‡ ≈ | -0.089 [-0.356, -0.044] ▼ | +0.022 [0, 0.067] ≈ | 0 [0, 0] ‡ ≈ | 0 [0, 0] ‡ ≈ | -0.089 [-0.356, -0.044] ▼ | -0.022 [-0.133, 0] |
 
 Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction. = held,
-for a row read by its margin, and ≈ no difference shown: either way the interval's worse
-end stays within the row's margin, so it is no worse than the margin, which is not the
-same as equal. ○ no verdict, on purpose: a row reported without one, a pair across
-rounds, or two judges that disagree. (not compared): too few complete pairs for an
-interval. No mark: no difference shown, on a row with no margin or past the margin it
-has.
+better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
+round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
+no difference shown: either way the interval's worse end stays within the row's margin,
+so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+purpose: a row reported without one, a pair across rounds, or two judges that disagree.
+(not compared): too few complete pairs for an interval. No mark: no difference shown, on
+a row with no margin or past the margin it has.
 
 ‡ the interval was not computed by BCa: the paired differences were identical, or the
 bias correction was undefined. `aggregate.json` carries the method per row.
@@ -141,22 +140,22 @@ before it, and allows no escalation.
 
 | Metric | Direction | Margin | none | hybrid | reference | inline | skills | hybrid−none | reference−none | inline−none | skills−none | skills−hybrid | reference−hybrid | skills−inline |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.906 | 0.882 | 0.926 | 0.906 | -0.086 [-0.352, -0.002] ▼ | -0.110 [-0.240, -0.033] ▼ | -0.066 [-0.333, 0.001] | -0.085 [-0.349, -0.002] ▼ | +0.001 [-0.187, 0.199] | -0.023 [-0.164, 0.210] | -0.019 [-0.217, 0.176] |
-| Installs in a clean environment | up | — | 1 | 0.933 | 1 | 0.933 | 0.933 | -0.067 [-0.400, 0] | 0 [0, 0] ‡ | -0.067 [-0.400, 0] | -0.067 [-0.400, 0] | 0 [-0.267, 0.133] | +0.067 [0, 0.200] | 0 [-0.267, 0.133] |
-| Adherence checklist fraction | up | 8 pp | 0.472 | 0.555 | 0.537 | 0.626 | 0.597 | +0.082 [0.025, 0.130] ▲ | +0.065 [0.021, 0.097] ▲ | +0.154 [0.099, 0.218] ▲ | +0.125 [0.064, 0.177] ▲ | +0.043 [-0.013, 0.120] ≈ | -0.018 [-0.070, 0.030] ≈ | -0.029 [-0.081, 0.046] |
+| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.972 | 0.882 | 0.992 | 0.953 | -0.020 [-0.097, 0.000] | -0.110 [-0.240, -0.033] ▼ | -0.000 [-0.004, 0.002] ≈ | -0.038 [-0.115, -0.001] ▼ | -0.019 [-0.077, 0.040] | -0.090 [-0.220, 0.006] | -0.038 [-0.115, -0.000] ▼ |
+| Installs in a clean environment | up | — | 1 | 1 | 1 | 1 | 1 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
+| Adherence checklist fraction | up | 8 pp | 0.472 | 0.561 | 0.537 | 0.628 | 0.603 | +0.089 [0.029, 0.137] ▲ | +0.065 [0.021, 0.097] ▲ | +0.156 [0.100, 0.225] ▲ | +0.131 [0.070, 0.177] ▲ | +0.041 [-0.007, 0.122] ≈ | -0.025 [-0.077, 0.027] ≈ | -0.025 [-0.076, 0.048] ≈ |
 | Output tokens | down | — | 122963.7 | 169072 | 154568.3 | 174413.5 | 159560.5 | +46108.3 [1924.3, 61839.9] ▼ | +31604.5 [21863.9, 41453.1] ▼ | +51449.8 [4796.9, 75872.1] ▼ | +36596.8 [25594, 47760.1] ▼ | -9511.5 [-27232.8, 35968.6] | -14503.7 [-32657.6, 31463.9] | -14853 [-40360.1, 34141.9] |
 | Turns | down | — | 93.867 | 197.667 | 139 | 197.800 | 168 | +103.800 [57.267, 122.667] ▼ | +45.133 [36, 59.200] ▼ | +103.933 [56.267, 131] ▼ | +74.133 [59.867, 91.733] ▼ | -29.667 [-56.267, 26.800] | -58.667 [-78.200, -14.333] ▲ | -29.800 [-59.600, 15.800] |
 | Wall time, seconds | down | — | 1358.3 | 2394.8 | 1815.1 | 2793.4 | 1906.1 | +1036.6 [867, 1225.1] ▼ | +456.820 [333.520, 619.213] ▼ | +1435.1 [1195.5, 1837.6] ▼ | +547.793 [382.420, 723.820] ▼ | -488.760 [-716.907, -209.180] ▲ | -579.733 [-740.780, -342.327] ▲ | -887.353 [-1248.8, -591.920] ▲ |
 | Cost, USD | down | — | 4.294 | 11.783 | 7.208 | 14.184 | 9.302 | +7.489 [6.550, 8.636] ▼ | +2.915 [2.325, 3.736] ▼ | +9.890 [8.326, 12.227] ▼ | +5.009 [4.024, 6.242] ▼ | -2.480 [-3.775, -0.842] ▲ | -4.574 [-5.804, -3.393] ▲ | -4.881 [-7.301, -2.864] ▲ |
 
 Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction. = held,
-for a row read by its margin, and ≈ no difference shown: either way the interval's worse
-end stays within the row's margin, so it is no worse than the margin, which is not the
-same as equal. ○ no verdict, on purpose: a row reported without one, a pair across
-rounds, or two judges that disagree. (not compared): too few complete pairs for an
-interval. No mark: no difference shown, on a row with no margin or past the margin it
-has.
+better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
+round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
+no difference shown: either way the interval's worse end stays within the row's margin,
+so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+purpose: a row reported without one, a pair across rounds, or two judges that disagree.
+(not compared): too few complete pairs for an interval. No mark: no difference shown, on
+a row with no margin or past the margin it has.
 
 ‡ the interval was not computed by BCa: the paired differences were identical, or the
 bias correction was undefined. `aggregate.json` carries the method per row.
@@ -175,37 +174,38 @@ beside whether the change works and whether the build still passes after it.
 | Change task, cost, USD | down | — | — | — | — | — | — | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured |
 
 Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction. = held,
-for a row read by its margin, and ≈ no difference shown: either way the interval's worse
-end stays within the row's margin, so it is no worse than the margin, which is not the
-same as equal. ○ no verdict, on purpose: a row reported without one, a pair across
-rounds, or two judges that disagree. (not compared): too few complete pairs for an
-interval. No mark: no difference shown, on a row with no margin or past the margin it
-has.
+better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
+round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
+no difference shown: either way the interval's worse end stays within the row's margin,
+so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+purpose: a row reported without one, a pair across rounds, or two judges that disagree.
+(not compared): too few complete pairs for an interval. No mark: no difference shown, on
+a row with no margin or past the margin it has.
 
 ## Every other metric
 
 | Metric | Direction | Margin | none | hybrid | reference | inline | skills | hybrid−none | reference−none | inline−none | skills−none | skills−hybrid | reference−hybrid | skills−inline |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| SRP, 1-5 | up | — | 2.822 | 3.310 | 2.978 | 3.810 | 3.143 | +0.500 [0.238, 0.714] ▲ (14 pairs) | +0.156 [0.044, 0.311] ▲ | +0.952 [0.714, 1.095] ▲ (14 pairs) | +0.333 [0.119, 0.548] ▲ (14 pairs) | -0.179 [-0.513, 0.179] (13 pairs) | -0.333 [-0.595, -0.167] ▼ (14 pairs) | -0.718 [-0.897, -0.410] ▼ (13 pairs) |
-| OCP, 1-5 | up | — | 2 | 2 | 2 | 2 | 2 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
-| LSP, 1-5 | up | — | 2.711 | 2.786 | 2.822 | 3.381 | 2.810 | +0.167 [-0.143, 0.524] (14 pairs) | +0.111 [-0.467, 0.489] | +0.619 [0.214, 1.000] ▲ (14 pairs) | +0.119 [-0.500, 0.595] (14 pairs) | +0.051 [-0.538, 0.538] (13 pairs) | +0.024 [-0.548, 0.357] (14 pairs) | -0.513 [-1.077, 0.077] (13 pairs) |
-| ISP, 1-5 | up | — | 4.067 | 4.143 | 4.067 | 3.929 | 4.167 | +0.071 [-0.119, 0.333] (14 pairs) | 0 [-0.133, 0.200] | -0.143 [-0.357, 0.024] (14 pairs) | +0.095 [-0.024, 0.310] (14 pairs) | +0.026 [-0.231, 0.231] (13 pairs) | -0.071 [-0.357, 0.024] (14 pairs) | +0.256 [0, 0.513] (13 pairs) |
-| DIP, 1-5 | up | — | 5 | 5 | 5 | 5 | 5 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
-| Naming and abstraction, 1-5 | up | — | 4 | 4 | 3.978 | 4 | 4 | 0 [0, 0] ‡ (14 pairs) | -0.022 [-0.133, 0] | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | -0.024 [-0.190, 0] (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
-| Error design, 1-5 | up | — | 2.111 | 2.405 | 2.400 | 2.595 | 2.310 | +0.309 [0.119, 0.524] ▲ (14 pairs) | +0.289 [-0.044, 0.556] | +0.476 [0.214, 0.690] ▲ (14 pairs) | +0.191 [0.024, 0.429] ▲ (14 pairs) | -0.103 [-0.410, 0.256] (13 pairs) | -0.048 [-0.405, 0.286] (14 pairs) | -0.231 [-0.590, 0.154] (13 pairs) |
-| Test quality, 1-5 | up | — | 3.089 | 3.500 | 3.622 | 3.905 | 3.238 | +0.405 [0.024, 0.619] ▲ (14 pairs) | +0.533 [0.267, 0.733] ▲ | +0.881 [0.667, 0.952] ▲ (14 pairs) | +0.143 [0.024, 0.333] ▲ (14 pairs) | -0.256 [-0.564, 0.051] (13 pairs) | +0.143 [-0.214, 0.381] (14 pairs) | -0.692 [-0.897, -0.487] ▼ (13 pairs) |
-| Patterns warranted | up | — | 4.822 | 4.452 | 4.622 | 5.190 | 4.738 | -0.309 [-0.881, 0.190] (14 pairs) | -0.200 [-0.733, 0.222] | +0.357 [0.024, 0.667] ▲ (14 pairs) | -0.167 [-0.643, 0.310] (14 pairs) | +0.231 [-0.128, 0.487] (13 pairs) | +0.167 [-0.214, 0.595] (14 pairs) | -0.385 [-0.872, 0.128] (13 pairs) |
-| Patterns over-engineered | down | — | 0 | 0.048 | 0.067 | 0.048 | 0.024 | +0.048 [0, 0.143] (14 pairs) | +0.067 [0, 0.200] | +0.048 [0, 0.143] (14 pairs) | +0.024 [0, 0.071] (14 pairs) | -0.026 [-0.256, 0.026] (13 pairs) | +0.024 [-0.143, 0.214] (14 pairs) | -0.026 [-0.231, 0.026] (13 pairs) |
-| Patterns missed | down | — | 1.467 | 1.524 | 1.467 | 1.310 | 1.500 | +0.024 [-0.262, 0.310] (14 pairs) | 0 [-0.333, 0.311] | -0.143 [-0.429, 0.167] (14 pairs) | +0.071 [-0.238, 0.357] (14 pairs) | +0.026 [-0.231, 0.333] (13 pairs) | -0.071 [-0.286, 0.167] (14 pairs) | +0.128 [-0.103, 0.333] (13 pairs) |
-| Line coverage of the trial's own tests, % | up | — | 72.665 | 93.036 | 86.864 | 94.899 | 81.264 | +22.231 [10.510, 33.969] ▲ (8 pairs) | +15.439 [2.699, 26.284] ▲ (14 pairs) | +24.804 [14.944, 33.538] ▲ (13 pairs) | +7.515 [-7.117, 21.382] (14 pairs) | -11.811 [-25.282, -3.299] ▼ (7 pairs) | -6.639 [-19.008, -1.314] ▼ (8 pairs) | -12.571 [-21.636, -6.893] ▼ (12 pairs) |
+| Installs and boots | up | — | 1 | 1 | 0.867 | 1 | 1 | 0 [0, 0] ‡ | -0.133 [-0.533, -0.067] ▼ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | -0.133 [-0.533, -0.067] ▼ | 0 [0, 0] ‡ |
+| SRP, 1-5 | up | — | 2.822 | 3.356 | 2.978 | 3.822 | 3.156 | +0.533 [0.289, 0.733] ▲ | +0.156 [0.044, 0.311] ▲ | +1 [0.756, 1.156] ▲ | +0.333 [0.133, 0.533] ▲ | -0.200 [-0.511, 0.133] | -0.378 [-0.622, -0.200] ▼ | -0.667 [-0.889, -0.378] ▼ |
+| OCP, 1-5 | up | — | 2 | 2 | 2 | 2 | 2 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
+| LSP, 1-5 | up | — | 2.711 | 2.933 | 2.822 | 3.356 | 2.867 | +0.222 [-0.111, 0.556] | +0.111 [-0.467, 0.489] | +0.644 [0.267, 1.000] ▲ | +0.156 [-0.467, 0.600] | -0.067 [-0.778, 0.444] | -0.111 [-0.689, 0.267] | -0.489 [-1.000, 0.022] |
+| ISP, 1-5 | up | — | 4.067 | 4.133 | 4.067 | 3.933 | 4.200 | +0.067 [-0.111, 0.311] | 0 [-0.133, 0.200] | -0.133 [-0.333, 0.022] | +0.133 [0, 0.333] | +0.067 [-0.156, 0.267] | -0.067 [-0.311, 0.022] | +0.267 [0.044, 0.489] ▲ |
+| DIP, 1-5 | up | — | 5 | 5 | 5 | 5 | 5 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
+| Naming and abstraction, 1-5 | up | — | 4 | 4 | 3.978 | 4 | 4 | 0 [0, 0] ‡ | -0.022 [-0.133, 0] | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | -0.022 [-0.133, 0] | 0 [0, 0] ‡ |
+| Error design, 1-5 | up | — | 2.111 | 2.422 | 2.400 | 2.578 | 2.289 | +0.311 [0.111, 0.489] ▲ | +0.289 [-0.044, 0.556] | +0.467 [0.200, 0.667] ▲ | +0.178 [0, 0.400] | -0.133 [-0.400, 0.200] | -0.022 [-0.356, 0.289] | -0.289 [-0.600, 0.067] |
+| Test quality, 1-5 | up | — | 3.089 | 3.533 | 3.622 | 3.911 | 3.267 | +0.444 [0.089, 0.667] ▲ | +0.533 [0.267, 0.733] ▲ | +0.822 [0.578, 0.933] ▲ | +0.178 [0.044, 0.356] ▲ | -0.267 [-0.556, 0.022] | +0.089 [-0.244, 0.356] | -0.644 [-0.844, -0.467] ▼ |
+| Patterns warranted | up | — | 4.822 | 4.489 | 4.622 | 5.111 | 4.733 | -0.333 [-0.867, 0.133] | -0.200 [-0.733, 0.222] | +0.289 [-0.022, 0.644] | -0.089 [-0.578, 0.356] | +0.244 [-0.089, 0.467] | +0.133 [-0.244, 0.556] | -0.378 [-0.800, 0.067] |
+| Patterns over-engineered | down | — | 0 | 0.044 | 0.067 | 0.044 | 0.022 | +0.044 [0, 0.133] | +0.067 [0, 0.200] | +0.044 [0, 0.133] | +0.022 [0, 0.067] | -0.022 [-0.222, 0.022] | +0.022 [-0.133, 0.200] | -0.022 [-0.222, 0.022] |
+| Patterns missed | down | — | 1.467 | 1.511 | 1.467 | 1.289 | 1.489 | +0.044 [-0.244, 0.311] | 0 [-0.333, 0.311] | -0.178 [-0.444, 0.111] | +0.022 [-0.267, 0.311] | -0.022 [-0.244, 0.267] | -0.044 [-0.244, 0.178] | +0.200 [-0.044, 0.400] |
+| Line coverage of the trial's own tests, % | up | — | 72.685 | 93.036 | 86.951 | 95.080 | 81.984 | +22.231 [10.510, 33.969] ▲ (8 pairs) | +15.504 [2.773, 26.389] ▲ (14 pairs) | +23.620 [14.567, 32.337] ▲ (14 pairs) | +9.298 [-5.289, 22.514] | -10.644 [-22.604, -2.969] ▼ (8 pairs) | -6.597 [-19.008, -1.289] ▼ (8 pairs) | -11.508 [-19.597, -6.397] ▼ (14 pairs) |
 | Docstring coverage, % | up | — | 7.517 | 15.499 | 18.109 | 19.491 | 16.635 | +7.981 [4.481, 11.587] ▲ | +10.591 [5.981, 14.741] ▲ | +11.974 [6.479, 16.991] ▲ | +9.117 [5.590, 12.740] ▲ | +1.136 [-3.565, 4.534] | +2.610 [-0.832, 6.107] | -2.857 [-8.906, 1.899] |
 | Lint findings per KLOC | down | 10 % relative | 238.933 | 137.248 | 194.367 | 141.366 | 151.198 | -101.685 [-127.942, -79.340] ▲ | -44.567 [-61.823, -20.134] ▲ | -97.567 [-122.055, -71.830] ▲ | -87.735 [-109.987, -66.191] ▲ | +13.950 [1.529, 25.051] ▼ | +57.119 [43.276, 76.955] ▼ | +9.832 [-7.860, 24.529] |
 | Lint findings | down | — | 511.533 | 470.400 | 470.067 | 461.867 | 337.200 | -41.133 [-113.533, 17.800] | -41.467 [-135.800, 50.333] | -49.667 [-122.133, 34.133] | -174.333 [-233.267, -132.867] ▲ | -133.200 [-182.533, -79] ▲ | -0.333 [-70.600, 117.933] | -124.667 [-195.533, -63.067] ▲ |
 | Files the formatter would change | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
 | Files the formatter would change, per KLOC | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
-| Type errors under --strict | down | — | 220.533 | 13.933 | 157 | 14 | 10.067 | -206.600 [-295.467, -154.533] ▲ | -63.533 [-162.467, 12] | -206.533 [-283.133, -155.467] ▲ | -210.467 [-301.600, -162.600] ▲ | -3.867 [-30.933, 6] | +143.067 [98.333, 233.533] ▼ | -3.933 [-22.133, 21.800] |
-| Type errors under --strict, per KLOC | down | 10 % relative | 99.122 | 3.614 | 63.085 | 3.563 | 3.563 | -95.508 [-124.679, -77.433] ▲ | -36.037 [-61.311, -8.503] ▲ | -95.559 [-122.765, -77.119] ▲ | -95.559 [-125.339, -77.929] ▲ | -0.051 [-6.119, 2.737] | +59.471 [43.613, 91.870] ▼ | -0.001 [-4.978, 8.936] |
+| Type errors under --strict | down | — | 220.533 | 13.800 | 157 | 14 | 10.067 | -206.733 [-296, -154.667] ▲ | -63.533 [-162.467, 12] | -206.533 [-283.133, -155.467] ▲ | -210.467 [-301.600, -162.600] ▲ | -3.733 [-30.667, 6.133] | +143.200 [98.533, 233.533] ▼ | -3.933 [-22.133, 21.800] |
+| Type errors under --strict, per KLOC | down | 10 % relative | 99.122 | 3.577 | 63.085 | 3.563 | 3.563 | -95.545 [-124.763, -77.443] ▲ | -36.037 [-61.311, -8.503] ▲ | -95.559 [-122.765, -77.119] ▲ | -95.559 [-125.339, -77.929] ▲ | -0.015 [-6.119, 2.715] | +59.508 [43.686, 91.907] ▼ | -0.001 [-4.978, 8.936] |
 | Security findings, high and medium | down | — | 0.133 | 0.733 | 0.600 | 0.533 | 0.533 | +0.600 [0.133, 1.333] ▼ | +0.467 [0, 1.200] | +0.400 [0, 0.733] | +0.400 [0, 0.733] | -0.200 [-1.200, 0.267] | -0.133 [-1.267, 0.533] | 0 [-0.600, 0.467] |
 | Security findings, high and medium, per KLOC | down | 10 % relative | 0.071 | 0.185 | 0.263 | 0.159 | 0.235 | +0.113 [-0.032, 0.224] | +0.191 [-0.025, 0.587] | +0.088 [-0.055, 0.231] | +0.163 [-0.003, 0.332] | +0.050 [-0.139, 0.238] | +0.078 [-0.179, 0.413] | +0.075 [-0.131, 0.269] |
 | Highest cognitive complexity | down | — | 72.200 | 19.800 | 35.133 | 18.667 | 28.400 | -52.400 [-85, -30.467] ▲ | -37.067 [-69.467, -14.867] ▲ | -53.533 [-86.867, -32.400] ▲ | -43.800 [-79.467, -18.400] ▲ | +8.600 [1.067, 31.600] ▼ | +15.333 [9.933, 24.867] ▼ | +9.733 [2.333, 29.800] ▼ |
@@ -220,16 +220,16 @@ has.
 | Routes doing pricing arithmetic | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
 | Boolean parameters | down | — | 1.733 | 0.800 | 0.800 | 1.533 | 0.600 | -0.933 [-2.733, -0.133] ▲ | -0.933 [-2.800, -0.067] ▲ | -0.200 [-2.200, 0.733] | -1.133 [-2.400, -0.533] ▲ | -0.200 [-0.933, 0.400] | 0 [-0.933, 0.733] | -0.933 [-2.067, 0.200] |
 | Conditional ladders over rule kinds | down | — | 2.467 | 1.733 | 1.867 | 1.200 | 1.533 | -0.733 [-2.200, 0.267] | -0.600 [-2.533, 0.333] | -1.267 [-3, -0.133] ▲ | -0.933 [-2.733, 0.067] | -0.200 [-0.933, 0.533] | +0.133 [-0.800, 0.933] | +0.333 [-0.467, 0.933] |
-| Public names beyond the specification | down | — | 5.867 | 8.067 | 7.067 | 8.267 | 6.733 | +2.200 [-1.200, 5.133] | +1.200 [-0.800, 2.867] | +2.400 [-0.333, 4.400] | +0.867 [-1.333, 2.867] | -1.333 [-4.200, 1.867] | -1 [-3, 1.467] | -1.533 [-3.600, 1.133] |
+| Public names beyond the specification | down | — | 5.867 | 8.800 | 7.067 | 9 | 6.933 | +2.933 [-0.067, 5.467] | +1.200 [-0.800, 2.867] | +3.133 [1.133, 4.733] ▼ | +1.067 [-0.933, 3] | -1.867 [-4.333, 0.933] | -1.733 [-3.533, 0.667] | -2.067 [-3.733, 0.467] |
 | Specified names missing | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
-| Mutually importing module pairs | down | — | 0.800 | 0 | 0.400 | 0.500 | 0.571 | -0.857 [-3, -0.429] ▲ (14 pairs) | -0.400 [-2.400, 0.400] | -0.357 [-2.071, 0.929] (14 pairs) | -0.286 [-2, 1] (14 pairs) | +0.615 [0.077, 2] ▼ (13 pairs) | +0.429 [0, 1.286] (14 pairs) | 0 [-1.462, 1.154] (13 pairs) |
-| Mean instability of domain modules | neutral | — | 0.433 | 0.391 | 0.400 | 0.376 | 0.385 | -0.038 [-0.067, -0.017] ○ (14 pairs) | -0.033 [-0.068, 0.010] ○ | -0.053 [-0.082, -0.020] ○ (14 pairs) | -0.052 [-0.090, -0.004] ○ (14 pairs) | -0.004 [-0.054, 0.044] ○ (13 pairs) | +0.011 [-0.033, 0.051] ○ (14 pairs) | +0.013 [-0.028, 0.051] ○ (13 pairs) |
-| Stored payload renders inert | up | — | 1 | 1 | 1 | 1 | 1 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
-| A post without a token is refused | up | — | 0.200 | 0.857 | 0.400 | 0.714 | 0.643 | +0.643 [0.143, 0.857] ▲ (14 pairs) | +0.200 [-0.133, 0.400] | +0.500 [0.071, 0.714] ▲ (14 pairs) | +0.500 [0, 0.714] (14 pairs) | -0.231 [-0.615, 0.077] (13 pairs) | -0.500 [-0.857, -0.214] ▼ (14 pairs) | -0.077 [-0.538, 0.231] (13 pairs) |
-| Accessibility violations | down | — | 10 | 10 | 10 | 10 | 10 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
-| HTML validity errors | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
-| Invoice builder response size, bytes | down | — | 241 | 241 | 241 | 241.143 | 241 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | +0.143 [0, 0.429] (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | -0.154 [-0.923, 0] (13 pairs) |
-| Invoice builder subrequests | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) | 0 [0, 0] ‡ (14 pairs) | 0 [0, 0] ‡ (13 pairs) |
+| Mutually importing module pairs | down | — | 0.800 | 0 | 0.400 | 0.467 | 0.533 | -0.800 [-3.200, -0.400] ▲ | -0.400 [-2.400, 0.400] | -0.333 [-2, 0.867] | -0.267 [-1.933, 0.933] | +0.533 [0.067, 1.800] ▼ | +0.400 [0, 1.200] | +0.067 [-1.267, 1.067] |
+| Mean instability of domain modules | neutral | — | 0.433 | 0.384 | 0.400 | 0.375 | 0.380 | -0.049 [-0.088, -0.024] ○ | -0.033 [-0.068, 0.010] ○ | -0.059 [-0.087, -0.025] ○ | -0.053 [-0.088, -0.005] ○ | -0.004 [-0.050, 0.040] ○ | +0.016 [-0.027, 0.052] ○ | +0.006 [-0.031, 0.043] ○ |
+| Stored payload renders inert | up | — | 1 | 1 | 1 | 1 | 1 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
+| A post without a token is refused | up | — | 0.200 | 0.867 | 0.400 | 0.733 | 0.667 | +0.667 [0.133, 0.867] ▲ | +0.200 [-0.133, 0.400] | +0.533 [0.067, 0.733] ▲ | +0.467 [0, 0.667] | -0.200 [-0.600, 0.067] | -0.467 [-0.800, -0.200] ▼ | -0.067 [-0.467, 0.200] |
+| Accessibility violations | down | — | 10 | 10 | 10 | 10 | 10 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
+| HTML validity errors | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
+| Invoice builder response size, bytes | down | — | 241 | 241 | 241 | 241.133 | 241 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | +0.133 [0, 0.400] | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | -0.133 [-0.800, 0] |
+| Invoice builder subrequests | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
 | Source lines | neutral | — | 2181.2 | 3459.4 | 2411.6 | 3269.5 | 2253.9 | +1278.2 [931.333, 1611.1] ○ | +230.400 [-123.267, 577.267] ○ | +1088.3 [642.200, 1511.9] ○ | +72.667 [-217.200, 406.333] ○ | -1205.5 [-1491, -853.867] ○ | -1047.8 [-1410.9, -598.133] ○ | -1015.6 [-1406.9, -694.467] ○ |
 | Files | neutral | — | 38.800 | 63.333 | 47.400 | 64.400 | 43.667 | +24.533 [20.133, 27.267] ○ | +8.600 [6.200, 12.133] ○ | +25.600 [22, 29.133] ○ | +4.867 [1.467, 8.133] ○ | -19.667 [-24.067, -15.467] ○ | -15.933 [-19.933, -12] ○ | -20.733 [-26, -16.733] ○ |
 | App code, lines | down | 20 % relative | 2398.8 | 3090.8 | 2745.5 | 3206.3 | 2708.9 | +692 [570.800, 783.600] ▼ | +346.667 [233.867, 465.133] = | +807.533 [661.333, 907.867] ▼ | +310.133 [193.533, 431] = | -381.867 [-489.467, -256.067] ▲ | -345.333 [-454.200, -234.200] ▲ | -497.400 [-633.067, -330.533] ▲ |
@@ -238,13 +238,13 @@ has.
 | Artifacts nobody asked for | down | — | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
 
 Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction. = held,
-for a row read by its margin, and ≈ no difference shown: either way the interval's worse
-end stays within the row's margin, so it is no worse than the margin, which is not the
-same as equal. ○ no verdict, on purpose: a row reported without one, a pair across
-rounds, or two judges that disagree. (not compared): too few complete pairs for an
-interval. No mark: no difference shown, on a row with no margin or past the margin it
-has.
+better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
+round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
+no difference shown: either way the interval's worse end stays within the row's margin,
+so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+purpose: a row reported without one, a pair across rounds, or two judges that disagree.
+(not compared): too few complete pairs for an interval. No mark: no difference shown, on
+a row with no margin or past the margin it has.
 
 ‡ the interval was not computed by BCa: the paired differences were identical, or the
 bias correction was undefined. `aggregate.json` carries the method per row.
@@ -260,15 +260,15 @@ Adherence is held within 8 pp, one checklist item.
 | --- | --- | --- | --- | --- | --- | --- |
 | none | — | 0.85 (105) | 0.22 | 0.79 | 0.989 | 0.992 |
 | reference | 56 | 0.89 (105) | 0.17 | 0.68 | 0.416 | 0.882 |
-| inline | 4248 | 0.84 (105) | 0.32 | 0.57 | 0 | 0.926 |
-| hybrid | 3426 | 0.80 (105) | 0.28 | 0.73 | 0 | 0.906 |
-| skills | 9363 | 0.82 (105) | 0.28 | 0.54 | 0 | 0.906 |
+| inline | 4248 | 0.85 (105) | 0.32 | 0.65 | 0.979 | 0.992 |
+| hybrid | 3426 | 0.81 (105) | 0.28 | 0.82 | 0.700 | 0.972 |
+| skills | 9363 | 0.82 (105) | 0.28 | 0.56 | 0.707 | 0.953 |
 
 - H1, skills deliver what hybrid does, skills-hybrid: inconclusive (adherence held,
-  security probes open, data-protection probes open, security held, data protection
+  security probes open, data-protection probes held, security held, data protection
   held)
-- H3, a reference alone delivers less, reference-hybrid: inconclusive (adherence held,
-  security probes open, data-protection probes open, security held, data protection
+- H3, a reference alone delivers less, reference-hybrid: supported (adherence held,
+  security probes open, data-protection probes worse, security held, data protection
   held)
 - H2, consistency: skills agrees at least as much as hybrid
 
@@ -276,35 +276,36 @@ Adherence is held within 8 pp, one checklist item.
 
 | Metric | none-1 | none-2 | none-3 | none-4 | none-5 | none-6 | none-7 | none-8 | none-9 | none-10 | none-11 | none-12 | none-13 | none-14 | none-15 | hybrid-1 | hybrid-2 | hybrid-3 | hybrid-4 | hybrid-5 | hybrid-6 | hybrid-7 | hybrid-8 | hybrid-9 | hybrid-10 | hybrid-11 | hybrid-12 | hybrid-13 | hybrid-14 | hybrid-15 | reference-1 | reference-2 | reference-3 | reference-4 | reference-5 | reference-6 | reference-7 | reference-8 | reference-9 | reference-10 | reference-11 | reference-12 | reference-13 | reference-14 | reference-15 | inline-1 | inline-2 | inline-3 | inline-4 | inline-5 | inline-6 | inline-7 | inline-8 | inline-9 | inline-10 | inline-11 | inline-12 | inline-13 | inline-14 | inline-15 | skills-1 | skills-2 | skills-3 | skills-4 | skills-5 | skills-6 | skills-7 | skills-8 | skills-9 | skills-10 | skills-11 | skills-12 | skills-13 | skills-14 | skills-15 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Design (SOLID and patterns), 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
-| Readability, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 4 | 3 | 3 | 3 |
-| Maintainability, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
-| Security, 1-5 | 1 | 3 | 4 | 4 | 1.333 | 1 | 2.333 | 3 | 1 | 2 | 1 | 3 | 1.667 | 3.333 | 4 | 2.667 | 1 | — | 3.667 | 3 | 2 | 4 | 1 | 4 | 1 | 3.667 | 2 | 3 | 3.667 | 2 | 4 | 4 | 4 | 4 | 3.333 | 2 | 4 | 4 | 2.333 | 3 | 3.333 | 4 | 4 | 3.667 | 3 | 4 | 1 | 2.333 | 2.667 | — | 5 | 3.667 | 3.667 | 4 | 4 | 3 | 3.333 | 1.667 | 4 | 3 | 4 | 4 | 3.333 | — | 3 | 3.667 | 3.333 | 4 | 4 | 3 | 2.667 | 4 | 3 | 4 | 4 |
-| Data protection, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.667 | 3.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3.333 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | — | 3.333 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3.667 | 3 | 3 | 3 |
-| Security probe pass rate, of eleven | 0.727 | 0.727 | 0.727 | 0.727 | 0.818 | 0.636 | 0.727 | 0.818 | 0.727 | 0.818 | 0.727 | 0.818 | 0.818 | 0.727 | 0.818 | 0.909 | 0.818 | 0.182 | 0.909 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.818 | 0.909 | 0.818 | 1 | 0.909 | 0.818 | 0.909 | — | 0.909 | 0.909 | — | 0.909 | 0.909 | 0.909 | 0.818 | 1 | 0.818 | 1 | 0.909 | 0.182 | 1 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.818 | 1 | 0.909 | 0.182 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.909 | 0.818 | 0.818 | 0.818 | 0.909 | 1 |
-| Data-protection probe pass rate, of three | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 1 | 0 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 |
-| Task success, hidden suite pass rate | 0.991 | 0.991 | 0.996 | 0.993 | 0.994 | 0.989 | 0.994 | 0.989 | 0.994 | 0.994 | 0.993 | 0.991 | 0.991 | 0.989 | 0.989 | 0.989 | 0.700 | 0 | 0.989 | 0.989 | 0.996 | 0.994 | 0.989 | 0.994 | 0.991 | 0.987 | 0.989 | 0.989 | 0.996 | 0.993 | 0.994 | 0.991 | 0.996 | 0.702 | 0.998 | 0.989 | 0.998 | 0.416 | 0.989 | 0.996 | 0.421 | 0.766 | 0.994 | 0.989 | 0.994 | 0.989 | 0.996 | 0.994 | 0.994 | 0 | 0.991 | 0.979 | 0.989 | 0.998 | 0.993 | 0.989 | 0.991 | 1 | 0.996 | 0.987 | 0.991 | 0.989 | 0.991 | 0 | 0.985 | 0.989 | 0.989 | 0.994 | 0.994 | 0.713 | 0.989 | 0.993 | 0.998 | 0.993 | 0.989 |
-| Installs in a clean environment | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| Adherence checklist fraction | 0.417 | 0.667 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.583 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.364 | 0.545 | 0.500 | 0.667 | 0.583 | 0.583 | 0.538 | 0.500 | 0.583 | 0.500 | 0.500 | 0.600 | 0.500 | 0.692 | 0.667 | 0.500 | 0.600 | 0.500 | 0.583 | 0.500 | 0.500 | 0.500 | 0.583 | 0.583 | 0.583 | 0.583 | 0.417 | 0.583 | 0.538 | 0.500 | 0.769 | 0.750 | 0.667 | 0.667 | 0.800 | 0.583 | 0.615 | 0.500 | 0.667 | 0.667 | 0.500 | 0.462 | 0.615 | 0.667 | 0.462 | 0.750 | 0.667 | 0.583 | 0.500 | 0.667 | 0.583 | 0.500 | 0.583 | 0.583 | 0.462 | 0.583 | 0.750 | 0.583 | 0.583 | 0.583 |
-| SRP, 1-5 | 3 | 3 | 3 | 3 | 2.333 | 3 | 3 | 3 | 2.667 | 3 | 3 | 2 | 3 | 3 | 2.333 | 3 | 3.667 | — | 3 | 3 | 3 | 3.333 | 4 | 3 | 4 | 3 | 3 | 3 | 4 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2.667 | 3 | 3 | 3 | 3.667 | 4 | 4 | 3 | — | 3.667 | 4 | 4 | 3.667 | 4 | 4 | 3.333 | 4 | 4 | 4 | 4 | 3 | 3 | — | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 4 | 3 | 3 |
-| OCP, 1-5 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | — | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | — | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | — | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
-| LSP, 1-5 | 2 | 2.333 | 4 | 3 | 2 | 2.333 | 4 | 2.333 | 4 | 3 | 2 | 2.333 | 2.333 | 2.667 | 2.333 | 3 | 2.333 | — | 2.667 | 2.667 | 4 | 3 | 2.333 | 4 | 2.333 | 2.333 | 2.667 | 2.333 | 3 | 2.333 | 3 | 3 | 3 | 2 | 3.333 | 2.667 | 3 | 2.333 | 2 | 3 | 3 | 3 | 3 | 3 | 3 | 2.667 | 4.333 | 4 | 3.333 | — | 3 | 4 | 3 | 3 | 4 | 3 | 2.333 | 4 | 4 | 2.667 | 2.667 | 2.333 | 2.333 | — | 2 | 2 | 2 | 3 | 3 | 3 | 2.667 | 4 | 3.667 | 3 | 3.667 |
-| ISP, 1-5 | 4 | 4 | 4 | 4 | 4 | 4.667 | 4.333 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 5 | 4 | — | 4 | 4 | 4 | 4 | 4 | 4.333 | 4 | 3.667 | 5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | — | 4 | 4 | 4 | 3 | 4 | 3.667 | 4 | 4 | 4.667 | 3.667 | 4 | 4.333 | 4 | — | 4 | 5 | 4 | 4 | 4 | 4 | 4 | 5 | 4 | 4 | 4 |
-| DIP, 1-5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | — | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | — | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | — | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 |
-| Naming and abstraction, 1-5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | — | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 3.667 | 4 | 4 | 4 | 4 | 4 | 4 | — | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | — | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |
-| Error design, 1-5 | 2 | 2 | 2.333 | 2 | 2 | 2 | 2 | 2 | 3 | 2 | 2 | 2.333 | 2 | 2 | 2 | 2.667 | 2.333 | — | 2 | 2 | 3 | 2.333 | 2.333 | 3 | 2 | 2.667 | 2 | 2 | 3 | 2.333 | 3 | 3 | 3 | 2 | 3 | 2 | 2 | 2 | 2 | 3 | 3 | 2 | 2 | 2 | 2 | 2 | 3 | 3 | 3 | — | 2 | 3 | 2 | 3 | 3 | 2.333 | 2 | 2.667 | 3 | 2.333 | 2 | 2 | 2 | — | 2 | 2 | 2 | 3 | 3 | 2 | 2 | 3 | 3 | 2.333 | 2 |
-| Test quality, 1-5 | 3 | 3 | 3 | 3 | 4 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 4 | 3 | — | 3.333 | 3 | 4 | 4 | 4 | 3 | 3.667 | 3.667 | 3.333 | 4 | 3 | 3 | 4 | 3.333 | 3.333 | 4 | 3.667 | 4 | 3.333 | 3 | 3.333 | 4 | 4 | 4 | 3.333 | 3 | 4 | 4 | 4 | 4 | 4 | — | 4 | 4 | 4 | 4 | 3.333 | 3.333 | 4 | 4 | 4 | 4 | 3 | 3.333 | 3 | — | 3.667 | 3.333 | 3 | 3 | 3 | 3 | 3.333 | 4 | 3.667 | 3 | 3 |
-| Patterns warranted | 4.333 | 4 | 5.667 | 3.667 | 4.667 | 5 | 5.333 | 4 | 5 | 4.667 | 6.667 | 5.667 | 4.667 | 5 | 4 | 5.333 | 4.667 | — | 4.333 | 4.333 | 4 | 3.667 | 5 | 4 | 4.333 | 4.333 | 5.333 | 4 | 4 | 5 | 5.667 | 4.667 | 4.667 | 3.667 | 5.333 | 4.333 | 4.333 | 4.667 | 5.667 | 4 | 4.333 | 4.333 | 4.333 | 5.333 | 4 | 5.333 | 4.333 | 5.333 | 5.333 | — | 5.667 | 5.333 | 4.333 | 6 | 5 | 6.333 | 5.333 | 5 | 4.333 | 5 | 4.333 | 4.667 | 5.333 | — | 4 | 4.333 | 4 | 5.667 | 4.333 | 5.333 | 4.667 | 6 | 5 | 4.333 | 4.333 |
-| Patterns over-engineered | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.667 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0.667 | 0 | 0 | 0 | 0 | 0 | 0 | 0.333 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Patterns missed | 2 | 1.667 | 1 | 2 | 1.667 | 1 | 1.333 | 2 | 1.667 | 1.333 | 1 | 1 | 1.333 | 1.333 | 1.667 | 1.333 | 1 | — | 1.667 | 1.667 | 2 | 1 | 1.333 | 2 | 1.667 | 1.667 | 1.667 | 1.667 | 1.667 | 1 | 1 | 1 | 1.667 | 1.667 | 1.333 | 2 | 1 | 1 | 1 | 2 | 1.667 | 1.667 | 1.667 | 1.333 | 2 | 1.333 | 1 | 1.667 | 1 | — | 1.667 | 1.333 | 1.333 | 1 | 1.333 | 2 | 1 | 1 | 1 | 1.667 | 1.333 | 1 | 1 | — | 2 | 2 | 2 | 1 | 1.667 | 1 | 2 | 1 | 1.667 | 1.333 | 2 |
-| Line coverage of the trial's own tests, % | 56.250 | 90.017 | 90.415 | 57.487 | 88.805 | 55.882 | 87.002 | 89.927 | 52 | 87.659 | 51.885 | 88.147 | 56.890 | 84.916 | 52.688 | — | — | — | 94.525 | 93.893 | 94.154 | 91.751 | — | 86.832 | 93.860 | — | — | — | 93.150 | 96.119 | 88.869 | — | 88.917 | 91.353 | 82.507 | 93.704 | 57.180 | 88.527 | 92.131 | 92.328 | 89.217 | 78.530 | 90.870 | 90.116 | 91.855 | 99.525 | 94.944 | 95.655 | 94.375 | — | 94.079 | 96.757 | — | 96.245 | 94.288 | 91.786 | 92.538 | 97.756 | 93.700 | 92.042 | 90.893 | 89.559 | 89.875 | — | 89.488 | 90.226 | 87.232 | 59.741 | 88.962 | 60.565 | 90 | 59.758 | 90.792 | 58.829 | 91.778 |
+| Design (SOLID and patterns), 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
+| Readability, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 4 | 3 | 3 | 3 |
+| Maintainability, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
+| Security, 1-5 | 1 | 3 | 4 | 4 | 1.333 | 1 | 2.333 | 3 | 1 | 2 | 1 | 3 | 1.667 | 3.333 | 4 | 2.667 | 1 | 4 | 3.667 | 3 | 2 | 4 | 1 | 4 | 1 | 3.667 | 2 | 3 | 3.667 | 2 | 4 | 4 | 4 | 4 | 3.333 | 2 | 4 | 4 | 2.333 | 3 | 3.333 | 4 | 4 | 3.667 | 3 | 4 | 1 | 2.333 | 2.667 | 3.667 | 5 | 3.667 | 3.667 | 4 | 4 | 3 | 3.333 | 1.667 | 4 | 3 | 4 | 4 | 3.333 | 3.333 | 3 | 3.667 | 3.333 | 4 | 4 | 3 | 2.667 | 4 | 3 | 4 | 4 |
+| Data protection, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.667 | 3.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3.333 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3.667 | 3 | 3 | 3 |
+| Security probe pass rate, of eleven | 0.727 | 0.727 | 0.727 | 0.727 | 0.818 | 0.636 | 0.727 | 0.818 | 0.727 | 0.818 | 0.727 | 0.818 | 0.818 | 0.727 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.818 | 0.909 | 0.818 | 1 | 0.909 | 0.818 | 0.909 | — | 0.909 | 0.909 | — | 0.909 | 0.909 | 0.909 | 0.818 | 1 | 0.818 | 1 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.818 | 1 | 0.909 | 0.909 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.909 | 0.818 | 0.818 | 0.818 | 0.909 | 1 |
+| Data-protection probe pass rate, of three | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 1 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 |
+| Task success, hidden suite pass rate | 0.991 | 0.991 | 0.996 | 0.993 | 0.994 | 0.989 | 0.994 | 0.989 | 0.994 | 0.994 | 0.993 | 0.991 | 0.991 | 0.989 | 0.989 | 0.989 | 0.700 | 0.994 | 0.989 | 0.989 | 0.996 | 0.994 | 0.989 | 0.994 | 0.991 | 0.987 | 0.989 | 0.989 | 0.996 | 0.993 | 0.994 | 0.991 | 0.996 | 0.702 | 0.998 | 0.989 | 0.998 | 0.416 | 0.989 | 0.996 | 0.421 | 0.766 | 0.994 | 0.989 | 0.994 | 0.989 | 0.996 | 0.994 | 0.994 | 0.989 | 0.991 | 0.979 | 0.989 | 0.998 | 0.993 | 0.989 | 0.991 | 1 | 0.996 | 0.987 | 0.991 | 0.989 | 0.991 | 0.707 | 0.985 | 0.989 | 0.989 | 0.994 | 0.994 | 0.708 | 0.989 | 0.993 | 0.998 | 0.994 | 0.989 |
+| Installs in a clean environment | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| Installs and boots | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| Adherence checklist fraction | 0.417 | 0.667 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.583 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.364 | 0.545 | 0.600 | 0.667 | 0.583 | 0.583 | 0.538 | 0.500 | 0.583 | 0.500 | 0.500 | 0.600 | 0.500 | 0.692 | 0.667 | 0.500 | 0.600 | 0.500 | 0.583 | 0.500 | 0.500 | 0.500 | 0.583 | 0.583 | 0.583 | 0.583 | 0.417 | 0.583 | 0.538 | 0.500 | 0.769 | 0.750 | 0.667 | 0.667 | 0.833 | 0.583 | 0.615 | 0.500 | 0.667 | 0.667 | 0.500 | 0.462 | 0.615 | 0.667 | 0.462 | 0.750 | 0.667 | 0.583 | 0.583 | 0.667 | 0.583 | 0.500 | 0.583 | 0.583 | 0.462 | 0.583 | 0.750 | 0.583 | 0.583 | 0.583 |
+| SRP, 1-5 | 3 | 3 | 3 | 3 | 2.333 | 3 | 3 | 3 | 2.667 | 3 | 3 | 2 | 3 | 3 | 2.333 | 3 | 3.667 | 4 | 3 | 3 | 3 | 3.333 | 4 | 3 | 4 | 3 | 3 | 3 | 4 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2.667 | 3 | 3 | 3 | 3.667 | 4 | 4 | 3 | 4 | 3.667 | 4 | 4 | 3.667 | 4 | 4 | 3.333 | 4 | 4 | 4 | 4 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 4 | 3 | 3 |
+| OCP, 1-5 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
+| LSP, 1-5 | 2 | 2.333 | 4 | 3 | 2 | 2.333 | 4 | 2.333 | 4 | 3 | 2 | 2.333 | 2.333 | 2.667 | 2.333 | 3 | 2.333 | 5 | 2.667 | 2.667 | 4 | 3 | 2.333 | 4 | 2.333 | 2.333 | 2.667 | 2.333 | 3 | 2.333 | 3 | 3 | 3 | 2 | 3.333 | 2.667 | 3 | 2.333 | 2 | 3 | 3 | 3 | 3 | 3 | 3 | 2.667 | 4.333 | 4 | 3.333 | 3 | 3 | 4 | 3 | 3 | 4 | 3 | 2.333 | 4 | 4 | 2.667 | 2.667 | 2.333 | 2.333 | 3.667 | 2 | 2 | 2 | 3 | 3 | 3 | 2.667 | 4 | 3.667 | 3 | 3.667 |
+| ISP, 1-5 | 4 | 4 | 4 | 4 | 4 | 4.667 | 4.333 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4.333 | 4 | 3.667 | 5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 3 | 4 | 3.667 | 4 | 4 | 4.667 | 3.667 | 4 | 4.333 | 4 | 4.667 | 4 | 5 | 4 | 4 | 4 | 4 | 4 | 5 | 4 | 4 | 4 |
+| DIP, 1-5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 |
+| Naming and abstraction, 1-5 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 3.667 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |
+| Error design, 1-5 | 2 | 2 | 2.333 | 2 | 2 | 2 | 2 | 2 | 3 | 2 | 2 | 2.333 | 2 | 2 | 2 | 2.667 | 2.333 | 2.667 | 2 | 2 | 3 | 2.333 | 2.333 | 3 | 2 | 2.667 | 2 | 2 | 3 | 2.333 | 3 | 3 | 3 | 2 | 3 | 2 | 2 | 2 | 2 | 3 | 3 | 2 | 2 | 2 | 2 | 2 | 3 | 3 | 3 | 2.333 | 2 | 3 | 2 | 3 | 3 | 2.333 | 2 | 2.667 | 3 | 2.333 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 3 | 2 | 2 | 3 | 3 | 2.333 | 2 |
+| Test quality, 1-5 | 3 | 3 | 3 | 3 | 4 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 4 | 3 | 4 | 3.333 | 3 | 4 | 4 | 4 | 3 | 3.667 | 3.667 | 3.333 | 4 | 3 | 3 | 4 | 3.333 | 3.333 | 4 | 3.667 | 4 | 3.333 | 3 | 3.333 | 4 | 4 | 4 | 3.333 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 3.333 | 3.333 | 4 | 4 | 4 | 4 | 3 | 3.333 | 3 | 3.667 | 3.667 | 3.333 | 3 | 3 | 3 | 3 | 3.333 | 4 | 3.667 | 3 | 3 |
+| Patterns warranted | 4.333 | 4 | 5.667 | 3.667 | 4.667 | 5 | 5.333 | 4 | 5 | 4.667 | 6.667 | 5.667 | 4.667 | 5 | 4 | 5.333 | 4.667 | 5 | 4.333 | 4.333 | 4 | 3.667 | 5 | 4 | 4.333 | 4.333 | 5.333 | 4 | 4 | 5 | 5.667 | 4.667 | 4.667 | 3.667 | 5.333 | 4.333 | 4.333 | 4.667 | 5.667 | 4 | 4.333 | 4.333 | 4.333 | 5.333 | 4 | 5.333 | 4.333 | 5.333 | 5.333 | 4 | 5.667 | 5.333 | 4.333 | 6 | 5 | 6.333 | 5.333 | 5 | 4.333 | 5 | 4.333 | 4.667 | 5.333 | 4.667 | 4 | 4.333 | 4 | 5.667 | 4.333 | 5.333 | 4.667 | 6 | 5 | 4.333 | 4.333 |
+| Patterns over-engineered | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.667 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.667 | 0 | 0 | 0 | 0 | 0 | 0 | 0.333 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Patterns missed | 2 | 1.667 | 1 | 2 | 1.667 | 1 | 1.333 | 2 | 1.667 | 1.333 | 1 | 1 | 1.333 | 1.333 | 1.667 | 1.333 | 1 | 1.333 | 1.667 | 1.667 | 2 | 1 | 1.333 | 2 | 1.667 | 1.667 | 1.667 | 1.667 | 1.667 | 1 | 1 | 1 | 1.667 | 1.667 | 1.333 | 2 | 1 | 1 | 1 | 2 | 1.667 | 1.667 | 1.667 | 1.333 | 2 | 1.333 | 1 | 1.667 | 1 | 1 | 1.667 | 1.333 | 1.333 | 1 | 1.333 | 2 | 1 | 1 | 1 | 1.667 | 1.333 | 1 | 1 | 1.333 | 2 | 2 | 2 | 1 | 1.667 | 1 | 2 | 1 | 1.667 | 1.333 | 2 |
+| Line coverage of the trial's own tests, % | 56.250 | 90.017 | 90.813 | 57.487 | 88.805 | 55.882 | 87.002 | 89.837 | 52 | 87.659 | 51.885 | 88.147 | 56.890 | 84.916 | 52.688 | — | — | — | 94.525 | 93.893 | 94.154 | 91.751 | — | 86.832 | 93.860 | — | — | — | 93.150 | 96.119 | 89.276 | — | 88.917 | 91.353 | 82.844 | 93.704 | 57.180 | 88.527 | 92.131 | 92.328 | 89.296 | 78.530 | 91.260 | 90.116 | 91.855 | 99.525 | 94.944 | 95.655 | 94.375 | 97.434 | 94.079 | 96.757 | — | 96.245 | 94.288 | 91.786 | 92.538 | 97.756 | 93.700 | 92.042 | 90.893 | 89.559 | 89.875 | 92.054 | 89.488 | 90.226 | 87.232 | 59.741 | 88.962 | 60.565 | 90 | 59.758 | 90.792 | 58.829 | 91.778 |
 | Docstring coverage, % | 5.440 | 1.960 | 11.860 | 2.070 | 2.050 | 6.160 | 4.790 | 9.650 | 4.960 | 9.680 | 2.030 | 18.110 | 13.820 | 3.140 | 17.040 | 18.450 | 15.490 | 13.140 | 8.570 | 17.820 | 18.770 | 13.760 | 14.470 | 12.590 | 9.350 | 19.060 | 17.410 | 17.270 | 23.120 | 13.210 | 13.740 | 11.460 | 17.810 | 17.280 | 22.760 | 35.150 | 13.070 | 25.730 | 12.040 | 13.640 | 16.120 | 7.880 | 25.550 | 18.540 | 20.860 | 21.180 | 24.480 | 12.300 | 21.860 | 32.390 | 6.780 | 16.940 | 21.450 | 17.780 | 6.110 | 16.140 | 10.640 | 38.860 | 17.440 | 28.020 | 0 | 25.450 | 17.610 | 7.320 | 13.380 | 13.470 | 20.620 | 15.920 | 18.410 | 19.550 | 21.050 | 17.050 | 18.930 | 14.970 | 25.790 |
 | Lint findings per KLOC | 341.330 | 188.410 | 247.300 | 200.810 | 238.700 | 261.180 | 313.690 | 202.780 | 275.790 | 279.460 | 197.250 | 166.020 | 218.270 | 246.260 | 206.750 | 140.460 | 142.110 | 120.490 | 121 | 148.350 | 103.360 | 166.270 | 148.740 | 144.880 | 121.190 | 139.610 | 128 | 131.130 | 160.350 | 142.780 | 277 | 157.650 | 154.270 | 158.540 | 240.170 | 187.900 | 220.710 | 182.600 | 209.860 | 186.980 | 162.540 | 225.870 | 167.550 | 184.050 | 199.810 | 145.700 | 150 | 159.950 | 145.860 | 123.450 | 146.980 | 158.380 | 135.710 | 148.290 | 127.020 | 113.860 | 171.150 | 111.610 | 128.450 | 154.080 | 192.410 | 164.750 | 154.600 | 162.530 | 166.750 | 128.890 | 149.900 | 137.980 | 146.580 | 150.390 | 172.260 | 115.260 | 150.400 | 163.810 | 111.460 |
 | Lint findings | 555 | 533 | 734 | 495 | 449 | 473 | 591 | 510 | 500 | 517 | 388 | 344 | 595 | 609 | 380 | 310 | 490 | 441 | 431 | 498 | 412 | 565 | 571 | 481 | 537 | 529 | 410 | 484 | 368 | 529 | 795 | 341 | 336 | 559 | 501 | 416 | 454 | 405 | 677 | 385 | 459 | 599 | 317 | 397 | 410 | 344 | 336 | 671 | 368 | 308 | 631 | 379 | 589 | 581 | 480 | 455 | 624 | 296 | 456 | 410 | 365 | 358 | 316 | 354 | 335 | 402 | 310 | 287 | 433 | 345 | 318 | 281 | 302 | 401 | 251 |
 | Files the formatter would change | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Files the formatter would change, per KLOC | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Type errors under --strict | 322 | 251 | 588 | 263 | 117 | 160 | 173 | 267 | 168 | 139 | 88 | 115 | 282 | 206 | 169 | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 92 | 115 | 0 | 0 | 0 | 0 | 0 | 503 | 75 | 87 | 202 | 317 | 86 | 92 | 84 | 212 | 123 | 169 | 179 | 103 | 62 | 61 | 0 | 0 | 47 | 0 | 0 | 23 | 0 | 0 | 0 | 0 | 88 | 46 | 0 | 0 | 6 | 0 | 0 | 0 | 1 | 0 | 2 | 0 | 0 | 116 | 0 | 0 | 0 | 0 | 32 | 0 |
-| Type errors under --strict, per KLOC | 198.030 | 88.720 | 198.110 | 106.690 | 62.200 | 88.350 | 91.830 | 106.160 | 92.660 | 75.140 | 44.740 | 55.500 | 103.450 | 83.300 | 91.950 | 0 | 0 | 0.550 | 0 | 0 | 0 | 0 | 0 | 27.710 | 25.950 | 0 | 0 | 0 | 0 | 0 | 175.260 | 34.670 | 39.940 | 57.290 | 151.970 | 38.840 | 44.730 | 37.870 | 65.720 | 59.740 | 59.840 | 67.500 | 54.440 | 28.740 | 29.730 | 0 | 0 | 11.200 | 0 | 0 | 5.360 | 0 | 0 | 0 | 0 | 22.020 | 12.620 | 0 | 0 | 2.250 | 0 | 0 | 0 | 0.460 | 0 | 0.640 | 0 | 0 | 39.270 | 0 | 0 | 0 | 0 | 13.070 | 0 |
+| Type errors under --strict | 322 | 251 | 588 | 263 | 117 | 160 | 173 | 267 | 168 | 139 | 88 | 115 | 282 | 206 | 169 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 92 | 115 | 0 | 0 | 0 | 0 | 0 | 503 | 75 | 87 | 202 | 317 | 86 | 92 | 84 | 212 | 123 | 169 | 179 | 103 | 62 | 61 | 0 | 0 | 47 | 0 | 0 | 23 | 0 | 0 | 0 | 0 | 88 | 46 | 0 | 0 | 6 | 0 | 0 | 0 | 1 | 0 | 2 | 0 | 0 | 116 | 0 | 0 | 0 | 0 | 32 | 0 |
+| Type errors under --strict, per KLOC | 198.030 | 88.720 | 198.110 | 106.690 | 62.200 | 88.350 | 91.830 | 106.160 | 92.660 | 75.140 | 44.740 | 55.500 | 103.450 | 83.300 | 91.950 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 27.710 | 25.950 | 0 | 0 | 0 | 0 | 0 | 175.260 | 34.670 | 39.940 | 57.290 | 151.970 | 38.840 | 44.730 | 37.870 | 65.720 | 59.740 | 59.840 | 67.500 | 54.440 | 28.740 | 29.730 | 0 | 0 | 11.200 | 0 | 0 | 5.360 | 0 | 0 | 0 | 0 | 22.020 | 12.620 | 0 | 0 | 2.250 | 0 | 0 | 0 | 0.460 | 0 | 0.640 | 0 | 0 | 39.270 | 0 | 0 | 0 | 0 | 13.070 | 0 |
 | Security findings, high and medium | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 1 | 0 | 5 | 1 | 1 | 0 | 0 | 0 | 0 | 2 | 0 | 0 | 0 | 1 | 0 | 4 | 1 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 0 | 1 | 0 | 1 | 1 | 1 | 0 | 0 | 2 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 1 | 1 | 0 | 0 | 2 | 1 |
 | Security findings, high and medium, per KLOC | 0 | 0 | 0 | 0 | 0.530 | 0 | 0 | 0 | 0 | 0.540 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.270 | 0 | 0 | 0.250 | 0.290 | 0.260 | 0 | 1.130 | 0.260 | 0.310 | 0 | 0 | 0 | 0 | 0.920 | 0 | 0 | 0 | 0.450 | 0 | 1.800 | 0.310 | 0 | 0 | 0 | 0 | 0.460 | 0 | 0.420 | 0 | 0.240 | 0 | 0 | 0.230 | 0 | 0.230 | 0.260 | 0.260 | 0 | 0 | 0.750 | 0 | 0 | 0 | 0.460 | 0 | 0 | 0 | 0 | 0.480 | 0 | 0.340 | 0.440 | 0.540 | 0 | 0 | 0.820 | 0.440 |
 | Highest cognitive complexity | 157 | 51 | 30 | 30 | 184 | 49 | 38 | 34 | 54 | 69 | 113 | 154 | 27 | 55 | 38 | 22 | 14 | 31 | 22 | 22 | 18 | 25 | 25 | 16 | 19 | 16 | 13 | 22 | 12 | 20 | 31 | 46 | 50 | 38 | 44 | 27 | 36 | 23 | 16 | 75 | 23 | 29 | 30 | 34 | 25 | 13 | 14 | 14 | 16 | 14 | 22 | 17 | 19 | 24 | 18 | 23 | 23 | 19 | 17 | 27 | 12 | 23 | 36 | 13 | 29 | 14 | 22 | 22 | 36 | 28 | 24 | 13 | 28 | 105 | 21 |
@@ -319,16 +320,16 @@ Adherence is held within 8 pp, one checklist item.
 | Routes doing pricing arithmetic | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Boolean parameters | 0 | 1 | 0 | 0 | 1 | 2 | 8 | 2 | 2 | 3 | 2 | 3 | 2 | 0 | 0 | 1 | 1 | 0 | 0 | 3 | 0 | 0 | 1 | 1 | 3 | 0 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 1 | 0 | 0 | 0 | 2 | 2 | 0 | 3 | 0 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0 | 4 | 2 | 1 | 2 | 2 | 5 | 4 | 1 | 0 | 1 | 0 | 0 | 0 | 2 | 2 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 |
 | Conditional ladders over rule kinds | 0 | 8 | 1 | 1 | 0 | 1 | 5 | 1 | 6 | 4 | 2 | 2 | 3 | 2 | 1 | 2 | 2 | 2 | 0 | 2 | 2 | 3 | 2 | 2 | 0 | 1 | 3 | 2 | 0 | 3 | 2 | 0 | 2 | 2 | 2 | 0 | 3 | 3 | 2 | 4 | 2 | 0 | 2 | 2 | 2 | 0 | 0 | 0 | 4 | 1 | 0 | 0 | 1 | 2 | 2 | 0 | 0 | 2 | 4 | 2 | 2 | 0 | 2 | 2 | 2 | 1 | 2 | 0 | 2 | 2 | 1 | 2 | 0 | 3 | 2 |
-| Public names beyond the specification | 8 | 3 | 9 | 6 | 8 | 3 | 3 | 9 | 6 | 8 | 3 | 10 | 6 | 3 | 3 | 3 | 13 | 0 | 6 | 11 | 10 | 9 | 12 | 3 | 4 | 14 | 3 | 13 | 10 | 10 | 10 | 10 | 6 | 6 | 9 | 3 | 5 | 6 | 6 | 10 | 10 | 3 | 10 | 6 | 6 | 13 | 10 | 11 | 6 | 0 | 9 | 7 | 5 | 12 | 10 | 9 | 7 | 10 | 3 | 12 | 9 | 3 | 9 | 0 | 7 | 3 | 9 | 9 | 13 | 7 | 7 | 3 | 5 | 11 | 6 |
+| Public names beyond the specification | 8 | 3 | 9 | 6 | 8 | 3 | 3 | 9 | 6 | 8 | 3 | 10 | 6 | 3 | 3 | 3 | 13 | 11 | 6 | 11 | 10 | 9 | 12 | 3 | 4 | 14 | 3 | 13 | 10 | 10 | 10 | 10 | 6 | 6 | 9 | 3 | 5 | 6 | 6 | 10 | 10 | 3 | 10 | 6 | 6 | 13 | 10 | 11 | 6 | 11 | 9 | 7 | 5 | 12 | 10 | 9 | 7 | 10 | 3 | 12 | 9 | 3 | 9 | 3 | 7 | 3 | 9 | 9 | 13 | 7 | 7 | 3 | 5 | 11 | 6 |
 | Specified names missing | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Mutually importing module pairs | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | — | 1 | 0 | 0 | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Mean instability of domain modules | 0.373 | 0.400 | 0.486 | 0.382 | 0.489 | 0.408 | 0.486 | 0.400 | 0.472 | 0.407 | 0.444 | 0.426 | 0.450 | 0.400 | 0.474 | 0.325 | 0.398 | — | 0.403 | 0.483 | 0.395 | 0.374 | 0.384 | 0.456 | 0.317 | 0.400 | 0.420 | 0.463 | 0.327 | 0.331 | 0.405 | 0.374 | 0.362 | 0.525 | 0.521 | 0.340 | 0.462 | 0.298 | 0.337 | 0.384 | 0.358 | 0.500 | 0.340 | 0.403 | 0.388 | 0.384 | 0.381 | 0.385 | 0.417 | — | 0.363 | 0.368 | 0.358 | 0.319 | 0.472 | 0.342 | 0.370 | 0.400 | 0.328 | 0.374 | 0.465 | 0.514 | 0.357 | — | 0.375 | 0.358 | 0.378 | 0.396 | 0.333 | 0.360 | 0.465 | 0.261 | 0.374 | 0.386 | 0.362 |
-| Stored payload renders inert | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | — | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | — | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | — | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| A post without a token is refused | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | — | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 | — | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | — | 1 | 1 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 0 |
-| Accessibility violations | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | — | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | — | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | — | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| HTML validity errors | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Invoice builder response size, bytes | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | — | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 243 | 241 | 241 | — | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | — | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 |
-| Invoice builder subrequests | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Mutually importing module pairs | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Mean instability of domain modules | 0.373 | 0.400 | 0.486 | 0.382 | 0.489 | 0.408 | 0.486 | 0.400 | 0.472 | 0.407 | 0.444 | 0.426 | 0.450 | 0.400 | 0.474 | 0.325 | 0.398 | 0.284 | 0.403 | 0.483 | 0.395 | 0.374 | 0.384 | 0.456 | 0.317 | 0.400 | 0.420 | 0.463 | 0.327 | 0.331 | 0.405 | 0.374 | 0.362 | 0.525 | 0.521 | 0.340 | 0.462 | 0.298 | 0.337 | 0.384 | 0.358 | 0.500 | 0.340 | 0.403 | 0.388 | 0.384 | 0.381 | 0.385 | 0.417 | 0.358 | 0.363 | 0.368 | 0.358 | 0.319 | 0.472 | 0.342 | 0.370 | 0.400 | 0.328 | 0.374 | 0.465 | 0.514 | 0.357 | 0.322 | 0.375 | 0.358 | 0.378 | 0.396 | 0.333 | 0.360 | 0.465 | 0.261 | 0.374 | 0.386 | 0.362 |
+| Stored payload renders inert | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| A post without a token is refused | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 0 |
+| Accessibility violations | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
+| HTML validity errors | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Invoice builder response size, bytes | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 243 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 | 241 |
+| Invoice builder subrequests | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Output tokens | 105685 | 113804 | 145122 | 115594 | 119559 | 131172 | 118371 | 108091 | 124479 | 121173 | 113879 | 133652 | 123954 | 133901 | 136020 | 185011 | 187538 | 208208 | 164320 | 169256 | 188411 | 196781 | 186240 | 148248 | 92 | 196528 | 164118 | 157644 | 177775 | 205910 | 147313 | 176802 | 171142 | 167955 | 138903 | 149079 | 124287 | 168796 | 168166 | 168202 | 148614 | 135887 | 132151 | 177131 | 144096 | 531 | 229342 | 202630 | 185588 | 16131 | 203804 | 199918 | 219112 | 208761 | 160128 | 180600 | 180254 | 217604 | 188458 | 223342 | 152193 | 183260 | 175054 | 168170 | 155019 | 133365 | 168243 | 188551 | 136023 | 168760 | 133762 | 176226 | 157163 | 132659 | 164960 |
 | Turns | 79 | 88 | 96 | 82 | 83 | 120 | 103 | 108 | 85 | 89 | 82 | 86 | 104 | 107 | 96 | 213 | 223 | 228 | 189 | 188 | 233 | 221 | 215 | 170 | 1 | 219 | 181 | 192 | 217 | 275 | 132 | 169 | 142 | 189 | 103 | 132 | 142 | 141 | 130 | 124 | 137 | 118 | 127 | 158 | 141 | 1 | 281 | 271 | 173 | 49 | 213 | 253 | 260 | 215 | 189 | 211 | 200 | 220 | 215 | 216 | 147 | 179 | 166 | 177 | 143 | 158 | 171 | 232 | 113 | 199 | 122 | 223 | 181 | 150 | 159 |
 | Wall time, seconds | 1259 | 1192.8 | 1503.8 | 1273.9 | 1293.3 | 1611.5 | 1247.3 | 1430.9 | 1310.7 | 1301.4 | 1314.7 | 1345.2 | 1443.3 | 1403.6 | 1442.8 | 2766.3 | 2851.6 | 2434.2 | 1979.9 | 2251.5 | 2726.2 | 2296.5 | 2263.2 | 1711.9 | 2956.8 | 2468.4 | 1989.5 | 2132.2 | 2374.3 | 2720 | 1972.7 | 2215.4 | 1903.9 | 2307.7 | 1531.8 | 1699.4 | 1393.6 | 1839.3 | 1895.2 | 1888.1 | 1695.8 | 1516.6 | 1624.5 | 1973.2 | 1769.3 | 4070.9 | 2833.8 | 2492.5 | 2428.7 | 4069.5 | 2704.1 | 2647.6 | 3430.1 | 2661.6 | 2071.9 | 2423.2 | 2393.1 | 2646.7 | 2493.4 | 2534.3 | 1757.7 | 2000.9 | 1798.7 | 2510.4 | 2034.7 | 1580.9 | 1843.8 | 2194.9 | 1517.3 | 2040.6 | 1495.9 | 2324.8 | 2057.3 | 1522.7 | 1910.5 |
@@ -366,7 +367,7 @@ Adherence is held within 8 pp, one checklist item.
 | none-15 | completed | none |
 | hybrid-1 | completed | coverage |
 | hybrid-2 | completed | coverage, hidden_suite |
-| hybrid-3 | completed | coverage, hidden_suite, web |
+| hybrid-3 | completed | coverage |
 | hybrid-4 | completed | none |
 | hybrid-5 | completed | none |
 | hybrid-6 | completed | none |
@@ -398,7 +399,7 @@ Adherence is held within 8 pp, one checklist item.
 | inline-2 | completed | none |
 | inline-3 | completed | none |
 | inline-4 | completed | none |
-| inline-5 | completed | coverage, hidden_suite, web |
+| inline-5 | completed | none |
 | inline-6 | completed | none |
 | inline-7 | completed | none |
 | inline-8 | completed | coverage |
@@ -412,7 +413,7 @@ Adherence is held within 8 pp, one checklist item.
 | skills-1 | completed | none |
 | skills-2 | completed | none |
 | skills-3 | completed | none |
-| skills-4 | completed | coverage, hidden_suite, web |
+| skills-4 | completed | hidden_suite |
 | skills-5 | completed | none |
 | skills-6 | completed | none |
 | skills-7 | completed | none |
@@ -473,7 +474,7 @@ None: no scanned transcript names any of them.
 | none-15 | T33 | 100% |
 | hybrid-1 | T19 | 100% |
 | hybrid-2 | T127 | 100% |
-| hybrid-3 | — | its build did not install |
+| hybrid-3 | T218 | 100% |
 | hybrid-4 | T131 | 100% |
 | hybrid-5 | T184 | 100% |
 | hybrid-6 | T105 | 100% |
@@ -505,7 +506,7 @@ None: no scanned transcript names any of them.
 | inline-2 | T132 | 100% |
 | inline-3 | T10 | 100% |
 | inline-4 | T163 | 100% |
-| inline-5 | — | its build did not install |
+| inline-5 | T219 | 100% |
 | inline-6 | T101 | 100% |
 | inline-7 | T23 | 100% |
 | inline-8 | T162 | 100% |
@@ -519,7 +520,7 @@ None: no scanned transcript names any of them.
 | skills-1 | T169 | 100% |
 | skills-2 | T110 | 100% |
 | skills-3 | T20 | 100% |
-| skills-4 | — | its build did not install |
+| skills-4 | T217 | 100% |
 | skills-5 | T197 | 100% |
 | skills-6 | T183 | 100% |
 | skills-7 | T138 | 100% |
@@ -548,24 +549,25 @@ The whole vector, which the summary's scores digest and never replace.
 | Metric | hybrid−none | reference−none | inline−none | skills−none | skills−hybrid | reference−hybrid | skills−inline |
 |---|---|---|---|---|---|---|---|
 | Design (SOLID and patterns), 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
-| Readability, 1-5 | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
+| Readability, 1-5 | better | no improvement shown | no improvement shown | better | no improvement shown | worse | no improvement shown |
 | Maintainability, 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Security, 1-5 | no improvement shown | better | no improvement shown | better | better | better | no improvement shown |
-| Data protection, 1-5 | better | better | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown |
-| Security probe pass rate, of eleven | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
-| Data-protection probe pass rate, of three | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
-| Task success, hidden suite pass rate | worse | worse | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown |
+| Data protection, 1-5 | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
+| Security probe pass rate, of eleven | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
+| Data-protection probe pass rate, of three | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
+| Task success, hidden suite pass rate | no improvement shown | worse | no improvement shown | worse | no improvement shown | no improvement shown | worse |
 | Installs in a clean environment | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
+| Installs and boots | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
 | Adherence checklist fraction | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
 | SRP, 1-5 | better | better | better | better | no improvement shown | worse | worse |
 | OCP, 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | LSP, 1-5 | no improvement shown | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
-| ISP, 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
+| ISP, 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | better |
 | DIP, 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Naming and abstraction, 1-5 | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
-| Error design, 1-5 | better | no improvement shown | better | better | no improvement shown | no improvement shown | no improvement shown |
+| Error design, 1-5 | better | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Test quality, 1-5 | better | better | better | better | no improvement shown | no improvement shown | worse |
-| Patterns warranted | no improvement shown | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
+| Patterns warranted | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Patterns over-engineered | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Patterns missed | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Line coverage of the trial's own tests, % | better | better | better | no improvement shown | worse | worse | worse |
@@ -590,7 +592,7 @@ The whole vector, which the summary's scores digest and never replace.
 | Routes doing pricing arithmetic | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Boolean parameters | better | better | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown |
 | Conditional ladders over rule kinds | no improvement shown | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
-| Public names beyond the specification | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
+| Public names beyond the specification | no improvement shown | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Specified names missing | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Mutually importing module pairs | better | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown | no improvement shown |
 | Mean instability of domain modules | reported without a verdict | reported without a verdict | reported without a verdict | reported without a verdict | reported without a verdict | reported without a verdict | reported without a verdict |
