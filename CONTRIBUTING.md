@@ -60,7 +60,7 @@ py tools/sync_docs.py   # commit what it writes with your change
 Branch names, the commit and title form, one concern per pull request and
 the no-force-push rule are in
 [`AGENTS.md` section 2](AGENTS.md#2-git-and-pull-requests). The playbook,
-["Submit a pull request"](docs/playbook.md#submit-a-pull-request), gives
+["Submit a pull request"](docs/playbook.md#34-submit-a-pull-request), gives
 the steps in order.
 
 ## 6. Issues

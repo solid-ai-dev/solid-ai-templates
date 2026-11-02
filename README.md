@@ -78,7 +78,7 @@ holds each hook's rules and the arguments a project sets.
 |------|-----|
 | [Migrating from 2.x](docs/migrations/v3.md) | Moving a 2.x project or fork to 3.0 |
 | [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
-| [Adapt the rules](docs/playbook.md#sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
+| [Adapt the rules](docs/playbook.md#61-sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
 | [Changelog](CHANGELOG.md) | What changed in each release |
 | [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
 | [Playbook](docs/playbook.md) | Step-by-step procedures |
