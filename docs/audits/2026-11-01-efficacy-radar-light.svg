@@ -31,7 +31,7 @@
 <circle cx="214.9" cy="320.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
 <circle cx="144.7" cy="271.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
 <circle cx="250.0" cy="247.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
-<text x="750.0" y="89.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">skills — Worse</text>
+<text x="750.0" y="89.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">skills — Yes</text>
 <polygon points="750.0,220.0 771.1,230.2 776.3,253.0 761.7,271.3 738.3,271.3 723.7,253.0 728.9,230.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <polygon points="750.0,166.0 813.3,196.5 829.0,265.0 785.1,320.0 714.9,320.0 671.0,265.0 686.7,196.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
 <polygon points="750.0,139.0 834.4,179.7 855.3,271.0 796.9,344.3 703.1,344.3 644.7,271.0 665.6,179.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
@@ -50,8 +50,8 @@
 <line x1="750.0" y1="247.0" x2="665.6" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
 <text x="652.1" y="168.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
 <polygon points="750.0,193.0 792.2,213.3 802.6,259.0 773.4,295.7 726.6,295.7 697.4,259.0 707.8,213.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
-<polygon points="750.0,220.0 809.1,199.9 829.0,265.0 775.6,300.1 709.0,332.1 671.0,265.0 750.0,247.0" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
-<circle cx="750.0" cy="220.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<polygon points="750.0,193.0 809.1,199.9 829.0,265.0 775.6,300.1 709.0,332.1 671.0,265.0 750.0,247.0" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="750.0" cy="193.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
 <circle cx="809.1" cy="199.9" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
 <circle cx="829.0" cy="265.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
 <circle cx="775.6" cy="300.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
