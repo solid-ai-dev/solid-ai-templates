@@ -25,7 +25,7 @@ are in the sections below.
 
 | Axis | `reference` | `skills` | `hybrid` | `inline` | Rows |
 | --- | --- | --- | --- | --- | --- |
-| Reliability | -0.50 | -0.50 | 0.00 | 0.00 | Task success, hidden suite pass rate; Installs in a clean environment |
+| Reliability | -0.50 | 0.00 | 0.00 | 0.00 | Task success, hidden suite pass rate; Installs in a clean environment |
 | Security | +0.40 | +0.40 | +0.40 | +0.40 | Security, 1-5; Security probe pass rate, of eleven; A post without a token is refused; Stored payload renders inert; Security findings, high and medium, per KLOC |
 | Data protection | 0.00 | +0.50 | +0.50 | +0.50 | Data protection, 1-5; Data-protection probe pass rate, of three |
 | Design | +0.09 | +0.09 | +0.27 | +0.27 | Design (SOLID and patterns), 1-5; SRP, 1-5; OCP, 1-5; LSP, 1-5; ISP, 1-5; DIP, 1-5; Error design, 1-5; Naming and abstraction, 1-5; Patterns missed; Domain modules reaching Flask or the database; Mutually importing module pairs |
@@ -36,9 +36,9 @@ are in the sections below.
 | Arm | File | Verdict vs `none` | Hidden tests passed | Security, judge 1–5 | Adherence | Cost per trial |
 | --- | --- | --- | --- | --- | --- | --- |
 | `none` | no file | — | 99 % | 2.4 | 47 % | $4.29 |
-| `reference` | 19 lines | Worse | 88 % ▼ (4 runs low) | 3.5 ▲ | 54 % ▲ | $7.21 ▼ |
-| `skills` | 1,351 lines | Worse | 95 % ▼ (2 runs low) | 3.6 ▲ | 60 % ▲ | $9.30 ▼ |
-| `hybrid` | 511 lines | Yes | 97 % (1 run low) | 2.7 | 56 % ▲ | $11.78 ▼ |
+| `reference` | 19 lines | Worse | 90 % ▼ (3 runs low) | 3.5 ▲ | 54 % ▲ | $7.21 ▼ |
+| `skills` | 1,351 lines | Yes | 99 % ≈ | 3.6 ▲ | 60 % ▲ | $9.30 ▼ |
+| `hybrid` | 511 lines | Yes | 99 % ≈ | 2.7 | 56 % ▲ | $11.78 ▼ |
 | `inline` | 552 lines | Yes | 99 % ≈ | 3.3 ≈ | 63 % ▲ | $14.18 ▼ |
 
 Each mark reads an arm against `none`. ▲ better and ▼ worse: the interval is clear of
@@ -51,14 +51,14 @@ interval. No mark: no difference shown, on a row with no margin or past the marg
 has.
 
 Runs low on the hidden tests, more than 5 points under `none`'s mean: `reference` 42 %,
-42 %, 70 % and 77 %; `skills` 71 % and 71 %; `hybrid` 70 %.
+42 % and 77 %.
 
 **`reference`, Worse.** Two runs of 15 declared its dependencies so that a clean install
 left the app unable to boot. The judge read its code as more secure, more careful with
 personal data and better tested, and its code grew no more than its size margin allows —
 for more turns, tokens, time and cost.
 
-**`skills`, Worse.** The judge read its code as more readable, more secure, more careful
+**`skills`, Yes.** The judge read its code as more readable, more secure, more careful
 with personal data and better tested, and its code grew no more than its size margin
 allows — for more turns, tokens, time and cost.
 
@@ -70,11 +70,11 @@ readable, more careful with personal data and better tested.
 public names beyond the spec, and took more turns, tokens, time and cost to do it. The
 judge read its code as more careful with personal data and better tested.
 
-Together, reading the longest file beside the shortest (`skills`, `reference`): neither
-file added quality. K = 15, one project: a signal, not proof.
+Together, reading the longest file beside the shortest (`skills`, `reference`): the long
+file added quality, the short one did not. K = 15, one project: a signal, not proof.
 
 Between the files, 1 to 10: skills − hybrid 5.9 (6 won, 5 failed); reference − hybrid
-3.6 (6 won, 15 failed); skills − inline 5.2 (6 won, 7 failed). A win or a fail is a
+3.5 (6 won, 16 failed); skills − inline 5.5 (6 won, 6 failed). A win or a fail is a
 metric whose interval separated the pair in its declared direction, each counting once;
 the score is 1 + 9 × wins ÷ (wins + fails), digests the verdict vector at the end, and
 decides nothing.
@@ -95,7 +95,7 @@ past their workspace: none; the judge is checked only by its evidence lines.
 | Blinding | condition markers stripped, order shuffled at seed 20260912 |
 | Judgings per trial | 3, meaned |
 | Benchmark revision, per trial | `116e50e`, `12b6d76`, `495a0ec-dirty`, `5734700`, `64eecd7`, `70b268e`, `757cc34`, `a4d8a9d`, `ae23403`, `bda0499` |
-| Hidden suite | `c987eff4c100c24f070eb1ff2f2e488539b391f5` |
+| Hidden suite | `1f07e422b3b5348418a596d36c7a2d582688d49b` |
 | Bootstrap | 10000 resamples, 95%, seed 20260912 |
 | Arm hybrid's file | generated 2026-10-27T07:39:46 from the templates at `9086e0ff`, 511 lines, leak scan: clean |
 | Arm reference's file | generated 2026-10-27T07:33:03 from the templates at `9086e0ff`, 19 lines, leak scan: clean |
@@ -140,7 +140,7 @@ before it, and allows no escalation.
 
 | Metric | Direction | Margin | none | hybrid | reference | inline | skills | hybrid−none | reference−none | inline−none | skills−none | skills−hybrid | reference−hybrid | skills−inline |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.972 | 0.882 | 0.992 | 0.953 | -0.020 [-0.097, 0.000] | -0.110 [-0.240, -0.033] ▼ | -0.000 [-0.004, 0.002] ≈ | -0.038 [-0.115, -0.001] ▼ | -0.019 [-0.077, 0.040] | -0.090 [-0.220, 0.006] | -0.038 [-0.115, -0.000] ▼ |
+| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.991 | 0.901 | 0.992 | 0.992 | -0.001 [-0.003, 0.001] ≈ | -0.090 [-0.234, -0.015] ▼ | -0.000 [-0.004, 0.002] ≈ | -0.000 [-0.003, 0.002] ≈ | +0.001 [-0.002, 0.003] ≈ | -0.089 [-0.229, -0.014] ▼ | -0.000 [-0.002, 0.002] ≈ |
 | Installs in a clean environment | up | — | 1 | 1 | 1 | 1 | 1 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
 | Adherence checklist fraction | up | 8 pp | 0.472 | 0.561 | 0.537 | 0.628 | 0.603 | +0.089 [0.029, 0.137] ▲ | +0.065 [0.021, 0.097] ▲ | +0.156 [0.100, 0.225] ▲ | +0.131 [0.070, 0.177] ▲ | +0.041 [-0.007, 0.122] ≈ | -0.025 [-0.077, 0.027] ≈ | -0.025 [-0.076, 0.048] ≈ |
 | Output tokens | down | — | 122963.7 | 169072 | 154568.3 | 174413.5 | 159560.5 | +46108.3 [1924.3, 61839.9] ▼ | +31604.5 [21863.9, 41453.1] ▼ | +51449.8 [4796.9, 75872.1] ▼ | +36596.8 [25594, 47760.1] ▼ | -9511.5 [-27232.8, 35968.6] | -14503.7 [-32657.6, 31463.9] | -14853 [-40360.1, 34141.9] |
@@ -259,10 +259,10 @@ Adherence is held within 8 pp, one checklist item.
 | Arm | Words every turn | Conventions agreement (pairs) | Structure agreement | Security agreement | Task success, worst | Task success, mean |
 | --- | --- | --- | --- | --- | --- | --- |
 | none | — | 0.85 (105) | 0.22 | 0.79 | 0.989 | 0.992 |
-| reference | 56 | 0.89 (105) | 0.17 | 0.68 | 0.416 | 0.882 |
+| reference | 56 | 0.89 (105) | 0.17 | 0.68 | 0.416 | 0.901 |
 | inline | 4248 | 0.85 (105) | 0.32 | 0.65 | 0.979 | 0.992 |
-| hybrid | 3426 | 0.81 (105) | 0.28 | 0.82 | 0.700 | 0.972 |
-| skills | 9363 | 0.82 (105) | 0.28 | 0.56 | 0.707 | 0.953 |
+| hybrid | 3426 | 0.81 (105) | 0.28 | 0.82 | 0.985 | 0.991 |
+| skills | 9363 | 0.82 (105) | 0.28 | 0.56 | 0.985 | 0.992 |
 
 - H1, skills deliver what hybrid does, skills-hybrid: inconclusive (adherence held,
   security probes open, data-protection probes held, security held, data protection
@@ -283,7 +283,7 @@ Adherence is held within 8 pp, one checklist item.
 | Data protection, 1-5 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.667 | 3.667 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3.333 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3 | 3.333 | 3 | 3 | 3.333 | 3 | 3 | 3 | 3.667 | 3 | 3 | 3 |
 | Security probe pass rate, of eleven | 0.727 | 0.727 | 0.727 | 0.727 | 0.818 | 0.636 | 0.727 | 0.818 | 0.727 | 0.818 | 0.727 | 0.818 | 0.818 | 0.727 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.818 | 0.909 | 0.818 | 1 | 0.909 | 0.818 | 0.909 | — | 0.909 | 0.909 | — | 0.909 | 0.909 | 0.909 | 0.818 | 1 | 0.818 | 1 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.818 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.909 | 0.818 | 1 | 0.909 | 0.909 | 0.909 | 0.909 | 1 | 0.818 | 0.909 | 0.909 | 0.818 | 0.818 | 0.818 | 0.909 | 1 |
 | Data-protection probe pass rate, of three | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 1 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 |
-| Task success, hidden suite pass rate | 0.991 | 0.991 | 0.996 | 0.993 | 0.994 | 0.989 | 0.994 | 0.989 | 0.994 | 0.994 | 0.993 | 0.991 | 0.991 | 0.989 | 0.989 | 0.989 | 0.700 | 0.994 | 0.989 | 0.989 | 0.996 | 0.994 | 0.989 | 0.994 | 0.991 | 0.987 | 0.989 | 0.989 | 0.996 | 0.993 | 0.994 | 0.991 | 0.996 | 0.702 | 0.998 | 0.989 | 0.998 | 0.416 | 0.989 | 0.996 | 0.421 | 0.766 | 0.994 | 0.989 | 0.994 | 0.989 | 0.996 | 0.994 | 0.994 | 0.989 | 0.991 | 0.979 | 0.989 | 0.998 | 0.993 | 0.989 | 0.991 | 1 | 0.996 | 0.987 | 0.991 | 0.989 | 0.991 | 0.707 | 0.985 | 0.989 | 0.989 | 0.994 | 0.994 | 0.708 | 0.989 | 0.993 | 0.998 | 0.994 | 0.989 |
+| Task success, hidden suite pass rate | 0.991 | 0.991 | 0.996 | 0.993 | 0.994 | 0.989 | 0.994 | 0.989 | 0.996 | 0.994 | 0.993 | 0.991 | 0.991 | 0.989 | 0.989 | 0.989 | 0.985 | 0.994 | 0.989 | 0.989 | 0.996 | 0.994 | 0.989 | 0.994 | 0.991 | 0.987 | 0.989 | 0.989 | 0.996 | 0.993 | 0.994 | 0.991 | 0.996 | 0.989 | 0.998 | 0.989 | 0.998 | 0.416 | 0.989 | 0.996 | 0.421 | 0.766 | 0.994 | 0.989 | 0.994 | 0.989 | 0.996 | 0.994 | 0.994 | 0.989 | 0.991 | 0.979 | 0.989 | 0.998 | 0.993 | 0.989 | 0.991 | 1 | 0.996 | 0.987 | 0.991 | 0.989 | 0.991 | 0.994 | 0.985 | 0.989 | 0.989 | 0.994 | 0.994 | 0.994 | 0.989 | 0.993 | 0.998 | 0.994 | 0.989 |
 | Installs in a clean environment | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 | Installs and boots | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 | Adherence checklist fraction | 0.417 | 0.667 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.583 | 0.417 | 0.500 | 0.417 | 0.500 | 0.417 | 0.364 | 0.545 | 0.600 | 0.667 | 0.583 | 0.583 | 0.538 | 0.500 | 0.583 | 0.500 | 0.500 | 0.600 | 0.500 | 0.692 | 0.667 | 0.500 | 0.600 | 0.500 | 0.583 | 0.500 | 0.500 | 0.500 | 0.583 | 0.583 | 0.583 | 0.583 | 0.417 | 0.583 | 0.538 | 0.500 | 0.769 | 0.750 | 0.667 | 0.667 | 0.833 | 0.583 | 0.615 | 0.500 | 0.667 | 0.667 | 0.500 | 0.462 | 0.615 | 0.667 | 0.462 | 0.750 | 0.667 | 0.583 | 0.583 | 0.667 | 0.583 | 0.500 | 0.583 | 0.583 | 0.462 | 0.583 | 0.750 | 0.583 | 0.583 | 0.583 |
@@ -366,7 +366,7 @@ Adherence is held within 8 pp, one checklist item.
 | none-14 | completed | none |
 | none-15 | completed | none |
 | hybrid-1 | completed | coverage |
-| hybrid-2 | completed | coverage, hidden_suite |
+| hybrid-2 | completed | coverage |
 | hybrid-3 | completed | coverage |
 | hybrid-4 | completed | none |
 | hybrid-5 | completed | none |
@@ -383,7 +383,7 @@ Adherence is held within 8 pp, one checklist item.
 | reference-1 | completed | none |
 | reference-2 | completed | coverage |
 | reference-3 | completed | none |
-| reference-4 | completed | hidden_suite |
+| reference-4 | completed | none |
 | reference-5 | completed | none |
 | reference-6 | completed | none |
 | reference-7 | completed | none |
@@ -413,7 +413,7 @@ Adherence is held within 8 pp, one checklist item.
 | skills-1 | completed | none |
 | skills-2 | completed | none |
 | skills-3 | completed | none |
-| skills-4 | completed | hidden_suite |
+| skills-4 | completed | none |
 | skills-5 | completed | none |
 | skills-6 | completed | none |
 | skills-7 | completed | none |
@@ -555,7 +555,7 @@ The whole vector, which the summary's scores digest and never replace.
 | Data protection, 1-5 | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
 | Security probe pass rate, of eleven | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
 | Data-protection probe pass rate, of three | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
-| Task success, hidden suite pass rate | no improvement shown | worse | no improvement shown | worse | no improvement shown | no improvement shown | worse |
+| Task success, hidden suite pass rate | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
 | Installs in a clean environment | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Installs and boots | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
 | Adherence checklist fraction | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
