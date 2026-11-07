@@ -19,7 +19,7 @@ sections below.
 
 | Axis | `reference` | `skills` | `hybrid` | `inline` | Rows |
 | --- | --- | --- | --- | --- | --- |
-| Reliability | 0.00 | -0.00 | 0.00 | 0.00 | Installs and boots; Task success, hidden suite pass rate |
+| Reliability | 0.00 | 0.00 | 0.00 | 0.00 | Installs and boots; Task success, hidden suite pass rate |
 | Security | +0.21 | +0.20 | +0.22 | +0.18 | Security, 1-5; Security probe pass rate, of eleven; A post without a token is refused; Stored payload renders inert; Security findings, high and medium, per KLOC |
 | Data protection | +0.02 | +0.01 | +0.03 | +0.01 | Data protection, 1-5; Data-protection probe pass rate, of three |
 | Design | +0.00 | +0.01 | +0.05 | +0.11 | Design (SOLID and patterns), 1-5; SRP, 1-5; OCP, 1-5; LSP, 1-5; ISP, 1-5; DIP, 1-5; Error design, 1-5; Naming and abstraction, 1-5; Patterns missed; Domain modules reaching Flask or the database; Mutually importing module pairs |
@@ -53,7 +53,7 @@ Reliability can refute a hypothesis and never has to hold for one.
 | skills | 15 of 15 | 0.78 to 1.00 |
 
 - H1, skills deliver what hybrid does, skills-hybrid: inconclusive, robust (task success
-  open, security probes open, data-protection probes held, security held, data
+  held, security probes open, data-protection probes held, security held, data
   protection held, reliability open)
   - profile: Reliability unsettled; Security unsettled; Data protection held; Design
 worse; Maintainability worse; Tests worse; Economy held
@@ -82,7 +82,7 @@ bias correction was undefined. `aggregate-posthoc.json` carries the method per r
 
 | Metric | Direction | Margin | hybrid | reference | skills | skills−hybrid | reference−hybrid |
 |---|---|---|---|---|---|---|---|
-| Task success, hidden suite pass rate | up | 2 pp | 0.972 | 0.954 | 0.953 | -0.019 [-0.077, 0.040] | -0.016 [-0.083, 0.051] (13 pairs) |
+| Task success, hidden suite pass rate | up | 2 pp | 0.991 | 0.976 | 0.992 | +0.001 [-0.002, 0.003] = | -0.016 [-0.086, 0.003] (13 pairs) |
 | Security probe pass rate, of eleven | up | 2 pp | 0.897 | 0.888 | 0.897 | 0 [-0.036, 0.036] | -0.014 [-0.056, 0.021] (13 pairs) |
 | Data-protection probe pass rate, of three | up | 10 pp | 0.667 | 0.667 | 0.667 | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = (13 pairs) |
 | Security, 1-5 | up | 0.3 points | 2.711 | 3.511 | 3.556 | +0.844 [0.200, 1.533] = | +0.800 [0.178, 1.422] = |
@@ -94,7 +94,7 @@ bias correction was undefined. `aggregate-posthoc.json` carries the method per r
 | Metric | Direction | Margin | none | hybrid | reference | inline | skills | hybrid−none | reference−none | inline−none | skills−none |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Installs and boots | up | 6.7 pp | 1 | 1 | 0.867 | 1 | 1 | 0 [-0.204, 0.204] ‡ | -0.133 [-0.379, 0.092] ‡ | 0 [-0.204, 0.204] ‡ | 0 [-0.204, 0.204] ‡ |
-| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.972 | 0.954 | 0.992 | 0.953 | -0.020 [-0.097, 0.000] | -0.038 [-0.119, 0.001] (13 pairs) | -0.000 [-0.004, 0.002] = | -0.038 [-0.115, -0.001] |
+| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.991 | 0.976 | 0.992 | 0.992 | -0.001 [-0.003, 0.001] = | -0.016 [-0.087, 0.002] (13 pairs) | -0.000 [-0.004, 0.002] = | -0.000 [-0.003, 0.002] = |
 
 ### Security
 
