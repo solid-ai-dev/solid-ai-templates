@@ -511,11 +511,11 @@ workspace is kept and never scored.
 
 | Trial | Started | Why | Kept at | Re-run |
 |---|---|---|---|---|
-| hand-5 | 2026-11-04T16:50:56+02:00 | the CLI ended with an error (status 1, subtype success, API status 429): You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from | `C:/efficacy/r5d-main\void\hand-5-2026-11-04T17-16-59` | blocked |
-| hand-5 | 2026-11-04T17:47:08+02:00 | the CLI ended with an error (status 1, subtype success, API status 429): You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from | `C:/efficacy/r5d-main\void\hand-5-2026-11-04T18-10-47` | completed |
-| hand-9 | 2026-11-04T23:58:14+02:00 | the CLI ended with an error (status 1, subtype success, API status None): API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND) | `C:/efficacy/r5d-main\void\hand-9-2026-11-05T00-32-07` | completed |
-| hand-12 | 2026-11-05T11:19:08+02:00 | the CLI ended with an error (status 1, subtype success, API status 429): You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from | `C:/efficacy/r5d-main\void\hand-12-2026-11-05T11-29-25` | completed |
-| hand-15 | 2026-11-05T15:12:23+02:00 | the CLI ended with an error (status 1, subtype success, API status None): Failed to authenticate: OAuth session expired and could not be refreshed | `C:/efficacy/r5d-main\void\hand-15-2026-11-05T15-26-14` | completed |
+| hand-5 | 2026-11-04T16:50:56+02:00 | `the CLI ended with an error (status 1, subtype success, API status 429): You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from` | `C:/efficacy/r5d-main\void\hand-5-2026-11-04T17-16-59` | blocked |
+| hand-5 | 2026-11-04T17:47:08+02:00 | `the CLI ended with an error (status 1, subtype success, API status 429): You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from` | `C:/efficacy/r5d-main\void\hand-5-2026-11-04T18-10-47` | completed |
+| hand-9 | 2026-11-04T23:58:14+02:00 | `the CLI ended with an error (status 1, subtype success, API status None): API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)` | `C:/efficacy/r5d-main\void\hand-9-2026-11-05T00-32-07` | completed |
+| hand-12 | 2026-11-05T11:19:08+02:00 | `the CLI ended with an error (status 1, subtype success, API status 429): You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from` | `C:/efficacy/r5d-main\void\hand-12-2026-11-05T11-29-25` | completed |
+| hand-15 | 2026-11-05T15:12:23+02:00 | `the CLI ended with an error (status 1, subtype success, API status None): Failed to authenticate: OAuth session expired and could not be refreshed` | `C:/efficacy/r5d-main\void\hand-15-2026-11-05T15-26-14` | completed |
 
 ## Trials that reached past their own workspace
 
