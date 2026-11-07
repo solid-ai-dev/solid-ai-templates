@@ -38,7 +38,10 @@ contrast, one per block that measured both arms: K = 15 at most, and a cell that
 fewer names its count. The contrasts whose arms ran in different rounds, short − none,
 hand − none, inline − hand, hybrid − hand, reference − hand, skills − hand and short −
 inline, are unpaired: each arm's trials stand on their own, and the interval is for the
-difference of two independent means.
+difference of two independent means. The install rate's interval is Newcombe's score
+interval instead, from the Wilson interval of each arm's share: over the blocks'
+agreement where the contrast is paired, from the two shares on their own where it is
+not.
 
 ‡ the interval was not computed by BCa: the paired differences were identical, or the
 bias correction was undefined. `aggregate.json` carries the method per row.
