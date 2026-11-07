@@ -22,8 +22,8 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | FR-01-01 | The system shall state each rule as a plain imperative, or with an RFC 2119 keyword where strength matters. | Chapter 8.9 | - |
-| FR-01-02 | The system shall give a section an ID when something references it, unique across all templates. | Chapter 8.1 | SYS-02 |
-| FR-01-03 | The system shall name another file's section in prose only where that file is in every chain carrying the rule. | Chapter 8.4 | SYS-11 |
+| FR-01-02 | The system shall give a section an ID when something references it, unique across all templates. | Chapter 8.1 | SYS-02, partial, for uniqueness |
+| FR-01-03 | The system shall name another file's section in prose only where that file is in every chain carrying the rule. | Chapter 8.4 | SYS-11, partial: it skips a root a stack already reaches |
 
 ### 02. Layers
 
@@ -36,16 +36,16 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-03-01 | The system shall register every template in one manifest entry, with an ID unique across all layers. | `AGENTS.md` 4.1 | SYS-03, MNF-01 |
+| FR-03-01 | The system shall register every template in one manifest entry, with an ID unique across all layers. | `AGENTS.md` 4.1 | SYS-03, MNF-01, partial: nothing stops two entries naming one file |
 | FR-03-02 | The system shall seed the core tier, `core:` then `fork_core:`, into every chain without a declaration. | Chapter 5.3 | - |
-| FR-03-03 | The system shall reach an opt-in template only when a stack's `depends_on` names it. | Chapter 5.3 | - |
-| FR-03-04 | The system shall treat the manifest's `depends_on` as authoritative where a template's dependency line disagrees with it. | Chapter 8.1 | SYS-04 |
+| FR-03-03 | The system shall reach an opt-in template only when a project picks it as a root or a chosen root's dependency tree names it. | Chapter 5.3 | - |
+| FR-03-04 | The system shall treat the manifest's `depends_on` as authoritative where a template's dependency line disagrees with it. | Chapter 8.1 | SYS-04, partial: it fails any disagreement |
 
 ### 04. Composition
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-04-01 | The system shall resolve a root to an ordered file list, base then layer then stack, depth-first and deduplicated. | Chapter 6.1 | - |
+| FR-04-01 | The system shall resolve a root to an ordered file list, the core tier first, then each dependency before what depends on it, depth-first and deduplicated. | Chapter 6.1 | - |
 | FR-04-02 | Where several templates name one section ID, the system shall apply the higher level, in the order base, layer, stack, interview answers. | Chapter 8.2 | - |
 | FR-04-03 | The system shall apply an override, then every extension of the same ID on top of it. | Chapter 8.3 | - |
 | FR-04-04 | The system shall refuse a chain that overrides one ID twice. | Chapter 8.3 | TPL-10 |
@@ -64,12 +64,12 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | FR-06-01 | The system shall load a heading without a load directive on every turn, and give its subheadings its load. | Chapter 8.1, ADR-058 | - |
-| FR-06-02 | The system shall load every rule of a template that guards data, credentials or authentication on every turn. | Chapter 8.1, ADR-058 | SYS-25 |
-| FR-06-03 | The system shall build the root file and the skills from the resolved chain, leaving out overridden rules and the sections the project declines, and copy each remaining rule's text unchanged. | ADR-058 |SYS-26, partial, on a planted fixture |
+| FR-06-02 | The system shall load on every turn every section whose breaking exposes data, credentials or an unauthenticated path. | Chapter 8.1, ADR-058 | SYS-25, partial, for the security templates and `backend/auth.md` |
+| FR-06-03 | The system shall build the root file and the skills from the resolved chain, leaving out overridden rules and the sections the project declines, and copy each remaining rule's text unchanged. | ADR-058 | SYS-26, partial, on a planted fixture |
 | FR-06-04 | The system shall list each skill in the root file with the task that triggers it. | ADR-058 | SYS-26 |
-| FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 |SYS-26, partial, on a planted fixture |
+| FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 | SYS-26, partial, on a planted fixture |
 | FR-06-06 | The system shall build byte-identical files from the same input. | ADR-058 | SYS-26 |
-| FR-06-07 | The system shall build files that name no template file, since an emitted project carries no templates. | ADR-058 | SYS-27 |
+| FR-06-07 | The system shall build files that name no template file, since an emitted project carries no templates. | `AGENTS.md` 4.2 | SYS-27 |
 
 ### 07. Shipped checks
 
@@ -77,7 +77,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 |----|-------------|--------|------------|
 | FR-07-01 | The system shall state each mechanically checkable rule with its command in a fence and its pass condition beside it. | Chapter 8.9, ADR-031 | - |
 | FR-07-02 | The system shall ship a check script over 15 lines as a hook listed in `.pre-commit-hooks.yaml`. | `AGENTS.md` 4.3, ADR-055 | - |
-| FR-07-03 | The system shall have every check exit 0 on a pass, 1 on a failure and 3 when it does not apply. | Chapter 8.7 | - |
+| FR-07-03 | The system shall have every check exit 0 on a pass, 1 on a failure and 3 when it does not apply; under pre-commit, 3 becomes a `not applicable:` line and exit 0. | Chapter 8.7, chapter 6.3 | - |
 
 ### 08. Fork extension
 
@@ -86,15 +86,16 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | FR-08-01 | The system shall let a fork stay current by merging upstream, never by copying files. | Chapter 8.6 | - |
 | FR-08-02 | The system shall keep a fork's entries under `stacks:`, `platform:` and keys of its own, never under `core:`, `base:`, `backend:` or `frontend:`. | Chapter 8.6 | SYS-20 |
 | FR-08-03 | The system shall let a `fork_core:` entry depend only on core-tier IDs. | Chapter 8.6 | SYS-21 |
-| FR-08-04 | The system shall let a project take its rules from upstream, or from a fork for its stacks, by clone or as a submodule pinned to a released tag. | Playbook, "Vendor the templates in a project" | - |
+| FR-08-04 | The system shall let a project take its rules from upstream, or from a fork for its stacks, by submodule, clone or copy pinned to a released tag, or keep only its generated files when they copy in every rule, or only the shipped hooks. | Chapter 7.3 | - |
 
 ### 09. Versioned releases
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
 | FR-09-01 | The system shall not remove, rename or change the meaning of a frozen element in a 3.x release, except for a security fix. | Chapter 8.7, ADR-051 | SYS-24, partial, for section splitting only |
-| FR-09-02 | The system shall keep a deprecated template resolving until the next major, naming a live replacement. | Chapter 8.8 | SYS-22 |
+| FR-09-02 | The system shall keep a deprecated template resolving until the next major, naming a live replacement. | Chapter 8.8 | SYS-22, partial, for a live replacement |
 | FR-09-03 | The system shall change nothing in an existing context file when a project moves its pin. | Chapter 6.5 | - |
+| FR-09-04 | The system shall write each release's changelog entries from the labels of the pull requests merged since the previous tag. | Chapter 6.6 | changelog-label gate, `cut_changelog.py --self-test`, partial: the tag range is untested |
 
 ### 10. Self-checks
 
@@ -116,7 +117,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
-| QG-02-02 | Resource utilization | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 10.1 | - |
+| QG-02-02 | Resource utilization | A change that shrinks the context shall count as better only where outcomes hold. | Chapter 1.3 | - |
 
 ### 03. Flexibility
 
@@ -128,9 +129,9 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
-| QG-04-02 | Modifiability | No template shall score below its baseline. | Chapter 10.1 | score ratchet |
+| QG-04-02 | Modifiability | No template shall score more than 0.1 below its baseline. | Chapter 8.12 | score ratchet |
 
-### Removed
+## Removed
 
 | ID | Now |
 |----|-----|

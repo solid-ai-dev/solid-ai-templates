@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1160" viewBox="0 0 1000 1160" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="100%" height="100%" fill="#fcfcfb"/>
+<line x1="290" y1="25" x2="320" y2="25" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="328" y="25" dominant-baseline="middle" font-size="14" fill="#52514e">none, the ring at 0</text>
+<line x1="510" y1="25" x2="540" y2="25" stroke="#2a78d6" stroke-width="2"/>
+<text x="548" y="25" dominant-baseline="middle" font-size="14" fill="#52514e">the arm; outside the ring is better</text>
+<text x="250.0" y="89.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">reference — Yes</text>
+<polygon points="250.0,220.0 271.1,230.2 276.3,253.0 261.7,271.3 238.3,271.3 223.7,253.0 228.9,230.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="250.0,166.0 313.3,196.5 329.0,265.0 285.1,320.0 214.9,320.0 171.0,265.0 186.7,196.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="250.0,139.0 334.4,179.7 355.3,271.0 296.9,344.3 203.1,344.3 144.7,271.0 165.6,179.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<line x1="250.0" y1="247.0" x2="250.0" y2="139.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="250.0" y="121.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
+<line x1="250.0" y1="247.0" x2="334.4" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="347.9" y="168.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
+<line x1="250.0" y1="247.0" x2="355.3" y2="271.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="372.1" y="274.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Data protection</text>
+<line x1="250.0" y1="247.0" x2="296.9" y2="344.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="304.4" y="359.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Design</text>
+<line x1="250.0" y1="247.0" x2="203.1" y2="344.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="195.6" y="359.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Maintainability</text>
+<line x1="250.0" y1="247.0" x2="144.7" y2="271.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="127.9" y="274.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Tests</text>
+<line x1="250.0" y1="247.0" x2="165.6" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="152.1" y="168.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
+<polygon points="250.0,193.0 292.2,213.3 302.6,259.0 273.4,295.7 226.6,295.7 197.4,259.0 207.8,213.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<polygon points="250.0,193.0 300.9,206.4 303.8,259.3 273.5,295.8 225.7,297.6 186.7,261.5 219.3,222.5" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="250.0" cy="193.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="300.9" cy="206.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="303.8" cy="259.3" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="273.5" cy="295.8" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="225.7" cy="297.6" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="186.7" cy="261.5" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="219.3" cy="222.5" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<text x="750.0" y="89.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">short — Yes</text>
+<polygon points="750.0,220.0 771.1,230.2 776.3,253.0 761.7,271.3 738.3,271.3 723.7,253.0 728.9,230.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="750.0,166.0 813.3,196.5 829.0,265.0 785.1,320.0 714.9,320.0 671.0,265.0 686.7,196.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="750.0,139.0 834.4,179.7 855.3,271.0 796.9,344.3 703.1,344.3 644.7,271.0 665.6,179.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<line x1="750.0" y1="247.0" x2="750.0" y2="139.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="750.0" y="121.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
+<line x1="750.0" y1="247.0" x2="834.4" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="847.9" y="168.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
+<line x1="750.0" y1="247.0" x2="855.3" y2="271.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="872.1" y="274.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Data protection</text>
+<line x1="750.0" y1="247.0" x2="796.9" y2="344.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="804.4" y="359.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Design</text>
+<line x1="750.0" y1="247.0" x2="703.1" y2="344.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="695.6" y="359.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Maintainability</text>
+<line x1="750.0" y1="247.0" x2="644.7" y2="271.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="627.9" y="274.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Tests</text>
+<line x1="750.0" y1="247.0" x2="665.6" y2="179.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="652.1" y="168.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
+<polygon points="750.0,193.0 792.2,213.3 802.6,259.0 773.4,295.7 726.6,295.7 697.4,259.0 707.8,213.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<polygon points="750.0,193.0 793.5,212.3 802.6,259.0 773.6,295.9 722.8,303.6 697.4,259.0 719.3,222.6" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="750.0" cy="193.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="793.5" cy="212.3" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="802.6" cy="259.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="773.6" cy="295.9" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="722.8" cy="303.6" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="697.4" cy="259.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="719.3" cy="222.6" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<text x="250.0" y="459.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">hand — No</text>
+<polygon points="250.0,590.0 271.1,600.2 276.3,623.0 261.7,641.3 238.3,641.3 223.7,623.0 228.9,600.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="250.0,536.0 313.3,566.5 329.0,635.0 285.1,690.0 214.9,690.0 171.0,635.0 186.7,566.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="250.0,509.0 334.4,549.7 355.3,641.0 296.9,714.3 203.1,714.3 144.7,641.0 165.6,549.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<line x1="250.0" y1="617.0" x2="250.0" y2="509.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="250.0" y="491.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
+<line x1="250.0" y1="617.0" x2="334.4" y2="549.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="347.9" y="538.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
+<line x1="250.0" y1="617.0" x2="355.3" y2="641.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="372.1" y="644.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Data protection</text>
+<line x1="250.0" y1="617.0" x2="296.9" y2="714.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="304.4" y="729.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Design</text>
+<line x1="250.0" y1="617.0" x2="203.1" y2="714.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="195.6" y="729.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Maintainability</text>
+<line x1="250.0" y1="617.0" x2="144.7" y2="641.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="127.9" y="644.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Tests</text>
+<line x1="250.0" y1="617.0" x2="165.6" y2="549.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="152.1" y="538.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
+<polygon points="250.0,563.0 292.2,583.3 302.6,629.0 273.4,665.7 226.6,665.7 197.4,629.0 207.8,583.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<polygon points="250.0,563.0 292.2,583.3 302.6,629.0 274.4,667.6 222.5,674.0 188.3,631.1 220.3,593.3" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="250.0" cy="563.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="292.2" cy="583.3" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="302.6" cy="629.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="274.4" cy="667.6" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="222.5" cy="674.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="188.3" cy="631.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="220.3" cy="593.3" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<text x="750.0" y="459.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">skills — Yes</text>
+<polygon points="750.0,590.0 771.1,600.2 776.3,623.0 761.7,641.3 738.3,641.3 723.7,623.0 728.9,600.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="750.0,536.0 813.3,566.5 829.0,635.0 785.1,690.0 714.9,690.0 671.0,635.0 686.7,566.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="750.0,509.0 834.4,549.7 855.3,641.0 796.9,714.3 703.1,714.3 644.7,641.0 665.6,549.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<line x1="750.0" y1="617.0" x2="750.0" y2="509.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="750.0" y="491.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
+<line x1="750.0" y1="617.0" x2="834.4" y2="549.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="847.9" y="538.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
+<line x1="750.0" y1="617.0" x2="855.3" y2="641.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="872.1" y="644.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Data protection</text>
+<line x1="750.0" y1="617.0" x2="796.9" y2="714.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="804.4" y="729.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Design</text>
+<line x1="750.0" y1="617.0" x2="703.1" y2="714.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="695.6" y="729.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Maintainability</text>
+<line x1="750.0" y1="617.0" x2="644.7" y2="641.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="627.9" y="644.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Tests</text>
+<line x1="750.0" y1="617.0" x2="665.6" y2="549.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="652.1" y="538.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
+<polygon points="750.0,563.0 792.2,583.3 802.6,629.0 773.4,665.7 726.6,665.7 697.4,629.0 707.8,583.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<polygon points="750.0,563.0 800.9,576.4 803.2,629.1 773.7,666.2 721.9,675.4 696.2,629.3 725.4,597.4" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="750.0" cy="563.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="800.9" cy="576.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="803.2" cy="629.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="773.7" cy="666.2" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="721.9" cy="675.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="696.2" cy="629.3" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="725.4" cy="597.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<text x="250.0" y="829.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">hybrid — Yes</text>
+<polygon points="250.0,960.0 271.1,970.2 276.3,993.0 261.7,1011.3 238.3,1011.3 223.7,993.0 228.9,970.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="250.0,906.0 313.3,936.5 329.0,1005.0 285.1,1060.0 214.9,1060.0 171.0,1005.0 186.7,936.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="250.0,879.0 334.4,919.7 355.3,1011.0 296.9,1084.3 203.1,1084.3 144.7,1011.0 165.6,919.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<line x1="250.0" y1="987.0" x2="250.0" y2="879.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="250.0" y="861.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
+<line x1="250.0" y1="987.0" x2="334.4" y2="919.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="347.9" y="908.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
+<line x1="250.0" y1="987.0" x2="355.3" y2="1011.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="372.1" y="1014.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Data protection</text>
+<line x1="250.0" y1="987.0" x2="296.9" y2="1084.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="304.4" y="1099.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Design</text>
+<line x1="250.0" y1="987.0" x2="203.1" y2="1084.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="195.6" y="1099.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Maintainability</text>
+<line x1="250.0" y1="987.0" x2="144.7" y2="1011.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="127.9" y="1014.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Tests</text>
+<line x1="250.0" y1="987.0" x2="165.6" y2="919.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="152.1" y="908.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
+<polygon points="250.0,933.0 292.2,953.3 302.6,999.0 273.4,1035.7 226.6,1035.7 197.4,999.0 207.8,953.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<polygon points="250.0,933.0 301.7,945.8 304.4,999.4 274.7,1038.2 220.1,1049.1 181.2,1002.7 229.1,970.4" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="250.0" cy="933.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="301.7" cy="945.8" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="304.4" cy="999.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="274.7" cy="1038.2" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="220.1" cy="1049.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="181.2" cy="1002.7" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="229.1" cy="970.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<text x="750.0" y="829.0" text-anchor="middle" font-size="18" font-weight="600" fill="#0b0b0b">inline — Yes</text>
+<polygon points="750.0,960.0 771.1,970.2 776.3,993.0 761.7,1011.3 738.3,1011.3 723.7,993.0 728.9,970.2" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="750.0,906.0 813.3,936.5 829.0,1005.0 785.1,1060.0 714.9,1060.0 671.0,1005.0 686.7,936.5" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<polygon points="750.0,879.0 834.4,919.7 855.3,1011.0 796.9,1084.3 703.1,1084.3 644.7,1011.0 665.6,919.7" fill="none" stroke="#c8c7c0" stroke-width="1"/>
+<line x1="750.0" y1="987.0" x2="750.0" y2="879.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="750.0" y="861.7" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="#52514e">Reliability</text>
+<line x1="750.0" y1="987.0" x2="834.4" y2="919.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="847.9" y="908.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Security</text>
+<line x1="750.0" y1="987.0" x2="855.3" y2="1011.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="872.1" y="1014.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Data protection</text>
+<line x1="750.0" y1="987.0" x2="796.9" y2="1084.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="804.4" y="1099.9" text-anchor="start" dominant-baseline="middle" font-size="15" fill="#52514e">Design</text>
+<line x1="750.0" y1="987.0" x2="703.1" y2="1084.3" stroke="#c8c7c0" stroke-width="1"/>
+<text x="695.6" y="1099.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Maintainability</text>
+<line x1="750.0" y1="987.0" x2="644.7" y2="1011.0" stroke="#c8c7c0" stroke-width="1"/>
+<text x="627.9" y="1014.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Tests</text>
+<line x1="750.0" y1="987.0" x2="665.6" y2="919.7" stroke="#c8c7c0" stroke-width="1"/>
+<text x="652.1" y="908.9" text-anchor="end" dominant-baseline="middle" font-size="15" fill="#52514e">Economy</text>
+<polygon points="750.0,933.0 792.2,953.3 802.6,999.0 773.4,1035.7 726.6,1035.7 697.4,999.0 707.8,953.3" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<polygon points="750.0,933.0 799.6,947.4 803.2,999.1 776.0,1041.1 720.3,1048.6 663.0,1006.9 731.3,972.1" fill="#2a78d6" fill-opacity="0.22" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="750.0" cy="933.0" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="799.6" cy="947.4" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="803.2" cy="999.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="776.0" cy="1041.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="720.3" cy="1048.6" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="663.0" cy="1006.9" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="731.3" cy="972.1" r="4" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+</svg>
