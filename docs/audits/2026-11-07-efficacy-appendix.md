@@ -74,7 +74,7 @@ bias correction was undefined. `aggregate.json` carries the method per row.
 | Error design, 1-5 | up | — | 2.111 | 2.044 | 2.422 | 2.689 | 2.400 | 2.578 | 2.289 | -0.067 [-0.267, 0.067] | +0.311 [0.111, 0.489] ▲ | +0.578 [0.289, 0.778] ▲ | +0.289 [-0.044, 0.556] | +0.467 [0.200, 0.667] ▲ | +0.178 [0, 0.400] = |
 | Naming and abstraction, 1-5 | up | — | 4 | 3.978 | 4 | 4 | 3.978 | 4 | 4 | -0.022 [-0.133, 0] | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | -0.022 [-0.133, 0] | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = |
 | Patterns missed | down | — | 1.467 | 1.444 | 1.511 | 1.489 | 1.467 | 1.289 | 1.489 | -0.022 [-0.289, 0.222] | +0.044 [-0.244, 0.311] | +0.022 [-0.244, 0.244] | 0 [-0.333, 0.311] | -0.178 [-0.444, 0.111] | +0.022 [-0.267, 0.311] |
-| Domain modules reaching Flask or the database | down | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = |
+| Modules import tariff loads that reach Flask or the database | down | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = |
 | Mutually importing module pairs | down | — | 0.800 | 1.267 | 0 | 0.867 | 0.400 | 0.467 | 0.533 | +0.467 [-1.200, 2.067] | -0.800 [-3.200, -0.400] ▲ | +0.067 [-1.600, 1.400] | -0.400 [-2.400, 0.400] | -0.333 [-2, 0.867] | -0.267 [-1.933, 0.933] |
 
 ### Maintainability
@@ -150,7 +150,7 @@ The whole vector, which the summary's scores digest and never replace.
 | Unused names | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Unused names per KLOC | held | better | held | held | held | better | no improvement shown | worse | worse | worse | held | better | no improvement shown | no improvement shown | no improvement shown |
 | Extension axes present, of three | held | held | held | worse | held | held | held | no improvement shown | worse | held | worse | no improvement shown | worse | no improvement shown | held |
-| Domain modules reaching Flask or the database | held | held | held | held | held | held | held | held | held | held | held | held | held | held | held |
+| Modules import tariff loads that reach Flask or the database | held | held | held | held | held | held | held | held | held | held | held | held | held | held | held |
 | Routes doing pricing arithmetic | held | held | held | held | held | held | held | held | held | held | held | held | held | held | held |
 | Boolean parameters | better | better | no improvement shown | no improvement shown | better | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | better |
 | Conditional ladders over rule kinds | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown | better | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
