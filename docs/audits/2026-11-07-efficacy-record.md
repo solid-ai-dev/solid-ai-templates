@@ -8,7 +8,10 @@ metric directions were fixed before any trial ran, in the solid-ai-benchmark rep
 
 Each interval below is a 95 % bootstrap interval over the paired differences of its
 contrast, one per block that measured both arms: K = 15 at most, and a cell that had
-fewer names its count.
+fewer names its count. The contrasts whose arms ran in different rounds, short − none,
+hand − none, inline − hand, hybrid − hand, reference − hand, skills − hand and short −
+inline, are unpaired: each arm's trials stand on their own, and the interval is for the
+difference of two independent means.
 
 ## Executive summary
 
@@ -135,11 +138,11 @@ two probe pass rates. Task success and cost follow.
 | Security probe pass rate, of eleven | up | 2 pp | 0.758 | 0.824 | 0.897 | 0.776 | 0.888 | 0.909 | 0.897 | +0.067 [0.030, 0.109] ▲ | +0.139 [0.091, 0.176] ▲ | +0.018 [-0.036, 0.055] | +0.049 [-0.000, 0.103] = | +0.133 [0.091, 0.161] ▲ (13 pairs) | +0.151 [0.109, 0.200] ▲ | +0.139 [0.085, 0.182] ▲ | 0 [-0.036, 0.036] | -0.014 [-0.056, 0.021] (13 pairs) | -0.012 [-0.067, 0.042] | +0.133 [0.091, 0.182] ▲ | +0.121 [0.079, 0.170] ▲ | +0.112 [0.067, 0.158] ▲ (13 against 15 trials) | +0.121 [0.073, 0.176] ▲ | -0.085 [-0.121, -0.048] ▼ |
 | Data-protection probe pass rate, of three | up | 10 pp | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.689 | 0.667 | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = (13 pairs) | +0.022 [0, 0.067] = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = (13 pairs) | -0.022 [-0.133, 0] | +0.022 [0, 0.067] = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = (13 against 15 trials) | 0 [0, 0] ‡ = | -0.022 [-0.133, 0] |
 
-Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
-round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
-no difference shown: either way the interval's worse end stays within the row's margin,
-so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+Each cell: the mean difference, its 95 % interval in brackets, and a mark. ▲ better and
+▼ worse: the interval is clear of zero, in the metric's direction, and under round 5d's
+rules clear of the row's margin. = held, for a row read by its margin, and ≈ no
+difference shown: either way the interval's worse end stays within the row's margin, so
+it is no worse than the margin, which is not the same as equal. ○ no verdict, on
 purpose: a row reported without one, a pair across rounds, or two judges that disagree.
 (not compared): too few complete pairs for an interval. No mark: no difference shown, on
 a row with no margin or past the margin it has.
@@ -166,11 +169,11 @@ before it, and adds none once results are seen.
 | Wall time, seconds | down | 25 % relative | 1358.3 | 2002.9 | 2394.8 | 2062.5 | 1815.1 | 2793.4 | 1906.1 | +644.647 [474.767, 821.893] ▼ | +1036.6 [867, 1225.1] ▼ | +704.207 [535.807, 999.560] ▼ | -59.560 [-300.107, 164.853] = | +456.820 [333.520, 619.213] | +1435.1 [1195.5, 1837.6] ▼ | +547.793 [382.420, 723.820] ▼ | -488.760 [-716.907, -209.180] = | -579.733 [-740.780, -342.327] = | -887.353 [-1248.8, -591.920] = | +730.940 [400.040, 1122.7] | +332.347 [5.007, 569.113] | -247.387 [-556.407, -47.367] = | -156.413 [-470.513, 63.347] = | -790.500 [-1199.5, -501.287] = |
 | Cost, USD | down | 25 % relative | 4.294 | 8.061 | 11.783 | 8.284 | 7.208 | 14.184 | 9.302 | +3.767 [3.011, 4.445] ▼ | +7.489 [6.550, 8.636] ▼ | +3.990 [3.285, 4.627] ▼ | -0.223 [-1.249, 0.849] = | +2.915 [2.325, 3.736] ▼ | +9.890 [8.326, 12.227] ▼ | +5.009 [4.024, 6.242] ▼ | -2.480 [-3.775, -0.842] = | -4.574 [-5.804, -3.393] ▲ | -4.881 [-7.301, -2.864] = | +5.900 [4.279, 8.121] ▼ | +3.499 [2.309, 4.826] ▼ | -1.076 [-1.894, -0.149] = | +1.018 [-0.135, 2.317] | -6.123 [-8.420, -4.474] ▲ |
 
-Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
-round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
-no difference shown: either way the interval's worse end stays within the row's margin,
-so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+Each cell: the mean difference, its 95 % interval in brackets, and a mark. ▲ better and
+▼ worse: the interval is clear of zero, in the metric's direction, and under round 5d's
+rules clear of the row's margin. = held, for a row read by its margin, and ≈ no
+difference shown: either way the interval's worse end stays within the row's margin, so
+it is no worse than the margin, which is not the same as equal. ○ no verdict, on
 purpose: a row reported without one, a pair across rounds, or two judges that disagree.
 (not compared): too few complete pairs for an interval. No mark: no difference shown, on
 a row with no margin or past the margin it has.
@@ -191,11 +194,11 @@ beside whether the change works and whether the build still passes after it.
 | Change task, lines changed | down | — | — | — | — | — | — | — | — | an arm has no measured trial | no complete pair was measured | an arm has no measured trial | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | an arm has no measured trial | an arm has no measured trial | an arm has no measured trial | an arm has no measured trial | an arm has no measured trial |
 | Change task, cost, USD | down | — | — | — | — | — | — | — | — | an arm has no measured trial | no complete pair was measured | an arm has no measured trial | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | no complete pair was measured | an arm has no measured trial | an arm has no measured trial | an arm has no measured trial | an arm has no measured trial | an arm has no measured trial |
 
-Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
-round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
-no difference shown: either way the interval's worse end stays within the row's margin,
-so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+Each cell: the mean difference, its 95 % interval in brackets, and a mark. ▲ better and
+▼ worse: the interval is clear of zero, in the metric's direction, and under round 5d's
+rules clear of the row's margin. = held, for a row read by its margin, and ≈ no
+difference shown: either way the interval's worse end stays within the row's margin, so
+it is no worse than the margin, which is not the same as equal. ○ no verdict, on
 purpose: a row reported without one, a pair across rounds, or two judges that disagree.
 (not compared): too few complete pairs for an interval. No mark: no difference shown, on
 a row with no margin or past the margin it has.
@@ -255,11 +258,11 @@ a row with no margin or past the margin it has.
 | Test code, lines | neutral | — | 833.533 | 920.600 | 1257.1 | 1157.3 | 926.333 | 1555.4 | 828.800 | +87.067 [5.267, 168.067] ○ | +423.600 [307.667, 523] ○ | +323.733 [219.400, 429.533] ○ | -236.667 [-350.533, -127.067] ○ | +92.800 [-17.667, 187.800] ○ | +721.867 [589.867, 852.667] ○ | -4.733 [-100.067, 79.267] ○ | -428.333 [-576.867, -297.133] ○ | -330.800 [-456.800, -219.800] ○ | -726.600 [-868.933, -597.067] ○ | +398.133 [260.600, 548] ○ | +99.867 [-28, 254.400] ○ | -230.933 [-344.467, -108.533] ○ | -328.467 [-438.733, -215.533] ○ | -634.800 [-772.733, -515.933] ○ |
 | Artifacts nobody asked for | down | — | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = | 0 [0, 0] ‡ = |
 
-Each cell: the mean paired difference, its 95 % interval in brackets, and a mark. ▲
-better and ▼ worse: the interval is clear of zero, in the metric's direction, and under
-round 5d's rules clear of the row's margin. = held, for a row read by its margin, and ≈
-no difference shown: either way the interval's worse end stays within the row's margin,
-so it is no worse than the margin, which is not the same as equal. ○ no verdict, on
+Each cell: the mean difference, its 95 % interval in brackets, and a mark. ▲ better and
+▼ worse: the interval is clear of zero, in the metric's direction, and under round 5d's
+rules clear of the row's margin. = held, for a row read by its margin, and ≈ no
+difference shown: either way the interval's worse end stays within the row's margin, so
+it is no worse than the margin, which is not the same as equal. ○ no verdict, on
 purpose: a row reported without one, a pair across rounds, or two judges that disagree.
 (not compared): too few complete pairs for an interval. No mark: no difference shown, on
 a row with no margin or past the margin it has.

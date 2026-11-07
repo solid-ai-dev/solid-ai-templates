@@ -24,15 +24,21 @@ trial, is in [the full record](2026-11-07-efficacy-record.md).
 ## The radar's axes, row by row
 
 Each table is one axis of the radar: every measurement it groups, each approach's mean,
-and each approach against `none`. Each cell: the mean paired difference, its 95 %
-interval in brackets, and a mark. ▲ better and ▼ worse: the interval is clear of zero,
-in the metric's direction, and under round 5d's rules clear of the row's margin. = held,
-for a row read by its margin, and ≈ no difference shown: either way the interval's worse
-end stays within the row's margin, so it is no worse than the margin, which is not the
-same as equal. ○ no verdict, on purpose: a row reported without one, a pair across
-rounds, or two judges that disagree. (not compared): too few complete pairs for an
-interval. No mark: no difference shown, on a row with no margin or past the margin it
-has.
+and each approach against `none`. Each cell: the mean difference, its 95 % interval in
+brackets, and a mark. ▲ better and ▼ worse: the interval is clear of zero, in the
+metric's direction, and under round 5d's rules clear of the row's margin. = held, for a
+row read by its margin, and ≈ no difference shown: either way the interval's worse end
+stays within the row's margin, so it is no worse than the margin, which is not the same
+as equal. ○ no verdict, on purpose: a row reported without one, a pair across rounds, or
+two judges that disagree. (not compared): too few complete pairs for an interval. No
+mark: no difference shown, on a row with no margin or past the margin it has.
+
+Each interval below is a 95 % bootstrap interval over the paired differences of its
+contrast, one per block that measured both arms: K = 15 at most, and a cell that had
+fewer names its count. The contrasts whose arms ran in different rounds, short − none,
+hand − none, inline − hand, hybrid − hand, reference − hand, skills − hand and short −
+inline, are unpaired: each arm's trials stand on their own, and the interval is for the
+difference of two independent means.
 
 ‡ the interval was not computed by BCa: the paired differences were identical, or the
 bias correction was undefined. `aggregate.json` carries the method per row.
