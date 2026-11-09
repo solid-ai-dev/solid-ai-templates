@@ -117,16 +117,17 @@ CHECKS = [
     # The project's own static checks: mypy strict and the ruff formatter,
     # configured in pyproject.toml, and pyflakes as the linter CI already
     # runs. Each prints nothing clean. The tooling still carries type errors
-    # and unformatted files, so for now every line is a reading, reported and
-    # not scored, and each command's exit is ignored with `|| true`. Once the
-    # tooling is clean, both go: the expectation becomes [] and any line
-    # printed, or any failing exit, fails the run.
+    # and unformatted files, so for now each command's exit is ignored with
+    # `|| true` and the check is a budgeted reading: it awaits a person and
+    # never reads as clean. Once the tooling is clean it prints nothing,
+    # which fails a manual check, and the gate comes back: the expectation
+    # becomes [], the `|| true` goes, and the budget line with it.
     {"file": "core/quality.md", "find": "<type-check-command>",
      "title": "The type checker, the linter and the formatter are clean",
-     "do": RUN, "expect": [READ],
-     "reading": "Every line: a type error, a lint finding or a file the "
-                "formatter would change, in the tooling. They are read while "
-                "the tooling is being cleaned; none is scored until then.",
+     "do": RUN, "expect": MANUAL,
+     "reason": "Every line is a type error, a lint finding or a file the "
+               "formatter would change, in tooling still being cleaned. "
+               "Each is read, and none scored, until the tooling is clean.",
      "substitute": {
          "<type-check-command>":
              PYTHON + " -m mypy --no-error-summary || true",

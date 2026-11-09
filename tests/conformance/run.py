@@ -327,6 +327,17 @@ def main():
             problems.append("%s: a reading with nothing said about it -- %s"
                             % (entry["file"], entry["title"][:40]))
 
+        # A substitution that ignores a command's exit cannot reach a
+        # verdict: whatever the command finds, the check reads as run. Such
+        # a check is a judgement, so it awaits a reading and is budgeted,
+        # rather than passing over findings it was told not to fail on.
+        ignored = [v for v in (entry.get("substitute") or {}).values()
+                   if "|| true" in v]
+        if ignored and declared != MANUAL:
+            problems.append("%s: ignores an exit with || true but is not "
+                            "manual -- %s"
+                            % (entry["file"], entry["title"][:40]))
+
         hits = [b for b in runnable
                 if b[0] == entry["file"] and any(entry["find"] in l
                                                  for l in b[3])]

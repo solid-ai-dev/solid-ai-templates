@@ -43,3 +43,8 @@ A change to an existing test is visible
 # Its pass condition states that the two counts are deliberately NOT
 # required to match, so there is no threshold to score: the operator
 # confirms each carried commit is represented or deliberately not.
+
+# The tooling still carries type errors and unformatted files, so the static
+# checks ignore their exits and report every finding as a reading. The line
+# goes when the tooling is clean and the check fails on findings again.
+The type checker, the linter and the formatter are clean
