@@ -33,7 +33,7 @@ import sys
 import tempfile
 import time
 
-from conformance import SKIP, MANUAL, READ
+from conformance import FINDINGS_ONLY, SKIP, MANUAL, READ
 from conformance.dispositions import CHECKS, SKIP_BUDGETS
 from testkit import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
                  print_verdict, template_documents)
@@ -325,6 +325,33 @@ def main():
         if isinstance(declared, list) and READ in declared \
                 and not entry.get("reading"):
             problems.append("%s: a reading with nothing said about it -- %s"
+                            % (entry["file"], entry["title"][:40]))
+
+        # A substitution that ignores a command's exit cannot reach a
+        # verdict: whatever the command finds, the check reads as run. Such
+        # a check is a judgement, so it awaits a reading and is budgeted,
+        # rather than passing over findings it was told not to fail on.
+        substituted = (entry.get("substitute") or {}).values()
+        ignored = [v for v in substituted if FINDINGS_ONLY in v]
+        if ignored and declared != MANUAL:
+            problems.append("%s: carries a findings exit past but is not "
+                            "manual -- %s"
+                            % (entry["file"], entry["title"][:40]))
+
+        # A missing checker exits 1 as findings do, so a command that carries
+        # the findings exit past must first import its checker.
+        unguarded = [v for v in ignored if '-c "import ' not in v]
+        if unguarded:
+            problems.append("%s: carries a findings exit past without "
+                            "importing its checker first; use findings_only "
+                            "-- %s" % (entry["file"], entry["title"][:40]))
+
+        # `|| true` ignores every exit, so a checker that cannot run (a bad
+        # configuration, a crash) reads as one that ran and found things.
+        # Only the findings exit may be carried past.
+        if any("|| true" in v for v in substituted):
+            problems.append("%s: || true hides a checker that cannot run; "
+                            "use findings_only -- %s"
                             % (entry["file"], entry["title"][:40]))
 
         hits = [b for b in runnable

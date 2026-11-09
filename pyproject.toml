@@ -24,3 +24,13 @@ solid-ai-checks = "solid_ai_checks.__main__:main"
 [tool.setuptools]
 package-dir = { "" = "hooks" }
 packages = ["solid_ai_checks", "solid_ai_checks.support"]
+
+# The static checks core/quality.md asks for, as this repository runs them:
+# mypy at its strictest over all the Python, and the ruff formatter at the
+# width .editorconfig declares.
+[tool.mypy]
+strict = true
+files = ["tools", "tests", "hooks"]
+
+[tool.ruff]
+line-length = 88

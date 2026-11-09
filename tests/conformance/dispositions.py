@@ -14,7 +14,7 @@ the wrong one.
 import os
 import sys
 
-from conformance import MANUAL, READ, RUN, SKIP
+from conformance import MANUAL, READ, RUN, SKIP, findings_only
 
 # Pass predicates, named here and implemented in the runner.
 #
@@ -113,6 +113,30 @@ CHECKS = [
     {"file": "core/quality.md", "find": "check-ascii-identifiers",
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
+
+    # The project's own static checks: mypy strict and the ruff formatter,
+    # configured in pyproject.toml, and pyflakes as the linter CI already
+    # runs. Each prints nothing clean. The tooling still carries type errors
+    # and unformatted files, so for now each command's findings exit is
+    # carried past with findings_only and the check is a budgeted reading: it
+    # awaits a person and never reads as clean, while a checker that cannot
+    # run still fails it. Once the tooling is clean it prints nothing, which
+    # fails a manual check, and the gate comes back: the expectation becomes
+    # [], findings_only goes, and the budget line with it.
+    {"file": "core/quality.md", "find": "<type-check-command>",
+     "title": "The type checker, the linter and the formatter are clean",
+     "do": RUN, "expect": MANUAL,
+     "reason": "Every line is a type error, a lint finding or a file the "
+               "formatter would change, in tooling still being cleaned. "
+               "Each is read, and none scored, until the tooling is clean.",
+     "substitute": {
+         "<type-check-command>":
+             findings_only(PYTHON, "mypy", "--no-error-summary"),
+         "<lint-command>":
+             findings_only(PYTHON, "pyflakes", "tools tests hooks"),
+         "<format-check-command>":
+             findings_only(PYTHON, "ruff",
+                           "format --check -q tools tests hooks")}},
 
     {"file": "core/quality.md", "find": "files not filed i/lf",
      "title": "No committed text file carries CRLF", "do": RUN,

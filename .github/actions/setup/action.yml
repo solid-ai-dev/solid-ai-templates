@@ -14,10 +14,14 @@ runs:
       with:
         python-version: "3.12"
 
-    # Pinned so a release of PyYAML cannot turn a green tree red.
+    # Pinned so a release of PyYAML cannot turn a green tree red. The type
+    # checker, the formatter and the linter run in conformance, each pinned
+    # to a minor range so a release cannot change what they report.
     - name: Install dependencies
       shell: bash
-      run: pip install pyyaml==6.0.3
+      run: >-
+        pip install pyyaml==6.0.3 "mypy~=2.4.0" "ruff~=0.17.1"
+        pyflakes==4.0.2
 
     # The line-width conformance check runs this linter under the runner's
     # time limit, so it is fetched here, outside that limit, and the check
