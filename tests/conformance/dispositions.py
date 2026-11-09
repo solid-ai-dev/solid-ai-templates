@@ -114,9 +114,9 @@ CHECKS = [
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
-    # The project's own static checks: mypy strict and the ruff formatter
-    # under the freeze tools/freeze_static.py writes into pyproject.toml,
-    # and pyflakes as the linter CI already runs. Each prints nothing clean.
+    # The project's own static checks: mypy strict and the ruff formatter,
+    # configured in pyproject.toml, and pyflakes as the linter CI already
+    # runs. Each prints nothing clean.
     {"file": "core/quality.md", "find": "<type-check-command>",
      "title": "The type checker, the linter and the formatter are clean",
      "do": RUN, "expect": [],

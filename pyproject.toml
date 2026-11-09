@@ -25,97 +25,12 @@ solid-ai-checks = "solid_ai_checks.__main__:main"
 package-dir = { "" = "hooks" }
 packages = ["solid_ai_checks", "solid_ai_checks.support"]
 
-# generated:static-freeze
-# Written by tools/freeze_static.py; never edit by hand.
+# The static checks core/quality.md asks for, as this repository runs them:
+# mypy at its strictest over all the Python, and the ruff formatter at the
+# width .editorconfig declares.
 [tool.mypy]
 strict = true
 files = ["tools", "tests", "hooks"]
 
-[[tool.mypy.overrides]]
-module = [
-    "ask_reviewers",
-    "audit_redundancy",
-    "check_doc_figures",
-    "check_horizontal_rules",
-    "check_release",
-    "conformance.dispositions",
-    "conformance.run",
-    "cut_changelog",
-    "emit_context",
-    "fork_sync.run",
-    "resolve_chain",
-    "run",
-    "score_templates",
-    "smoke.adr",
-    "smoke.common",
-    "smoke.hooks",
-    "smoke.manifest",
-    "smoke.run",
-    "smoke.system",
-    "smoke.templates",
-    "solid_ai_checks.__main__",
-    "solid_ai_checks.check_ascii_identifiers",
-    "solid_ai_checks.check_comment_layout",
-    "solid_ai_checks.check_heading_numbers",
-    "solid_ai_checks.compile_embedded_checks",
-    "solid_ai_checks.find_bare_suppressions",
-    "solid_ai_checks.find_import_bans",
-    "solid_ai_checks.find_line_continuations",
-    "solid_ai_checks.find_unfenced_checks",
-    "solid_ai_checks.find_unreferenced_scripts",
-    "solid_ai_checks.report_off_limits_paths",
-    "solid_ai_checks.report_test_edits",
-    "solid_ai_checks.support.fences",
-    "solid_ai_checks.support.files",
-    "solid_ai_checks.support.history",
-    "solid_ai_checks.support.report",
-    "sync_docs",
-    "testkit",
-]
-ignore_errors = true
-
 [tool.ruff]
 line-length = 88
-extend-exclude = [
-    "hooks/solid_ai_checks/__main__.py",
-    "hooks/solid_ai_checks/check_ascii_identifiers.py",
-    "hooks/solid_ai_checks/check_comment_layout.py",
-    "hooks/solid_ai_checks/check_heading_numbers.py",
-    "hooks/solid_ai_checks/compile_embedded_checks.py",
-    "hooks/solid_ai_checks/find_bare_suppressions.py",
-    "hooks/solid_ai_checks/find_import_bans.py",
-    "hooks/solid_ai_checks/find_line_continuations.py",
-    "hooks/solid_ai_checks/find_unfenced_checks.py",
-    "hooks/solid_ai_checks/find_unreferenced_scripts.py",
-    "hooks/solid_ai_checks/report_off_limits_paths.py",
-    "hooks/solid_ai_checks/report_test_edits.py",
-    "hooks/solid_ai_checks/support/fences.py",
-    "hooks/solid_ai_checks/support/files.py",
-    "hooks/solid_ai_checks/support/history.py",
-    "tests/conformance/dispositions.py",
-    "tests/conformance/run.py",
-    "tests/fork_sync/__init__.py",
-    "tests/fork_sync/run.py",
-    "tests/run.py",
-    "tests/smoke/__init__.py",
-    "tests/smoke/adr.py",
-    "tests/smoke/common.py",
-    "tests/smoke/hooks.py",
-    "tests/smoke/manifest.py",
-    "tests/smoke/registry.py",
-    "tests/smoke/run.py",
-    "tests/smoke/system.py",
-    "tests/smoke/templates.py",
-    "tests/testkit/__init__.py",
-    "tools/ask_reviewers.py",
-    "tools/audit_redundancy.py",
-    "tools/check_doc_figures.py",
-    "tools/check_horizontal_rules.py",
-    "tools/check_release.py",
-    "tools/cut_changelog.py",
-    "tools/emit_context.py",
-    "tools/resolve_chain.py",
-    "tools/score_templates.py",
-    "tools/sync_docs.py",
-]
-# /generated:static-freeze

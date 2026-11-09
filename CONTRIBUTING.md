@@ -18,7 +18,7 @@ ADR-050).
 |------|------------|
 | Git | Everything |
 | Python 3 with PyYAML (`pip install pyyaml`) | The tools and checks |
-| mypy 2.4, ruff 0.17, pyflakes 4.0.2 (`pip install "mypy~=2.4.0" "ruff~=0.17.1" pyflakes==4.0.2`) | The conformance suite's static check, and `tools/freeze_static.py` |
+| mypy 2.4, ruff 0.17, pyflakes 4.0.2 (`pip install "mypy~=2.4.0" "ruff~=0.17.1" pyflakes==4.0.2`) | The conformance suite's static check |
 | GitHub CLI (`gh`), authenticated | The issue, pull-request and release steps |
 | Node.js, pre-commit | Optional, to run CI's Markdown linter and hooks locally; `pre-commit install` then runs the hooks on each commit |
 

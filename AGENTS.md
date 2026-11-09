@@ -22,9 +22,6 @@ file. What the project is: `README.md`; how it works: `docs/spec.md`.
 ```bash
 py tools/sync_docs.py              # regenerate generated sections
 py tools/sync_docs.py --check      # exit 1 if any is stale
-py tools/freeze_static.py          # rewrite the type-check and format freeze
-py tools/freeze_static.py --check  # exit 1 if the freeze is not current
-py tools/freeze_static.py --self-test  # the shrink-only and failed-run rules
 py tools/resolve_chain.py --roots   # every root a project can pick
 py tools/resolve_chain.py <id>      # one root's resolved file list
 py tools/resolve_chain.py --emit <dir> <root>...   # root file and task skills

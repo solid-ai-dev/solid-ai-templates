@@ -16,7 +16,7 @@ runs:
 
     # Pinned so a release of PyYAML cannot turn a green tree red. The type
     # checker, the formatter and the linter run in conformance, each pinned
-    # to a minor range, as the freeze records one version's findings.
+    # to a minor range so a release cannot change what they report.
     - name: Install dependencies
       shell: bash
       run: >-
