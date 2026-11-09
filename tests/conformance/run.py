@@ -33,7 +33,7 @@ import sys
 import tempfile
 import time
 
-from conformance import SKIP, MANUAL, READ
+from conformance import FINDINGS_ONLY, SKIP, MANUAL, READ
 from conformance.dispositions import CHECKS, SKIP_BUDGETS
 from testkit import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
                  print_verdict, template_documents)
@@ -331,11 +331,19 @@ def main():
         # verdict: whatever the command finds, the check reads as run. Such
         # a check is a judgement, so it awaits a reading and is budgeted,
         # rather than passing over findings it was told not to fail on.
-        ignored = [v for v in (entry.get("substitute") or {}).values()
-                   if "|| true" in v]
+        substituted = (entry.get("substitute") or {}).values()
+        ignored = [v for v in substituted if FINDINGS_ONLY in v]
         if ignored and declared != MANUAL:
-            problems.append("%s: ignores an exit with || true but is not "
+            problems.append("%s: carries a findings exit past but is not "
                             "manual -- %s"
+                            % (entry["file"], entry["title"][:40]))
+
+        # `|| true` ignores every exit, so a checker that cannot run (a bad
+        # configuration, a crash) reads as one that ran and found things.
+        # Only the findings exit may be carried past.
+        if any("|| true" in v for v in substituted):
+            problems.append("%s: || true hides a checker that cannot run; "
+                            "use FINDINGS_ONLY -- %s"
                             % (entry["file"], entry["title"][:40]))
 
         hits = [b for b in runnable
