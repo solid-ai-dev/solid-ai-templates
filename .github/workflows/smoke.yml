@@ -38,6 +38,10 @@ jobs:
           - name: Check generated docs are up to date
             run: python tools/sync_docs.py --check
 
+          # The freeze only shrinks: a module or file cleaned must leave it.
+          - name: Check the static-check freeze is current
+            run: python tools/freeze_static.py --check
+
           # Upstream offers no stack, so this reads a fork's cache of
           # resolved chains; upstream's run confirms the manifest parses.
           - name: Check the resolved stack chains are up to date

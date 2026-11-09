@@ -114,6 +114,18 @@ CHECKS = [
      "title": "Identifiers stay ASCII", "do": RUN,
      "expect": ["nonzero", "zero"]},
 
+    # The project's own static checks: mypy strict and the ruff formatter
+    # under the freeze tools/freeze_static.py writes into pyproject.toml,
+    # and pyflakes as the linter CI already runs. Each prints nothing clean.
+    {"file": "core/quality.md", "find": "<type-check-command>",
+     "title": "The type checker, the linter and the formatter are clean",
+     "do": RUN, "expect": [],
+     "substitute": {
+         "<type-check-command>": PYTHON + " -m mypy --no-error-summary",
+         "<lint-command>": PYTHON + " -m pyflakes tools tests hooks",
+         "<format-check-command>":
+             PYTHON + " -m ruff format --check -q tools tests hooks"}},
+
     {"file": "core/quality.md", "find": "files not filed i/lf",
      "title": "No committed text file carries CRLF", "do": RUN,
      "expect": ["nonzero", "any", "any", "zero"]},

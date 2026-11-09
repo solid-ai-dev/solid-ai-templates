@@ -251,6 +251,17 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
 - Adopt a linter and a formatter, and keep both clean (MUST)
 - Run the type checker, the linter and the formatter before every commit
   and in CI
+- Adopt a checker on existing code with a per-file freeze generated from
+  its own output, as `base-quality-gates` states for a linter
+
+```bash
+<type-check-command>
+<lint-command>
+<format-check-command>
+```
+
+Pass condition: all three print nothing. Each command is the project's own,
+in its quiet mode.
 
 ## Enforcement
 
