@@ -338,12 +338,20 @@ def main():
                             "manual -- %s"
                             % (entry["file"], entry["title"][:40]))
 
+        # A missing checker exits 1 as findings do, so a command that carries
+        # the findings exit past must first import its checker.
+        unguarded = [v for v in ignored if '-c "import ' not in v]
+        if unguarded:
+            problems.append("%s: carries a findings exit past without "
+                            "importing its checker first; use findings_only "
+                            "-- %s" % (entry["file"], entry["title"][:40]))
+
         # `|| true` ignores every exit, so a checker that cannot run (a bad
         # configuration, a crash) reads as one that ran and found things.
         # Only the findings exit may be carried past.
         if any("|| true" in v for v in substituted):
             problems.append("%s: || true hides a checker that cannot run; "
-                            "use FINDINGS_ONLY -- %s"
+                            "use findings_only -- %s"
                             % (entry["file"], entry["title"][:40]))
 
         hits = [b for b in runnable
