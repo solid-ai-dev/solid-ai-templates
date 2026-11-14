@@ -49,6 +49,7 @@ GENERATED = ROOT / "generated"
 
 # ---- minimal YAML parser (shared with sync_docs.py) ----
 
+
 def parse_manifest(text):
     """Parse manifest.yaml into {section: [entries]}, and each task key into
     {kind: description}."""
@@ -68,8 +69,7 @@ def parse_manifest(text):
             if key == "version":
                 continue
             current_section = key
-            sections.setdefault(current_section,
-                                {} if key in TASK_KEYS else [])
+            sections.setdefault(current_section, {} if key in TASK_KEYS else [])
             current_entry = None
             list_key = None
             continue
@@ -126,15 +126,9 @@ def parse_manifest(text):
         # bracketed continuation after an empty "key:" line:
         #   depends_on:
         #     [a, b, c]
-        if (
-            list_key
-            and stripped.startswith("[")
-            and stripped.endswith("]")
-        ):
+        if list_key and stripped.startswith("[") and stripped.endswith("]"):
             inner = stripped[1:-1]
-            current_entry[list_key] = [
-                v.strip() for v in inner.split(",") if v.strip()
-            ]
+            current_entry[list_key] = [v.strip() for v in inner.split(",") if v.strip()]
             list_key = None
             continue
 
@@ -160,9 +154,13 @@ NON_ENTRY_KEYS = ("version", "core", "fork_core") + TASK_KEYS
 
 def entry_sections(manifest):
     """The manifest's sections of template entries, in manifest order."""
-    return [key for key, value in manifest.items()
-            if key not in NON_ENTRY_KEYS and isinstance(value, list)
-            and all(isinstance(entry, dict) for entry in value)]
+    return [
+        key
+        for key, value in manifest.items()
+        if key not in NON_ENTRY_KEYS
+        and isinstance(value, list)
+        and all(isinstance(entry, dict) for entry in value)
+    ]
 
 
 def core_tier(manifest):
@@ -171,8 +169,7 @@ def core_tier(manifest):
     A fork MUST NOT edit `core`, so a template it adds to every chain goes in
     `fork_core`, which is the fork's own.
     """
-    return list(manifest.get("core") or []) + list(
-        manifest.get("fork_core") or [])
+    return list(manifest.get("core") or []) + list(manifest.get("fork_core") or [])
 
 
 def task_kinds(manifest):
@@ -225,12 +222,16 @@ def load_directives(text):
         if load:
             own = stack[-1] if stack and in_tags else None
             enclosing = [h["kind"] for h in stack[:-1] if h["kind"]]
-            found.append({
-                "line": number, "kind": load.group(1),
-                "heading": own["line"] if own else None,
-                "placed": own is not None,
-                "second": bool(own and own["kind"]),
-                "inside": enclosing[-1] if enclosing and own else None})
+            found.append(
+                {
+                    "line": number,
+                    "kind": load.group(1),
+                    "heading": own["line"] if own else None,
+                    "placed": own is not None,
+                    "second": bool(own and own["kind"]),
+                    "inside": enclosing[-1] if enclosing and own else None,
+                }
+            )
             if own and not own["kind"]:
                 own["kind"] = load.group(1)
             continue
@@ -257,7 +258,8 @@ def load_manifest():
                 raise ResolveError(
                     f"Manifest ID '{entry['id']}' is declared twice: "
                     f"{entries[entry['id']].get('file', '?')} and "
-                    f"{entry.get('file', '?')} ({section}:)")
+                    f"{entry.get('file', '?')} ({section}:)"
+                )
             entries[entry["id"]] = entry
 
     core_ids = core_tier(manifest)
@@ -313,15 +315,16 @@ def _check_graph(roots, entries, named_by):
             if by is CORE_TIER:
                 raise ResolveError(
                     "Missing dependency: the core tier names %s, which has "
-                    "no manifest entry" % eid)
+                    "no manifest entry" % eid
+                )
             if by is None:
-                raise ResolveError(
-                    "Unknown root: %s has no manifest entry" % eid)
+                raise ResolveError("Unknown root: %s has no manifest entry" % eid)
             raise ResolveError(
                 "Missing dependency: %s depends on %s, which has no manifest "
-                "entry" % (by, eid))
+                "entry" % (by, eid)
+            )
         if eid in path:
-            cycle = path[path.index(eid):] + [eid]
+            cycle = path[path.index(eid) :] + [eid]
             raise ResolveError("Dependency cycle: " + " -> ".join(cycle))
         path.append(eid)
         for dep in entries[eid].get("depends_on", []):
@@ -358,7 +361,8 @@ def _resolve_order(root, core_ids, entries):
                 raise ResolveError(
                     "Core-tier entry %s depends on %s, which is outside the "
                     "core tier; add %s to core or fork_core, or drop the "
-                    "dependency" % (cid, dep, dep))
+                    "dependency" % (cid, dep, dep)
+                )
 
     done = set(core_ids)
     order = []
@@ -441,8 +445,7 @@ def generate_all(core_ids, entries, stacks):
         # committed, and Python translates every newline on a platform
         # whose default is CRLF, so the file the repository holds would
         # depend on the machine that regenerated it.
-        io.open(out, "w", encoding="utf-8",
-                newline="\n").write(content)
+        io.open(out, "w", encoding="utf-8", newline="\n").write(content)
         print(f"  {sid} -> {out.relative_to(ROOT)}  ({len(files)} files)")
         count += 1
     print(f"\n{count} file(s) generated.")
@@ -467,16 +470,27 @@ def check_generated(core_ids, entries, stacks):
         if expected != actual:
             stale.append(sid)
     owed = {f"{stack['id']}.md" for stack in stacks}
-    cached = sorted(p.name for p in GENERATED.glob("*.md")) \
-        if GENERATED.is_dir() else []
+    cached = (
+        sorted(p.name for p in GENERATED.glob("*.md")) if GENERATED.is_dir() else []
+    )
     orphans = [name for name in cached if name not in owed]
     return stale, orphans
 
 
 # ---- CLI ----
 
-KNOWN_FLAGS = {"--help", "--list", "--roots", "--generate", "--check", "--concat",
-               "--emit", "--declined", "--inline-skills", "--mirror"}
+KNOWN_FLAGS = {
+    "--help",
+    "--list",
+    "--roots",
+    "--generate",
+    "--check",
+    "--concat",
+    "--emit",
+    "--declined",
+    "--inline-skills",
+    "--mirror",
+}
 
 # The flags that take a value, so the value is not read as a root.
 VALUE_FLAGS = ("--emit", "--declined", "--mirror")
@@ -502,8 +516,10 @@ def _emit(args, core_ids, entries):
             roots.append(args[i])
         i += 1
     if not roots:
-        raise ResolveError("--emit needs at least one root; run with "
-                           "--roots to see what a project can pick")
+        raise ResolveError(
+            "--emit needs at least one root; run with "
+            "--roots to see what a project can pick"
+        )
     unknown = [r for r in roots if r not in entries]
     if unknown:
         raise ResolveError("Unknown root: " + ", ".join(unknown))
@@ -513,23 +529,22 @@ def _emit(args, core_ids, entries):
             if path not in files:
                 files.append(path)
     kinds = task_kinds(parse_manifest(io.open(MANIFEST, encoding="utf-8").read()))
-    declined = emit_context.read_declined(
-        (values.get("--declined") or [None])[0])
+    declined = emit_context.read_declined((values.get("--declined") or [None])[0])
     emitted = emit_context.build(
-        [(path, read_file(path)) for path in files], kinds, declined,
-        inline_skills="--inline-skills" in args)
+        [(path, read_file(path)) for path in files],
+        kinds,
+        declined,
+        inline_skills="--inline-skills" in args,
+    )
     out_dir = values["--emit"][0]
     try:
-        written = emit_context.write(out_dir, emitted,
-                                     values.get("--mirror", []))
+        written = emit_context.write(out_dir, emitted, values.get("--mirror", []))
     except emit_context.EmitError as error:
         raise ResolveError(f"refused: {error}")
     for rel in written:
         text = emitted[rel]
-        print(f"  {rel}: {len(text.splitlines())} lines, "
-              f"{len(text.split())} words")
-    print(f"{len(written)} file(s) emitted from {len(files)} templates "
-          f"into {out_dir}.")
+        print(f"  {rel}: {len(text.splitlines())} lines, {len(text.split())} words")
+    print(f"{len(written)} file(s) emitted from {len(files)} templates into {out_dir}.")
 
 
 def _check(core_ids, offered, catalogue, stacks):
@@ -543,21 +558,27 @@ def _check(core_ids, offered, catalogue, stacks):
     # zero count alone proves nothing. The fixture is always there, though,
     # so a manifest that parses to no stack at all is a parse that failed.
     if not stacks:
-        print("The manifest parsed to no stack, not even the fixture; "
-              "refusing to report an empty cache as up to date.")
+        print(
+            "The manifest parsed to no stack, not even the fixture; "
+            "refusing to report an empty cache as up to date."
+        )
         sys.exit(1)
 
     stale, orphans = check_generated(core_ids, offered, catalogue)
-    print(f"stacks in the manifest: {len(stacks)}, of which a project can "
-          f"pick {len(catalogue)}; generated files checked: {len(catalogue)}")
+    print(
+        f"stacks in the manifest: {len(stacks)}, of which a project can "
+        f"pick {len(catalogue)}; generated files checked: {len(catalogue)}"
+    )
     for sid in stale:
         print(f"  stale: {sid}")
     for name in orphans:
         print(f"  orphaned: generated/{name}, which no stack produces")
     if stale or orphans:
-        print(f"{len(stale) + len(orphans)} generated file(s) out of date. "
-              f"Run py tools/resolve_chain.py --generate for a stale one, and "
-              f"delete an orphaned one.")
+        print(
+            f"{len(stale) + len(orphans)} generated file(s) out of date. "
+            f"Run py tools/resolve_chain.py --generate for a stale one, and "
+            f"delete an orphaned one."
+        )
         sys.exit(1)
     print("All generated files up to date.")
     sys.exit(0)

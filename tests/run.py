@@ -26,8 +26,11 @@ ALL = ["smoke", "conformance", "fork_sync"]
 
 def suites():
     """Every folder under tests/ holding a run.py, by name."""
-    return sorted(name for name in os.listdir(TESTS)
-                  if os.path.isfile(os.path.join(TESTS, name, "run.py")))
+    return sorted(
+        name
+        for name in os.listdir(TESTS)
+        if os.path.isfile(os.path.join(TESTS, name, "run.py"))
+    )
 
 
 def run_all():
@@ -44,8 +47,10 @@ def run_all():
         if code:
             failed.append(name)
     skipped = [name for name in found if name not in ALL]
-    print(f"\nsuites run: {len(ALL)}, failed: {len(failed)}"
-          + (f" ({', '.join(failed)})" if failed else ""))
+    print(
+        f"\nsuites run: {len(ALL)}, failed: {len(failed)}"
+        + (f" ({', '.join(failed)})" if failed else "")
+    )
     if skipped:
         print(f"not in all, run by name: {', '.join(skipped)}")
     return 1 if failed else 0

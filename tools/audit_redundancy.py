@@ -53,9 +53,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 # Ensure UTF-8 stdout on Windows
 if sys.stdout.encoding != "utf-8":
-    sys.stdout = io.TextIOWrapper(
-        sys.stdout.buffer, encoding="utf-8", errors="replace"
-    )
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 HEADING = re.compile(r"^(#{1,6})\s+(.*)$")
 TAG = re.compile(r"^\[(ID|OVERRIDE|EXTEND):\s*([^\]]+)\]\s*$")
@@ -275,33 +273,43 @@ def collect(core_ids, entries, roots, want_near=False):
         read[sid] = sum(len(s["rules"]) for s in sections)
 
         for fp, original, ia, ib in find_exact(sections, supersedes):
-            files = tuple(sorted(
-                [sections[ia]["file"], sections[ib]["file"]]
-            ))
-            sites = tuple(sorted([
-                f"{sections[ia]['file']} §{sections[ia]['heading']}",
-                f"{sections[ib]['file']} §{sections[ib]['heading']}",
-            ]))
+            files = tuple(sorted([sections[ia]["file"], sections[ib]["file"]]))
+            sites = tuple(
+                sorted(
+                    [
+                        f"{sections[ia]['file']} §{sections[ia]['heading']}",
+                        f"{sections[ib]['file']} §{sections[ib]['heading']}",
+                    ]
+                )
+            )
             key = (fp, sites)
             rec = exact.setdefault(
                 key,
-                {"original": original, "sites": sites, "fp": fp,
-                 "files": files, "chains": set()},
+                {
+                    "original": original,
+                    "sites": sites,
+                    "fp": fp,
+                    "files": files,
+                    "chains": set(),
+                },
             )
             rec["chains"].add(sid)
 
         if not want_near:
             continue
         for ratio, fa, fb, ia, ib in find_near(sections, supersedes):
-            sites = tuple(sorted([
-                f"{sections[ia]['file']} §{sections[ia]['heading']}",
-                f"{sections[ib]['file']} §{sections[ib]['heading']}",
-            ]))
+            sites = tuple(
+                sorted(
+                    [
+                        f"{sections[ia]['file']} §{sections[ia]['heading']}",
+                        f"{sections[ib]['file']} §{sections[ib]['heading']}",
+                    ]
+                )
+            )
             key = tuple(sorted([fa, fb])) + (sites,)
             rec = near.setdefault(
                 key,
-                {"ratio": ratio, "a": fa, "b": fb, "sites": sites,
-                 "chains": set()},
+                {"ratio": ratio, "a": fa, "b": fb, "sites": sites, "chains": set()},
             )
             rec["chains"].add(sid)
     return exact, near, read
@@ -314,19 +322,46 @@ def collect(core_ids, entries, roots, want_near=False):
 PLANTED_RULE = "- MUST state each planted rule once, in the file that owns it"
 PLANTED_NEAR = "- MUST state every planted rule once, in the file that owns it"
 PLANTED_CASES = [
-    ("a rule stated in two unrelated sections",
-     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
-      "b.md": "# B\n[ID: b]\n\n" + PLANTED_RULE + "\n"}, 1, 0),
-    ("a rule restated by the section that overrides it",
-     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
-      "b.md": "# B\n[OVERRIDE: a]\n\n" + PLANTED_RULE + "\n"}, 0, 0),
-    ("a rule repeated only in a fence and a table row",
-     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
-      "b.md": "# B\n[ID: b]\n\n```\n" + PLANTED_RULE + "\n```\n\n| "
-              + PLANTED_RULE + " |\n"}, 0, 0),
-    ("a rule paraphrased in an unrelated section",
-     {"a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
-      "b.md": "# B\n[ID: b]\n\n" + PLANTED_NEAR + "\n"}, 0, 1),
+    (
+        "a rule stated in two unrelated sections",
+        {
+            "a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+            "b.md": "# B\n[ID: b]\n\n" + PLANTED_RULE + "\n",
+        },
+        1,
+        0,
+    ),
+    (
+        "a rule restated by the section that overrides it",
+        {
+            "a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+            "b.md": "# B\n[OVERRIDE: a]\n\n" + PLANTED_RULE + "\n",
+        },
+        0,
+        0,
+    ),
+    (
+        "a rule repeated only in a fence and a table row",
+        {
+            "a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+            "b.md": "# B\n[ID: b]\n\n```\n"
+            + PLANTED_RULE
+            + "\n```\n\n| "
+            + PLANTED_RULE
+            + " |\n",
+        },
+        0,
+        0,
+    ),
+    (
+        "a rule paraphrased in an unrelated section",
+        {
+            "a.md": "# A\n[ID: a]\n\n" + PLANTED_RULE + "\n",
+            "b.md": "# B\n[ID: b]\n\n" + PLANTED_NEAR + "\n",
+        },
+        0,
+        1,
+    ),
 ]
 
 
@@ -341,9 +376,11 @@ def self_test():
         got_exact = len(list(find_exact(sections, supersedes)))
         got_near = len(list(find_near(sections, supersedes)))
         if (got_exact, got_near) != (want_exact, want_near):
-            misses.append(f"  {label}: found {got_exact} exact and "
-                          f"{got_near} near, owed {want_exact} and "
-                          f"{want_near}")
+            misses.append(
+                f"  {label}: found {got_exact} exact and "
+                f"{got_near} near, owed {want_exact} and "
+                f"{want_near}"
+            )
     return misses
 
 
@@ -354,8 +391,10 @@ def run_self_test():
     for line in misses:
         print(line)
     if misses:
-        print("FAIL: the detector's findings differ from what the planted "
-              "cases owe, so its audit of the corpus cannot be trusted")
+        print(
+            "FAIL: the detector's findings differ from what the planted "
+            "cases owe, so its audit of the corpus cannot be trusted"
+        )
         sys.exit(1)
 
 
@@ -376,26 +415,30 @@ def main():
     roots = [s["id"] for s in stacks]
     roots += opt_in_roots(core_ids, entries, stacks)
     if not roots:
-        print("no root resolved; refusing to report a clean audit over an "
-              "empty corpus")
+        print("no root resolved; refusing to report a clean audit over an empty corpus")
         sys.exit(1)
 
     # --check reports the near count, so it must compute that tier too.
     # A --check that skipped it printed "0" while six pairs stood.
     want_near = "--near" in args or "--check" in args
     exact, near, read = collect(core_ids, entries, roots, want_near=want_near)
-    print(f"roots scanned: {len(roots)} "
-          f"({len(stacks)} stack, {len(roots) - len(stacks)} orthogonal)")
-    print(f"rules read: {sum(read.values())} "
-          f"(fewest in one chain: {min(read.values())})")
+    print(
+        f"roots scanned: {len(roots)} "
+        f"({len(stacks)} stack, {len(roots) - len(stacks)} orthogonal)"
+    )
+    print(
+        f"rules read: {sum(read.values())} (fewest in one chain: {min(read.values())})"
+    )
 
     # Every chain carries the core tier, which states rules as bullets, so a
     # chain that yields none means the parser stopped matching, not that the
     # chain is free of duplicates.
     empty = sorted(sid for sid, n in read.items() if n == 0)
     if empty:
-        print(f"no rule read from {len(empty)} chain(s): {', '.join(empty)}; "
-              f"refusing to report a clean audit over rules it never read")
+        print(
+            f"no rule read from {len(empty)} chain(s): {', '.join(empty)}; "
+            f"refusing to report a clean audit over rules it never read"
+        )
         sys.exit(1)
 
     print("=" * 70)
@@ -410,20 +453,20 @@ def main():
         for site in rec["sites"]:
             print(f"    {site}")
         print(f"    rule: {rec['original'][:84]}")
-    n_base = sum(1 for r in exact.values()
-                 if (r["fp"], r["files"]) in BASELINE)
-    print(f"\n>>> {len(exact)} exact in-chain duplicate(s) "
-          f"({n_base} baselined)")
+    n_base = sum(1 for r in exact.values() if (r["fp"], r["files"]) in BASELINE)
+    print(f"\n>>> {len(exact)} exact in-chain duplicate(s) ({n_base} baselined)")
 
     if "--near" in args:
         print("\n" + "=" * 70)
         print(f"NEAR in-chain duplicates (>= {NEAR_THRESHOLD})")
         print("=" * 70)
-        for rec in sorted(near.values(),
-                          key=lambda r: (-len(r["chains"]), -r["ratio"])):
+        for rec in sorted(
+            near.values(), key=lambda r: (-len(r["chains"]), -r["ratio"])
+        ):
             chains = sorted(rec["chains"])
-            print(f"\n~{rec['ratio']:.2f} | {len(chains)} chain(s): "
-                  f"{', '.join(chains)}")
+            print(
+                f"\n~{rec['ratio']:.2f} | {len(chains)} chain(s): {', '.join(chains)}"
+            )
             for site in rec["sites"]:
                 print(f"    {site}")
             print(f"    A: {rec['a'][:80]}")
@@ -435,8 +478,7 @@ def main():
         # letting a green run read as "no duplicates". A 0.99 pair survived
         # in a shipping chain while --check passed and reported nothing about
         # the tier it does not score (ADR-038).
-        print(f"\nnear-duplicate pairs found (not gated, see ADR-038): "
-              f"{len(near)}")
+        print(f"\nnear-duplicate pairs found (not gated, see ADR-038): {len(near)}")
 
         present = set()
         new_dups = []
@@ -449,24 +491,26 @@ def main():
 
         resolved = set(BASELINE) - present
         if resolved:
-            print("\nBaseline entries no longer present "
-                  "(remove from BASELINE):")
+            print("\nBaseline entries no longer present (remove from BASELINE):")
             for fp, files in sorted(resolved):
                 print(f"  {fp[:56]}  {files}")
 
         if new_dups:
-            print(f"\nFAIL: {len(new_dups)} new exact in-chain "
-                  f"duplicate(s) beyond the baseline:")
+            print(
+                f"\nFAIL: {len(new_dups)} new exact in-chain "
+                f"duplicate(s) beyond the baseline:"
+            )
             for rec in new_dups:
                 print(f"  rule: {rec['original'][:70]}")
                 for site in rec["sites"]:
                     print(f"      {site}")
-            print("\nFix the duplicate, or add it to BASELINE in "
-                  "tools/audit_redundancy.py with its owning issue.")
+            print(
+                "\nFix the duplicate, or add it to BASELINE in "
+                "tools/audit_redundancy.py with its owning issue."
+            )
             sys.exit(1)
 
-        print(f"\nOK: no new exact in-chain duplicates "
-              f"({len(present)} baselined).")
+        print(f"\nOK: no new exact in-chain duplicates ({len(present)} baselined).")
         sys.exit(0)
 
 

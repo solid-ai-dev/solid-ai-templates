@@ -67,8 +67,12 @@ FORK_KEY = "fork"
 
 def git(cwd, *args, check=True):
     """Run git in cwd and return the completed process."""
-    run = subprocess.run(["git", "-C", cwd] + list(args),
-                         capture_output=True, text=True, encoding="utf-8")
+    run = subprocess.run(
+        ["git", "-C", cwd] + list(args),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
     if check and run.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)}: {run.stderr.strip()}")
     return run
@@ -110,14 +114,14 @@ def commit(repo, base, message, edit):
     tip = out(repo, "rev-parse", "HEAD")
     changed = set(out(repo, "diff", "--name-only", base, tip).splitlines())
     if changed != set(owed):
-        raise RuntimeError(f"{message}: changed {sorted(changed)}, "
-                           f"owed {sorted(owed)}")
+        raise RuntimeError(f"{message}: changed {sorted(changed)}, owed {sorted(owed)}")
     return tip
 
 
 # ---------------------------------------------------------------------------
 # The edits each side makes
 # ---------------------------------------------------------------------------
+
 
 def fork_edits(repo):
     """What a fork does under ADR-049: append, and own its documents."""
@@ -133,8 +137,7 @@ def fork_edits(repo):
 
     # A fork owns whichever of these it carries; one that upstream adds after
     # the fork's base arrives with the merge instead.
-    owned = [rel for rel in FORK_OWNED
-             if os.path.exists(os.path.join(repo, rel))]
+    owned = [rel for rel in FORK_OWNED if os.path.exists(os.path.join(repo, rel))]
     for rel in owned:
         write(repo, rel, insert_after_title(read(repo, rel), FORK_NOTE))
     return [FORK_STACK, MANIFEST, *owned]
@@ -157,22 +160,25 @@ def upstream_appends_a_stack(repo):
     manifest = read(repo, MANIFEST)
     if not manifest.endswith("\n"):
         manifest += "\n"
-    write(repo, MANIFEST, manifest + FORK_ENTRY.replace(
-        "stack-fork-sync", "stack-upstream-plant"))
+    write(
+        repo,
+        MANIFEST,
+        manifest + FORK_ENTRY.replace("stack-fork-sync", "stack-upstream-plant"),
+    )
     return [MANIFEST]
 
 
 def upstream_edits_readme(repo):
     """Planted: upstream edits the README where the fork brands it."""
     text = read(repo, "README.md")
-    write(repo, "README.md",
-          insert_after_title(text, "Upstream edit under the title."))
+    write(repo, "README.md", insert_after_title(text, "Upstream edit under the title."))
     return ["README.md"]
 
 
 # ---------------------------------------------------------------------------
 # The merge
 # ---------------------------------------------------------------------------
+
 
 def merge(repo, fork, upstream):
     """Merge upstream into fork the way a fork syncs.
@@ -185,8 +191,9 @@ def merge(repo, fork, upstream):
     run = git(repo, "merge", "--no-edit", "-q", upstream, check=False)
     conflicted = out(repo, "diff", "--name-only", "--diff-filter=U").split()
     if run.returncode != 0 and not conflicted:
-        raise RuntimeError(f"merge failed without conflicts: "
-                           f"{(run.stdout + run.stderr).strip()}")
+        raise RuntimeError(
+            f"merge failed without conflicts: {(run.stdout + run.stderr).strip()}"
+        )
 
     owned = sorted(p for p in conflicted if p in FORK_OWNED)
     unexpected = sorted(p for p in conflicted if p not in FORK_OWNED)
@@ -209,11 +216,11 @@ def follow_renames(repo, base, upstream, fork, merged):
     simulation does what the fork would and reports it. Anything a rename
     does not explain, a deleted file or a removed ID, still reaches smoke.
     """
-    status = out(repo, "diff", "-M", "--name-status", "--diff-filter=R",
-                 base, upstream).splitlines()
+    status = out(
+        repo, "diff", "-M", "--name-status", "--diff-filter=R", base, upstream
+    ).splitlines()
     renames = [tuple(line.split("\t")[1:3]) for line in status]
-    own = out(repo, "diff", "--name-only", "--diff-filter=A", base,
-              fork).splitlines()
+    own = out(repo, "diff", "--name-only", "--diff-filter=A", base, fork).splitlines()
 
     git(repo, "checkout", "-q", "--detach", merged)
     touched = []
@@ -259,14 +266,20 @@ def nested_smoke(repo, upstream):
     """Run the merged tree's own smoke suite, with SYS-20 against upstream."""
     command = smoke_command(repo)
     if command is None:
-        return 1, None, ["  the merged tree ships no smoke entry point: "
-                         + " or ".join(c[0] for c in SMOKE_ENTRY_POINTS)]
+        return (
+            1,
+            None,
+            [
+                "  the merged tree ships no smoke entry point: "
+                + " or ".join(c[0] for c in SMOKE_ENTRY_POINTS)
+            ],
+        )
     env = dict(os.environ, SAIT_UPSTREAM_REF=upstream)
-    run = subprocess.run(command, cwd=repo, env=env, capture_output=True,
-                         text=True, encoding="utf-8")
+    run = subprocess.run(
+        command, cwd=repo, env=env, capture_output=True, text=True, encoding="utf-8"
+    )
     lines = run.stdout.splitlines()
-    verdict = next((l for l in reversed(lines) if l.startswith("VERDICT:")),
-                   None)
+    verdict = next((l for l in reversed(lines) if l.startswith("VERDICT:")), None)
     failing = [l for l in lines if l.startswith(("  FAIL", "  ERR"))]
     return run.returncode, verdict, failing
 
@@ -275,16 +288,20 @@ def nested_smoke(repo, upstream):
 # Scenarios
 # ---------------------------------------------------------------------------
 
+
 def planted(repo, base, fork, rid, title, edit, owed_owned, owed_unexpected):
     """A planted upstream change whose conflicts are known in advance."""
     upstream = commit(repo, base, f"upstream: {title}", edit)
     merged, owned, unexpected = merge(repo, fork, upstream)
-    notes = [f"  conflicts in fork-owned files: {owned or 'none'}",
-             f"  conflicts elsewhere: {unexpected or 'none'}"]
+    notes = [
+        f"  conflicts in fork-owned files: {owned or 'none'}",
+        f"  conflicts elsewhere: {unexpected or 'none'}",
+    ]
     failures = []
     if owned != owed_owned or unexpected != owed_unexpected:
-        failures.append(f"  owed fork-owned {owed_owned} and elsewhere "
-                        f"{owed_unexpected}")
+        failures.append(
+            f"  owed fork-owned {owed_owned} and elsewhere {owed_unexpected}"
+        )
     if not owed_unexpected and merged is None:
         failures.append("  the merge did not complete")
     return {"id": rid, "title": title, "notes": notes, "failures": failures}
@@ -299,14 +316,17 @@ def pending_splits(repo, base, upstream):
     would merge with `-s ours`, so it is left out.
     """
     revs = out(repo, "rev-list", f"{base}..{upstream}").split()
-    declared = [rev for rev in revs
-                if OURS_TRAILER.search(out(repo, "log", "-1", "--format=%B",
-                                           rev))]
+    declared = [
+        rev
+        for rev in revs
+        if OURS_TRAILER.search(out(repo, "log", "-1", "--format=%B", rev))
+    ]
     absorbed = set()
     for rev in out(repo, "rev-list", "--merges", f"{base}..{upstream}").split():
         parents = out(repo, "rev-list", "--parents", "-n", "1", rev).split()[1:]
-        if (len(parents) > 1 and out(repo, "rev-parse", f"{rev}^{{tree}}")
-                == out(repo, "rev-parse", f"{parents[0]}^{{tree}}")):
+        if len(parents) > 1 and out(repo, "rev-parse", f"{rev}^{{tree}}") == out(
+            repo, "rev-parse", f"{parents[0]}^{{tree}}"
+        ):
             absorbed.update(parents[1:])
     return [rev for rev in declared if rev not in absorbed]
 
@@ -331,10 +351,13 @@ def leave_upstream_keys(repo, merged, upstream):
     up = yaml.safe_load(out(repo, "show", f"{upstream}:{MANIFEST}"))
     git(repo, "checkout", "-q", "--detach", merged)
     mine = yaml.safe_load(read(repo, MANIFEST))
-    kept_ids = {e["id"] for key in UPSTREAM_ENTRY_KEYS
-                for e in up.get(key) or []}
-    moving = [e["id"] for key in UPSTREAM_ENTRY_KEYS
-              for e in mine.get(key) or [] if e["id"] not in kept_ids]
+    kept_ids = {e["id"] for key in UPSTREAM_ENTRY_KEYS for e in up.get(key) or []}
+    moving = [
+        e["id"]
+        for key in UPSTREAM_ENTRY_KEYS
+        for e in mine.get(key) or []
+        if e["id"] not in kept_ids
+    ]
     up_core = up.get("core") or []
     extra_core = [i for i in mine.get("core") or [] if i not in up_core]
     if not moving and not extra_core:
@@ -348,8 +371,7 @@ def leave_upstream_keys(repo, merged, upstream):
                 section, current = top.group(1), False
             entry = re.match(r"^  - id: (\S+)", line)
             if entry:
-                current = (section in UPSTREAM_ENTRY_KEYS
-                           and entry.group(1) in moving)
+                current = section in UPSTREAM_ENTRY_KEYS and entry.group(1) in moving
             if section == "core" and top:
                 kept.append("core: [%s]" % ", ".join(up_core))
                 if extra_core:
@@ -360,8 +382,11 @@ def leave_upstream_keys(repo, merged, upstream):
         write(target, MANIFEST, text + "\n".join(moved).rstrip("\n") + "\n")
         return [MANIFEST]
 
-    return (commit(repo, merged, "fork: move its templates out of upstream's "
-                   "keys", edit), moving, extra_core)
+    return (
+        commit(repo, merged, "fork: move its templates out of upstream's keys", edit),
+        moving,
+        extra_core,
+    )
 
 
 def real(repo, base, head, fork):
@@ -369,45 +394,61 @@ def real(repo, base, head, fork):
     notes = []
     upstream = head
     if not out(repo, "diff", "--name-only", base, head):
-        upstream = commit(repo, base, "upstream: edit base:",
-                          upstream_base_edit)
-        notes.append("  HEAD changes nothing against the base, so the "
-                     "upstream change is a planted `base:` edit")
+        upstream = commit(repo, base, "upstream: edit base:", upstream_base_edit)
+        notes.append(
+            "  HEAD changes nothing against the base, so the "
+            "upstream change is a planted `base:` edit"
+        )
     changed = out(repo, "diff", "--name-only", base, upstream).splitlines()
-    notes.append(f"  upstream change: {len(changed)} file(s), "
-                 f"{base[:7]}..{upstream[:7]}")
+    notes.append(
+        f"  upstream change: {len(changed)} file(s), {base[:7]}..{upstream[:7]}"
+    )
 
     title = "the upstream change merges into a fork that only appends"
     if pending_splits(repo, base, upstream):
         return split(repo, upstream, fork, notes, title)
 
     merged, owned, unexpected = merge(repo, fork, upstream)
-    notes.append(f"  conflicts in fork-owned files, kept as the fork's: "
-                 f"{owned or 'none'}")
+    notes.append(
+        f"  conflicts in fork-owned files, kept as the fork's: {owned or 'none'}"
+    )
     if merged is None:
-        return {"id": "FS-03", "title": title, "notes": notes, "failures": [
-            f"  conflicts outside the fork's own documents: {unexpected}"]}
+        return {
+            "id": "FS-03",
+            "title": title,
+            "notes": notes,
+            "failures": [f"  conflicts outside the fork's own documents: {unexpected}"],
+        }
 
     merged, renames = follow_renames(repo, base, upstream, fork, merged)
-    notes.append(f"  upstream renames, applied to the fork's own files: "
-                 f"{renames or 'none'}")
+    notes.append(
+        f"  upstream renames, applied to the fork's own files: {renames or 'none'}"
+    )
 
     if not os.path.exists(os.path.join(repo, FORK_STACK)):
-        return {"id": "FS-03", "title": title, "notes": notes, "failures": [
-            f"  the merged tree lost the fork's stack, {FORK_STACK}"]}
+        return {
+            "id": "FS-03",
+            "title": title,
+            "notes": notes,
+            "failures": [f"  the merged tree lost the fork's stack, {FORK_STACK}"],
+        }
 
     return smoke_result(repo, upstream, notes, title)
 
 
 def split(repo, upstream, fork, notes, title):
     """A change declaring `Fork-merge: ours`: merge it the way a fork must."""
-    notes.append("  the change declares `Fork-merge: ours`, so the fork "
-                 "takes it with `git merge -s ours`")
+    notes.append(
+        "  the change declares `Fork-merge: ours`, so the fork "
+        "takes it with `git merge -s ours`"
+    )
     merged = merge_ours(repo, fork, upstream)
     merged, moving, extra_core = leave_upstream_keys(repo, merged, upstream)
-    notes.append(f"  entries moved to the fork's `{FORK_KEY}:` key: "
-                 f"{len(moving)}; core IDs moved to `fork_core`: "
-                 f"{extra_core or 'none'}")
+    notes.append(
+        f"  entries moved to the fork's `{FORK_KEY}:` key: "
+        f"{len(moving)}; core IDs moved to `fork_core`: "
+        f"{extra_core or 'none'}"
+    )
     return smoke_result(repo, upstream, notes, title)
 
 
@@ -419,13 +460,13 @@ def smoke_result(repo, upstream, notes, title):
     if code != 0 or verdict is None:
         failures.append("  smoke fails in the merged tree")
         failures.extend(failing)
-    return {"id": "FS-03", "title": title, "notes": notes,
-            "failures": failures}
+    return {"id": "FS-03", "title": title, "notes": notes, "failures": failures}
 
 
 # ---------------------------------------------------------------------------
 # Runner
 # ---------------------------------------------------------------------------
+
 
 def base_commit(ref):
     """The commit the fork was made from, or exit naming what is missing.
@@ -433,14 +474,16 @@ def base_commit(ref):
     A baseline that cannot be derived is a refusal, never a pass: a run
     against nothing would report the clean merge of an empty change.
     """
-    resolved = git(ROOT, "rev-parse", "--verify", "-q", f"{ref}^{{commit}}",
-                   check=False)
+    resolved = git(
+        ROOT, "rev-parse", "--verify", "-q", f"{ref}^{{commit}}", check=False
+    )
     if resolved.returncode != 0:
-        print(f"Base ref {ref!r} does not resolve. Fetch it, or name "
-              f"another with --base=<ref>. Nothing has run.")
+        print(
+            f"Base ref {ref!r} does not resolve. Fetch it, or name "
+            f"another with --base=<ref>. Nothing has run."
+        )
         sys.exit(1)
-    found = git(ROOT, "merge-base", "HEAD", resolved.stdout.strip(),
-                check=False)
+    found = git(ROOT, "merge-base", "HEAD", resolved.stdout.strip(), check=False)
     if found.returncode != 0 or not found.stdout.strip():
         print(f"HEAD shares no history with {ref!r}. Nothing has run.")
         sys.exit(1)
@@ -452,6 +495,7 @@ def remove(path):
     def retry(func, target, _info):
         os.chmod(target, stat.S_IWRITE)
         func(target)
+
     shutil.rmtree(path, onerror=retry)
 
 
@@ -477,8 +521,10 @@ def main():
     base = base_commit(ref)
     if out(ROOT, "status", "--porcelain"):
         print("The working tree is dirty; this run reads committed HEAD only.")
-    print(f"Fork from {base[:7]} (merge-base of HEAD and {ref}); "
-          f"upstream change {base[:7]}..{head[:7]}\n")
+    print(
+        f"Fork from {base[:7]} (merge-base of HEAD and {ref}); "
+        f"upstream change {base[:7]}..{head[:7]}\n"
+    )
 
     repo = tempfile.mkdtemp(prefix="sait-fork-sync-")
     results = []
@@ -486,24 +532,42 @@ def main():
         # A shared clone borrows ROOT's objects, so HEAD resolves even when
         # it is CI's detached merge commit, which no branch names.
         git(ROOT, "clone", "-q", "--shared", "--no-checkout", ROOT, repo)
-        for key, value in (("core.autocrlf", "false"),
-                           ("user.name", "fork-sync"),
-                           ("user.email", "fork-sync@localhost")):
+        for key, value in (
+            ("core.autocrlf", "false"),
+            ("user.name", "fork-sync"),
+            ("user.email", "fork-sync@localhost"),
+        ):
             git(repo, "config", key, value)
-        fork = commit(repo, base, "fork: append a stack, own the documents",
-                      fork_edits)
+        fork = commit(repo, base, "fork: append a stack, own the documents", fork_edits)
 
         scenarios = [
-            ("FS-01", lambda: planted(
-                repo, base, fork, "FS-01",
-                "planted: upstream appends where the fork appends, and the "
-                "conflict is caught",
-                upstream_appends_a_stack, [], [MANIFEST])),
-            ("FS-02", lambda: planted(
-                repo, base, fork, "FS-02",
-                "planted: a conflict in a fork-owned file is kept as the "
-                "fork's",
-                upstream_edits_readme, ["README.md"], [])),
+            (
+                "FS-01",
+                lambda: planted(
+                    repo,
+                    base,
+                    fork,
+                    "FS-01",
+                    "planted: upstream appends where the fork appends, and the "
+                    "conflict is caught",
+                    upstream_appends_a_stack,
+                    [],
+                    [MANIFEST],
+                ),
+            ),
+            (
+                "FS-02",
+                lambda: planted(
+                    repo,
+                    base,
+                    fork,
+                    "FS-02",
+                    "planted: a conflict in a fork-owned file is kept as the fork's",
+                    upstream_edits_readme,
+                    ["README.md"],
+                    [],
+                ),
+            ),
             ("FS-03", lambda: real(repo, base, head, fork)),
         ]
         for rid, scenario in scenarios:
@@ -511,8 +575,14 @@ def main():
                 r = scenario()
                 r["status"] = FAIL if r["failures"] else PASS
             except RuntimeError as e:
-                r = {"id": rid, "title": "scenario raised", "status": ERR,
-                     "notes": [], "failures": [], "error": str(e)}
+                r = {
+                    "id": rid,
+                    "title": "scenario raised",
+                    "status": ERR,
+                    "notes": [],
+                    "failures": [],
+                    "error": str(e),
+                }
             results.append(r)
             print(f"  {r['status']}  {r['id']}  {r['title']}")
             for line in r["notes"] + r["failures"]:
@@ -524,11 +594,13 @@ def main():
 
     failed = sum(1 for r in results if r["status"] == FAIL)
     errors = sum(1 for r in results if r["status"] == ERR)
-    write_report(results, started_at, "fork_sync",
-                 {PASS: render, FAIL: render, ERR: render})
+    write_report(
+        results, started_at, "fork_sync", {PASS: render, FAIL: render, ERR: render}
+    )
     ok = failed == 0 and errors == 0 and len(results) == 3
-    print_verdict(ok, "%d scenarios, %d failed, %d errors"
-                  % (len(results), failed, errors))
+    print_verdict(
+        ok, "%d scenarios, %d failed, %d errors" % (len(results), failed, errors)
+    )
     sys.exit(0 if ok else 1)
 
 

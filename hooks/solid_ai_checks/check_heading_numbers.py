@@ -74,8 +74,9 @@ def ordinals(lines):
     stay apart. Fenced content is an example, never the document's own
     numbering.
     """
-    fenced = {opening: (closing, indent)
-              for opening, closing, indent, _ in spans(lines)}
+    fenced = {
+        opening: (closing, indent) for opening, closing, indent, _ in spans(lines)
+    }
     serials = itertools.count(1)
     lists = Lists("(top)", serials)
     n = 0
@@ -113,8 +114,12 @@ def ordinals(lines):
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="check-heading-numbers")
-    parser.add_argument("--path", action="append", default=[],
-                        help="a numbered document to check; repeatable")
+    parser.add_argument(
+        "--path",
+        action="append",
+        default=[],
+        help="a numbered document to check; repeatable",
+    )
     args = parser.parse_args(argv)
 
     paths = report.count("documents inspected", args.path)
@@ -131,19 +136,24 @@ def main(argv, report):
             found += 1
             run = runs.setdefault(key, [])
             if value in run:
-                report.finding(path, number, "REPEATED",
-                               "%s repeats under %s" % (label, key[0]))
+                report.finding(
+                    path, number, "REPEATED", "%s repeats under %s" % (label, key[0])
+                )
             elif run and value != run[-1] + 1:
-                report.finding(path, number, "SKIPPED",
-                               "%s follows %s under %s"
-                               % (label, run[-1], key[0]))
+                report.finding(
+                    path,
+                    number,
+                    "SKIPPED",
+                    "%s follows %s under %s" % (label, run[-1], key[0]),
+                )
             run.append(value)
 
         # A document with no ordinal means the pattern drifted from its
         # convention, not that its numbering is clean.
         if not found:
-            report.finding(path, 0, "NO-ORDINALS",
-                           "no ordinal found; the pattern drifted")
+            report.finding(
+                path, 0, "NO-ORDINALS", "no ordinal found; the pattern drifted"
+            )
         total += found
     report.count("ordinals inspected", total)
     report.count("numbering problems", report.findings)

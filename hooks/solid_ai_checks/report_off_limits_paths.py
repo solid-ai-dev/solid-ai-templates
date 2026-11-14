@@ -29,8 +29,10 @@ def changed_paths(span):
     # longer starts with the prefix it falls under.
     diff = run_git(["diff", "--name-status", "-z", span])
     if diff.returncode != 0:
-        raise GitFailed("git diff exited %d: %s" % (
-            diff.returncode, diff.stderr.decode("utf-8", "replace").strip()))
+        raise GitFailed(
+            "git diff exited %d: %s"
+            % (diff.returncode, diff.stderr.decode("utf-8", "replace").strip())
+        )
     fields = diff.stdout.decode("utf-8").split("\0")
     paths, i = [], 0
     while i < len(fields) and fields[i]:
@@ -47,17 +49,23 @@ def changed_paths(span):
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="report-off-limits-paths")
-    parser.add_argument("--base", default="origin/main",
-                        help="the ref the change is compared against")
-    parser.add_argument("--path", action="append", default=[],
-                        help="an off-limits path prefix; repeatable")
+    parser.add_argument(
+        "--base", default="origin/main", help="the ref the change is compared against"
+    )
+    parser.add_argument(
+        "--path",
+        action="append",
+        default=[],
+        help="an off-limits path prefix; repeatable",
+    )
     args = parser.parse_args(argv)
 
     # git prints `.github/workflows/ci.yml`, so a prefix spelled
     # `./.github/workflows/` or with backslashes must be respelled before
     # it can match; left raw, the protected change drops out of the report.
-    prefixes = report.count("off-limits paths declared",
-                            [path_prefix(p) for p in args.path if p.strip()])
+    prefixes = report.count(
+        "off-limits paths declared", [path_prefix(p) for p in args.path if p.strip()]
+    )
     if not prefixes:
         return report.not_applicable("no --path declared off-limits")
 

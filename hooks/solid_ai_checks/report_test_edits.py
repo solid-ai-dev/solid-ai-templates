@@ -12,10 +12,10 @@ from .support.history import git, open_change
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="report-test-edits")
-    parser.add_argument("--base", default="origin/main",
-                        help="the ref the change is compared against")
-    parser.add_argument("--tests", default="tests",
-                        help="the project's test root")
+    parser.add_argument(
+        "--base", default="origin/main", help="the ref the change is compared against"
+    )
+    parser.add_argument("--tests", default="tests", help="the project's test root")
     args = parser.parse_args(argv)
 
     span, status = open_change(report, args.base)
@@ -24,8 +24,9 @@ def main(argv, report):
 
     scope = "%s/" % args.tests.rstrip("/")
     changed = [l for l in git("diff", "--name-status", span).splitlines() if l]
-    tests = [l for l in git("diff", "--name-status", span, "--", scope)
-             .splitlines() if l]
+    tests = [
+        l for l in git("diff", "--name-status", span, "--", scope).splitlines() if l
+    ]
     loosened = [l for l in tests if not l.startswith("A")]
     added = removed = 0
     for row in git("diff", "--numstat", span, "--", scope).splitlines():
@@ -40,6 +41,10 @@ def main(argv, report):
     report.count("test-root lines removed", removed)
     for row in loosened:
         status, path = row.split("\t", 1)
-        report.finding(path.split("\t")[-1], 0, "EDITED",
-                       "test file changed with status %s" % status)
+        report.finding(
+            path.split("\t")[-1],
+            0,
+            "EDITED",
+            "test file changed with status %s" % status,
+        )
     return report.finish(False)

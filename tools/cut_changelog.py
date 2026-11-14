@@ -69,8 +69,9 @@ BOTS = {"app/dependabot", "dependabot[bot]", "dependabot"}
 def entry_text(title, body=""):
     """The plain-words entry for a pull request."""
     override = OVERRIDE.search((body or "").replace("\r\n", "\n"))
-    text = override.group(1) if override else ISSUES.sub(
-        "", PREFIX.sub("", title.strip()))
+    text = (
+        override.group(1) if override else ISSUES.sub("", PREFIX.sub("", title.strip()))
+    )
     return text[:1].upper() + text[1:]
 
 
@@ -89,10 +90,13 @@ def section_of(labels):
 
 def unreleased_span(lines):
     """The index range of the `Unreleased` section's body."""
-    start = next(i for i, line in enumerate(lines)
-                 if line.startswith("## [Unreleased]"))
-    end = next((i for i in range(start + 1, len(lines))
-                if lines[i].startswith("## [")), len(lines))
+    start = next(
+        i for i, line in enumerate(lines) if line.startswith("## [Unreleased]")
+    )
+    end = next(
+        (i for i in range(start + 1, len(lines)) if lines[i].startswith("## [")),
+        len(lines),
+    )
     return start + 1, end
 
 
@@ -110,25 +114,34 @@ def add_entries(text, entries):
     listed = set(re.findall(r"\(\[#(\d+)\]\)", text))
     defined = set(re.findall(r"^\[#(\d+)\]: ", text, re.MULTILINE))
     links = [i for i, line in enumerate(body) if re.match(r"^\[#\d+\]: ", line)]
-    content = body[:links[0]] if links else body
-    refs = body[links[0]:] if links else []
+    content = body[: links[0]] if links else body
+    refs = body[links[0] :] if links else []
     added = []
     for heading, number, words in entries:
         if str(number) in listed:
             continue
         listed.add(str(number))
         added.append(number)
-        bullet = textwrap.wrap("- %s ([#%d])" % (words, number), WIDTH,
-                               subsequent_indent="  ", break_long_words=False,
-                               break_on_hyphens=False)
+        bullet = textwrap.wrap(
+            "- %s ([#%d])" % (words, number),
+            WIDTH,
+            subsequent_indent="  ",
+            break_long_words=False,
+            break_on_hyphens=False,
+        )
         marker = "### " + heading
         if marker not in content:
             # Place a new heading before the first later one, in order.
             order = list(SECTIONS.values())
-            later = [h for h in order[order.index(heading) + 1:]]
-            at = next((i for i, line in enumerate(content)
-                       if line[4:] in later and line.startswith("### ")),
-                      None)
+            later = [h for h in order[order.index(heading) + 1 :]]
+            at = next(
+                (
+                    i
+                    for i, line in enumerate(content)
+                    if line[4:] in later and line.startswith("### ")
+                ),
+                None,
+            )
             block = [marker, ""] + bullet + [""]
             if at is None:
                 while content and content[-1] == "":
@@ -147,8 +160,7 @@ def add_entries(text, entries):
     # blank line, so a run that adds nothing leaves the file unchanged.
     while refs and refs[-1] == "":
         refs.pop()
-    refs += ["[#%d]: %s%d" % (n, REPO, n) for n in added
-             if str(n) not in defined]
+    refs += ["[#%d]: %s%d" % (n, REPO, n) for n in added if str(n) not in defined]
     while content and content[-1] == "":
         content.pop()
     tail = [""] + refs + [""] if refs else [""]
@@ -168,16 +180,18 @@ def cut(text, version, day):
     start, end = unreleased_span(lines)
     if not any(line.startswith("- ") for line in lines[start:end]):
         raise ValueError("Unreleased holds no entry to cut")
-    return text.replace("## [Unreleased]",
-                        "## [Unreleased]\n\n## [%s] - %s" % (version, day), 1)
+    return text.replace(
+        "## [Unreleased]", "## [Unreleased]\n\n## [%s] - %s" % (version, day), 1
+    )
 
 
 def merged_since(tag):
     """The pull request numbers the squash subjects since `tag` name."""
     log = subprocess.run(["git", "log", "--format=%s", tag + "..HEAD"], **RUN)
     if log.returncode != 0:
-        raise SystemExit("cut_changelog: git log %s..HEAD failed: %s"
-                         % (tag, log.stderr.strip()))
+        raise SystemExit(
+            "cut_changelog: git log %s..HEAD failed: %s" % (tag, log.stderr.strip())
+        )
     found = []
     for subject in log.stdout.splitlines():
         match = NUMBER.search(subject)
@@ -192,11 +206,13 @@ def fetch(number):
     A dependency bump carries no entry, and the label gate exempts its
     author, so it reads as `changelog:none` here.
     """
-    out = subprocess.run(["gh", "pr", "view", str(number), "--json",
-                          "title,labels,body,author"], **RUN)
+    out = subprocess.run(
+        ["gh", "pr", "view", str(number), "--json", "title,labels,body,author"], **RUN
+    )
     if out.returncode != 0:
-        raise SystemExit("cut_changelog: gh pr view %d failed: %s"
-                         % (number, out.stderr.strip()))
+        raise SystemExit(
+            "cut_changelog: gh pr view %d failed: %s" % (number, out.stderr.strip())
+        )
     data = json.loads(out.stdout)
     labels = [lab["name"] for lab in data["labels"]]
     if (data.get("author") or {}).get("login") in BOTS:
@@ -216,8 +232,9 @@ def run(args):
             print("cut_changelog: --cut takes vA.B.C, not %r" % options.cut)
             return 2
         version = match.group(1)
-    tag = subprocess.run(["git", "describe", "--tags", "--abbrev=0",
-                          "--match", "v*"], **RUN).stdout.strip()
+    tag = subprocess.run(
+        ["git", "describe", "--tags", "--abbrev=0", "--match", "v*"], **RUN
+    ).stdout.strip()
     if not tag:
         print("cut_changelog: no previous v* tag to read from")
         return 2
@@ -262,85 +279,155 @@ def run(args):
 
 
 def self_test():
-    sample = ("# Changelog\n\n## [Unreleased]\n\n### Added\n\n"
-              "- Old entry ([#10])\n\n### Fixed\n\n- Old fix ([#11])\n\n"
-              "[#10]: %s10\n[#11]: %s11\n\n## [1.0.0] - 2026-01-01\n\n"
-              "### Added\n\n- First ([#1])\n" % (REPO, REPO))
+    sample = (
+        "# Changelog\n\n## [Unreleased]\n\n### Added\n\n"
+        "- Old entry ([#10])\n\n### Fixed\n\n- Old fix ([#11])\n\n"
+        "[#10]: %s10\n[#11]: %s11\n\n## [1.0.0] - 2026-01-01\n\n"
+        "### Added\n\n- First ([#1])\n" % (REPO, REPO)
+    )
     cases = []
-    cases.append(("the prefix and issue numbers are dropped",
-                  entry_text("feat(tools): emit the skills (#12) (#13)")
-                  == "Emit the skills"))
-    cases.append(("a Changelog line overrides the title",
-                  entry_text("docs: x (#1)", "Body\nChangelog: Plain words\n")
-                  == "Plain words"))
-    cases.append(("one label names its section",
-                  section_of(["P2", "changelog:fixed"]) == "Fixed"))
-    cases.append(("changelog:none names no section",
-                  section_of(["changelog:none"]) == ""))
-    cases.append(("no label, or two, is refused",
-                  section_of(["task"]) is None
-                  and section_of(["changelog: none"]) is None
-                  and section_of(["changelog:added", "changelog:fixed"])
-                  is None))
-    text, added = add_entries(sample, [("Added", 20, "New thing"),
-                                       ("Added", 10, "Duplicate")])
+    cases.append(
+        (
+            "the prefix and issue numbers are dropped",
+            entry_text("feat(tools): emit the skills (#12) (#13)") == "Emit the skills",
+        )
+    )
+    cases.append(
+        (
+            "a Changelog line overrides the title",
+            entry_text("docs: x (#1)", "Body\nChangelog: Plain words\n")
+            == "Plain words",
+        )
+    )
+    cases.append(
+        (
+            "one label names its section",
+            section_of(["P2", "changelog:fixed"]) == "Fixed",
+        )
+    )
+    cases.append(
+        ("changelog:none names no section", section_of(["changelog:none"]) == "")
+    )
+    cases.append(
+        (
+            "no label, or two, is refused",
+            section_of(["task"]) is None
+            and section_of(["changelog: none"]) is None
+            and section_of(["changelog:added", "changelog:fixed"]) is None,
+        )
+    )
+    text, added = add_entries(
+        sample, [("Added", 20, "New thing"), ("Added", 10, "Duplicate")]
+    )
     unreleased = text.split("## [1.0.0]")[0]
-    cases.append(("an entry joins its section, a listed one is skipped",
-                  added == [20] and "- New thing ([#20])" in unreleased
-                  and "Duplicate" not in text
-                  and unreleased.index("[#20])") < unreleased.index(
-                      "### Fixed")))
-    cases.append(("its link joins the section's links",
-                  "[#20]: %s20" % REPO in unreleased))
+    cases.append(
+        (
+            "an entry joins its section, a listed one is skipped",
+            added == [20]
+            and "- New thing ([#20])" in unreleased
+            and "Duplicate" not in text
+            and unreleased.index("[#20])") < unreleased.index("### Fixed"),
+        )
+    )
+    cases.append(
+        ("its link joins the section's links", "[#20]: %s20" % REPO in unreleased)
+    )
     text, _ = add_entries(sample, [("Breaking changes", 30, "Big change")])
-    cases.append(("a missing section is opened in its place",
-                  text.index("### Breaking changes")
-                  < text.index("### Added")))
+    cases.append(
+        (
+            "a missing section is opened in its place",
+            text.index("### Breaking changes") < text.index("### Added"),
+        )
+    )
     text, _ = add_entries(sample, [("Security", 31, "Patched")])
-    cases.append(("a last section goes after the others",
-                  text.index("### Fixed") < text.index("### Security")
-                  < text.index("[#10]:")))
-    cases.append(("a bare Changelog line leaves the title as the entry",
-                  entry_text("feat: emit skills (#1)",
-                             "Changelog:\n\nCloses #2") == "Emit skills"))
-    emptied = (sample.replace("- Old entry ([#10])", "")
-               .replace("- Old fix ([#11])", ""))
+    cases.append(
+        (
+            "a last section goes after the others",
+            text.index("### Fixed") < text.index("### Security") < text.index("[#10]:"),
+        )
+    )
+    cases.append(
+        (
+            "a bare Changelog line leaves the title as the entry",
+            entry_text("feat: emit skills (#1)", "Changelog:\n\nCloses #2")
+            == "Emit skills",
+        )
+    )
+    emptied = sample.replace("- Old entry ([#10])", "").replace("- Old fix ([#11])", "")
     refused = []
     for text_in, version in ((sample, "1.0.0"), (emptied, "1.1.0")):
         try:
             cut(text_in, version, "2026-02-02")
         except ValueError:
             refused.append(version)
-    cases.append(("the cut refuses a known version and an empty section",
-                  refused == ["1.0.0", "1.1.0"]))
-    cases.append(("a pull request linked in an earlier section is skipped",
-                  add_entries(sample, [("Added", 1, "Again")])[1] == []))
+    cases.append(
+        (
+            "the cut refuses a known version and an empty section",
+            refused == ["1.0.0", "1.1.0"],
+        )
+    )
+    cases.append(
+        (
+            "a pull request linked in an earlier section is skipped",
+            add_entries(sample, [("Added", 1, "Again")])[1] == [],
+        )
+    )
     orphan = sample.replace("[#11]: ", "[#40]: %s40\n[#11]: " % REPO, 1)
     text, added = add_entries(orphan, [("Added", 40, "Orphan defined")])
-    cases.append(("a link definition alone is no entry, and is not repeated",
-                  added == [40] and text.count("[#40]: ") == 1))
-    long_title = ("A title long enough that the generated bullet must wrap "
-                  "onto a second line to stay inside the width")
+    cases.append(
+        (
+            "a link definition alone is no entry, and is not repeated",
+            added == [40] and text.count("[#40]: ") == 1,
+        )
+    )
+    long_title = (
+        "A title long enough that the generated bullet must wrap "
+        "onto a second line to stay inside the width"
+    )
     text, _ = add_entries(sample, [("Added", 41, long_title)])
-    cases.append(("a long entry wraps inside the width",
-                  all(len(line) <= WIDTH for line in text.split("\n")
-                      if not line.startswith("[#"))
-                  and "\n  " in text.split("## [1.0.0]")[0]))
-    cases.append(("a CRLF body gives a clean override",
-                  entry_text("x", "Changelog: Clean\r\nmore") == "Clean"))
-    cases.append(("a version with a leading zero is refused",
-                  not VERSION.match("v03.0.0")
-                  and bool(VERSION.match("v3.0.10"))))
-    cases.append(("a run that adds nothing leaves the file unchanged",
-                  add_entries(sample, [])[0] == sample))
-    cases.append(("the cut keeps an empty Unreleased above the version",
-                  "## [Unreleased]\n\n## [1.1.0] - 2026-02-02"
-                  in cut(sample, "1.1.0", "2026-02-02")))
+    cases.append(
+        (
+            "a long entry wraps inside the width",
+            all(
+                len(line) <= WIDTH
+                for line in text.split("\n")
+                if not line.startswith("[#")
+            )
+            and "\n  " in text.split("## [1.0.0]")[0],
+        )
+    )
+    cases.append(
+        (
+            "a CRLF body gives a clean override",
+            entry_text("x", "Changelog: Clean\r\nmore") == "Clean",
+        )
+    )
+    cases.append(
+        (
+            "a version with a leading zero is refused",
+            not VERSION.match("v03.0.0") and bool(VERSION.match("v3.0.10")),
+        )
+    )
+    cases.append(
+        (
+            "a run that adds nothing leaves the file unchanged",
+            add_entries(sample, [])[0] == sample,
+        )
+    )
+    cases.append(
+        (
+            "the cut keeps an empty Unreleased above the version",
+            "## [Unreleased]\n\n## [1.1.0] - 2026-02-02"
+            in cut(sample, "1.1.0", "2026-02-02"),
+        )
+    )
     failed = [name for name, ok in cases if not ok]
     for name, ok in cases:
         print("%s  %s" % ("PASS" if ok else "FAIL", name))
-    print("VERDICT: %s - %d case(s), %d failed"
-          % ("FAIL" if failed else "PASS", len(cases), len(failed)))
+    print(
+        "VERDICT: %s - %d case(s), %d failed"
+        % ("FAIL" if failed else "PASS", len(cases), len(failed))
+    )
     return 1 if failed else 0
 
 

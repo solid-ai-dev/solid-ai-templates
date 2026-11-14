@@ -77,6 +77,7 @@ else:
 # Report renderers
 # ---------------------------------------------------------------------------
 
+
 def _inspected(r):
     """Render what a check reported inspecting, when it reported anything."""
     if not r.get("notes"):
@@ -85,28 +86,39 @@ def _inspected(r):
 
 
 def render_pass(r):
-    return ([f"### {r['status']}  {r['id']} — {r['title']}", ""]
-            + _inspected(r))
+    return [f"### {r['status']}  {r['id']} — {r['title']}", ""] + _inspected(r)
 
 
 def render_fail(r):
     lines = [f"### {r['status']}  {r['id']} — {r['title']}", ""]
     lines.extend(_inspected(r))
-    lines.extend(["**Expected**: all assertions pass with no violations", "",
-                  "**Observed**:", "", "```"])
+    lines.extend(
+        [
+            "**Expected**: all assertions pass with no violations",
+            "",
+            "**Observed**:",
+            "",
+            "```",
+        ]
+    )
     lines.extend(r["failures"])
     lines.extend(["```", ""])
     return lines
 
 
 def render_err(r):
-    return [f"### {r['status']}  {r['id']} — {r['title']}", "",
-            f"**Error**: {r['error']}", ""]
+    return [
+        f"### {r['status']}  {r['id']} — {r['title']}",
+        "",
+        f"**Error**: {r['error']}",
+        "",
+    ]
 
 
 # ---------------------------------------------------------------------------
 # Runner
 # ---------------------------------------------------------------------------
+
 
 # PyYAML is a precondition of this suite, not a property of the tree the
 # suite checks. Many checks read `templates/manifest.yaml` through it,
@@ -194,10 +206,15 @@ def main():
         except Exception as e:
             print(f"  {ERR}  {check['id']}  — {e}")
             results[ERR] += 1
-            run_results.append({
-                "id": check["id"], "title": check["title"],
-                "status": ERR, "failures": [], "error": str(e),
-            })
+            run_results.append(
+                {
+                    "id": check["id"],
+                    "title": check["title"],
+                    "status": ERR,
+                    "failures": [],
+                    "error": str(e),
+                }
+            )
             continue
 
         if failures:
@@ -207,21 +224,31 @@ def main():
             for line in failures:
                 print(line)
             results[FAIL] += 1
-            run_results.append({
-                "id": check["id"], "title": check["title"],
-                "status": FAIL, "failures": failures, "notes": notes,
-                "error": None,
-            })
+            run_results.append(
+                {
+                    "id": check["id"],
+                    "title": check["title"],
+                    "status": FAIL,
+                    "failures": failures,
+                    "notes": notes,
+                    "error": None,
+                }
+            )
         else:
             print(f"  {PASS}  {check['id']}")
             for line in notes:
                 print(line)
             results[PASS] += 1
-            run_results.append({
-                "id": check["id"], "title": check["title"],
-                "status": PASS, "failures": [], "notes": notes,
-                "error": None,
-            })
+            run_results.append(
+                {
+                    "id": check["id"],
+                    "title": check["title"],
+                    "status": PASS,
+                    "failures": [],
+                    "notes": notes,
+                    "error": None,
+                }
+            )
 
     elapsed = (datetime.datetime.now() - started_at).total_seconds()
     total = sum(results.values())
@@ -233,15 +260,21 @@ def main():
         f"  ({elapsed:.1f}s)"
     )
 
-    write_report(run_results, started_at, "smoke", {
-        PASS: render_pass,
-        FAIL: render_fail,
-        ERR: render_err,
-    })
+    write_report(
+        run_results,
+        started_at,
+        "smoke",
+        {
+            PASS: render_pass,
+            FAIL: render_fail,
+            ERR: render_err,
+        },
+    )
 
     ok = results[FAIL] == 0 and results[ERR] == 0
-    print_verdict(ok, "%d checks, %d failed, %d errors"
-                  % (total, results[FAIL], results[ERR]))
+    print_verdict(
+        ok, "%d checks, %d failed, %d errors" % (total, results[FAIL], results[ERR])
+    )
     sys.exit(0 if ok else 1)
 
 

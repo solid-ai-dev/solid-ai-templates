@@ -1,5 +1,4 @@
-"""Smoke checks of the ADR family: decision-record frontmatter.
-"""
+"""Smoke checks of the ADR family: decision-record frontmatter."""
 
 import os
 import re
@@ -84,7 +83,7 @@ def check_adr_01():
         if not isinstance(adr_id, str):
             failures.append(
                 f"  {rel}: id {adr_id!r} is not a string — quote it as "
-                f"\"{expected_id}\" to avoid YAML octal parsing"
+                f'"{expected_id}" to avoid YAML octal parsing'
             )
         elif adr_id != expected_id:
             failures.append(
@@ -94,15 +93,11 @@ def check_adr_01():
 
         status = data.get("status")
         if status not in ADR_STATUSES:
-            failures.append(
-                f"  {rel}: status {status!r} not in {sorted(ADR_STATUSES)}"
-            )
+            failures.append(f"  {rel}: status {status!r} not in {sorted(ADR_STATUSES)}")
 
         date = str(data.get("date") or "")
         if not ADR_DATE.match(date):
-            failures.append(
-                f"  {rel}: date {data.get('date')!r} is not YYYY-MM-DD"
-            )
+            failures.append(f"  {rel}: date {data.get('date')!r} is not YYYY-MM-DD")
 
         category = data.get("category")
         if category not in ADR_CATEGORIES:

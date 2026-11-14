@@ -31,7 +31,7 @@ def named(path, text):
 
 def dotted(path):
     """The dotted name of a .py path; a package's is its __init__ module's."""
-    parts = path[:-len(".py")].split("/")
+    parts = path[: -len(".py")].split("/")
     return ".".join(parts[:-1] if parts[-1] == "__init__" else parts)
 
 
@@ -52,17 +52,18 @@ def imported(path, text, directory):
         if isinstance(node, ast.Import):
             heads, names = roots, [alias.name for alias in node.names]
         elif isinstance(node, ast.ImportFrom):
-
             # A relative import reaching above the tree's root fails when
             # it runs, so it reaches nothing.
             if node.level > len(here):
                 continue
-            heads = ([here[:len(here) - node.level + 1]] if node.level
-                     else roots)
+            heads = [here[: len(here) - node.level + 1]] if node.level else roots
             base = [node.module] if node.module else []
             names = [".".join(base)] if base else []
-            names += [".".join(base + [alias.name]) for alias in node.names
-                      if alias.name != "*"]
+            names += [
+                ".".join(base + [alias.name])
+                for alias in node.names
+                if alias.name != "*"
+            ]
         else:
             continue
         for head in heads:
@@ -94,12 +95,12 @@ def reachable(scripts, entries, directory):
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="find-unreferenced-scripts")
-    parser.add_argument("--dir", default="scripts",
-                        help="the directory of maintained scripts")
+    parser.add_argument(
+        "--dir", default="scripts", help="the directory of maintained scripts"
+    )
     args = parser.parse_args(argv)
 
-    scripts = report.count("scripts inspected",
-                           tracked(SUFFIXES, [args.dir]))
+    scripts = report.count("scripts inspected", tracked(SUFFIXES, [args.dir]))
     if not scripts:
         return report.not_applicable("%s holds no script" % args.dir)
 
@@ -119,10 +120,13 @@ def main(argv, report):
     reached = reachable(scripts, entries, directory)
     for path in scripts:
         if path not in reached:
-            report.finding(path, 0, "UNREFERENCED",
-                           "nothing outside %s names it, and no script "
-                           "reached from there imports or names it"
-                           % args.dir)
+            report.finding(
+                path,
+                0,
+                "UNREFERENCED",
+                "nothing outside %s names it, and no script "
+                "reached from there imports or names it" % args.dir,
+            )
     report.count("unreferenced", report.findings)
 
     # A searched count of zero means the corpus never loaded, which reads

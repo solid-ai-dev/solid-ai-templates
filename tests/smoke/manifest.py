@@ -8,13 +8,21 @@ import sys
 
 from testkit import ROOT
 from .common import (
-    _load_manifest, _resolve_stack, _stacks, HAS_YAML, Inspected, MISSING_YAML,
-    read, yaml)
+    _load_manifest,
+    _resolve_stack,
+    _stacks,
+    HAS_YAML,
+    Inspected,
+    MISSING_YAML,
+    read,
+    yaml,
+)
 
 
 # ---------------------------------------------------------------------------
 # MNF-01 — manifest entries reference valid paths and IDs
 # ---------------------------------------------------------------------------
+
 
 def check_mnf_01():
     if not HAS_YAML:
@@ -44,7 +52,8 @@ def check_mnf_01():
                     if "id" in entry:
                         declared_ids.add(entry["id"])
                         declarations.setdefault(entry["id"], []).append(
-                            (key, entry.get("file", "?")))
+                            (key, entry.get("file", "?"))
+                        )
 
     seen.count("manifest entries read", len(entries))
     seen.count("IDs declared in the manifest", len(declared_ids))
@@ -52,8 +61,7 @@ def check_mnf_01():
     for eid, places in declarations.items():
         if len(places) > 1:
             where = ", ".join(f"{key}: {path}" for key, path in places)
-            failures.append(
-                f"  ID '{eid}' declared {len(places)} times — {where}")
+            failures.append(f"  ID '{eid}' declared {len(places)} times — {where}")
 
     for entry in entries:
         path = entry.get("file", "")
@@ -77,6 +85,7 @@ def check_mnf_01():
 # ---------------------------------------------------------------------------
 # MNF-02 — all stacks resolve to valid, non-empty file lists
 # ---------------------------------------------------------------------------
+
 
 def check_mnf_02():
     if not HAS_YAML:
@@ -113,6 +122,7 @@ def check_mnf_02():
 # MNF-03 — all resolved chains include core tier files
 # ---------------------------------------------------------------------------
 
+
 def check_mnf_03():
     if not HAS_YAML:
         return [MISSING_YAML]
@@ -130,10 +140,7 @@ def check_mnf_03():
 
         for cid in core_ids:
             if cid not in resolved_ids:
-                failures.append(
-                    f"  {sid}: core ID '{cid}' missing from "
-                    f"resolved chain"
-                )
+                failures.append(f"  {sid}: core ID '{cid}' missing from resolved chain")
 
     return seen.failures() + failures, seen.notes()
 
@@ -141,6 +148,7 @@ def check_mnf_03():
 # ---------------------------------------------------------------------------
 # MNF-04 — prompt builds for all stacks
 # ---------------------------------------------------------------------------
+
 
 def check_mnf_04():
     if not HAS_YAML:
@@ -174,10 +182,7 @@ def check_mnf_04():
             continue
 
         if len(prompt) < 500:
-            failures.append(
-                f"  {sid}: prompt suspiciously short "
-                f"({len(prompt)} chars)"
-            )
+            failures.append(f"  {sid}: prompt suspiciously short ({len(prompt)} chars)")
         built += 1
 
     seen.count("prompts built", built)
@@ -194,6 +199,7 @@ def check_mnf_04():
 # verifies self-consistency against the same parser. This gate resolves every
 # stack with BOTH parsers and fails on any mismatch, so the two can never
 # silently drift again regardless of which parser is edited next.
+
 
 def check_mnf_05():
     if not HAS_YAML:
@@ -229,8 +235,7 @@ def check_mnf_05():
         if not parts:
             parts.append("same files, different order")
         failures.append(
-            f"  {sid}: resolve_chain.py chain != PyYAML chain — "
-            f"{'; '.join(parts)}"
+            f"  {sid}: resolve_chain.py chain != PyYAML chain — {'; '.join(parts)}"
         )
 
     return seen.failures() + failures, seen.notes()

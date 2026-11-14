@@ -26,8 +26,7 @@ def spans(lines):
         # Only a run of the opening character at least as long, with
         # nothing after it, closes the block, so a shorter fence inside a
         # longer one is part of its body.
-        closing = re.compile(
-            r"^[ ]*%s{%d,}[ \t]*$" % (re.escape(fence[0]), len(fence)))
+        closing = re.compile(r"^[ ]*%s{%d,}[ \t]*$" % (re.escape(fence[0]), len(fence)))
         end = n + 1
         while end < len(lines) and not closing.match(lines[end]):
             end += 1
@@ -42,6 +41,8 @@ def blocks(lines):
     renderer, so it is stripped from the body here too.
     """
     for opening, closing, indent, language in spans(lines):
-        body = [line[indent:] if not line[:indent].strip() else line
-                for line in lines[opening + 1:closing]]
+        body = [
+            line[indent:] if not line[:indent].strip() else line
+            for line in lines[opening + 1 : closing]
+        ]
         yield opening + 2, language, body

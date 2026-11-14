@@ -32,5 +32,9 @@ packages = ["solid_ai_checks", "solid_ai_checks.support"]
 strict = true
 files = ["tools", "tests", "hooks"]
 
+# The runners write gitignored reports under tests/reports, some holding a
+# copy of the tree, whose duplicate modules stop mypy before it checks any.
+exclude = ["^tests/reports/"]
+
 [tool.ruff]
 line-length = 88

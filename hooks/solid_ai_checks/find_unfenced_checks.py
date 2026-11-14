@@ -17,7 +17,8 @@ PHRASE = re.compile(
     r"|(?:verified|checked|confirmed)\s+by"
     r"|pass condition"
     r"|\b(?:[\w-]+\s+)?checks?:",
-    re.IGNORECASE)
+    re.IGNORECASE,
+)
 COMMAND = re.compile(r"[`][^`]+[`]")
 
 # The other order: the command comes first and its pass condition after it,
@@ -26,7 +27,8 @@ VERDICT = re.compile(
     r"output\s+must\s+be\s+empty"
     r"|\bno\s+output\s+means"
     r"|\bis\s+done\s+when",
-    re.IGNORECASE)
+    re.IGNORECASE,
+)
 
 # A sentence boundary between the phrase and the command means the
 # paragraph talks ABOUT a check and names a command somewhere else.
@@ -43,41 +45,47 @@ def examine(path, para, numbers, marks, report):
     """Record a finding where the paragraph states a check no fence holds."""
     if not para:
         return 0
-    near = (min(min(abs(m - n) for m in marks) for n in numbers)
-            if marks else WINDOW + 1)
+    near = min(min(abs(m - n) for m in marks) for n in numbers) if marks else WINDOW + 1
     if near <= WINDOW:
         return 1
     joined = " ".join(line.strip() for line in para)
-    pairs = [(p, COMMAND.search(joined, p.end()))
-             for p in PHRASE.finditer(joined)]
-    pairs += [(c, VERDICT.search(joined, c.end()))
-              for c in COMMAND.finditer(joined)]
+    pairs = [(p, COMMAND.search(joined, p.end())) for p in PHRASE.finditer(joined)]
+    pairs += [(c, VERDICT.search(joined, c.end())) for c in COMMAND.finditer(joined)]
     for first, second in pairs:
-        if second and not BREAK.search(joined[first.end():second.start()]):
-            report.finding(path, numbers[0], "UNFENCED",
-                           joined[first.start():second.end()])
+        if second and not BREAK.search(joined[first.end() : second.start()]):
+            report.finding(
+                path, numbers[0], "UNFENCED", joined[first.start() : second.end()]
+            )
             break
     return 1
 
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="find-unfenced-checks")
-    parser.add_argument("--root", action="append", default=[],
-                        help="directory holding rule documents; repeatable")
+    parser.add_argument(
+        "--root",
+        action="append",
+        default=[],
+        help="directory holding rule documents; repeatable",
+    )
     args = parser.parse_args(argv)
 
-    files = report.count("markdown files scanned",
-                         tracked([".md"], args.root))
+    files = report.count("markdown files scanned", tracked([".md"], args.root))
     inspected = 0
     for path in files:
         lines = read_lines(path)
-        marks = [n for n, line in enumerate(lines, 1)
-                 if line.lstrip().startswith(FENCE)]
+        marks = [
+            n for n, line in enumerate(lines, 1) if line.lstrip().startswith(FENCE)
+        ]
         fenced, para, numbers = False, [], []
         for number, line in enumerate(lines, 1):
             stripped = line.lstrip()
-            skip = (stripped.startswith(FENCE) or not line.strip()
-                    or stripped.startswith("|") or stripped.startswith("#"))
+            skip = (
+                stripped.startswith(FENCE)
+                or not line.strip()
+                or stripped.startswith("|")
+                or stripped.startswith("#")
+            )
             if skip or (para and BULLET.match(line)):
                 inspected += examine(path, para, numbers, marks, report)
                 para, numbers = [], []

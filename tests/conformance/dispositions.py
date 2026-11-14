@@ -68,52 +68,70 @@ SKIP_BUDGET = 2
 PYTHON = '"%s"' % sys.executable.replace(os.sep, "/")
 
 CHECKS = [
-
     # -- core/git.md -------------------------------------------------
-
     # This repository's regenerator is sync_docs.py, and what it writes depends
     # on the tree -- a fork's examples document among them -- so the diff
     # covers the whole tree. The run therefore reads committed work only,
     # which is how the suite is run anyway. sync_docs.py's own report is
     # silenced, so anything printed is a diff.
-    {"file": "core/git.md", "find": "<regenerate-command>",
-     "title": "Regenerated artifact matches its sources", "do": RUN,
-     "expect": [],
-     "substitute": {"<regenerate-command>":
-                    PYTHON + " tools/sync_docs.py > /dev/null",
-                    "<artifact-path>": "."}},
-
-    {"file": "core/git.md", "find": "--ignore-cr-at-eol <file>",
-     "title": "A line-ending-only regeneration diff is dropped before staging",
-     "do": SKIP,
-     "reason": "Classifies one file's pending change, between regenerating "
-               "and staging it. It is run per change on the file just "
-               "regenerated; a committed tree holds no pending change to "
-               "classify."},
-
-    {"file": "core/git.md", "find": "report-off-limits-paths",
-     "title": "A diff touching an off-limits path says so", "do": RUN,
-     "args": ["--path", ".github/workflows/", "--path", ".env",
-              "--path", "migrations/"],
-     "expect": MANUAL,
-     "reason": "The finding is whether the change SAYS SO about the path it "
-               "touches, which is prose in a pull request body and not a "
-               "count."},
-
+    {
+        "file": "core/git.md",
+        "find": "<regenerate-command>",
+        "title": "Regenerated artifact matches its sources",
+        "do": RUN,
+        "expect": [],
+        "substitute": {
+            "<regenerate-command>": PYTHON + " tools/sync_docs.py > /dev/null",
+            "<artifact-path>": ".",
+        },
+    },
+    {
+        "file": "core/git.md",
+        "find": "--ignore-cr-at-eol <file>",
+        "title": "A line-ending-only regeneration diff is dropped before staging",
+        "do": SKIP,
+        "reason": "Classifies one file's pending change, between regenerating "
+        "and staging it. It is run per change on the file just "
+        "regenerated; a committed tree holds no pending change to "
+        "classify.",
+    },
+    {
+        "file": "core/git.md",
+        "find": "report-off-limits-paths",
+        "title": "A diff touching an off-limits path says so",
+        "do": RUN,
+        "args": [
+            "--path",
+            ".github/workflows/",
+            "--path",
+            ".env",
+            "--path",
+            "migrations/",
+        ],
+        "expect": MANUAL,
+        "reason": "The finding is whether the change SAYS SO about the path it "
+        "touches, which is prose in a pull request body and not a "
+        "count.",
+    },
     # -- core/quality.md ------------------------------------------
-
     # The shipped hooks are this repository's one real boundary: they run
     # in consumers' CI and must not reach the maintainer-side tools or the
     # tests.
-    {"file": "core/quality.md", "find": "find-import-bans",
-     "title": "A directional layering ban names its check", "do": RUN,
-     "args": ["--forbid", "hooks:tools", "--forbid", "hooks:tests"],
-     "expect": ["nonzero", "nonzero", "zero"]},
-
-    {"file": "core/quality.md", "find": "check-ascii-identifiers",
-     "title": "Identifiers stay ASCII", "do": RUN,
-     "expect": ["nonzero", "zero"]},
-
+    {
+        "file": "core/quality.md",
+        "find": "find-import-bans",
+        "title": "A directional layering ban names its check",
+        "do": RUN,
+        "args": ["--forbid", "hooks:tools", "--forbid", "hooks:tests"],
+        "expect": ["nonzero", "nonzero", "zero"],
+    },
+    {
+        "file": "core/quality.md",
+        "find": "check-ascii-identifiers",
+        "title": "Identifiers stay ASCII",
+        "do": RUN,
+        "expect": ["nonzero", "zero"],
+    },
     # The project's own static checks: mypy strict and the ruff formatter,
     # configured in pyproject.toml, and pyflakes as the linter CI already
     # runs. Each prints nothing clean. The tooling still carries type errors
@@ -123,88 +141,108 @@ CHECKS = [
     # run still fails it. Once the tooling is clean it prints nothing, which
     # fails a manual check, and the gate comes back: the expectation becomes
     # [], findings_only goes, and the budget line with it.
-    {"file": "core/quality.md", "find": "<type-check-command>",
-     "title": "The type checker, the linter and the formatter are clean",
-     "do": RUN, "expect": MANUAL,
-     "reason": "Every line is a type error, a lint finding or a file the "
-               "formatter would change, in tooling still being cleaned. "
-               "Each is read, and none scored, until the tooling is clean.",
-     "substitute": {
-         "<type-check-command>":
-             findings_only(PYTHON, "mypy", "--no-error-summary"),
-         "<lint-command>":
-             findings_only(PYTHON, "pyflakes", "tools tests hooks"),
-         "<format-check-command>":
-             findings_only(PYTHON, "ruff",
-                           "format --check -q tools tests hooks")}},
-
-    {"file": "core/quality.md", "find": "files not filed i/lf",
-     "title": "No committed text file carries CRLF", "do": RUN,
-     "expect": ["nonzero", "any", "any", "zero"]},
-
+    {
+        "file": "core/quality.md",
+        "find": "<type-check-command>",
+        "title": "The type checker, the linter and the formatter are clean",
+        "do": RUN,
+        "expect": MANUAL,
+        "reason": "Every line is a type error, a lint finding or a file the "
+        "formatter would change, in tooling still being cleaned. "
+        "Each is read, and none scored, until the tooling is clean.",
+        "substitute": {
+            "<type-check-command>": findings_only(PYTHON, "mypy", "--no-error-summary"),
+            "<lint-command>": findings_only(PYTHON, "pyflakes", "tools tests hooks"),
+            "<format-check-command>": findings_only(
+                PYTHON, "ruff", "format --check -q tools tests hooks"
+            ),
+        },
+    },
+    {
+        "file": "core/quality.md",
+        "find": "files not filed i/lf",
+        "title": "No committed text file carries CRLF",
+        "do": RUN,
+        "expect": ["nonzero", "any", "any", "zero"],
+    },
     # -- core/testing.md ---------------------------------------------
-
-    {"file": "core/testing.md", "find": "guard-field-name",
-     "title": "A guard field has a consumer, not only an assignment",
-     "do": SKIP,
-     "reason": "Takes the module under review and the guard field as "
-               "arguments. It is run when one inert primitive is found, to "
-               "sweep for its siblings, not as a property of the tree."},
-
+    {
+        "file": "core/testing.md",
+        "find": "guard-field-name",
+        "title": "A guard field has a consumer, not only an assignment",
+        "do": SKIP,
+        "reason": "Takes the module under review and the guard field as "
+        "arguments. It is run when one inert primitive is found, to "
+        "sweep for its siblings, not as a property of the tree.",
+    },
     # -- core/quality-gates.md -----------------------------------
-
     # The example's limit stands for the project's own. Here that is the
     # 88 .editorconfig declares for Python, and the Python is all this
     # repository holds that carries no exempt line: its Markdown keeps
     # table rows over the width, which its linter configuration exempts.
-    {"file": "core/quality-gates.md", "find": "length > 80 { print; bad = 1 }",
-     "title": "An output constraint is paired with its check", "do": RUN,
-     "expect": [],
-     "substitute": {"80": "88", "FILE": "tools/*.py tests/*.py"}},
-
+    {
+        "file": "core/quality-gates.md",
+        "find": "length > 80 { print; bad = 1 }",
+        "title": "An output constraint is paired with its check",
+        "do": RUN,
+        "expect": [],
+        "substitute": {"80": "88", "FILE": "tools/*.py tests/*.py"},
+    },
     # The hooks scan the tracked tree. The Markdown ones take --root, which
     # here is the templates: the docs quote checks in prose on purpose, as
     # history and as worked examples of the defects the hooks find.
-    {"file": "core/quality-gates.md", "find": "find-bare-suppressions",
-     "title": "A suppression names the rule it suppresses", "do": RUN,
-     "expect": ["nonzero", "any", "zero"]},
-
-    {"file": "core/quality-gates.md",
-     "find": "report-test-edits", "title": "A change to an existing test is visible",
-     "do": RUN, "expect": MANUAL,
-     "reason": "Governance rather than a pass/fail metric: it decides "
-               "review eligibility, not whether the build is green. Every "
-               "template change owes a disposition in this file, which is "
-               "itself a test edit, so scoring it would fail each "
-               "conforming change on arrival."},
-
-    {"file": "core/embedded-checks.md",
-     "find": "find-unfenced-checks",
-     "title": "Every stated check is in a form a tool can extract",
-     "do": RUN, "args": ["--root", "templates"],
-     "expect": ["nonzero", "nonzero", "zero"]},
-
+    {
+        "file": "core/quality-gates.md",
+        "find": "find-bare-suppressions",
+        "title": "A suppression names the rule it suppresses",
+        "do": RUN,
+        "expect": ["nonzero", "any", "zero"],
+    },
+    {
+        "file": "core/quality-gates.md",
+        "find": "report-test-edits",
+        "title": "A change to an existing test is visible",
+        "do": RUN,
+        "expect": MANUAL,
+        "reason": "Governance rather than a pass/fail metric: it decides "
+        "review eligibility, not whether the build is green. Every "
+        "template change owes a disposition in this file, which is "
+        "itself a test edit, so scoring it would fail each "
+        "conforming change on arrival.",
+    },
+    {
+        "file": "core/embedded-checks.md",
+        "find": "find-unfenced-checks",
+        "title": "Every stated check is in a form a tool can extract",
+        "do": RUN,
+        "args": ["--root", "templates"],
+        "expect": ["nonzero", "nonzero", "zero"],
+    },
     # -- core/embedded-checks.md ---------------------------------
-
-    {"file": "core/embedded-checks.md",
-     "find": "compile-embedded-checks",
-     "title": "A shipped rule states its check", "do": RUN,
-     "args": ["--root", "templates"],
-     "expect": ["nonzero", "nonzero", "zero"]},
-
-    {"file": "core/embedded-checks.md", "find": "find-line-continuations",
-     "title": "A shipped check is safe to run where it is documented",
-     "do": RUN, "args": ["--root", "templates"],
-     "expect": ["nonzero", "nonzero", "nonzero", READ],
-     "reading": "The continuation count and the lines under it. A non-zero "
-                "count is not a failure -- it is the set to read against "
-                "what was written, because the check cannot tell a "
-                "continuation that is safe where it sits from one a reader "
-                "would lose. The three counts above it are decided: zero "
-                "files means the root named nothing, zero blocks that the "
-                "fence pattern drifted, and zero check-language blocks that "
-                "the language filter did."},
-
+    {
+        "file": "core/embedded-checks.md",
+        "find": "compile-embedded-checks",
+        "title": "A shipped rule states its check",
+        "do": RUN,
+        "args": ["--root", "templates"],
+        "expect": ["nonzero", "nonzero", "zero"],
+    },
+    {
+        "file": "core/embedded-checks.md",
+        "find": "find-line-continuations",
+        "title": "A shipped check is safe to run where it is documented",
+        "do": RUN,
+        "args": ["--root", "templates"],
+        "expect": ["nonzero", "nonzero", "nonzero", READ],
+        "reading": "The continuation count and the lines under it. A non-zero "
+        "count is not a failure -- it is the set to read against "
+        "what was written, because the check cannot tell a "
+        "continuation that is safe where it sits from one a reader "
+        "would lose. The three counts above it are decided: zero "
+        "files means the root named nothing, zero blocks that the "
+        "fence pattern drifted, and zero check-language blocks that "
+        "the language filter did.",
+    },
 ]
 
 
@@ -225,7 +263,12 @@ SKIP_BUDGETS = [("tests/conformance/dispositions.py", CHECKS, SKIP_BUDGET)]
 FORK_CHECKS = []
 if fork_dispositions is not None:
     FORK_CHECKS = fork_dispositions.CHECKS
-    SKIP_BUDGETS.append(("tests/fork_dispositions.py", FORK_CHECKS,
-                         getattr(fork_dispositions, "SKIP_BUDGET", None)))
+    SKIP_BUDGETS.append(
+        (
+            "tests/fork_dispositions.py",
+            FORK_CHECKS,
+            getattr(fork_dispositions, "SKIP_BUDGET", None),
+        )
+    )
 
 CHECKS = CHECKS + FORK_CHECKS

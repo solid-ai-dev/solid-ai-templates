@@ -34,18 +34,21 @@ def heredocs(body):
         end = n + 1
         while end < len(body) and body[end].strip() != "EOF":
             end += 1
-        yield n, NEWLINE.join(body[n + 1:end])
+        yield n, NEWLINE.join(body[n + 1 : end])
         n = end + 1
 
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="compile-embedded-checks")
-    parser.add_argument("--root", action="append", default=[],
-                        help="directory holding rule documents; repeatable")
+    parser.add_argument(
+        "--root",
+        action="append",
+        default=[],
+        help="directory holding rule documents; repeatable",
+    )
     args = parser.parse_args(argv)
 
-    files = report.count("markdown files scanned",
-                         tracked([".md"], args.root))
+    files = report.count("markdown files scanned", tracked([".md"], args.root))
     found = 0
     for path in files:
         for start, _, body in blocks(read_lines(path)):
@@ -54,8 +57,9 @@ def main(argv, report):
                 try:
                     compile(source, path, "exec")
                 except SyntaxError as error:
-                    report.finding(path, start + offset + (error.lineno or 1),
-                                   "COMPILE", error.msg)
+                    report.finding(
+                        path, start + offset + (error.lineno or 1), "COMPILE", error.msg
+                    )
 
     report.count("embedded checks found", found)
     report.count("checks that do not compile", report.findings)
@@ -63,5 +67,6 @@ def main(argv, report):
         return report.finish(True)
     if not found:
         return report.not_applicable(
-            "no embedded check to compile in %d file(s)" % len(files))
+            "no embedded check to compile in %d file(s)" % len(files)
+        )
     return report.finish(bool(report.findings))

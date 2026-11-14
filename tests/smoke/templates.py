@@ -7,19 +7,30 @@ import re
 
 from testkit import ROOT, template_files
 from .common import (
-    _load_manifest, _opt_in_roots, _resolve_stack, _roots_by_kind, _stacks,
-    all_template_files, depends_on_refs, HAS_YAML, Inspected,
-    iter_id_declarations, MISSING_YAML, read)
+    _load_manifest,
+    _opt_in_roots,
+    _resolve_stack,
+    _roots_by_kind,
+    _stacks,
+    all_template_files,
+    depends_on_refs,
+    HAS_YAML,
+    Inspected,
+    iter_id_declarations,
+    MISSING_YAML,
+    read,
+)
 
 
 # ---------------------------------------------------------------------------
 # TPL-04 — all EXTEND/OVERRIDE refs point to existing IDs
 # ---------------------------------------------------------------------------
 
+
 def check_tpl_04():
     failures = []
     seen = Inspected()
-    ref_pattern = re.compile(r'\[(EXTEND|OVERRIDE):\s*([^\]]+)\]')
+    ref_pattern = re.compile(r"\[(EXTEND|OVERRIDE):\s*([^\]]+)\]")
 
     declared = set()
     files = seen.count("template files scanned", all_template_files())
@@ -38,9 +49,7 @@ def check_tpl_04():
             directive = match.group(1)
             ref_id = match.group(2).strip()
             if ref_id not in declared:
-                failures.append(
-                    f"  {rel}: [{directive}: {ref_id}] — ID not declared"
-                )
+                failures.append(f"  {rel}: [{directive}: {ref_id}] — ID not declared")
 
     seen.count("EXTEND/OVERRIDE directives checked", directives)
     return seen.failures() + failures, seen.notes()
@@ -49,6 +58,7 @@ def check_tpl_04():
 # ---------------------------------------------------------------------------
 # TPL-01 — DEPENDS ON chain from the fixture stack is complete
 # ---------------------------------------------------------------------------
+
 
 def _collect_chain(rel_path, visited=None):
     if visited is None:
@@ -92,6 +102,7 @@ def check_tpl_01():
 # TPL-02 — EXTEND adds rules without removing base rules
 # ---------------------------------------------------------------------------
 
+
 def _extract_section(filepath, section_id):
     content = read(filepath)
     lines = content.splitlines()
@@ -107,9 +118,9 @@ def _extract_section(filepath, section_id):
             continue
         if in_section:
             has_content = any(l.strip() for l in result)
-            if re.match(r'^#{1,4} ', line) and has_content:
+            if re.match(r"^#{1,4} ", line) and has_content:
                 break
-            if re.match(r'^\[(ID|EXTEND|OVERRIDE|DEPENDS):', line) and has_content:
+            if re.match(r"^\[(ID|EXTEND|OVERRIDE|DEPENDS):", line) and has_content:
                 break
             result.append(line)
 
@@ -127,8 +138,7 @@ def check_tpl_02():
         failures.append("  core/testing.md [ID: base-testing] section is empty")
 
     extension = _extract_section(
-        os.path.join(ROOT, "templates", "fixture", "stack.md"),
-        "base-testing-general"
+        os.path.join(ROOT, "templates", "fixture", "stack.md"), "base-testing-general"
     )
     if not extension:
         failures.append(
@@ -138,8 +148,7 @@ def check_tpl_02():
 
     seen.count("sections extracted", 2)
     seen.count("lines read from base-testing", len(base_content), floor=0)
-    seen.count("lines read from the fixture's extension",
-               len(extension), floor=0)
+    seen.count("lines read from the fixture's extension", len(extension), floor=0)
     return seen.failures() + failures, seen.notes()
 
 
@@ -147,26 +156,27 @@ def check_tpl_02():
 # TPL-03 — OVERRIDE replaces parent section entirely
 # ---------------------------------------------------------------------------
 
+
 def check_tpl_03():
     failures = []
     seen = Inspected()
 
     original = _extract_section(
         os.path.join(ROOT, "templates", "core", "testing.md"),
-        "testing-verify-the-render"
+        "testing-verify-the-render",
     )
     override = _extract_section(
         os.path.join(ROOT, "templates", "fixture", "stack.md"),
-        "testing-verify-the-render"
+        "testing-verify-the-render",
     )
 
     if not original:
         failures.append(
-            "  core/testing.md [ID: testing-verify-the-render] section is empty")
+            "  core/testing.md [ID: testing-verify-the-render] section is empty"
+        )
     if not override:
         failures.append(
-            "  fixture/stack.md [OVERRIDE: testing-verify-the-render] section is "
-            "empty"
+            "  fixture/stack.md [OVERRIDE: testing-verify-the-render] section is empty"
         )
     if original and override and original == override:
         failures.append(
@@ -184,12 +194,13 @@ def check_tpl_03():
 # TPL-06 — EXTEND/OVERRIDE targets reachable in resolved chain
 # ---------------------------------------------------------------------------
 
+
 def check_tpl_06():
     if not HAS_YAML:
         return [MISSING_YAML]
 
     core_ids, entries, _ = _load_manifest()
-    ref_pattern = re.compile(r'\[(EXTEND|OVERRIDE):\s*([^\]]+)\]')
+    ref_pattern = re.compile(r"\[(EXTEND|OVERRIDE):\s*([^\]]+)\]")
     failures = []
     seen = Inspected()
 
@@ -201,8 +212,7 @@ def check_tpl_06():
     # and not whichever stack they are paired with. Resolving stacks alone
     # left every opt-in template unexamined, which is how two platform files
     # came to extend a section carried by one chain in seventeen.
-    opt_in = seen.count("opt-in roots resolved",
-                        _opt_in_roots(core_ids, entries))
+    opt_in = seen.count("opt-in roots resolved", _opt_in_roots(core_ids, entries))
 
     directives = 0
     for sid in list(stacks) + list(opt_in):
@@ -237,6 +247,7 @@ def check_tpl_06():
 # TPL-07 — EXTEND sections do not duplicate parent rules
 # ---------------------------------------------------------------------------
 
+
 def _extract_bullets(filepath, section_id):
     """Return list of bullet-point texts from the section tagged with ID."""
     content = read(filepath)
@@ -250,12 +261,12 @@ def _extract_bullets(filepath, section_id):
             in_section = True
             continue
         if in_section:
-            if re.match(r'^#{1,4} ', line) and bullets:
+            if re.match(r"^#{1,4} ", line) and bullets:
                 break
-            if re.match(r'^\[(ID|EXTEND|OVERRIDE|DEPENDS):', line) and bullets:
+            if re.match(r"^\[(ID|EXTEND|OVERRIDE|DEPENDS):", line) and bullets:
                 break
             stripped = line.strip()
-            if stripped.startswith('- '):
+            if stripped.startswith("- "):
                 bullets.append(stripped[2:].strip())
 
     return bullets
@@ -263,14 +274,14 @@ def _extract_bullets(filepath, section_id):
 
 def _word_set(text):
     """Return set of lowercase words (3+ chars) from text."""
-    return {w.lower() for w in re.findall(r'[a-zA-Z]{3,}', text)}
+    return {w.lower() for w in re.findall(r"[a-zA-Z]{3,}", text)}
 
 
 def check_tpl_07():
     if not HAS_YAML:
         return [MISSING_YAML]
 
-    extend_pattern = re.compile(r'^\[EXTEND:\s*([^\]]+)\]', re.MULTILINE)
+    extend_pattern = re.compile(r"^\[EXTEND:\s*([^\]]+)\]", re.MULTILINE)
     failures = []
     seen = Inspected()
 
@@ -311,13 +322,13 @@ def check_tpl_07():
 
             # Collect child bullets after the EXTEND line
             child_bullets = []
-            for line in child_lines[extend_lineno + 1:]:
-                if re.match(r'^#{1,4} ', line) and child_bullets:
+            for line in child_lines[extend_lineno + 1 :]:
+                if re.match(r"^#{1,4} ", line) and child_bullets:
                     break
-                if re.match(r'^\[(ID|EXTEND|OVERRIDE|DEPENDS):', line):
+                if re.match(r"^\[(ID|EXTEND|OVERRIDE|DEPENDS):", line):
                     break
                 stripped = line.strip()
-                if stripped.startswith('- '):
+                if stripped.startswith("- "):
                     child_bullets.append(stripped[2:].strip())
 
             # Compare each child bullet against parent bullets
@@ -334,7 +345,7 @@ def check_tpl_07():
                     if union and len(intersection) / len(union) >= 0.7:
                         failures.append(
                             f"  {rel} [EXTEND: {parent_id}]: "
-                            f"possible duplicate — \"{cb[:60]}...\""
+                            f'possible duplicate — "{cb[:60]}..."'
                         )
                         break
 
@@ -357,12 +368,13 @@ def check_tpl_07():
 # go-lib -> go-service -> go-echo already uses: a section that overrides
 # declares an [ID:] of its own, and the next level overrides that.
 
+
 def check_tpl_10():
     if not HAS_YAML:
         return [MISSING_YAML]
 
     core_ids, entries, _ = _load_manifest()
-    override_pattern = re.compile(r'\[OVERRIDE:\s*([^\]]+)\]')
+    override_pattern = re.compile(r"\[OVERRIDE:\s*([^\]]+)\]")
     failures = []
     seen = Inspected()
 
@@ -421,9 +433,10 @@ def check_tpl_08():
     seen = Inspected()
     seen.count("directories the check is pointed at", len(CORE_DIRS))
 
-    base_files = seen.count("files inspected for an [ID:] tag",
-                            [path for d in CORE_DIRS
-                             for path in template_files(d + "/")])
+    base_files = seen.count(
+        "files inspected for an [ID:] tag",
+        [path for d in CORE_DIRS for path in template_files(d + "/")],
+    )
 
     # A directory that is not there is a finding, not a skip. Skipping it
     # makes a rename silent: every listed directory disappears and the
@@ -447,15 +460,15 @@ def check_tpl_08():
 # TPL-09 — no empty [ID:] sections
 # ---------------------------------------------------------------------------
 
+
 def check_tpl_09():
     failures = []
     seen = Inspected()
-    meta_pattern = re.compile(r'^\[(DEPENDS ON|EXTEND|OVERRIDE|LOAD):')
-    next_id_pattern = re.compile(r'^\s*\[ID:')
+    meta_pattern = re.compile(r"^\[(DEPENDS ON|EXTEND|OVERRIDE|LOAD):")
+    next_id_pattern = re.compile(r"^\s*\[ID:")
 
     sections = 0
-    for filepath in seen.count("template files scanned",
-                               all_template_files()):
+    for filepath in seen.count("template files scanned", all_template_files()):
         content = read(filepath)
         rel = os.path.relpath(filepath, ROOT).replace(os.sep, "/")
         lines = content.splitlines()
@@ -474,7 +487,7 @@ def check_tpl_09():
             # [OVERRIDE:]) that accompany this section's [ID:].
             # Sub-headings count as content.
             has_content = False
-            for subsequent in lines[i + 1:]:
+            for subsequent in lines[i + 1 :]:
                 stripped = subsequent.strip()
                 if not stripped:
                     continue
@@ -486,9 +499,7 @@ def check_tpl_09():
                 break
 
             if not has_content:
-                failures.append(
-                    f"  {rel}: [ID: {section_id}] section is empty"
-                )
+                failures.append(f"  {rel}: [ID: {section_id}] section is empty")
 
     seen.count("[ID:] sections inspected", sections)
     return seen.failures() + failures, seen.notes()

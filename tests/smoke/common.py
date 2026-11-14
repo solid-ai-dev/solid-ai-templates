@@ -17,6 +17,7 @@ from testkit import ROOT, template_files
 # HAS_YAML rather than on an import of its own.
 try:
     import yaml
+
     HAS_YAML = True
 except ImportError:
     yaml = None
@@ -39,7 +40,7 @@ MISSING_YAML = "  PyYAML not installed — run: pip install pyyaml"
 # declarations — otherwise referencing another template's ID in prose
 # would trip duplicate-detection (SYS-02).
 
-_DECL_LINE = re.compile(r'^\s*\[ID:\s*([^\]]+)\]\s*$')
+_DECL_LINE = re.compile(r"^\s*\[ID:\s*([^\]]+)\]\s*$")
 
 
 def iter_id_declarations(content):
@@ -53,6 +54,7 @@ def iter_id_declarations(content):
 # ---------------------------------------------------------------------------
 # Manifest resolution helpers (shared by MNF-02, MNF-03, MNF-04)
 # ---------------------------------------------------------------------------
+
 
 def _load_manifest():
     """Load manifest.yaml and return (core_ids, entries, file_to_id)."""
@@ -80,8 +82,7 @@ def _stacks(entries):
     manifest_path = os.path.join(ROOT, "templates", "manifest.yaml")
     with io.open(manifest_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    return [entries[e["id"]] for e in data.get("stacks", [])
-            if e["id"] in entries]
+    return [entries[e["id"]] for e in data.get("stacks", []) if e["id"] in entries]
 
 
 def _resolve_stack(stack_id, core_ids, entries):
@@ -166,6 +167,7 @@ TEMPLATE_DIRS = [
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def all_template_files():
     """Absolute paths to every template the manifest governs.
 
@@ -175,8 +177,7 @@ def all_template_files():
     print cannot move to say so -- a stale count and a correct one read
     alike when the enumerator never looked.
     """
-    return [os.path.join(ROOT, p.replace("/", os.sep))
-            for p in template_files()]
+    return [os.path.join(ROOT, p.replace("/", os.sep)) for p in template_files()]
 
 
 def read(path):
@@ -216,7 +217,8 @@ class Inspected:
             f"  {label}: {n} — below the floor of {floor}; the check reached "
             f"nothing and an empty corpus reports the same result as a clean "
             f"tree"
-            for label, n, floor in self._counts if n < floor
+            for label, n, floor in self._counts
+            if n < floor
         ]
 
 
