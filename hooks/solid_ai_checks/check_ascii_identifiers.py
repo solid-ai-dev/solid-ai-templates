@@ -5,14 +5,18 @@ ASCII it resembles turns all three into guesswork. Comments, docstrings and
 strings are documentation and carry no charset restriction.
 """
 
+from __future__ import annotations
+
 import argparse
 import token
 import tokenize
+from typing import List
 
 from .support.files import tracked
+from .support.report import Report
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="check-ascii-identifiers")
     parser.add_argument(
         "--root", action="append", default=[], help="directory to scan; repeatable"

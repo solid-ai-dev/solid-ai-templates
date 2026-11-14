@@ -5,10 +5,14 @@ an aside to the right of code that is not a tool directive. Whether a
 comment sits above the right item takes a person.
 """
 
+from __future__ import annotations
+
 import argparse
 import tokenize
+from typing import Dict, Iterable, List
 
 from .support.files import VENDORED, ls_files, normalised
+from .support.report import Report
 
 DIRECTIVES = ("noqa", "nosec", "type:", "pragma:", "pylint:", "fmt:", "mypy:")
 
@@ -30,7 +34,7 @@ LAYOUT = (
 )
 
 
-def candidates(roots):
+def candidates(roots: Iterable[str]) -> List[str]:
     """Tracked Python plus the untracked files a commit could still add."""
     listed = ls_files("--cached", "--others", "--exclude-standard", "*.py")
     prefixes = normalised(roots)
@@ -44,7 +48,7 @@ def candidates(roots):
     )
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="check-comment-layout")
     parser.add_argument(
         "--root", action="append", default=[], help="directory to scan; repeatable"
@@ -61,7 +65,7 @@ def main(argv, report):
 
         # The last code token ending on each row. A `#` inside a string is
         # part of that string's token, so it can never pass for a comment.
-        last_code = {}
+        last_code: Dict[int, str] = {}
         for tok in tokens:
             if tok.type not in LAYOUT:
                 last_code[tok.end[0]] = tok.string

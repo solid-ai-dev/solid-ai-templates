@@ -7,15 +7,19 @@ too. A name appearing anywhere counts, which under-reports on purpose:
 every finding is a file nothing reaches.
 """
 
+from __future__ import annotations
+
 import argparse
 import ast
+from typing import Iterator, List, Optional, Set
 
 from .support.files import normalised, tracked
+from .support.report import Report
 
 SUFFIXES = (".py", ".sh", ".ts", ".js")
 
 
-def read(path):
+def read(path: str) -> Optional[str]:
     """The file's text, or None when it cannot be opened."""
     try:
         with open(path, encoding="utf-8", errors="ignore") as handle:
@@ -24,18 +28,18 @@ def read(path):
         return None
 
 
-def named(path, text):
+def named(path: str, text: str) -> bool:
     """Whether `text` names the file by its path or its file name."""
     return path in text or path.rsplit("/", 1)[-1] in text
 
 
-def dotted(path):
+def dotted(path: str) -> str:
     """The dotted name of a .py path; a package's is its __init__ module's."""
     parts = path[: -len(".py")].split("/")
     return ".".join(parts[:-1] if parts[-1] == "__init__" else parts)
 
 
-def imported(path, text, directory):
+def imported(path: str, text: str, directory: List[str]) -> Iterator[str]:
     """Yield every name, dotted from the tree's root, a script imports.
 
     A script run directly finds its own directory on the path, one run as
@@ -71,7 +75,7 @@ def imported(path, text, directory):
                 yield ".".join(head + [name])
 
 
-def reachable(scripts, entries, directory):
+def reachable(scripts: List[str], entries: List[str], directory: List[str]) -> Set[str]:
     """The entry points and every script they reach by import or by name."""
     modules = {dotted(p): p for p in scripts if p.endswith(".py")}
     seen, pending = set(entries), list(entries)
@@ -93,7 +97,7 @@ def reachable(scripts, entries, directory):
     return seen
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="find-unreferenced-scripts")
     parser.add_argument(
         "--dir", default="scripts", help="the directory of maintained scripts"
@@ -105,7 +109,7 @@ def main(argv, report):
         return report.not_applicable("%s holds no script" % args.dir)
 
     inside = normalised([args.dir])
-    corpus = []
+    corpus: List[str] = []
     for path in tracked(("",)):
         if path.startswith(inside):
             continue

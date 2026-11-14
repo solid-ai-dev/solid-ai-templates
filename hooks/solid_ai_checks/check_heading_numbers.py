@@ -5,18 +5,25 @@ merges without conflict. Each diff is correct; only the merged result is
 wrong, so the check reads the result.
 """
 
+from __future__ import annotations
+
 import argparse
 import itertools
 import os
 import re
+from typing import Dict, Iterator, List, Sequence, Tuple
 
 from .support.fences import spans
 from .support.files import read_lines
+from .support.report import Report
 
 # A numbered heading (### 3.9 Title) and a list ordinal (  4. Step).
 HEADING = re.compile(r"^(#{1,6}) +([0-9]+(?:[.][0-9]+)*)[.]? ")
 LISTITEM = re.compile(r"^([ \t]*)([0-9]+)[.] ")
 PLAIN = re.compile(r"^#{1,6} ")
+
+# A run of ordinals: the label it is grouped under and a serial.
+RunKey = Tuple[str, int]
 
 
 class Lists:
@@ -27,22 +34,22 @@ class Lists:
     An open list is (marker column, text column, run key).
     """
 
-    def __init__(self, group, serials):
+    def __init__(self, group: str, serials: Iterator[int]) -> None:
         self.group = group
         self.serials = serials
-        self.open = []
-        self.closed = {}
+        self.open: List[Tuple[int, int, RunKey]] = []
+        self.closed: Dict[int, RunKey] = {}
 
-    def _close(self):
+    def _close(self) -> None:
         key = self.open.pop()[2]
         self.closed[len(self.open)] = key
 
-    def end_at(self, indent):
+    def end_at(self, indent: int) -> None:
         """Close every list whose item text a line at `indent` ends."""
         while self.open and self.open[-1][1] > indent:
             self._close()
 
-    def key(self, indent, width, value):
+    def key(self, indent: int, width: int, value: int) -> RunKey:
         """The run key of an item whose marker, `width` wide, is at `indent`."""
         while self.open and indent < self.open[-1][0]:
             self._close()
@@ -67,7 +74,7 @@ class Lists:
         return key
 
 
-def ordinals(lines):
+def ordinals(lines: Sequence[str]) -> Iterator[Tuple[int, RunKey, int, str]]:
     """Yield (line number, group key, value, label) for every ordinal.
 
     A group key is a (label, serial) pair, so two runs under one heading
@@ -94,9 +101,9 @@ def ordinals(lines):
 
             # A heading is grouped under its parent, so 3.x and 4.x are
             # separate runs and each may restart.
-            key = "%s %s" % (match.group(1), ".".join(parts[:-1]) or "(root)")
+            group = "%s %s" % (match.group(1), ".".join(parts[:-1]) or "(root)")
             lists = Lists(line.strip(), serials)
-            yield number, (key, 0), int(parts[-1]), match.group(2)
+            yield number, (group, 0), int(parts[-1]), match.group(2)
             continue
         if PLAIN.match(line):
             lists = Lists(line.strip(), serials)
@@ -112,7 +119,7 @@ def ordinals(lines):
             lists.end_at(len(text) - len(text.lstrip()))
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="check-heading-numbers")
     parser.add_argument(
         "--path",
@@ -131,7 +138,8 @@ def main(argv, report):
         if not os.path.isfile(path):
             report.finding(path, 0, "MISSING", "no such document")
             continue
-        runs, found = {}, 0
+        runs: Dict[RunKey, List[int]] = {}
+        found = 0
         for number, key, value, label in ordinals(read_lines(path)):
             found += 1
             run = runs.setdefault(key, [])
