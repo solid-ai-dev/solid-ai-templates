@@ -1,6 +1,6 @@
 ---
 id: "058"
-status: Proposed
+status: Accepted
 date: 2026-10-26
 category: composition
 supersedes: []
@@ -54,17 +54,33 @@ What is settled:
 - A hand-written project in daily use keeps 563 words in its root file and
   about 7,650 in nine skills.
 
-Not yet measured: whether any delivery improves the code an agent writes.
-The benchmark rounds of September and October 2026 ran while the benchmark
-itself was being built, so their results do not compare one option with
-another under one ruler:
+When this record was proposed, no round had measured whether any delivery
+improves the code an agent writes. The benchmark rounds of September and
+October 2026 ran while the benchmark itself was being built, so their
+results do not compare one option with another under one ruler:
 
 - Hybrid adhered to project conventions best in round 3 and scored
   highest on the judge's security rows in round 4.
 - In the 2026-10-17 round every file made the app 40–160% bigger, and with
   a weaker model every generated file lowered the share of hidden tests
   passed.
-- No round has run a root file with skills.
+- No round had run a root file with skills.
+
+Measured since, in round 5e of 2026-11-13: one ruler, one model, 15 builds
+an arm, with the root file and skills built by the resolver
+([report](../audits/2026-11-13-efficacy.md)):
+
+| Row | Root file and skills against hybrid | Against no file |
+| --- | ----------------------------------- | --------------- |
+| Hidden tests passed | No worse | No worse |
+| Judge's security score | No worse | Better |
+| Judge's data-protection score | No worse | No worse |
+| Security probes | No worse | Better |
+| Data-protection probes | No worse | No worse |
+| Cost a build | $9.30 against $11.78 | $9.30 against $4.29 |
+
+Not measured: loading on demand. The agents of that arm loaded none of the
+skills, so its result came from the root file alone.
 
 ## Decision
 
@@ -85,8 +101,10 @@ project the same files.
 - One format for every agent: the open skill format, with the procedures
   inlined where an agent cannot load skills.
 - Scored: 84 of 100. The same split decided by each generator scores 66,
-  and today's hybrid file 60 (Scoring). No option is scored on outcomes,
-  which no benchmark has yet measured under one ruler.
+  and today's hybrid file 60 (Scoring). The scores rate design, not
+  outcomes.
+- Measured: in round 5e the root file and skills was no worse than hybrid
+  on every row that decides this record, and cost less a build (Context).
 
 ## Design
 
@@ -144,7 +162,7 @@ score out of 100 (Scoring):
 | `agents.md` | States the load directive, the trigger table and the skill rules, and its model table shows root and skills. It closes the gaps the 2026-10-26 generators filled by invention: a checkable rule with no tool, a missing end-of-session checklist, an override order for a single rule source |
 | Documentation | A generated table of root-file and skill words per root |
 | Forks | The interview records the adopted list and the facts |
-| Benchmark | The benchmark moves to a repository of its own, so one ruler measures upstream and fork refs alike. A fresh run of every arm, none, hybrid, inline, and root and skills, scores each by its spread across runs and projects as well as its mean. Accepting this record waits for that run; worse than hybrid on adherence or on the judge's security and data-protection rows rejects it |
+| Benchmark | The benchmark has a repository of its own, so one ruler measures upstream and fork refs alike. Round 5e ran every arm under it and settled this record: the root file and skills was no worse than hybrid on the hidden tests or on the judge's security and data-protection rows. Adherence is reported without a verdict since round 5d, so the hidden tests take its place. Its agents loaded no skill, so a later round measures loading on demand; worse than hybrid there, on the same rows, reverses this record by a new one |
 
 ## Compatibility
 
@@ -169,8 +187,8 @@ inline generates today.
 Each option was scored 1 (poor) to 5 (good) per criterion, by the author's
 judgement against the measurements in Context. Its score is the sum of
 weight times score, divided by 5, so 100 is the best. No criterion scores
-outcomes: no benchmark has measured them under one ruler, and the fresh run
-in Consequences is what will.
+outcomes: none had been measured under one ruler when the options were
+scored, and round 5e's run, in Context, measured them after.
 
 | Criterion | Weight | Why it weighs this much |
 | --------- | ------ | ----------------------- |
@@ -210,5 +228,5 @@ four in proportion, so the weights still total 100.
 | G | — | — | Never: it scores no higher than A on any criterion |
 
 No alternative is close: each needs one criterion weighed more than twice
-what it is. The scores rate design, not outcomes; the fresh benchmark run
-decides whether the design delivers.
+what it is. The scores rate design, not outcomes; round 5e's run, in
+Context, is what settled this record.

@@ -13,7 +13,7 @@ labelled with the use.
 |-------|----------------|----------------|--------|
 | Templates | Hold the shared rules, one concern per file | `templates/` | FR-01-01, FR-02-01, ADR-001 |
 | Manifest | Registers every template with its ID and dependencies, the one source of truth for the graph | `templates/manifest.yaml` | FR-03-01, ADR-004 |
-| Resolver and emitter | Turn a root into its ordered chain, and a chain into a root file and task skills | `tools/resolve_chain.py`, `tools/emit_context.py` | FR-04-01, FR-06-03, ADR-058, proposed |
+| Resolver and emitter | Turn a root into its ordered chain, and a chain into a root file and task skills | `tools/resolve_chain.py`, `tools/emit_context.py` | FR-04-01, FR-06-03, ADR-058 |
 | Doc sync | Writes the sections of the documentation derived from the manifest, the templates and the files the resolver and emitter build, such as context sizes, and fails on drift | `tools/sync_docs.py` | - |
 | Shipped hooks | Run the checks too long for a fence, in a project's CI | `hooks/solid_ai_checks/`, `.pre-commit-hooks.yaml` | FR-07-02, ADR-055 |
 | Self-checks | Check that the templates compose, that upstream obeys them, and that a fork still merges | `tests/` | FR-10-01, FR-10-02, ADR-030 |
@@ -42,7 +42,7 @@ owns.
 |-----------------|------------------|--------|
 | Stacks and platforms | Its own templates, under `stacks:`, `platform:` or a key of its own | FR-08-02, ADR-050 |
 | Fork core | Templates every chain takes after the core tier, under `fork_core:` | FR-08-03 |
-| Kinds of task | Task skills of its own, under `fork_tasks:` | ADR-058, proposed |
+| Kinds of task | Task skills of its own, under `fork_tasks:` | ADR-058 |
 | Interview | The questions its projects answer before generating | ADR-049 |
 | Suites | A test suite under `tests/`, which the suite runner finds | FR-10-02 |
 | Checks, dispositions and examples | `tests/fork_checks.py`, `tests/fork_dispositions.py` and `tools/fork_examples.py`, loaded when present, which register its template directories, conformance dispositions and documentation examples | ADR-050 |
@@ -87,8 +87,8 @@ misses it and reports nothing, because nothing declares what is absent.
 | `--concat` | A root ID | The chain's text, concatenated | FR-04-01 |
 | `--roots` | The manifest | Every root a project can pick | FR-03-01 |
 | `--emit <dir> <root>...` | Roots and the declined list | The root file and one skill per kind of task | FR-06-03, FR-06-04, FR-06-06 |
-| `--inline-skills` | As `--emit` | One root file with the skills inlined, for an agent without skills | ADR-058, proposed |
-| `--mirror <dir>` | As `--emit` | A copy of the skills where an agent reads only its own folder | ADR-058, proposed |
+| `--inline-skills` | As `--emit` | One root file with the skills inlined, for an agent without skills | ADR-058 |
+| `--mirror <dir>` | As `--emit` | A copy of the skills where an agent reads only its own folder | ADR-058 |
 
 ## 5.5 Level 2: self-checks
 
