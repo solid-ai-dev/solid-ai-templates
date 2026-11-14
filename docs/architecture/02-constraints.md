@@ -8,7 +8,7 @@ The givens the design accepts rather than chooses.
 |---|------------|-------------|--------|
 | 1 | Plain Markdown, no build step required | A template is read as written, and nothing compiles or packages it. Python runs the tools, the checks and the optional emitter | ADR-007, FR-05-01 |
 | 2 | Agent-agnostic | Any agent that reads a Markdown context file can use the output, such as Claude Code, Codex CLI, Cursor or GitHub Copilot | FR-05-04 |
-| 3 | An agent can generate by reading Markdown | No tool is needed between the templates and the context file, and instructions use neutral wording ("ask the user"). The emitter, where a project runs it, builds the same files | ADR-007, FR-05-01; ADR-058, proposed |
+| 3 | An agent can generate by reading Markdown | No tool is needed between the templates and the context file, and instructions use neutral wording ("ask the user"). The emitter, where a project runs it, builds the same files | ADR-007, FR-05-01; ADR-058 |
 | 4 | Context windows are finite | Every rule in the root file is read on every turn by every project on that chain. A task's procedures load only when that task starts | ADR-041, ADR-058, QG-02-02 |
 
 ## 2.2 Compatibility constraints

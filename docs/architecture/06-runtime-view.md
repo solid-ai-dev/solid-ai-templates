@@ -26,8 +26,8 @@ orders, placing each rule where the output contract says.
 | 4 | The resolver seeds the core tier, then walks `depends_on` depth-first, without duplicates, each dependency before what depends on it | FR-03-02, FR-04-01 |
 | 5-6 | An override replaces a section, and each extension of the same ID adds to it. An inline file copies in every adopted rule. A hybrid file copies in every rule whose breach is silent and which no tool enforces, and any other rule may stay a reference | FR-04-02, FR-04-03, ADR-052 |
 | 7-8 | The agent writes both files to the output contract, then runs the contract's self-check against them | FR-05-02, FR-05-04 |
-| 9 | The emitter leaves out overridden rules and the sections the project declines, places each remaining section by its load, copies each rule's text unchanged, and builds the same files from the same input | ADR-058, proposed; FR-06-03, FR-06-06 |
-| 10 | The agent fills only the project's facts, such as names, paths and commands; a regeneration keeps them | ADR-058, proposed |
+| 9 | The emitter leaves out overridden rules and the sections the project declines, places each remaining section by its load, copies each rule's text unchanged, and builds the same files from the same input | ADR-058; FR-06-03, FR-06-06 |
+| 10 | The agent fills only the project's facts, such as names, paths and commands; a regeneration keeps them | ADR-058 |
 | 11 | The team reviews the files like any other change | - |
 
 Without Python, the agent walks the chain by hand. It loads every file in
@@ -47,8 +47,8 @@ task loads only when that task starts.
 |------|--------------|--------|
 | 1 | A section with no load directive, and every rule guarding data, credentials or authentication, is in the root file | FR-06-01, FR-06-02 |
 | 3 | The root file lists each skill with the task that triggers it | FR-06-04 |
-| 4 | A skill is one folder under `.agents/skills/`, copied where an agent reads only its own folder | ADR-058, proposed |
-| 5 | An agent that cannot load skills gets them inlined in the root file | ADR-058, proposed |
+| 4 | A skill is one folder under `.agents/skills/`, copied where an agent reads only its own folder | ADR-058 |
+| 5 | An agent that cannot load skills gets them inlined in the root file | ADR-058 |
 
 ## 6.3 Hook execution in CI
 

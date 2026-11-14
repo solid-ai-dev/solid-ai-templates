@@ -242,6 +242,25 @@ match on "[0-9a-f]{16}.html"  wrong directory -> nothing matched
   source that looks wrong
 - Never weaken the rule behind a check to make it green or quiet
 
+## Static checks
+
+- Adopt the language's static type checker at its strictest setting where
+  the language has one, and keep it clean (MUST)
+- Annotate every public function's parameters and return type where the
+  language allows it (MUST)
+- Adopt a linter and a formatter, and keep both clean (MUST)
+- Run the type checker, the linter and the formatter before every commit
+  and in CI
+
+```bash
+<type-check-command>
+<lint-command>
+<format-check-command>
+```
+
+Pass condition: all three print nothing. Each command is the project's own,
+in its quiet mode.
+
 ## Enforcement
 
 - Enforce these conventions through the gates: editor, pre-commit, CI

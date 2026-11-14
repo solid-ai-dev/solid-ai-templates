@@ -40,7 +40,7 @@ A heading may carry several tag lines:
 - `[LOAD:]` says where the heading's rules load, either a kind of task
   the manifest's `tasks:` lists, such as `release`, or `check` for rules a
   check enforces. A heading without one loads on every turn, and a
-  heading's subheadings take its load (ADR-058, proposed)
+  heading's subheadings take its load (ADR-058)
 - A heading carries one load at most, among its tags, and none under a
   heading that has one. A section whose breaking exposes data, credentials
   or an unauthenticated path carries none. SYS-25 checks each of these, the
@@ -142,7 +142,7 @@ elements, and deprecate one by naming its replacement.
 | Manifest schema | The fields the header comment of `templates/manifest.yaml` lists, and their meaning; a minor adds only optional fields | ADR-051 |
 | Core-tier membership | The IDs under `core:`; a new template is reached by declaring it, never by joining the core | ADR-051 |
 | Check exit codes | 0 passes, 1 fails, 3 does not apply | ADR-051 |
-| Task kinds | The kinds under the manifest's `tasks:`, which a load directive names | ADR-058, proposed |
+| Task kinds | The kinds under the manifest's `tasks:`, which a load directive names | ADR-058 |
 | Hooks | A shipped hook ID, its direct exit codes, its `not applicable` line and its violation codes | ADR-055 |
 | Hook arguments | The name and default of each argument a consumer writes into its config, such as `--path`, `--forbid` and `--base`; a minor adds only arguments whose default keeps the hook's behaviour | ADR-051, applied to hooks |
 | Fork entry points | The fork-owned module names (8.6), and the names upstream reads from them, `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |
@@ -211,45 +211,45 @@ task starts. The root file's count includes its fact slots.
 <!-- generated:spec-context-cost -->
 | Root | Every turn, words | Skills | Skill words |
 |------|-------------------|--------|-------------|
-| `backend-api` | 5730 | 11 | 2714 |
-| `backend-auth` | 7784 | 10 | 2094 |
-| `backend-caching` | 5389 | 10 | 2094 |
-| `backend-concurrency` | 5236 | 10 | 2094 |
-| `backend-database` | 5196 | 11 | 2173 |
-| `backend-edge` | 8117 | 10 | 2094 |
-| `backend-errors` | 6635 | 10 | 2094 |
-| `backend-features` | 5247 | 10 | 2094 |
-| `backend-grpc` | 8896 | 11 | 2250 |
-| `backend-http` | 5663 | 10 | 2094 |
-| `backend-jobs` | 5169 | 10 | 2094 |
-| `backend-messaging` | 5455 | 11 | 2188 |
-| `backend-microservices` | 6852 | 11 | 2853 |
-| `backend-monitoring` | 5528 | 10 | 2094 |
-| `backend-observability` | 5275 | 10 | 2094 |
-| `backend-webhooks` | 8637 | 11 | 2188 |
-| `base-agents` | 4797 | 10 | 3189 |
-| `base-cicd` | 5085 | 10 | 2214 |
-| `base-config` | 5259 | 10 | 2124 |
-| `base-containers` | 5138 | 10 | 2194 |
-| `base-data-governance` | 5694 | 10 | 2094 |
-| `base-data-migration` | 5367 | 11 | 2466 |
-| `base-data-modeling` | 5206 | 10 | 2094 |
-| `base-data-quality` | 5961 | 11 | 2143 |
-| `base-deployment` | 5075 | 10 | 2153 |
-| `base-devsecops` | 5383 | 10 | 2094 |
-| `base-docs` | 4781 | 10 | 2094 |
-| `base-embedded-checks` | 6035 | 11 | 4377 |
-| `base-git` | 4781 | 10 | 2094 |
-| `base-measurement` | 5508 | 10 | 2094 |
-| `base-oop` | 5323 | 10 | 2094 |
-| `base-quality` | 4781 | 10 | 2094 |
-| `base-quality-gates` | 6014 | 11 | 4134 |
-| `base-review` | 4781 | 10 | 2094 |
-| `base-security` | 6312 | 10 | 2094 |
-| `base-testing` | 4781 | 10 | 2094 |
-| `frontend-content` | 5176 | 10 | 2094 |
-| `frontend-quality` | 5201 | 10 | 2169 |
-| `frontend-ux` | 5283 | 10 | 2094 |
+| `backend-api` | 5818 | 11 | 2714 |
+| `backend-auth` | 7872 | 10 | 2094 |
+| `backend-caching` | 5477 | 10 | 2094 |
+| `backend-concurrency` | 5324 | 10 | 2094 |
+| `backend-database` | 5284 | 11 | 2173 |
+| `backend-edge` | 8205 | 10 | 2094 |
+| `backend-errors` | 6723 | 10 | 2094 |
+| `backend-features` | 5335 | 10 | 2094 |
+| `backend-grpc` | 8984 | 11 | 2250 |
+| `backend-http` | 5751 | 10 | 2094 |
+| `backend-jobs` | 5257 | 10 | 2094 |
+| `backend-messaging` | 5543 | 11 | 2188 |
+| `backend-microservices` | 6940 | 11 | 2853 |
+| `backend-monitoring` | 5616 | 10 | 2094 |
+| `backend-observability` | 5363 | 10 | 2094 |
+| `backend-webhooks` | 8725 | 11 | 2188 |
+| `base-agents` | 4885 | 10 | 3189 |
+| `base-cicd` | 5173 | 10 | 2214 |
+| `base-config` | 5347 | 10 | 2124 |
+| `base-containers` | 5226 | 10 | 2194 |
+| `base-data-governance` | 5782 | 10 | 2094 |
+| `base-data-migration` | 5455 | 11 | 2466 |
+| `base-data-modeling` | 5294 | 10 | 2094 |
+| `base-data-quality` | 6049 | 11 | 2143 |
+| `base-deployment` | 5163 | 10 | 2153 |
+| `base-devsecops` | 5471 | 10 | 2094 |
+| `base-docs` | 4869 | 10 | 2094 |
+| `base-embedded-checks` | 6123 | 11 | 4377 |
+| `base-git` | 4869 | 10 | 2094 |
+| `base-measurement` | 5596 | 10 | 2094 |
+| `base-oop` | 5411 | 10 | 2094 |
+| `base-quality` | 4869 | 10 | 2094 |
+| `base-quality-gates` | 6102 | 11 | 4134 |
+| `base-review` | 4869 | 10 | 2094 |
+| `base-security` | 6400 | 10 | 2094 |
+| `base-testing` | 4869 | 10 | 2094 |
+| `frontend-content` | 5264 | 10 | 2094 |
+| `frontend-quality` | 5289 | 10 | 2169 |
+| `frontend-ux` | 5371 | 10 | 2094 |
 <!-- /generated:spec-context-cost -->
 
 ## 8.11 Responsibility levels

@@ -13,7 +13,7 @@ trial, is in [the full record](2026-11-01-efficacy-record.md).
 | Blinding | condition markers stripped, order shuffled at seed 20260912 |
 | Judgings per trial | 3, meaned |
 | Benchmark revision, per trial | `116e50e`, `12b6d76`, `495a0ec-dirty`, `5734700`, `64eecd7`, `70b268e`, `757cc34`, `a4d8a9d`, `ae23403`, `bda0499` |
-| Hidden suite | `c987eff4c100c24f070eb1ff2f2e488539b391f5` |
+| Hidden suite | `1f07e422b3b5348418a596d36c7a2d582688d49b` |
 | Bootstrap | 10000 resamples, 95%, seed 20260912 |
 | Arm hybrid's file | generated 2026-10-27T07:39:46 from the templates at `9086e0ff`, 511 lines, leak scan: clean |
 | Arm reference's file | generated 2026-10-27T07:33:03 from the templates at `9086e0ff`, 19 lines, leak scan: clean |
@@ -40,7 +40,7 @@ bias correction was undefined. `aggregate.json` carries the method per row.
 
 | Metric | Direction | Margin | none | hybrid | reference | inline | skills | hybrid−none | reference−none | inline−none | skills−none |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.972 | 0.882 | 0.992 | 0.953 | -0.020 [-0.097, 0.000] | -0.110 [-0.240, -0.033] ▼ | -0.000 [-0.004, 0.002] ≈ | -0.038 [-0.115, -0.001] ▼ |
+| Task success, hidden suite pass rate | up | 2 pp | 0.992 | 0.991 | 0.901 | 0.992 | 0.992 | -0.001 [-0.003, 0.001] ≈ | -0.090 [-0.234, -0.015] ▼ | -0.000 [-0.004, 0.002] ≈ | -0.000 [-0.003, 0.002] ≈ |
 | Installs in a clean environment | up | — | 1 | 1 | 1 | 1 | 1 | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ | 0 [0, 0] ‡ |
 
 ### Security
@@ -118,7 +118,7 @@ The whole vector, which the summary's scores digest and never replace.
 | Data protection, 1-5 | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
 | Security probe pass rate, of eleven | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
 | Data-protection probe pass rate, of three | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
-| Task success, hidden suite pass rate | no improvement shown | worse | no improvement shown | worse | no improvement shown | no improvement shown | worse |
+| Task success, hidden suite pass rate | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
 | Installs in a clean environment | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown | no improvement shown |
 | Installs and boots | no improvement shown | worse | no improvement shown | no improvement shown | no improvement shown | worse | no improvement shown |
 | Adherence checklist fraction | better | better | better | better | no improvement shown | no improvement shown | no improvement shown |
