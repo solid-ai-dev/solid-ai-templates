@@ -54,18 +54,30 @@ Read the agent's report and the files before you commit them.
 
 ## Documentation
 
-| Read | For |
-|------|-----|
-| [Migrating from 2.x](docs/migrations/v3.md) | Moving a 2.x project or fork to 3.0 |
-| [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
+To use the templates in your project:
+
+| Document | Use it to |
+|----------|-----------|
 | [Pre-commit hooks](docs/hooks.md) | Run the shipped checks, with or without the templates |
 | [Adapt the rules](docs/playbook.md#61-sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
-| [Changelog](CHANGELOG.md) | What changed in each release |
-| [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
-| [Playbook](docs/playbook.md) | Step-by-step procedures |
-| [Decisions](docs/decisions/) | Why the design is what it is |
-| [Security](SECURITY.md) | Reporting a vulnerability |
-| [Issues](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose) | Defects, proposals, questions |
+| [Migrating from 2.x](docs/migrations/v3.md) | Move a 2.x project or fork to 3.0 |
+| [Changelog](CHANGELOG.md) | See what changed in each release |
+
+To work on the templates themselves:
+
+| Document | Use it to |
+|----------|-----------|
+| [Contributing](CONTRIBUTING.md) | Set up, and learn what a change must carry |
+| [Specification](docs/spec.md) | Learn how the templates compose |
+| [Decisions](docs/decisions/) | Learn why the design is what it is |
+| [Playbook](docs/playbook.md) | Follow a step-by-step procedure |
+
+To report a problem:
+
+| Document | Use it to |
+|----------|-----------|
+| [Issues](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose) | Report a defect, propose a change, ask a question |
+| [Security](SECURITY.md) | Report a vulnerability |
 
 ## License
 
