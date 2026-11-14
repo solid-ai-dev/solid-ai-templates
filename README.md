@@ -1,96 +1,90 @@
 # SOLID-AI Templates
 
-Ready-made coding rules that help your AI agents make the same choices
-your team would. Hand over routine coding and review to the agents, and
-keep your team on design and testing.
+AI coding agents write code whose quality varies by agent, by session
+and by the context they are given. Each project writes its own agent
+instructions, and over a long-running project they drift, contradict
+one another and go unchecked.
+
+SOLID-AI Templates are shared engineering rules that a tool turns into an
+`AGENTS.md` and task skills for your project, so every agent and every
+session works to the same standards. Made for solo developers and small
+teams.
+
+Part of [solid-ai-dev](https://github.com/solid-ai-dev), alongside
+orchestrators, skills and a benchmark that measures what the rules change.
 
 ## Features
 
-- Engineering standards for solo developers and small teams, like large
-  companies have
-- The same rules for every team member and every project
-- Ready-made rules for testing, security, Git, CI/CD and APIs
-- Ready-made checks for the rules, run as pre-commit hooks
-- Skip, adapt or override the rules
-- New rules never change your project without your say
+| What you get | How |
+|--------------|-----|
+| Same standards for every agent and session | One `AGENTS.md`, built by a tool from shared rules for testing, security, Git, CI/CD and APIs |
+| Rules that keep up | Move to a newer templates release and rebuild your files; the project facts you filled in are kept |
+| Checked, not only written | Some rules ship with a script that checks them; installed as [pre-commit hooks](docs/hooks.md), they stop a commit that breaks one, such as an import across a declared boundary |
+| A lean context | By default, each task's procedures sit in a skill that loads only when that task starts; for an agent without skills, they go into `AGENTS.md` |
+| Your own rules on top | Add stacks, platforms and process rules in a fork, and keep merging upstream's updates |
 
 ## Quick setup
 
-1. Open your project in your agent and paste:
+Paste this into your agent, opened in your project:
 
-   ```text
-   Clone https://github.com/solid-ai-dev/solid-ai-templates next to this
-   project. Read its templates/manifest.yaml, propose the templates that
-   fit this project, and ask me to confirm before going on.
+```text
+Clone https://github.com/solid-ai-dev/solid-ai-templates at its latest
+release tag (3.0.0 or later; until 3.0.0 is tagged, clone main and pin
+the commit) next to this project. List its roots with
+../solid-ai-templates/tools/resolve_chain.py --roots, propose the ones
+that fit this project, and wait for me to confirm.
 
-   Then write AGENTS.md and CLAUDE.md for this project:
-   - Load every file in the manifest's core: list
-   - Load the chosen templates and every file their [DEPENDS ON] lines name
-   - Follow templates/core/agents.md for the output
-   ```
+Then build this project's AGENTS.md and skills from those roots:
+../solid-ai-templates/tools/resolve_chain.py --emit . <roots>
+If you read skills from a folder other than .agents/skills, add
+--mirror <that folder>.
 
-2. Review the result before you commit it.
+If you cannot load a SKILL.md file on demand when a task starts, add
+--inline-skills, so each task's procedures go into AGENTS.md instead.
 
-## Use the checks only
+Fill the {{...}} placeholders in AGENTS.md from this repository and ask
+me for any you cannot find. If your context file is not AGENTS.md, write
+it so it points to AGENTS.md.
 
-A project can run the shipped checks without the templates. Add them to
-`.pre-commit-config.yaml`, pinned to a released tag, and list the hooks it
-wants. The hooks ship from 3.0.0, which is not tagged yet; until it is,
-pin a commit of `main` as `rev:`.
-
-```yaml
-repos:
-  - repo: https://github.com/solid-ai-dev/solid-ai-templates
-    rev: v3.0.0
-    hooks:
-      - id: find-unfenced-checks
-      - id: find-bare-suppressions
+Finally, check the result and report each item: no {{ left in AGENTS.md,
+the commands under Commands run, every skill in the Skills table has its
+file, and your context file points to AGENTS.md.
 ```
 
-<!-- generated:readme-hooks -->
-| Hook | What it does | Runs | Rules and arguments |
-|------|--------------|------|---------------------|
-| `find-unfenced-checks` | Find checks stated outside a fenced block | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
-| `compile-embedded-checks` | Compile the Python checks embedded in Markdown | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
-| `find-line-continuations` | List line continuations in embedded checks | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
-| `find-bare-suppressions` | Find lint suppressions that name no rule | On each commit | [core/quality-gates.md](templates/core/quality-gates.md) |
-| `report-test-edits` | Report changes that edit an existing test | On request, after committing | [core/quality-gates.md](templates/core/quality-gates.md) |
-| `check-ascii-identifiers` | Check Python identifiers are ASCII | On each commit | [core/quality.md](templates/core/quality.md) |
-| `find-import-bans` | Find imports that cross a declared boundary | On each commit | [core/quality.md](templates/core/quality.md) |
-| `report-off-limits-paths` | Report committed changes touching off-limits paths | On request, after committing | [core/git.md](templates/core/git.md) |
-<!-- /generated:readme-hooks -->
-
-Run the commit hooks on each commit with `pre-commit install`, and in CI
-with `pre-commit run --all-files`. Run a hook marked on request after
-committing, in CI or by hand, since it reads the committed change:
-
-```bash
-pre-commit run report-test-edits --hook-stage manual --all-files
-```
-
-A hook that finds nothing to check prints `not applicable: <reason>` and
-passes; read it as nothing checked, not as a pass. The linked template
-holds each hook's rules and the arguments a project sets.
+Read the agent's report and the files before you commit them.
 
 ## Documentation
 
-| Read | For |
-|------|-----|
-| [Migrating from 2.x](docs/migrations/v3.md) | Moving a 2.x project or fork to 3.0 |
-| [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
+To use the templates in your project:
+
+| Document | Use it to |
+|----------|-----------|
+| [Pre-commit hooks](docs/hooks.md) | Run the shipped checks, with or without the templates |
 | [Adapt the rules](docs/playbook.md#61-sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
-| [Changelog](CHANGELOG.md) | What changed in each release |
-| [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |
-| [Playbook](docs/playbook.md) | Step-by-step procedures |
-| [Decisions](docs/decisions/) | Why the design is what it is |
-| [Security](SECURITY.md) | Reporting a vulnerability |
-| [Issues](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose) | Defects, proposals, questions |
+| [Migrating from 2.x](docs/migrations/v3.md) | Move a 2.x project or fork to 3.0 |
+| [Changelog](CHANGELOG.md) | See what changed in each release |
+
+To work on the templates themselves:
+
+| Document | Use it to |
+|----------|-----------|
+| [Contributing](CONTRIBUTING.md) | Set up, and learn what a change must carry |
+| [Specification](docs/spec.md) | Learn how the templates compose |
+| [Decisions](docs/decisions/) | Learn why the design is what it is |
+| [Playbook](docs/playbook.md) | Follow a step-by-step procedure |
+
+To report a problem:
+
+| Document | Use it to |
+|----------|-----------|
+| [Issues](https://github.com/solid-ai-dev/solid-ai-templates/issues/new/choose) | Report a defect, propose a change, ask a question |
+| [Security](SECURITY.md) | Report a vulnerability |
 
 ## License
 
-[MIT](LICENSE). Use, copy and adapt the templates and tools for any
-purpose, including in closed and commercial projects, keeping the copyright
-notice. Releases before 3.0.0 remain under CC BY 4.0.
+[MIT](LICENSE). Use, copy and adapt the templates, tools and hooks for
+any purpose, including in closed and commercial projects, keeping the
+copyright and licence notice.
 
 ## Author
 
