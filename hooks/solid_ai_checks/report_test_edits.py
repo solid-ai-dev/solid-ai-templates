@@ -5,12 +5,16 @@ it, which takes a person. The verdict is that person's, so this is a
 reading.
 """
 
+from __future__ import annotations
+
 import argparse
+from typing import List
 
 from .support.history import git, open_change
+from .support.report import Report
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="report-test-edits")
     parser.add_argument(
         "--base", default="origin/main", help="the ref the change is compared against"
@@ -18,9 +22,10 @@ def main(argv, report):
     parser.add_argument("--tests", default="tests", help="the project's test root")
     args = parser.parse_args(argv)
 
-    span, status = open_change(report, args.base)
-    if span is None:
-        return status
+    change = open_change(report, args.base)
+    if change[0] is None:
+        return change[1]
+    span = change[0]
 
     scope = "%s/" % args.tests.rstrip("/")
     changed = [l for l in git("diff", "--name-status", span).splitlines() if l]

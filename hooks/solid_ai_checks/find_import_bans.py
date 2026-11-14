@@ -5,11 +5,15 @@ cycle can still cross a boundary, such as a domain layer importing an
 adapter it is meant not to know.
 """
 
+from __future__ import annotations
+
 import argparse
 import ast
 import re
+from typing import Iterator, List, Set, Tuple
 
 from .support.files import tracked
+from .support.report import Report
 
 # A dotted module prefix: identifiers joined by single dots. A side that is
 # not one can never match an import, so the ban it names checks nothing.
@@ -21,7 +25,7 @@ MODULE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*([.][A-Za-z_][A-Za-z0-9_]*)*$")
 SOURCE_ROOT = "src"
 
 
-def importable_as(path):
+def importable_as(path: str) -> Iterator[Tuple[str, List[str]]]:
     """Yield (module, package parts) for each name a tracked file goes by.
 
     The whole path is one name; under a src layout the part below the
@@ -40,7 +44,7 @@ def importable_as(path):
         yield ".".join(parts), package
 
 
-def imported(tree, package):
+def imported(tree: ast.AST, package: List[str]) -> Iterator[Tuple[int, List[str]]]:
     """Yield (line, names) for every import statement in the tree.
 
     A relative import is resolved against `package`, the importing
@@ -51,14 +55,14 @@ def imported(tree, package):
         if isinstance(node, ast.Import):
             yield node.lineno, [alias.name for alias in node.names]
         elif isinstance(node, ast.ImportFrom):
-            base = []
+            prefix: List[str] = []
             if node.level:
                 # A relative import reaching above the top-level package
                 # fails when it runs, so it names no module to check.
                 if node.level > len(package):
                     continue
-                base = package[: len(package) - node.level + 1]
-            base = ".".join(base + ([node.module] if node.module else []))
+                prefix = package[: len(package) - node.level + 1]
+            base = ".".join(prefix + ([node.module] if node.module else []))
             yield (
                 node.lineno,
                 [base]
@@ -70,11 +74,11 @@ def imported(tree, package):
             )
 
 
-def crosses(name, banned):
+def crosses(name: str, banned: str) -> bool:
     return name == banned or name.startswith(banned + ".")
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="find-import-bans")
     parser.add_argument(
         "--forbid",
@@ -90,7 +94,7 @@ def main(argv, report):
 
     # A malformed ban dropped quietly leaves the boundary it meant to close
     # unchecked, so every supplied pair is validated and a bad one fails.
-    bans = []
+    bans: List[Tuple[str, ...]] = []
     for raw in args.forbid:
         parts = [p.strip() for p in raw.split(":")]
         if len(parts) != 2 or not all(MODULE.match(p) for p in parts):
@@ -115,7 +119,7 @@ def main(argv, report):
 
         # One statement crossing one ban is one finding, whichever of the
         # file's names or the statement's names reached it first.
-        flagged = set()
+        flagged: Set[Tuple[int, str, str]] = set()
         for module, package in importable_as(path):
             for line, names in imported(tree, package):
                 for importer, banned in bans:

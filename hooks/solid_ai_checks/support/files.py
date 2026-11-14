@@ -1,8 +1,11 @@
 """The files a hook reads: the tracked ones, never the working-tree walk."""
 
+from __future__ import annotations
+
 import os
 import posixpath
 import subprocess
+from typing import Iterable, List, Tuple
 
 # Vendored and installed code is not the project's own. Tracked copies of
 # it still dominate any count they are left in.
@@ -26,7 +29,7 @@ class GitFailed(Exception):
     """Raised when git fails inside a work tree, so no listing is whole."""
 
 
-def run_git(args):
+def run_git(args: Iterable[str]) -> subprocess.CompletedProcess[bytes]:
     """Run git with its messages in English, returning the finished process.
 
     Under the C locale git does not translate its errors, so the one that
@@ -39,7 +42,7 @@ def run_git(args):
         raise GitFailed("cannot run git: %s" % error)
 
 
-def ls_files(*args):
+def ls_files(*args: str) -> List[str]:
     """The paths `git ls-files -z` prints for `args`.
 
     Raises NotARepository outside a work tree and GitFailed when git fails
@@ -65,7 +68,7 @@ def ls_files(*args):
     )
 
 
-def tracked(suffixes, roots=()):
+def tracked(suffixes: Iterable[str], roots: Iterable[str] = ()) -> List[str]:
     """Tracked paths ending in one of `suffixes`, under one of `roots`.
 
     Asking git keeps a scratch or ignored file out of the corpus, so a
@@ -83,13 +86,13 @@ def tracked(suffixes, roots=()):
     )
 
 
-def normalised(roots):
+def normalised(roots: Iterable[str]) -> Tuple[str, ...]:
     """Roots as the prefixes git prints; empty when one names the whole tree.
 
     git prints `docs/a.md`, so `./docs`, `docs/` and `docs\\` all have to
     become `docs/` before they can match it, and `.` means every path.
     """
-    prefixes = []
+    prefixes: List[str] = []
     for root in roots:
         clean = posixpath.normpath(root.replace(chr(92), "/"))
         if clean in (".", ""):
@@ -98,7 +101,7 @@ def normalised(roots):
     return tuple(prefixes)
 
 
-def path_prefix(raw):
+def path_prefix(raw: str) -> str:
     """A path prefix spelled as git prints paths; empty for the whole tree.
 
     `./.github/workflows/` and `.github\\workflows\\` both become
@@ -113,6 +116,6 @@ def path_prefix(raw):
     return clean + "/" if text.endswith("/") else clean
 
 
-def read_lines(path):
+def read_lines(path: str) -> List[str]:
     with open(path, encoding="utf-8") as handle:
         return handle.read().splitlines()

@@ -4,11 +4,15 @@ A check that does not compile when a reader extracts it looks enforced and
 is not.
 """
 
+from __future__ import annotations
+
 import argparse
 import re
+from typing import Iterator, List, Tuple
 
 from .support.fences import blocks
 from .support.files import read_lines, tracked
+from .support.report import Report
 
 OPENER = "<<'EOF'"
 NEWLINE = chr(10)
@@ -18,7 +22,7 @@ NEWLINE = chr(10)
 INTERPRETER = re.compile(r"(^|[\s;|&(/])(py|python[0-9.]*)(\s|$)")
 
 
-def heredocs(body):
+def heredocs(body: List[str]) -> Iterator[Tuple[int, str]]:
     """Yield (opening offset, source) for every Python heredoc in a block.
 
     A block can hold several checks, and each one is compiled, so a valid
@@ -38,7 +42,7 @@ def heredocs(body):
         n = end + 1
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="compile-embedded-checks")
     parser.add_argument(
         "--root",

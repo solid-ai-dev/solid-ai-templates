@@ -4,11 +4,15 @@ A bare suppression absorbs every rule that later applies to its line; a
 named one keeps failing on the next.
 """
 
+from __future__ import annotations
+
 import argparse
 import re
 import tokenize
+from typing import Dict, List, Tuple
 
 from .support.files import read_lines, tracked
+from .support.report import Report
 
 # One ESLint pattern covers the whole-file, same-line and next-line forms.
 # The first lookahead refuses a longer directive name, so the short form
@@ -30,8 +34,11 @@ SUPPRESSIONS = (
 HASH = (".py", ".sh", ".rb", ".yml", ".yaml")
 SLASH = (".js", ".ts", ".go", ".jsx", ".tsx")
 
+# A file's source lines, and the (row, text) of every comment in them.
+Comments = Tuple[List[str], List[Tuple[int, str]]]
 
-def python_comments(path):
+
+def python_comments(path: str) -> Comments:
     """(row, text) for each comment the Python tokenizer finds.
 
     A `#` inside a string is part of the string's token, so a quoted
@@ -45,7 +52,7 @@ def python_comments(path):
     ]
 
 
-def hash_comments(path):
+def hash_comments(path: str) -> Comments:
     """(row, text) after the first `#` on each line, for the shell family."""
     src = read_lines(path)
     return src, [
@@ -53,7 +60,7 @@ def hash_comments(path):
     ]
 
 
-def slash_comments(path):
+def slash_comments(path: str) -> Comments:
     """(row, text) of each comment on each line, for the slash family.
 
     Every comment boundary on a line is followed, so a block comment that
@@ -65,7 +72,8 @@ def slash_comments(path):
     division, or a template's `${...}` from its text, takes a parser.
     """
     src = read_lines(path)
-    found, in_block = [], False
+    found: List[Tuple[int, str]] = []
+    in_block = False
     for number, line in enumerate(src, 1):
         at = 0
         while at < len(line):
@@ -91,7 +99,7 @@ def slash_comments(path):
     return src, found
 
 
-def comments(path):
+def comments(path: str) -> Comments:
     """The source lines of `path` and every comment in it, by language."""
     if path.endswith(SLASH):
         return slash_comments(path)
@@ -106,7 +114,7 @@ def comments(path):
     return hash_comments(path)
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="find-bare-suppressions")
     parser.add_argument(
         "--root", action="append", default=[], help="directory to scan; repeatable"
@@ -119,7 +127,7 @@ def main(argv, report):
         # Only a comment can hold a directive; reading code too would match
         # a quoted one, such as this module's own pattern table.
         src, found = comments(path)
-        lines = {}
+        lines: Dict[int, List[str]] = {}
         for number, comment in found:
             lines.setdefault(number, []).append(comment)
 

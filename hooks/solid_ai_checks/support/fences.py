@@ -1,13 +1,16 @@
 """Fenced blocks in Markdown, read the way a renderer reads them."""
 
+from __future__ import annotations
+
 import re
+from typing import Iterator, List, Sequence, Tuple
 
 # A CommonMark fence: three or more backticks or tildes. A backtick fence's
 # info string may hold no backtick, or the line is inline code instead.
 OPENING = re.compile(r"^([ ]*)(`{3,}(?=[^`]*$)|~{3,})(.*)$")
 
 
-def spans(lines):
+def spans(lines: Sequence[str]) -> Iterator[Tuple[int, int, int, str]]:
     """Yield (opening index, closing index, indent, language) per block.
 
     A block left open runs to the end of the document, as a renderer reads
@@ -34,7 +37,7 @@ def spans(lines):
         n = end + 1
 
 
-def blocks(lines):
+def blocks(lines: Sequence[str]) -> Iterator[Tuple[int, str, List[str]]]:
     """Yield (first body line number, language, body lines) per block.
 
     A fence indented under a list item has that indent stripped by a

@@ -4,10 +4,14 @@ A continuation lost in copying joins two lines and nothing reports it. This
 locator cannot tell a lost one from a kept one; it lists where to look.
 """
 
+from __future__ import annotations
+
 import argparse
+from typing import List
 
 from .support.fences import blocks
 from .support.files import read_lines, tracked
+from .support.report import Report
 
 # A fenced workflow or a table of output is an example, where a line ending
 # in a continuation is valid. Only a block a reader copies and runs counts.
@@ -16,7 +20,7 @@ CHECK_LANGUAGES = ("bash", "sh", "python", "py")
 BACKSLASH = chr(92)
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="find-line-continuations")
     parser.add_argument(
         "--root",

@@ -1,15 +1,20 @@
 """The change under review: the commits between a base and HEAD."""
 
+from __future__ import annotations
+
 import subprocess
+from typing import Tuple, Union
+
+from .report import Report
 
 
-def git(*args):
+def git(*args: str) -> str:
     return subprocess.run(
         ["git"] + list(args), capture_output=True, text=True, check=True
     ).stdout
 
 
-def open_change(report, base):
+def open_change(report: Report, base: str) -> Union[Tuple[str, None], Tuple[None, int]]:
     """The range under review, or the exit status that ends the run.
 
     Returns (span, None) when a change is open, or (None, status) when the

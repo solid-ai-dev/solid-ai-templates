@@ -5,18 +5,22 @@ and cannot tell an executable change from a prose one, so the summary and,
 where owed, the proposal are a person's to write.
 """
 
+from __future__ import annotations
+
 import argparse
+from typing import List
 
 from .support.files import GitFailed, path_prefix, run_git
 from .support.history import open_change
+from .support.report import Report
 
 
-def touches(path, prefix):
+def touches(path: str, prefix: str) -> bool:
     """Whether a path git printed falls under a normalised prefix."""
     return path.startswith(prefix) or ("/" + prefix) in path
 
 
-def changed_paths(span):
+def changed_paths(span: str) -> List[str]:
     """Every path the range touches, in the order git lists them.
 
     A rename touches both of its paths: moving a protected file out of
@@ -34,7 +38,8 @@ def changed_paths(span):
             % (diff.returncode, diff.stderr.decode("utf-8", "replace").strip())
         )
     fields = diff.stdout.decode("utf-8").split("\0")
-    paths, i = [], 0
+    paths: List[str] = []
+    i = 0
     while i < len(fields) and fields[i]:
         status = fields[i]
         if status[0] in "RC":
@@ -47,7 +52,7 @@ def changed_paths(span):
     return list(dict.fromkeys(paths))
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="report-off-limits-paths")
     parser.add_argument(
         "--base", default="origin/main", help="the ref the change is compared against"
@@ -69,9 +74,10 @@ def main(argv, report):
     if not prefixes:
         return report.not_applicable("no --path declared off-limits")
 
-    span, status = open_change(report, args.base)
-    if span is None:
-        return status
+    change = open_change(report, args.base)
+    if change[0] is None:
+        return change[1]
+    span = change[0]
 
     changed = report.count("files changed", changed_paths(span))
     for path in changed:
