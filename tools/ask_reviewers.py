@@ -15,8 +15,11 @@ answers to tests/reports/. It exits 0 when every reviewer answered and 1
 otherwise. Both CLIs bill subscription quota; no API key is read.
 """
 
+from __future__ import annotations
+
 import concurrent.futures
 import datetime
+import io
 import json
 import pathlib
 import shutil
@@ -24,10 +27,14 @@ import statistics
 import subprocess
 import sys
 import tempfile
+from collections.abc import Sequence
+from typing import Literal, NotRequired, TypedDict, cast
 
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -101,6 +108,58 @@ SCHEMA = {
     "additionalProperties": False,
 }
 
+
+class Finding(TypedDict):
+    """One point a reviewer makes, with the file it is about."""
+
+    file: str
+    point: str
+
+
+class Recommendation(TypedDict):
+    """One change a reviewer recommends, and its expected effect."""
+
+    file: str
+    change: str
+    effect: str
+
+
+class Answer(TypedDict):
+    """A reviewer's answer, in the shape SCHEMA requires."""
+
+    score: int
+    criteria: dict[str, int]
+    summary: str
+    strengths: list[Finding]
+    weaknesses: list[Finding]
+    drift_risks: list[Finding]
+    recommendations: list[Recommendation]
+
+
+class Record(TypedDict):
+    """One reviewer's run: what was asked, then its answer or its error."""
+
+    model: str
+    cli: str
+    effort: str
+    argv: NotRequired[list[str]]
+    seconds: NotRequired[int]
+    answer: NotRequired[Answer]
+    error: NotRequired[str]
+
+
+class Options(TypedDict):
+    """The parsed command line."""
+
+    models: list[str]
+    effort: str
+    timeout: int
+    dry_run: bool
+
+
+# The sections of findings an answer holds, each with its report heading.
+FindingKey = Literal["strengths", "weaknesses", "drift_risks"]
+
 PROMPT = """\
 You are reviewing solid-ai-templates, a set of Markdown templates a project
 composes into the instruction file (AGENTS.md, CLAUDE.md) its AI coding
@@ -138,7 +197,7 @@ Name files by their path as given in the headers below.
 """
 
 
-def bundle():
+def bundle() -> str:
     """Return the files a reviewer reads, each under its path."""
     paths = [ROOT / name for name in CONTEXT_FILES]
     paths += sorted(
@@ -146,7 +205,7 @@ def bundle():
         for path in TEMPLATES.rglob("*.md")
         if path.relative_to(TEMPLATES).parts[0] not in EXCLUDED
     )
-    parts = []
+    parts: list[str] = []
 
     for path in paths:
         text = path.read_text(encoding="utf-8")
@@ -156,13 +215,13 @@ def bundle():
     return "\n\n".join(parts)
 
 
-def prompt():
+def prompt() -> str:
     """Return the review prompt with the criteria and the bundle filled in."""
     criteria = "\n".join("- %s: %s." % item for item in CRITERIA.items())
     return PROMPT.format(criteria=criteria, bundle=bundle())
 
 
-def claude_argv(executable, model, effort):
+def claude_argv(executable: str, model: str, effort: str) -> list[str]:
     """Return the command for one review through Claude Code.
 
     No tools, no MCP servers, no session file, and no setting source, so
@@ -189,7 +248,14 @@ def claude_argv(executable, model, effort):
     ]
 
 
-def codex_argv(executable, model, effort, workdir, schema, last):
+def codex_argv(
+    executable: str,
+    model: str,
+    effort: str,
+    workdir: pathlib.Path,
+    schema: pathlib.Path,
+    last: pathlib.Path,
+) -> list[str]:
     """Return the command for one review through Codex.
 
     The user's config.toml is skipped, because it pins a low reasoning
@@ -219,11 +285,11 @@ def codex_argv(executable, model, effort, workdir, schema, last):
     ]
 
 
-def review(model, effort, text, timeout, dry_run):
+def review(model: str, effort: str, text: str, timeout: int, dry_run: bool) -> Record:
     """Run one reviewer and return its record: the answer or the error."""
     cli = "claude" if model.startswith("claude-") else "codex"
     executable = shutil.which(cli)
-    record = {"model": model, "cli": cli, "effort": effort}
+    record: Record = {"model": model, "cli": cli, "effort": effort}
     if executable is None:
         record["error"] = "%s is not on PATH" % cli
         return record
@@ -271,11 +337,12 @@ def review(model, effort, text, timeout, dry_run):
         if error:
             record["error"] = "%s; the CLI said: %s" % (error, said)
         else:
-            record["answer"] = answer
+            # A reply that names no error carries its answer.
+            record["answer"] = cast(Answer, answer)
     return record
 
 
-def claude_answer(stdout):
+def claude_answer(stdout: str) -> tuple[Answer | None, str | None]:
     """Return (answer, error) from Claude Code's JSON result."""
     try:
         result = json.loads(stdout)
@@ -286,7 +353,7 @@ def claude_answer(stdout):
     return result["structured_output"], None
 
 
-def codex_answer(last):
+def codex_answer(last: pathlib.Path) -> tuple[Answer | None, str | None]:
     """Return (answer, error) from the final message Codex wrote."""
     if not last.exists():
         return None, "no final message was written"
@@ -297,7 +364,7 @@ def codex_answer(last):
         return None, "the final message was not JSON: %s" % text[:300]
 
 
-def report(records, started):
+def report(records: Sequence[Record], started: datetime.datetime) -> str:
     """Return the Markdown report over every reviewer's record."""
     answered = [r for r in records if "answer" in r]
     names = list(CRITERIA)
@@ -340,6 +407,7 @@ def report(records, started):
         answer = record["answer"]
         lines += [answer["summary"].strip(), ""]
 
+        key: FindingKey
         for key, title in (
             ("strengths", "Strengths"),
             ("weaknesses", "Weaknesses"),
@@ -359,9 +427,9 @@ def report(records, started):
     return "\n".join(lines).rstrip() + "\n"
 
 
-def options(args):
+def options(args: Sequence[str]) -> Options:
     """Return the parsed command line, or exit 2 on an unknown argument."""
-    parsed = {
+    parsed: Options = {
         "models": list(DEFAULT_MODELS),
         "effort": "high",
         "timeout": 1800,
@@ -386,7 +454,7 @@ def options(args):
     return parsed
 
 
-def main(args):
+def main(args: list[str]) -> int:
     parsed = options(args)
     text = prompt()
     started = datetime.datetime.now()

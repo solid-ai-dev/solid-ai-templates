@@ -15,11 +15,18 @@ are left out, because they are not rules an agent reads as prose. No
 dependency beyond the standard library.
 """
 
+from __future__ import annotations
+
 import io
 import pathlib
 import re
 import statistics
 import sys
+from collections.abc import Collection, Mapping
+
+# A document's score, its subscore and raw value per criterion, and the
+# caps applied to it.
+Score = tuple[float, dict[str, float], dict[str, float], list[str]]
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / "templates"
@@ -124,21 +131,21 @@ FENCE = re.compile(r"^\s*(```|~~~)")
 class Item:
     """One bullet: its words, sentences, line and nesting depth."""
 
-    def __init__(self, text, line, depth, section):
+    def __init__(self, text: str, line: int, depth: int, section: str) -> None:
         self.text = text
         self.line = line
         self.depth = depth
         self.section = section
 
     @property
-    def words(self):
+    def words(self) -> int:
         return len(self.text.split())
 
     @property
-    def sentences(self):
+    def sentences(self) -> int:
         return len([s for s in SENTENCE_END.split(self.text) if s.strip()])
 
-    def is_directive(self):
+    def is_directive(self) -> bool:
         if RFC_KEYWORDS.search(self.text) or OBLIGATION.search(self.text):
             return True
 
@@ -147,9 +154,9 @@ class Item:
             return True
         lead = re.sub(r"^[*_`]+", "", self.text)
         match = re.match(r"[A-Za-z']+", lead)
-        return bool(match) and match.group(0) in IMPERATIVES
+        return match is not None and match.group(0) in IMPERATIVES
 
-    def opens_with_subject(self):
+    def opens_with_subject(self) -> bool:
         if re.match(r"^\[[ xX]\]\s", self.text):
             return False
         lead = RULE_LABEL.sub("", self.text)
@@ -168,33 +175,33 @@ class Item:
 class Doc:
     """A template's prose, split into rules, paragraphs and sections."""
 
-    def __init__(self, text):
-        self.items = []
-        self.paragraphs = []
-        self.sections = []
-        self.prose = []
+    def __init__(self, text: str) -> None:
+        self.items: list[Item] = []
+        self.paragraphs: list[tuple[str, str]] = []
+        self.sections: list[tuple[str, int]] = []
+        self.prose: list[str] = []
         self.broken_wraps = 0
         self._parse(text.splitlines())
 
-    def _parse(self, lines):
+    def _parse(self, lines: list[str]) -> None:
         fence = False
         section = "(preamble)"
         prose_lines = 0
-        item = None
-        para = []
+        item: Item | None = None
+        para: list[str] = []
 
         # A continuation line holding only a dash or one word, with more of
         # the rule after it, is a wrap broken mid-sentence.
         short_line = False
 
-        def close_item():
+        def close_item() -> None:
             nonlocal item, short_line
             short_line = False
             if item is not None:
                 self.items.append(item)
                 item = None
 
-        def close_para():
+        def close_para() -> None:
             nonlocal para
             if para:
                 self.paragraphs.append((section, " ".join(para)))
@@ -248,20 +255,20 @@ class Doc:
         self.sections.append((section, prose_lines))
 
     @property
-    def text(self):
+    def text(self) -> str:
         return " ".join(self.prose)
 
     @property
-    def words(self):
+    def words(self) -> int:
         return len(self.text.split())
 
 
-def _without_code(text):
+def _without_code(text: str) -> str:
     """Text with inline code spans removed, for the word scans."""
     return re.sub(r"`[^`]*`", " ", text)
 
 
-def _without_quotes(text):
+def _without_quotes(text: str) -> str:
     """Text with quoted passages removed. A rule quoting the form it forbids
     ("not 'see #123'") is not an instance of it."""
 
@@ -274,12 +281,12 @@ def _without_quotes(text):
     return re.sub(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|" + single, " ", text)
 
 
-def _sentences(unit):
+def _sentences(unit: str) -> list[int]:
     """The word count of each sentence in one bullet or paragraph."""
     return [len(s.split()) for s in SENTENCE_END.split(unit) if s.split()]
 
 
-def metrics(doc):
+def metrics(doc: Doc) -> dict[str, float]:
     """The raw measurement behind each criterion."""
     rules = [i for i in doc.items if i.depth == 0]
     rule_words = [i.words for i in doc.items] or [0]
@@ -316,7 +323,7 @@ def metrics(doc):
 # calibrated on the corpus on 2026-10-19: "good" sits near the median of the
 # templates outside core/, "bad" near the corpus's 90th percentile. Run
 # --calibrate to see the distributions they came from.
-CRITERIA = {
+CRITERIA: dict[str, dict[str, float]] = {
     "rule_words": {"good": 15, "bad": 35, "weight": 2.0},
     "long_rules": {"good": 0.02, "bad": 0.30, "weight": 2.0},
     "paragraph_share": {"good": 0.10, "bad": 0.35, "weight": 1.5},
@@ -344,7 +351,7 @@ CAPS = (
 UPSTREAM_KEYS = ("base", "backend", "frontend")
 
 
-def upstream_files(manifest_text):
+def upstream_files(manifest_text: str) -> set[str]:
     """The template paths the manifest files under an upstream key."""
     sys.path.insert(0, str(ROOT / "tools"))
     import resolve_chain
@@ -358,7 +365,7 @@ def upstream_files(manifest_text):
     }
 
 
-def criterion_score(name, value):
+def criterion_score(name: str, value: float) -> float:
     band = CRITERIA[name]
     good, bad = band["good"], band["bad"]
     if good == bad:
@@ -367,13 +374,13 @@ def criterion_score(name, value):
     return round(100 * min(max(1 - position, 0.0), 1.0), 1)
 
 
-def score(doc):
+def score(doc: Doc) -> Score:
     """(score, subscores, raw metrics, caps applied) for one document."""
     raw = metrics(doc)
     subs = {name: criterion_score(name, raw[name]) for name in CRITERIA}
     total = sum(CRITERIA[n]["weight"] for n in CRITERIA)
     value = sum(subs[n] * CRITERIA[n]["weight"] for n in CRITERIA) / total
-    applied = []
+    applied: list[str] = []
     for metric, threshold, cap in CAPS:
         if raw[metric] > threshold:
             value = min(value, cap)
@@ -381,19 +388,20 @@ def score(doc):
     return round(value, 1), subs, raw, applied
 
 
-def sections(text):
+def sections(text: str) -> list[tuple[str, int, Doc]]:
     """(title, first line, Doc) for each H2 section of a template."""
     lines = text.splitlines()
 
     # A heading inside a fenced example is part of the example, not a
     # section boundary.
-    starts, fence = [], False
+    starts: list[int] = []
+    fence = False
     for i, line in enumerate(lines):
         if FENCE.match(line):
             fence = not fence
         elif not fence and line.startswith("## "):
             starts.append(i)
-    out = []
+    out: list[tuple[str, int, Doc]] = []
     for n, start in enumerate(starts):
         end = starts[n + 1] if n + 1 < len(starts) else len(lines)
         out.append(
@@ -402,7 +410,7 @@ def sections(text):
     return out
 
 
-def templates():
+def templates() -> list[pathlib.Path]:
     """Every template a project reads, as paths relative to the root."""
     return sorted(
         p
@@ -411,19 +419,21 @@ def templates():
     )
 
 
-def rel(path):
+def rel(path: pathlib.Path) -> str:
     return path.relative_to(ROOT).as_posix()
 
 
-def split_by_owner(scores, owned):
+def split_by_owner(
+    scores: Mapping[str, float], owned: Collection[str]
+) -> tuple[dict[str, float], dict[str, float]]:
     """(upstream rows, fork rows) of a score table, by manifest ownership."""
     upstream = {n: v for n, v in scores.items() if n in owned}
     fork = {n: v for n, v in scores.items() if n not in owned}
     return upstream, fork
 
 
-def read_baseline(path):
-    rows = {}
+def read_baseline(path: pathlib.Path) -> dict[str, float]:
+    rows: dict[str, float] = {}
     if path.exists():
         for line in io.open(path, encoding="utf-8"):
             line = line.split("#", 1)[0].strip()
@@ -433,7 +443,7 @@ def read_baseline(path):
     return rows
 
 
-def write_baseline(path, rows, header):
+def write_baseline(path: pathlib.Path, rows: Mapping[str, float], header: str) -> None:
     with io.open(path, "w", encoding="utf-8", newline="\n") as out:
         out.write(header)
         for name in sorted(rows):
@@ -449,7 +459,7 @@ BASELINE_HEADER = """\
 """
 
 
-def unmoved_baselines():
+def unmoved_baselines() -> list[str]:
     """A line per baseline still at its old path, naming where it goes."""
     return [
         f"{rel(old)} is at its old path; move it to {rel(new)}"
@@ -458,9 +468,14 @@ def unmoved_baselines():
     ]
 
 
-def check(scores, baseline, fork_baseline, upstream=()):
+def check(
+    scores: Mapping[str, float],
+    baseline: Mapping[str, float],
+    fork_baseline: Mapping[str, float],
+    upstream: Collection[str] = (),
+) -> list[str]:
     """Findings for the ratchet: each a line naming the file and why."""
-    findings = []
+    findings: list[str] = []
     recorded = {**baseline, **fork_baseline}
     for name, value in sorted(scores.items()):
         if name in upstream and value < UPSTREAM_FLOOR - TOLERANCE:
@@ -519,8 +534,8 @@ ESSAY = (
 )
 
 
-def self_test():
-    cases = []
+def self_test() -> int:
+    cases: list[tuple[str, object, object]] = []
     good = score(Doc(GOOD))[0]
     cases.append(("short imperative rules score 85 or above", good >= 85, good))
     essay = score(Doc(ESSAY))[0]
@@ -687,14 +702,14 @@ SHORT = {
 }
 
 
-def score_all():
-    out = {}
+def score_all() -> dict[str, Score]:
+    out: dict[str, Score] = {}
     for path in templates():
         out[rel(path)] = score(Doc(path.read_text(encoding="utf-8")))
     return out
 
 
-def print_table(results):
+def print_table(results: Mapping[str, Score]) -> None:
     print(
         f"{'template':40} {'score':>5}  "
         + " ".join(f"{SHORT[n]:>5}" for n in CRITERIA)
@@ -716,7 +731,7 @@ def print_table(results):
     )
 
 
-def print_detail(path):
+def print_detail(path: pathlib.Path) -> None:
     text = path.read_text(encoding="utf-8")
     doc = Doc(text)
     value, subs, raw, caps = score(doc)
@@ -736,8 +751,8 @@ def print_detail(path):
         print(f"    {value:5.1f}  line {line}: {title}")
 
 
-def print_sections(limit=25):
-    rows = []
+def print_sections(limit: int = 25) -> None:
+    rows: list[tuple[float, str, int, str, int]] = []
     for path in templates():
         text = path.read_text(encoding="utf-8")
         for title, line, doc in sections(text):
@@ -749,7 +764,7 @@ def print_sections(limit=25):
     print(f"\nsections scored: {len(rows)}")
 
 
-def calibrate():
+def calibrate() -> None:
     rows = {
         name: metrics(Doc(p.read_text(encoding="utf-8")))
         for name, p in ((rel(p), p) for p in templates())
@@ -763,7 +778,7 @@ def calibrate():
         )
 
 
-def main(args):
+def main(args: list[str]) -> int:
     if "--self-test" in args:
         return 1 if self_test() else 0
     if "--calibrate" in args:

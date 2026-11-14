@@ -18,14 +18,20 @@ Usage:
     py tools/check_doc_figures.py --self-test  # the planted cases below
 """
 
+from __future__ import annotations
+
+import io
 import pathlib
 import re
 import subprocess
 import sys
+from typing import Iterator, cast
 
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -104,7 +110,7 @@ HISTORY = ("CHANGELOG.md", "docs/decisions/", "docs/audits/")
 SOURCES = ("templates/", "generated/", "examples/")
 
 
-def figures(lines):
+def figures(lines: list[str]) -> Iterator[tuple[int, str, str]]:
     """Yield (line number, numeral, noun) for each ungated figure."""
     generated = fenced = measured = False
 
@@ -134,7 +140,7 @@ def figures(lines):
             yield number, hit.group(1), hit.group(2)
 
 
-def documents():
+def documents() -> list[str]:
     """Return the tracked Markdown paths the check covers."""
     out = subprocess.check_output(["git", "ls-files", "-z", "*.md"])
     return sorted(
@@ -144,7 +150,7 @@ def documents():
     )
 
 
-def check():
+def check() -> int:
     paths = documents()
 
     # An empty list means the pathspec reached nothing, which would report
@@ -153,7 +159,7 @@ def check():
         print("no tracked Markdown reached; the pathspec drifted")
         return 1
 
-    findings = []
+    findings: list[str] = []
 
     for rel in paths:
         lines = pathlib.Path(rel).read_text(encoding="utf-8").splitlines()
@@ -174,7 +180,7 @@ def check():
 
 
 # (text, figures expected). Each case is one document's lines.
-CASES = [
+CASES: list[tuple[list[str], int]] = [
     (["The suite has 14 checks."], 1),
     (["Eight files moved."], 1),
     (["The 14 manifest-reading checks run."], 1),
@@ -195,7 +201,7 @@ CASES = [
 ]
 
 
-def self_test():
+def self_test() -> int:
     failed = 0
 
     for lines, expected in CASES:
@@ -212,7 +218,7 @@ def self_test():
     return 1 if failed else 0
 
 
-def main(args):
+def main(args: list[str]) -> int:
     if "--self-test" in args:
         return self_test()
 

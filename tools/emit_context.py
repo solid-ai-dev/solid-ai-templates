@@ -14,10 +14,14 @@ Run it through the resolver:
         [--declined <file>] [--inline-skills] [--mirror <dir>]
 """
 
+from __future__ import annotations
+
 import hashlib
 import io
 import os
 import re
+from collections.abc import Collection, Iterable, Mapping, Sequence
+from typing import TypedDict, cast
 
 from resolve_chain import (
     FENCE_LINE,
@@ -73,7 +77,28 @@ class EmitError(Exception):
     """An emission refused rather than written."""
 
 
-def _blocks(text):
+class Row(TypedDict):
+    """One line of a template and where it sits; `_blocks` says each key."""
+
+    line: str
+    path: list[tuple[int, str]]
+    load: str | None
+    anchor: int | None
+    section: str | None
+    tag: bool
+    heading: bool
+    fence: bool
+
+
+class Unit(TypedDict):
+    """Rows that stay together: a heading, a block, a paragraph or a bullet."""
+
+    kind: str
+    rows: list[Row]
+    closed: bool
+
+
+def _blocks(text: str) -> list[Row]:
     """The file's lines, each a dict describing where it sits.
 
     Keys: `line`; the `path` of (level, text) headings above it; its `load`
@@ -83,7 +108,10 @@ def _blocks(text):
     line, a heading, or a fence line or inside one.
     """
     loads = {d["heading"]: d["kind"] for d in load_directives(text) if d["placed"]}
-    out, stack, fence, section = [], [], None, None
+    out: list[Row] = []
+    stack: list[tuple[int, str, str | None]] = []
+    fence: str | None = None
+    section: str | None = None
     for number, line in enumerate(text.splitlines(), start=1):
         run = FENCE_LINE.match(line)
         in_fence = fence is not None
@@ -130,7 +158,7 @@ def _blocks(text):
     return out
 
 
-def _overridden(parsed):
+def _overridden(parsed: Iterable[Iterable[Row]]) -> set[str]:
     """The section IDs an adopted override replaces.
 
     Only a tag line counts, so an example in a fence overrides nothing, and
@@ -146,12 +174,12 @@ def _overridden(parsed):
     }
 
 
-def _declined(row, path, declined):
+def _declined(row: Row, path: str, declined: Collection[str]) -> bool:
     """True when the row sits under a heading the project declined."""
     return any(f"{path}#{text}" in declined for _, text in row["path"])
 
 
-def _demote(line, by):
+def _demote(line: str, by: int) -> str:
     heading = HEADING_LINE.match(line)
     if not heading:
         return line
@@ -159,9 +187,10 @@ def _demote(line, by):
     return "#" * level + line[len(heading.group(1)) :]
 
 
-def _fenced(lines):
+def _fenced(lines: Iterable[str]) -> list[bool]:
     """For each line, True when it is a fence delimiter or inside one."""
-    marks, fence = [], None
+    marks: list[bool] = []
+    fence: str | None = None
     for line in lines:
         run = FENCE_LINE.match(line)
         marks.append(fence is not None or bool(run))
@@ -174,10 +203,10 @@ def _fenced(lines):
     return marks
 
 
-def _units(rows):
+def _units(rows: Iterable[Row]) -> list[Unit]:
     """Group a section's rows into units: a heading, a fenced block, a
     paragraph, a bullet with its continuation lines, or a blank line."""
-    units = []
+    units: list[Unit] = []
     for row in rows:
         line = row["line"]
         kind = (
@@ -197,7 +226,8 @@ def _units(rows):
             if FENCE_LINE.match(line) and len(last["rows"]) > 1:
                 last["closed"] = True
             continue
-        nested = kind == "bullet" and BULLET_LINE.match(line).group(1)
+        bullet = BULLET_LINE.match(line) if kind == "bullet" else None
+        nested = bullet is not None and bullet.group(1)
         if (
             last
             and last["kind"] in ("bullet", "text")
@@ -210,7 +240,7 @@ def _units(rows):
     return units
 
 
-def _checked(rows):
+def _checked(rows: Iterable[Row]) -> list[Row]:
     """What a checked section keeps: its headings, its fenced commands, its
     prose, the bullet that introduces a command, and the whole list that
     follows one, which states its pass condition. The other bullets are
@@ -220,7 +250,7 @@ def _checked(rows):
     costs nothing the check does not report, and dropping half a pass
     condition loses what the check means."""
     units = _units(rows)
-    near = set()
+    near: set[int] = set()
     for i, unit in enumerate(units):
         if unit["kind"] != "fence":
             continue
@@ -234,18 +264,18 @@ def _checked(rows):
             if units[j]["kind"] == "bullet":
                 near.add(j)
             j += 1
-    keep = []
+    keep: list[Row] = []
     for i, unit in enumerate(units):
         if unit["kind"] != "bullet" or i in near:
             keep.extend(unit["rows"])
     return keep
 
 
-def _tidy(lines):
+def _tidy(lines: Sequence[str]) -> list[str]:
     """Drop headings left with no content and collapse blank runs outside
     fences, so a `#` comment in a code block is never read as a heading."""
     fenced = _fenced(lines)
-    kept = []
+    kept: list[str] = []
     for i, line in enumerate(lines):
         heading = None if fenced[i] else HEADING_LINE.match(line)
         if heading:
@@ -269,14 +299,17 @@ def _tidy(lines):
     return kept
 
 
-def _place(files, declined):
+def _place(
+    files: Iterable[tuple[str, str]], declined: Collection[str]
+) -> tuple[list[str], dict[str, list[str]]]:
     """Split the chain into the root file's rows and each kind's rows."""
     parsed = [
         [row for row in _blocks(text) if not _declined(row, path, declined)]
         for path, text in files
     ]
     overridden = _overridden(parsed)
-    root, skills = [], {}
+    root: list[str] = []
+    skills: dict[str, list[str]] = {}
     for adopted in parsed:
         rows = [
             row
@@ -299,9 +332,12 @@ def _place(files, declined):
                 ]
             else:
                 # A skill's sections start at level two, whatever level the
-                # loaded heading had in its template.
+                # loaded heading had in its template. A row with a load has
+                # the anchor of the heading that set it.
                 skills.setdefault(load, []).extend(
-                    _demote(r["line"], 2 - r["anchor"]) if r["heading"] else r["line"]
+                    _demote(r["line"], 2 - cast(int, r["anchor"]))
+                    if r["heading"]
+                    else r["line"]
                     for r in run
                 )
             i = j
@@ -309,7 +345,12 @@ def _place(files, declined):
     return root, skills
 
 
-def build(files, kinds, declined=(), inline_skills=False):
+def build(
+    files: Iterable[tuple[str, str]],
+    kinds: Mapping[str, str],
+    declined: Iterable[str] = (),
+    inline_skills: bool = False,
+) -> dict[str, str]:
     """Every file the chain emits, as {relative path: text}.
 
     `files` is the chain as (path, text) pairs in resolution order, `kinds`
@@ -328,7 +369,7 @@ def build(files, kinds, declined=(), inline_skills=False):
         "The adopted rules that apply on every task.",
         "",
     ] + root
-    table = []
+    table: list[str] = []
     if used and not inline_skills:
         table = [
             "## Skills",
@@ -339,7 +380,7 @@ def build(files, kinds, declined=(), inline_skills=False):
             "|-------|--------------|",
         ]
         table += [f"| {kind} | {kinds[kind]} |" for kind in used]
-    procedures = []
+    procedures: list[str] = []
     if inline_skills and used:
         procedures = [
             "## Procedures",
@@ -374,7 +415,7 @@ def build(files, kinds, declined=(), inline_skills=False):
     return out
 
 
-def read_declined(path):
+def read_declined(path: str | None) -> list[str]:
     """The `path#Heading` entries of a declined list, one per line."""
     if not path:
         return []
@@ -384,20 +425,20 @@ def read_declined(path):
         ]
 
 
-def _read(path):
+def _read(path: str) -> str | None:
     if not os.path.exists(path):
         return None
     with io.open(path, encoding="utf-8") as handle:
         return handle.read()
 
 
-def _hash(text):
+def _hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def _read_record(out_dir):
+def _read_record(out_dir: str) -> dict[str, str]:
     """The previous run's {path: hash}, one tab-separated entry a line."""
-    entries = {}
+    entries: dict[str, str] = {}
     for line in (_read(os.path.join(out_dir, RECORD)) or "").splitlines():
         digest, sep, rel = line.partition("\t")
         if sep and rel:
@@ -405,7 +446,7 @@ def _read_record(out_dir):
     return entries
 
 
-def _keep_facts(previous, emitted, recorded):
+def _keep_facts(previous: str, emitted: str, recorded: Collection[str]) -> str:
     """The emitted root file with the facts a previous one filled in.
 
     The facts are everything above `## Rules`. A previous file is the
@@ -428,7 +469,7 @@ def _keep_facts(previous, emitted, recorded):
     return facts + marker[1:] + rules
 
 
-def _owned_stale(out_dir, rel, digest):
+def _owned_stale(out_dir: str, rel: str, digest: str) -> str | None:
     """The full path of a recorded file to remove, or None to keep it: it
     must stay inside the output directory and still hold what was written.
     """
@@ -444,7 +485,9 @@ def _owned_stale(out_dir, rel, digest):
     return full
 
 
-def write(out_dir, emitted, mirrors=()):
+def write(
+    out_dir: str, emitted: Mapping[str, str], mirrors: Sequence[str] = ()
+) -> list[str]:
     """Write the emitted files, copy the skills into each mirror, keep the
     facts a previous root file filled in, and remove what a previous run
     wrote that this one does not."""
@@ -453,7 +496,7 @@ def write(out_dir, emitted, mirrors=()):
     previous = _read(os.path.join(out_dir, ROOT_FILE))
     if previous is not None:
         files[ROOT_FILE] = _keep_facts(previous, files[ROOT_FILE], recorded)
-    targets = {}
+    targets: dict[str, str] = {}
     for rel, text in files.items():
         targets[rel] = text
         if rel.startswith(SKILLS_DIR + "/"):
