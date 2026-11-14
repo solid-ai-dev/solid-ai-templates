@@ -1,76 +1,37 @@
 # SOLID-AI Templates
 
-Ready-made coding rules that help your AI agents make the same choices
-your team would. Hand over routine coding and review to the agents, and
-keep your team on design and testing.
+Markdown rule templates that turn into an `AGENTS.md` and `CLAUDE.md` for
+your project, so every AI agent and every session works to the same
+engineering standards. Made for solo developers and small teams. Part of
+[solid-ai-dev](https://github.com/solid-ai-dev), alongside orchestrators,
+skills and a benchmark that measures what the rules change.
 
 ## Features
 
-- Engineering standards for solo developers and small teams, like large
-  companies have
-- The same rules for every team member and every project
-- Ready-made rules for testing, security, Git, CI/CD and APIs
-- Ready-made checks for the rules, run as pre-commit hooks
-- Skip, adapt or override the rules
-- New rules never change your project without your say
+- Rules for testing, security, Git, CI/CD and APIs, composed into your
+  agent files
+- Pre-commit hooks that enforce the rules a script can check, such as
+  comment layout, import bans and ASCII identifiers
+- Add your own stacks, platforms and process rules in a fork, and keep
+  merging upstream's updates
 
 ## Quick setup
 
-1. Open your project in your agent and paste:
+Paste this into your agent, opened in your project:
 
-   ```text
-   Clone https://github.com/solid-ai-dev/solid-ai-templates next to this
-   project. Read its templates/manifest.yaml, propose the templates that
-   fit this project, and ask me to confirm before going on.
+```text
+Clone https://github.com/solid-ai-dev/solid-ai-templates at its latest
+release tag (3.0.0 or later) next to this project. Run its
+tools/resolve_chain.py --roots, propose the roots that fit this project,
+and wait for me to confirm.
 
-   Then write AGENTS.md and CLAUDE.md for this project:
-   - Load every file in the manifest's core: list
-   - Load the chosen templates and every file their [DEPENDS ON] lines name
-   - Follow templates/core/agents.md for the output
-   ```
-
-2. Review the result before you commit it.
-
-## Use the checks only
-
-A project can run the shipped checks without the templates. Add them to
-`.pre-commit-config.yaml`, pinned to a released tag, and list the hooks it
-wants. The hooks ship from 3.0.0, which is not tagged yet; until it is,
-pin a commit of `main` as `rev:`.
-
-```yaml
-repos:
-  - repo: https://github.com/solid-ai-dev/solid-ai-templates
-    rev: v3.0.0
-    hooks:
-      - id: find-unfenced-checks
-      - id: find-bare-suppressions
+Then run tools/resolve_chain.py --emit . <roots> --mirror .claude/skills.
+Fill the {{...}} placeholders in AGENTS.md from this repository and ask
+me for any you cannot find. Write a CLAUDE.md that holds @AGENTS.md.
 ```
 
-<!-- generated:readme-hooks -->
-| Hook | What it does | Runs | Rules and arguments |
-|------|--------------|------|---------------------|
-| `find-unfenced-checks` | Find checks stated outside a fenced block | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
-| `compile-embedded-checks` | Compile the Python checks embedded in Markdown | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
-| `find-line-continuations` | List line continuations in embedded checks | On each commit | [core/embedded-checks.md](templates/core/embedded-checks.md) |
-| `find-bare-suppressions` | Find lint suppressions that name no rule | On each commit | [core/quality-gates.md](templates/core/quality-gates.md) |
-| `report-test-edits` | Report changes that edit an existing test | On request, after committing | [core/quality-gates.md](templates/core/quality-gates.md) |
-| `check-ascii-identifiers` | Check Python identifiers are ASCII | On each commit | [core/quality.md](templates/core/quality.md) |
-| `find-import-bans` | Find imports that cross a declared boundary | On each commit | [core/quality.md](templates/core/quality.md) |
-| `report-off-limits-paths` | Report committed changes touching off-limits paths | On request, after committing | [core/git.md](templates/core/git.md) |
-<!-- /generated:readme-hooks -->
-
-Run the commit hooks on each commit with `pre-commit install`, and in CI
-with `pre-commit run --all-files`. Run a hook marked on request after
-committing, in CI or by hand, since it reads the committed change:
-
-```bash
-pre-commit run report-test-edits --hook-stage manual --all-files
-```
-
-A hook that finds nothing to check prints `not applicable: <reason>` and
-passes; read it as nothing checked, not as a pass. The linked template
-holds each hook's rules and the arguments a project sets.
+Review the files before you commit them. 3.0.0 is not tagged yet; until
+it is, have the agent clone `main` and pin a commit.
 
 ## Documentation
 
@@ -78,6 +39,7 @@ holds each hook's rules and the arguments a project sets.
 |------|-----|
 | [Migrating from 2.x](docs/migrations/v3.md) | Moving a 2.x project or fork to 3.0 |
 | [Specification](docs/spec.md) | How the templates compose: goals, building blocks, rules, quality, risks |
+| [Pre-commit hooks](docs/hooks.md) | Run the shipped checks, with or without the templates |
 | [Adapt the rules](docs/playbook.md#61-sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
 | [Changelog](CHANGELOG.md) | What changed in each release |
 | [Contributing](CONTRIBUTING.md) | Setup, and what a change must carry |

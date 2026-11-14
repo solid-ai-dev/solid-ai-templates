@@ -517,8 +517,11 @@ def _readme_agents():
     return "\n".join(out)
 
 
-def _readme_hooks():
-    """Render the README table of shipped hooks a project can run.
+def _hooks_table(prefix=""):
+    """Render the table of shipped hooks a project can run.
+
+    Each link to a template starts with `prefix`, the path from the
+    document holding the table back to the repository root.
 
     The hook list is written once, in `.pre-commit-hooks.yaml`. A
     deprecated hook still runs until the next major, but a project
@@ -532,7 +535,7 @@ def _readme_hooks():
     if not blocks:
         raise SystemExit(
             "sync: .pre-commit-hooks.yaml parsed to zero hooks; refusing to "
-            "write an empty README table"
+            "write an empty hook table"
         )
 
     templates = {
@@ -564,10 +567,12 @@ def _readme_hooks():
         ]
         if not homes:
             raise SystemExit(
-                "sync: no template states the command of hook %s; the README "
-                "cannot link where its arguments are described" % hid
+                "sync: no template states the command of hook %s; the hook "
+                "table cannot link where its arguments are described" % hid
             )
-        links = ", ".join("[%s](%s)" % (rel[len("templates/") :], rel) for rel in homes)
+        links = ", ".join(
+            "[%s](%s%s)" % (rel[len("templates/") :], prefix, rel) for rel in homes
+        )
         out.append("| `%s` | %s | %s | %s |" % (hid, name, runs, links))
     return "\n".join(out)
 
@@ -607,10 +612,12 @@ def main():
     has_model_table = "<!-- generated:readme-model-limits -->" in readme_text
     model_limits = _readme_model_limits() if has_model_table else None
     agent_outputs = _readme_agents()
-    # Only a README carrying the hook table's markers asks for it, so a
-    # fork whose README drops the table never parses the hook file.
+    # docs/hooks.md always holds the hook table. A fork's README may carry a
+    # copy too, and only a README carrying the table's markers gets one.
     has_hook_table = "<!-- generated:readme-hooks -->" in readme_text
-    readme_hooks = _readme_hooks() if has_hook_table else None
+    readme_hooks = _hooks_table() if has_hook_table else None
+    hooks_doc = ROOT / "docs" / "hooks.md"
+    hooks_blocks = {"hooks-table": _hooks_table("../")}
     interview_content = _interview_stacks(manifest)
 
     spec_doc = ROOT / "docs" / "architecture" / "05-building-block-view.md"
@@ -618,12 +625,12 @@ def main():
     examples_doc = ROOT / CHAIN_EXAMPLES_DOC
     example_blocks = {"spec-chain-examples": chain_examples}
 
-    # The README is fork-owned. Upstream's is a short front page whose only
-    # generated section is the hook table; a fork keeps the markers for the
-    # tables it shows, and each pair present is filled, so --check still
-    # sees its drift. A
-    # section is absent only when both markers are: one marker deleted from
-    # a pair would otherwise leave a stale table outside every check.
+    # The README is fork-owned. Upstream's is a short front page with no
+    # generated section, since the hook table lives in docs/hooks.md; a fork
+    # keeps the markers for the tables it shows, and each pair present is
+    # filled, so --check still sees its drift. A section is absent only when
+    # both markers are: one marker deleted from a pair would otherwise leave
+    # a stale table outside every check.
     readme_blocks = {}
     for marker, content in (
         ("readme-stacks", readme_content),
@@ -654,6 +661,7 @@ def main():
             True,
         ),
         (ROOT / "README.md", readme_blocks, True),
+        (hooks_doc, hooks_blocks, True),
         (
             ROOT / "templates" / "INTERVIEW.md",
             {"interview-stacks": interview_content},
