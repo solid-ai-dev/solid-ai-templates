@@ -7,8 +7,7 @@ import io
 import os
 import subprocess
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
-    os.path.abspath(__file__))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def load_dotenv():
@@ -24,19 +23,18 @@ def load_dotenv():
             key, _, value = line.partition("=")
             os.environ.setdefault(key.strip(), value.strip())
 
+
 PASS = "PASS"
 FAIL = "FAIL"
 SKIP = "SKIP"
-ERR  = "ERR "
-
+ERR = "ERR "
 
 
 # Directories git may list in full -- an unignored virtual environment, a
 # dependency tree, a nested worktree -- that no check has ever read as
 # repository content. Applied to git's answer so a corpus does not depend
 # on whether a given toolchain happens to write its own .gitignore.
-SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".idea",
-             ".claude"}
+SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".idea", ".claude"}
 
 # templates/INTERVIEW.md is written by tools/sync_docs.py from the manifest. It
 # is a document the templates directory holds, not a template: it declares
@@ -57,15 +55,20 @@ def repository_files():
     out everything .gitignore excludes.
     """
     out = subprocess.check_output(
-        ["git", "-C", ROOT, "ls-files", "-z", "--cached", "--others",
-         "--exclude-standard"],
+        [
+            "git",
+            "-C",
+            ROOT,
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+        ],
         stderr=subprocess.STDOUT,
     )
     paths = [p for p in out.decode("utf-8").split("\0") if p]
-    return [
-        p for p in paths
-        if not any(part in SKIP_DIRS for part in p.split("/"))
-    ]
+    return [p for p in paths if not any(part in SKIP_DIRS for part in p.split("/"))]
 
 
 def template_documents(prefix="templates/"):
@@ -77,8 +80,7 @@ def template_documents(prefix="templates/"):
     it differs when the tree differs.
     """
     return sorted(
-        p for p in repository_files()
-        if p.startswith(prefix) and p.endswith(".md")
+        p for p in repository_files() if p.startswith(prefix) and p.endswith(".md")
     )
 
 
@@ -88,8 +90,7 @@ def template_files(prefix="templates/"):
     Every Markdown file under templates/ except the documents sync_docs.py
     generates there, which carry no manifest entry and declare no sections.
     """
-    return [p for p in template_documents(prefix)
-            if p not in GENERATED_TEMPLATE_DOCS]
+    return [p for p in template_documents(prefix) if p not in GENERATED_TEMPLATE_DOCS]
 
 
 def read(rel_path):
@@ -109,10 +110,12 @@ def tree_id():
     the commit. Where there is no repository or no git at all, a run is
     still a run: the caller falls back to the plain name.
     """
+
     def git(*args):
         return subprocess.run(
             ["git", "-C", ROOT] + list(args),
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
 
     try:
@@ -149,11 +152,11 @@ def write_report(run_results, started_at, runner_name, columns, header=None):
     suffix = f"-{tree}" if tree else ""
     report_path = os.path.join(reports_dir, f"{ts}-{runner_name}{suffix}.md")
 
-    passed  = sum(1 for r in run_results if r["status"] == PASS)
-    failed  = sum(1 for r in run_results if r["status"] == FAIL)
+    passed = sum(1 for r in run_results if r["status"] == PASS)
+    failed = sum(1 for r in run_results if r["status"] == FAIL)
     skipped = sum(1 for r in run_results if r["status"] == SKIP)
     errored = sum(1 for r in run_results if r["status"] == ERR)
-    total   = len(run_results)
+    total = len(run_results)
 
     # A runner may carry a status of its own -- a check whose verdict is a
     # judgement rather than a pass. Count it by name rather than dropping

@@ -53,9 +53,12 @@ def rules(lines):
         opener = FENCE.match(line)
 
         if fence:
-            if opener and opener.group(1)[0] == fence[0] \
-                    and len(opener.group(1)) >= len(fence) \
-                    and not line.strip()[len(opener.group(1)):].strip():
+            if (
+                opener
+                and opener.group(1)[0] == fence[0]
+                and len(opener.group(1)) >= len(fence)
+                and not line.strip()[len(opener.group(1)) :].strip()
+            ):
                 fence = None
             continue
 
@@ -67,8 +70,11 @@ def rules(lines):
             continue
 
         previous = lines[number - 2] if number > 1 else ""
-        setext = (line.strip()[0] == "-" and previous.strip()
-                  and not BLOCK_START.match(previous))
+        setext = (
+            line.strip()[0] == "-"
+            and previous.strip()
+            and not BLOCK_START.match(previous)
+        )
 
         if not setext:
             yield number
@@ -77,8 +83,7 @@ def rules(lines):
 def documents():
     """Return the tracked Markdown paths."""
     out = subprocess.check_output(["git", "ls-files", "-z", "*.md"])
-    return sorted(p for p in out.decode("utf-8").split(chr(0))
-                  if p.endswith(".md"))
+    return sorted(p for p in out.decode("utf-8").split(chr(0)) if p.endswith(".md"))
 
 
 def check():
@@ -133,8 +138,10 @@ def self_test():
             failed += 1
             print("FAIL %r: expected %d, found %d" % (lines, expected, found))
 
-    print("VERDICT: %s - %d case(s), %d failed"
-          % ("FAIL" if failed else "PASS", len(CASES), failed))
+    print(
+        "VERDICT: %s - %d case(s), %d failed"
+        % ("FAIL" if failed else "PASS", len(CASES), failed)
+    )
     return 1 if failed else 0
 
 

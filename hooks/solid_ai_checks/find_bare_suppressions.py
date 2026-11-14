@@ -18,9 +18,13 @@ SUPPRESSIONS = (
     ("noqa", re.compile(r"noqa(?![:])")),
     ("nosec", re.compile(r"nosec(?![:]|[ ][A-Z][0-9])")),
     ("nolint", re.compile(r"nolint(?![:])")),
-    ("eslint-disable",
-     re.compile(r"eslint-disable(?:-next-line|-line)?(?![-\w])"
-                r"(?![ \t]*[a-zA-Z@])")),
+    (
+        "eslint-disable",
+        re.compile(
+            r"eslint-disable(?:-next-line|-line)?(?![-\w])"
+            r"(?![ \t]*[a-zA-Z@])"
+        ),
+    ),
 )
 
 HASH = (".py", ".sh", ".rb", ".yml", ".yaml")
@@ -36,15 +40,17 @@ def python_comments(path):
     with tokenize.open(path) as handle:
         src = handle.readlines()
     tokens = tokenize.generate_tokens(iter(src).__next__)
-    return src, [(t.start[0], t.string[1:]) for t in tokens
-                 if t.type == tokenize.COMMENT]
+    return src, [
+        (t.start[0], t.string[1:]) for t in tokens if t.type == tokenize.COMMENT
+    ]
 
 
 def hash_comments(path):
     """(row, text) after the first `#` on each line, for the shell family."""
     src = read_lines(path)
-    return src, [(n, line.split("#", 1)[1])
-                 for n, line in enumerate(src, 1) if "#" in line]
+    return src, [
+        (n, line.split("#", 1)[1]) for n, line in enumerate(src, 1) if "#" in line
+    ]
 
 
 def slash_comments(path):
@@ -71,8 +77,7 @@ def slash_comments(path):
                 found.append((number, line[at:end]))
                 at, in_block = end + 2, False
                 continue
-            opened = [k for k in (line.find("//", at), line.find("/*", at))
-                      if k >= 0]
+            opened = [k for k in (line.find("//", at), line.find("/*", at)) if k >= 0]
             if not opened:
                 break
             at = min(opened)
@@ -80,7 +85,7 @@ def slash_comments(path):
             # A line comment runs to the end of the line; a block comment
             # opens here and is read by the branch above.
             if line.startswith("//", at):
-                found.append((number, line[at + 2:]))
+                found.append((number, line[at + 2 :]))
                 break
             at, in_block = at + 2, True
     return src, found
@@ -103,8 +108,9 @@ def comments(path):
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="find-bare-suppressions")
-    parser.add_argument("--root", action="append", default=[],
-                        help="directory to scan; repeatable")
+    parser.add_argument(
+        "--root", action="append", default=[], help="directory to scan; repeatable"
+    )
     args = parser.parse_args(argv)
 
     files = report.count("files scanned", tracked(HASH + SLASH, args.root))
@@ -125,8 +131,7 @@ def main(argv, report):
                 if named:
                     total += 1
                     if any(pattern.search(text) for text in named):
-                        report.finding(path, number, "BARE",
-                                       src[number - 1].strip())
+                        report.finding(path, number, "BARE", src[number - 1].strip())
 
     report.count("suppressions found", total)
     report.count("bare (naming no rule)", report.findings)

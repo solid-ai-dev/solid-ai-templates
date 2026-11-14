@@ -35,8 +35,15 @@ import time
 
 from conformance import FINDINGS_ONLY, SKIP, MANUAL, READ
 from conformance.dispositions import CHECKS, SKIP_BUDGETS
-from testkit import (PASS, FAIL, SKIP as SKIPPED, ROOT, write_report,
-                 print_verdict, template_documents)
+from testkit import (
+    PASS,
+    FAIL,
+    SKIP as SKIPPED,
+    ROOT,
+    write_report,
+    print_verdict,
+    template_documents,
+)
 
 ERR = "ERR"
 
@@ -92,7 +99,7 @@ def iter_blocks():
     # whatever happens to sit there, so a gitignored scratch file becomes a
     # block with no disposition and fails the gate.
     for tracked in template_documents():
-        rel = tracked[len("templates/"):]
+        rel = tracked[len("templates/") :]
         path = os.path.join(ROOT, tracked.replace("/", os.sep))
         lines = io.open(path, encoding="utf-8").read().splitlines()
         index = 0
@@ -103,7 +110,7 @@ def iter_blocks():
                 index += 1
                 while index < len(lines) and lines[index].strip() != "```":
                     index += 1
-                yield rel, start + 1, match.group(2), lines[start + 1:index]
+                yield rel, start + 1, match.group(2), lines[start + 1 : index]
             index += 1
 
 
@@ -114,10 +121,10 @@ def unwrap(body):
     every line inside it. Left in place it makes the first statement of a
     Python check an indentation error.
     """
-    inner = [line for line in body
-             if not HEREDOC_OPEN.match(line) and line.strip() != "EOF"]
-    pad = min((len(l) - len(l.lstrip()) for l in inner if l.strip()),
-              default=0)
+    inner = [
+        line for line in body if not HEREDOC_OPEN.match(line) and line.strip() != "EOF"
+    ]
+    pad = min((len(l) - len(l.lstrip()) for l in inner if l.strip()), default=0)
     return [l[pad:] if l.strip() else l for l in inner]
 
 
@@ -130,8 +137,14 @@ def run_hook(hook, args):
     env = dict(os.environ, PYTHONPATH=HOOKS_DIR)
     proc = subprocess.run(
         [sys.executable, "-m", "solid_ai_checks", hook] + list(args or []),
-        cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8",
-        errors="replace", timeout=120)
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=120,
+    )
     out = (proc.stdout or "") + (proc.stderr or "")
     return proc.returncode, [l for l in out.splitlines() if l.strip()]
 
@@ -159,14 +172,20 @@ def run_block(body, language, workdir, substitute=None):
         # path and reports the script as missing.
         suffix, argv = ".sh", [shutil.which("bash") or "bash"]
     script = os.path.join(workdir, "check%s" % suffix)
-    io.open(script, "w", encoding="utf-8", newline="\n").write(
-        "\n".join(lines) + "\n")
+    io.open(script, "w", encoding="utf-8", newline="\n").write("\n".join(lines) + "\n")
 
     # bash on Windows reads a native path's separators as escapes and
     # loses them, reporting the collapsed name as not found.
     argv.append(script.replace(os.sep, "/"))
-    proc = subprocess.run(argv, cwd=ROOT, capture_output=True, text=True,
-                          encoding="utf-8", errors="replace", timeout=120)
+    proc = subprocess.run(
+        argv,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=120,
+    )
     out = (proc.stdout or "") + (proc.stderr or "")
     return proc.returncode, [l for l in out.splitlines() if l.strip()]
 
@@ -201,10 +220,11 @@ def verdict(entry, code, out):
         # Everything from READ on is the reading, so only the lines
         # before it are declared, and only they set the length the
         # check must reach.
-        scored = expect[:expect.index(READ)] if READ in expect else expect
+        scored = expect[: expect.index(READ)] if READ in expect else expect
         if len(out) < len(scored):
-            return ["printed %d line(s), expected at least %d"
-                    % (len(out), len(scored))]
+            return [
+                "printed %d line(s), expected at least %d" % (len(out), len(scored))
+            ]
         for rule, line in zip(scored, out):
             if rule == "line":
                 continue
@@ -213,15 +233,13 @@ def verdict(entry, code, out):
                 return ["'%s' does not end in a count" % line]
             value = int(number.group(1))
             if rule == "nonzero" and value == 0:
-                return ["'%s' counted zero -- the check reached nothing"
-                        % line]
+                return ["'%s' counted zero -- the check reached nothing" % line]
             if rule == "zero" and value != 0:
                 return ["'%s' should be zero" % line]
         if READ in expect:
             return []
-        extra = out[len(scored):]
-        return ["%d finding(s), first: %s" % (len(extra), extra[0])] \
-            if extra else []
+        extra = out[len(scored) :]
+        return ["%d finding(s), first: %s" % (len(extra), extra[0])] if extra else []
 
     # MANUAL: the check runs and is reported; only a crash is a failure.
     if exit_matters and code != 0:
@@ -246,15 +264,16 @@ def reading(result):
     took = " (%.1fs)" % result["seconds"] if "seconds" in result else ""
     if not body and not failures:
         return ["### %s  %s%s" % (result["status"], result["id"], took), ""]
-    head = ["### %s  %s — %s%s" % (result["status"], result["id"],
-                                   result["title"], took), ""]
+    head = [
+        "### %s  %s — %s%s" % (result["status"], result["id"], result["title"], took),
+        "",
+    ]
     if failures:
         head += failures + [""]
     return head + (["```"] + body + ["```", ""] if body else [])
 
 
-BUDGET = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                      "reading-budget.txt")
+BUDGET = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reading-budget.txt")
 
 
 def budgeted():
@@ -267,15 +286,17 @@ def budgeted():
     """
     raw = io.open(BUDGET, "rb").read().decode("utf-8")
     raw = raw.replace(chr(13) + chr(10), chr(10)).replace(chr(13), chr(10))
-    titles = [l.strip() for l in raw.split(chr(10))
-              if l.strip() and not l.startswith("#")]
+    titles = [
+        l.strip() for l in raw.split(chr(10)) if l.strip() and not l.startswith("#")
+    ]
 
     # A budget the file did not produce is not a budget. An empty read --
     # a truncated file, a wrong path -- would license every reading, which
     # is the state this check exists to refuse.
     if not titles:
-        raise SystemExit("FAIL: %s named no check. An empty budget "
-                         "licenses every reading." % BUDGET)
+        raise SystemExit(
+            "FAIL: %s named no check. An empty budget licenses every reading." % BUDGET
+        )
     return titles
 
 
@@ -294,8 +315,7 @@ def main():
     print("registered dispositions:      %d" % len(CHECKS))
 
     if not blocks:
-        print("\nFAIL: extracted nothing -- the fence pattern reached no "
-              "template")
+        print("\nFAIL: extracted nothing -- the fence pattern reached no template")
         sys.exit(1)
 
     # Reconcile the registry against the corpus. An entry matching nothing
@@ -308,24 +328,27 @@ def main():
         # verdict nobody got round to writing, and the pile is where the
         # difference stops being visible.
         if entry.get("expect") == MANUAL and not entry.get("reason"):
-            problems.append("%s: manual with no reason -- %s"
-                            % (entry["file"], entry["title"][:40]))
+            problems.append(
+                "%s: manual with no reason -- %s" % (entry["file"], entry["title"][:40])
+            )
 
         # A skip is a check that does not run, and its reason is the whole
         # of the justification. Left ungated it is prose nothing reads,
         # over the largest population in the registry.
         if entry["do"] == SKIP and not entry.get("reason"):
-            problems.append("%s: skip with no reason -- %s"
-                            % (entry["file"], entry["title"][:40]))
+            problems.append(
+                "%s: skip with no reason -- %s" % (entry["file"], entry["title"][:40])
+            )
 
         # A check mixing a verdict with a reading MUST say which lines
         # are which. Left unstated, the unscored tail cannot be told
         # from a predicate that stopped short.
         declared = entry.get("expect")
-        if isinstance(declared, list) and READ in declared \
-                and not entry.get("reading"):
-            problems.append("%s: a reading with nothing said about it -- %s"
-                            % (entry["file"], entry["title"][:40]))
+        if isinstance(declared, list) and READ in declared and not entry.get("reading"):
+            problems.append(
+                "%s: a reading with nothing said about it -- %s"
+                % (entry["file"], entry["title"][:40])
+            )
 
         # A substitution that ignores a command's exit cannot reach a
         # verdict: whatever the command finds, the check reads as run. Such
@@ -334,29 +357,35 @@ def main():
         substituted = (entry.get("substitute") or {}).values()
         ignored = [v for v in substituted if FINDINGS_ONLY in v]
         if ignored and declared != MANUAL:
-            problems.append("%s: carries a findings exit past but is not "
-                            "manual -- %s"
-                            % (entry["file"], entry["title"][:40]))
+            problems.append(
+                "%s: carries a findings exit past but is not "
+                "manual -- %s" % (entry["file"], entry["title"][:40])
+            )
 
         # A missing checker exits 1 as findings do, so a command that carries
         # the findings exit past must first import its checker.
         unguarded = [v for v in ignored if '-c "import ' not in v]
         if unguarded:
-            problems.append("%s: carries a findings exit past without "
-                            "importing its checker first; use findings_only "
-                            "-- %s" % (entry["file"], entry["title"][:40]))
+            problems.append(
+                "%s: carries a findings exit past without "
+                "importing its checker first; use findings_only "
+                "-- %s" % (entry["file"], entry["title"][:40])
+            )
 
         # `|| true` ignores every exit, so a checker that cannot run (a bad
         # configuration, a crash) reads as one that ran and found things.
         # Only the findings exit may be carried past.
         if any("|| true" in v for v in substituted):
-            problems.append("%s: || true hides a checker that cannot run; "
-                            "use findings_only -- %s"
-                            % (entry["file"], entry["title"][:40]))
+            problems.append(
+                "%s: || true hides a checker that cannot run; "
+                "use findings_only -- %s" % (entry["file"], entry["title"][:40])
+            )
 
-        hits = [b for b in runnable
-                if b[0] == entry["file"] and any(entry["find"] in l
-                                                 for l in b[3])]
+        hits = [
+            b
+            for b in runnable
+            if b[0] == entry["file"] and any(entry["find"] in l for l in b[3])
+        ]
         if len(hits) != 1:
             # A block its entry can no longer reach is two different
             # defects. Say which: an entry whose check was deleted or
@@ -366,18 +395,22 @@ def main():
             # second reads as the first unless the untagged blocks are
             # searched too, and the remedy for it is the fence, not the
             # registry.
-            stray = [b for b in untagged
-                     if b[0] == entry["file"] and any(entry["find"] in l
-                                                      for l in b[3])]
+            stray = [
+                b
+                for b in untagged
+                if b[0] == entry["file"] and any(entry["find"] in l for l in b[3])
+            ]
             if not hits and stray:
                 problems.append(
                     "%s:%d fence carries no language, so its check no "
                     "longer runs -- %s"
-                    % (stray[0][0], stray[0][1], entry["title"][:40]))
+                    % (stray[0][0], stray[0][1], entry["title"][:40])
+                )
             else:
                 problems.append(
                     "%s: 'find' matched %d blocks, expected 1 -- %s"
-                    % (entry["file"], len(hits), entry["find"][:40]))
+                    % (entry["file"], len(hits), entry["find"][:40])
+                )
             continue
         key = (hits[0][0], hits[0][1])
         if key in matched:
@@ -387,8 +420,9 @@ def main():
     for block in runnable:
         if (block[0], block[1]) not in matched:
             first = next((l.strip() for l in block[3] if l.strip()), "")
-            problems.append("%s:%d has no disposition -- %s"
-                            % (block[0], block[1], first[:50]))
+            problems.append(
+                "%s:%d has no disposition -- %s" % (block[0], block[1], first[:50])
+            )
 
     # A reason justifies one skip; nothing bounded how many there are. The
     # count is held to the number each registry declares, so a new skip
@@ -398,28 +432,35 @@ def main():
         skips = sum(1 for e in entries if e["do"] == SKIP)
         print("skips in %s: %d, budgeted: %s" % (where, skips, budget))
         if budget is None:
-            problems.append("%s declares no SKIP_BUDGET; it carries %d "
-                            "skip(s)" % (where, skips))
+            problems.append(
+                "%s declares no SKIP_BUDGET; it carries %d skip(s)" % (where, skips)
+            )
         elif skips != budget:
-            problems.append("%s carries %d skip(s) against a SKIP_BUDGET of "
-                            "%d -- move the budget in the change that moves "
-                            "the count" % (where, skips, budget))
+            problems.append(
+                "%s carries %d skip(s) against a SKIP_BUDGET of "
+                "%d -- move the budget in the change that moves "
+                "the count" % (where, skips, budget)
+            )
 
     if problems:
         print("\nRegistry does not account for the templates:\n")
         for line in problems:
             print("  %s" % line)
-        print("\n%d problem(s). Fix the entry or the fence each line names."
-              % len(problems))
+        print(
+            "\n%d problem(s). Fix the entry or the fence each line names."
+            % len(problems)
+        )
         sys.exit(1)
 
     print("every runnable block has a disposition\n")
 
     entries = [matched[k] for k in sorted(matched)]
     if wanted:
-        entries = [e for e in entries
-                   if any(w in e[0]["find"] or w in e[0]["file"]
-                          for w in wanted)]
+        entries = [
+            e
+            for e in entries
+            if any(w in e[0]["find"] or w in e[0]["file"] for w in wanted)
+        ]
         if not entries:
             print("nothing matched: %s" % wanted)
             sys.exit(1)
@@ -439,9 +480,15 @@ def main():
                     print("  %-6s %s" % (SKIPPED, title))
                     print("        %s -- %s" % (where, entry["reason"]))
                 results[SKIPPED] += 1
-                run_results.append({"id": where, "title": title,
-                                    "status": SKIPPED, "failures": [],
-                                    "error": entry["reason"]})
+                run_results.append(
+                    {
+                        "id": where,
+                        "title": title,
+                        "status": SKIPPED,
+                        "failures": [],
+                        "error": entry["reason"],
+                    }
+                )
                 continue
 
             if listing:
@@ -454,14 +501,21 @@ def main():
                 if hook:
                     code, out = run_hook(hook, entry.get("args"))
                 else:
-                    code, out = run_block(block[3], block[2], workdir,
-                                          entry.get("substitute"))
+                    code, out = run_block(
+                        block[3], block[2], workdir, entry.get("substitute")
+                    )
             except Exception as exc:
                 print("  %-6s %s\n        %s -- %s" % (ERR, title, where, exc))
                 results[ERR] += 1
-                run_results.append({"id": where, "title": title,
-                                    "status": ERR, "failures": [],
-                                    "error": str(exc)})
+                run_results.append(
+                    {
+                        "id": where,
+                        "title": title,
+                        "status": ERR,
+                        "failures": [],
+                        "error": str(exc),
+                    }
+                )
                 continue
 
             # Asked before the predicate, because a check that does not
@@ -483,8 +537,9 @@ def main():
             # is a defect in the check rather than a reading for the
             # operator, so it fails rather than joining the review pile.
             if judgement and not failures and not out:
-                failures = ["printed nothing -- a judgement check reports "
-                            "what it inspected"]
+                failures = [
+                    "printed nothing -- a judgement check reports what it inspected"
+                ]
 
             if failures:
                 status = FAIL
@@ -501,10 +556,17 @@ def main():
             for line in failures or reported or (out if not_applicable else []):
                 print("        %s" % line)
             results[status] += 1
-            run_results.append({"id": where, "title": title,
-                                "status": status, "failures": failures,
-                                "error": "", "output": out,
-                                "seconds": time.monotonic() - started})
+            run_results.append(
+                {
+                    "id": where,
+                    "title": title,
+                    "status": status,
+                    "failures": failures,
+                    "error": "",
+                    "output": out,
+                    "seconds": time.monotonic() - started,
+                }
+            )
             if status == REVIEW:
                 reviewed.append(title)
     finally:
@@ -513,35 +575,41 @@ def main():
     if listing:
         return
 
-    ran = (results[PASS] + results[FAIL] + results[ERR]
-           + results[REVIEW] + results[NA])
-    print("\n%d block(s) registered - %d ran, %d skipped"
-          % (len(CHECKS), ran, results[SKIPPED]))
-    print("%d passed  %d failed  %d errors  %d not applicable  "
-          "%d awaiting a reading"
-          % (results[PASS], results[FAIL], results[ERR], results[NA],
-             results[REVIEW]))
+    ran = results[PASS] + results[FAIL] + results[ERR] + results[REVIEW] + results[NA]
+    print(
+        "\n%d block(s) registered - %d ran, %d skipped"
+        % (len(CHECKS), ran, results[SKIPPED])
+    )
+    print(
+        "%d passed  %d failed  %d errors  %d not applicable  "
+        "%d awaiting a reading"
+        % (results[PASS], results[FAIL], results[ERR], results[NA], results[REVIEW])
+    )
 
     # The count alone reads as a tally of things that went fine. Say what
     # the operator still owes, beside it.
     if results[REVIEW]:
-        print("%d check(s) produced a reading no rule can judge. Read "
-              "them above before calling the run clean."
-              % results[REVIEW])
+        print(
+            "%d check(s) produced a reading no rule can judge. Read "
+            "them above before calling the run clean." % results[REVIEW]
+        )
 
     # Nobody reads a reading in CI: the job is green and the line scrolls
     # past. The budget is what makes growth arrive as a failure, in the
     # change that causes it.
     allowed = budgeted()
-    print("readings budgeted: %d, awaiting a reading: %d"
-          % (len(allowed), len(reviewed)))
+    print(
+        "readings budgeted: %d, awaiting a reading: %d" % (len(allowed), len(reviewed))
+    )
     unbudgeted = [t for t in reviewed if t not in allowed]
     for title in unbudgeted:
         print("  unbudgeted reading: %s" % title)
     if unbudgeted:
-        print("A reading is not a failure, but an unregistered one is. "
-              "Reach a verdict, or add it to tests/conformance/reading-budget.txt in "
-              "this change with the reason it cannot.")
+        print(
+            "A reading is not a failure, but an unregistered one is. "
+            "Reach a verdict, or add it to tests/conformance/reading-budget.txt in "
+            "this change with the reason it cannot."
+        )
 
     # The report is where a reading is legible; the log is where it is
     # not. On a hosted runner say it in the run summary too, which a green
@@ -550,10 +618,18 @@ def main():
     if summary:
         with io.open(summary, "a", encoding="utf-8") as handle:
             handle.write("### Conformance%s" % chr(10) + chr(10))
-            handle.write("%d passed, %d failed, %d not applicable, "
-                         "%d awaiting a reading (%d budgeted)."
-                         % (results[PASS], results[FAIL], results[NA],
-                            results[REVIEW], len(allowed)) + chr(10))
+            handle.write(
+                "%d passed, %d failed, %d not applicable, "
+                "%d awaiting a reading (%d budgeted)."
+                % (
+                    results[PASS],
+                    results[FAIL],
+                    results[NA],
+                    results[REVIEW],
+                    len(allowed),
+                )
+                + chr(10)
+            )
             for title in reviewed:
                 handle.write("- reading: %s%s" % (title, chr(10)))
 
@@ -561,31 +637,46 @@ def main():
     # of nothing else is as empty as a run of nothing.
     verified = ran - results[NA]
     if verified == 0:
-        print("\nFAIL: verified nothing. %d check(s) ran and every one "
-              "reported that it does not apply." % ran)
+        print(
+            "\nFAIL: verified nothing. %d check(s) ran and every one "
+            "reported that it does not apply." % ran
+        )
         sys.exit(1)
 
-    write_report(run_results, started_at, "conformance", {
-        FAIL: reading,
-        SKIPPED: lambda r: ["### %s  %s — %s" % (r["status"], r["id"],
-                                                 r["title"]), "",
-                            r["error"], ""],
-        PASS: reading,
-        REVIEW: reading,
-        NA: reading,
-    })
+    write_report(
+        run_results,
+        started_at,
+        "conformance",
+        {
+            FAIL: reading,
+            SKIPPED: lambda r: [
+                "### %s  %s — %s" % (r["status"], r["id"], r["title"]),
+                "",
+                r["error"],
+                "",
+            ],
+            PASS: reading,
+            REVIEW: reading,
+            NA: reading,
+        },
+    )
 
     ok = not (results[FAIL] or results[ERR] or unbudgeted)
-    detail = ("%d passed, %d failed, %d errors, %d not applicable"
-              % (results[PASS], results[FAIL], results[ERR],
-                 results[NA]))
+    detail = "%d passed, %d failed, %d errors, %d not applicable" % (
+        results[PASS],
+        results[FAIL],
+        results[ERR],
+        results[NA],
+    )
 
     # A budgeted reading is not a failure, so the verdict word stays
     # PASS. It is also not a clean run, and the word alone would be
     # read as one, so the line says what is still owed.
     if results[REVIEW]:
-        detail += ("; %d reading(s) still to read, so this run is not"
-                   " clean yet" % results[REVIEW])
+        detail += (
+            "; %d reading(s) still to read, so this run is not"
+            " clean yet" % results[REVIEW]
+        )
 
     print_verdict(ok, detail)
     sys.exit(0 if ok else 1)

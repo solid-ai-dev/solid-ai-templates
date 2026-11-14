@@ -18,12 +18,15 @@ BACKSLASH = chr(92)
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="find-line-continuations")
-    parser.add_argument("--root", action="append", default=[],
-                        help="directory holding rule documents; repeatable")
+    parser.add_argument(
+        "--root",
+        action="append",
+        default=[],
+        help="directory holding rule documents; repeatable",
+    )
     args = parser.parse_args(argv)
 
-    files = report.count("markdown files scanned",
-                         tracked([".md"], args.root))
+    files = report.count("markdown files scanned", tracked([".md"], args.root))
     found = inspected = 0
     for path in files:
         for start, language, body in blocks(read_lines(path)):
@@ -33,8 +36,12 @@ def main(argv, report):
             inspected += 1
             for offset, line in enumerate(body):
                 if line.rstrip().endswith(BACKSLASH):
-                    report.finding(path, start + offset, "CONTINUATION",
-                                   "line ends in a continuation")
+                    report.finding(
+                        path,
+                        start + offset,
+                        "CONTINUATION",
+                        "line ends in a continuation",
+                    )
 
     report.count("fenced blocks found", found)
     report.count("blocks in a check language", inspected)
@@ -43,7 +50,8 @@ def main(argv, report):
         return report.finish(True)
     if not inspected:
         return report.not_applicable(
-            "no fenced block in a check language in %d file(s)" % len(files))
+            "no fenced block in a check language in %d file(s)" % len(files)
+        )
 
     # The continuation count is a reading, not a verdict: a person reads
     # each line against what was written.

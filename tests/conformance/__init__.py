@@ -26,5 +26,11 @@ def findings_only(python, module, args):
     A missing checker also exits 1, with "No module named ...", so the
     module is imported first and its absence stops the block with exit 2.
     """
-    return ('%s -c "import %s" || exit 2; %s -m %s %s%s'
-            % (python, module, python, module, args, FINDINGS_ONLY))
+    return '%s -c "import %s" || exit 2; %s -m %s %s%s' % (
+        python,
+        module,
+        python,
+        module,
+        args,
+        FINDINGS_ONLY,
+    )

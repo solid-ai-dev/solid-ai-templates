@@ -58,7 +58,8 @@ OBLIGATION = re.compile(r"\b(must|should|never|shall)\b", re.IGNORECASE)
 # Imperative verbs the corpus opens rules with, read from the first word of
 # every bullet. A rule opening with one of these, or carrying an RFC 2119
 # key word, states what to do.
-IMPERATIVES = frozenset("""
+IMPERATIVES = frozenset(
+    """
 Use Never Do Don't Prefer Validate Set Define Document Keep Include Run
 Return Design Build Alert Avoid Provide Add Write Enforce Distinguish Treat
 Generate State Remove Store Separate Check Audit Pin Deploy Fail Propagate
@@ -71,7 +72,8 @@ Cover Count Declare Delete Disable Enable Expect Extract Fix Follow Handle
 Log Lock Merge Mock Open Plant Publish Raise Rename Replace Reuse Scope
 Select Sign Skip Sort Stage Stub Tag Test Throttle Trim Version Wait Watch
 No Not Only
-""".split())
+""".split()
+)
 
 # Words that tell the reader to use judgement without saying how, so two
 # agents reading the same rule act differently.
@@ -80,7 +82,8 @@ HEDGES = re.compile(
     r"if (?:needed|necessary|possible)|properly|reasonabl[ey]|sensible|"
     r"generally|typically|usually|various|etc\b|and so on|"
     r"as much as possible|when it makes sense|consider(?:ing)?)\b",
-    re.IGNORECASE)
+    re.IGNORECASE,
+)
 
 # Signs that a passage records a history rather than states a rule: a date,
 # a measurement taken on one occasion, an incident seen once.
@@ -88,7 +91,8 @@ NARRATIVE = re.compile(
     r"\b\d{4}-\d{2}-\d{2}\b|\b(?:measured|observed|seen) (?:in|on|at|"
     r"against|during)\b|\bin practice\b|\bone project\b|"
     r"\bwas (?:caught|found|seen|reported)\b",
-    re.IGNORECASE)
+    re.IGNORECASE,
+)
 
 # A ticket or decision-record number in template text. The rule against it
 # is absolute, so one occurrence caps the file's score.
@@ -101,11 +105,11 @@ SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z`*(\"'])")
 # as one when its first word is a determiner, an auxiliary is its second
 # word, or an RFC key word outside parentheses follows within four; a
 # trailing "(MUST)" marks an instruction's strength, not its subject.
-DETERMINERS = frozenset(
-    "A An The All Every Each Any Some This These Its Their".split())
+DETERMINERS = frozenset("A An The All Every Each Any Some This These Its Their".split())
 AUXILIARIES = frozenset(
     "is are was were must should shall can may will has have".split()
-    + "MUST SHOULD SHALL MAY".split())
+    + "MUST SHOULD SHALL MAY".split()
+)
 SUBJECT_KEYWORD = frozenset("MUST SHOULD SHALL MAY".split())
 
 # A bold or code label before a colon or dash ("**Write-through**: write
@@ -154,9 +158,11 @@ class Item:
         words = re.findall(r"[A-Za-z'][\w'-]*", lead)
         if not words or words[0] in IMPERATIVES:
             return False
-        return (words[0] in DETERMINERS
-                or any(w in AUXILIARIES for w in words[1:2])
-                or any(w in SUBJECT_KEYWORD for w in words[1:5]))
+        return (
+            words[0] in DETERMINERS
+            or any(w in AUXILIARIES for w in words[1:2])
+            or any(w in SUBJECT_KEYWORD for w in words[1:5])
+        )
 
 
 class Doc:
@@ -209,8 +215,13 @@ class Doc:
                 self.sections.append((section, prose_lines))
                 section, prose_lines = stripped[3:], 0
                 continue
-            if (not stripped or line.startswith("#") or stripped.startswith("|")
-                    or DIRECTIVE_LINE.match(stripped) or stripped == "---"):
+            if (
+                not stripped
+                or line.startswith("#")
+                or stripped.startswith("|")
+                or DIRECTIVE_LINE.match(stripped)
+                or stripped == "---"
+            ):
                 close_item()
                 close_para()
                 continue
@@ -225,8 +236,7 @@ class Doc:
                 continue
             if item is not None and line.startswith(" "):
                 self.broken_wraps += short_line
-                short_line = (stripped in ("—", "–", "-")
-                              or len(stripped.split()) == 1)
+                short_line = stripped in ("—", "–", "-") or len(stripped.split()) == 1
                 item.text += " " + stripped
                 self.prose.append(stripped)
                 continue
@@ -285,12 +295,13 @@ def metrics(doc):
         "paragraph_share": sum(para_words) / prose_words,
         "longest_paragraph": max(para_words),
         "sentence_words": statistics.mean(sentence_words),
-        "multi_sentence": (sum(i.sentences >= 3 for i in doc.items)
-                           / max(len(doc.items), 1)),
-        "directive_share": (sum(i.is_directive() for i in rules)
-                            / max(len(rules), 1)),
-        "subject_share": (sum(i.opens_with_subject() for i in rules)
-                          / max(len(rules), 1)),
+        "multi_sentence": (
+            sum(i.sentences >= 3 for i in doc.items) / max(len(doc.items), 1)
+        ),
+        "directive_share": (sum(i.is_directive() for i in rules) / max(len(rules), 1)),
+        "subject_share": (
+            sum(i.opens_with_subject() for i in rules) / max(len(rules), 1)
+        ),
         "broken_wraps": doc.broken_wraps,
         "hedges": 1000 * len(HEDGES.findall(scan)) / prose_words,
         "narrative": 1000 * len(NARRATIVE.findall(scan)) / prose_words,
@@ -306,18 +317,18 @@ def metrics(doc):
 # templates outside core/, "bad" near the corpus's 90th percentile. Run
 # --calibrate to see the distributions they came from.
 CRITERIA = {
-    "rule_words":        {"good": 15,   "bad": 35,   "weight": 2.0},
-    "long_rules":        {"good": 0.02, "bad": 0.30, "weight": 2.0},
-    "paragraph_share":   {"good": 0.10, "bad": 0.35, "weight": 1.5},
-    "longest_paragraph": {"good": 40,   "bad": 120,  "weight": 1.0},
-    "sentence_words":    {"good": 15,   "bad": 22,   "weight": 1.0},
-    "multi_sentence":    {"good": 0.02, "bad": 0.20, "weight": 1.5},
-    "directive_share":   {"good": 0.75, "bad": 0.40, "weight": 1.0},
-    "subject_share":     {"good": 0.0,  "bad": 1.0,  "weight": 0.25},
-    "broken_wraps":      {"good": 0,    "bad": 4,    "weight": 0.25},
-    "hedges":            {"good": 1.0,  "bad": 5.0,  "weight": 1.0},
-    "narrative":         {"good": 0.0,  "bad": 1.0,  "weight": 0.5},
-    "section_lines":     {"good": 40,   "bad": 200,  "weight": 1.0},
+    "rule_words": {"good": 15, "bad": 35, "weight": 2.0},
+    "long_rules": {"good": 0.02, "bad": 0.30, "weight": 2.0},
+    "paragraph_share": {"good": 0.10, "bad": 0.35, "weight": 1.5},
+    "longest_paragraph": {"good": 40, "bad": 120, "weight": 1.0},
+    "sentence_words": {"good": 15, "bad": 22, "weight": 1.0},
+    "multi_sentence": {"good": 0.02, "bad": 0.20, "weight": 1.5},
+    "directive_share": {"good": 0.75, "bad": 0.40, "weight": 1.0},
+    "subject_share": {"good": 0.0, "bad": 1.0, "weight": 0.25},
+    "broken_wraps": {"good": 0, "bad": 4, "weight": 0.25},
+    "hedges": {"good": 1.0, "bad": 5.0, "weight": 1.0},
+    "narrative": {"good": 0.0, "bad": 1.0, "weight": 0.5},
+    "section_lines": {"good": 40, "bad": 200, "weight": 1.0},
 }
 
 # A severe failure caps the score, so a weighted mean cannot average it
@@ -337,9 +348,14 @@ def upstream_files(manifest_text):
     """The template paths the manifest files under an upstream key."""
     sys.path.insert(0, str(ROOT / "tools"))
     import resolve_chain
+
     manifest = resolve_chain.parse_manifest(manifest_text)
-    return {entry["file"] for key in UPSTREAM_KEYS
-            for entry in manifest.get(key) or [] if "file" in entry}
+    return {
+        entry["file"]
+        for key in UPSTREAM_KEYS
+        for entry in manifest.get(key) or []
+        if "file" in entry
+    }
 
 
 def criterion_score(name, value):
@@ -380,15 +396,19 @@ def sections(text):
     out = []
     for n, start in enumerate(starts):
         end = starts[n + 1] if n + 1 < len(starts) else len(lines)
-        out.append((lines[start][3:].strip(), start + 1,
-                    Doc("\n".join(lines[start:end]))))
+        out.append(
+            (lines[start][3:].strip(), start + 1, Doc("\n".join(lines[start:end])))
+        )
     return out
 
 
 def templates():
     """Every template a project reads, as paths relative to the root."""
-    return sorted(p for p in TEMPLATES.rglob("*.md")
-                  if "fixture" not in p.relative_to(TEMPLATES).parts)
+    return sorted(
+        p
+        for p in TEMPLATES.rglob("*.md")
+        if "fixture" not in p.relative_to(TEMPLATES).parts
+    )
 
 
 def rel(path):
@@ -431,8 +451,11 @@ BASELINE_HEADER = """\
 
 def unmoved_baselines():
     """A line per baseline still at its old path, naming where it goes."""
-    return [f"{rel(old)} is at its old path; move it to {rel(new)}"
-            for old, new in MOVED_BASELINES.items() if old.exists()]
+    return [
+        f"{rel(old)} is at its old path; move it to {rel(new)}"
+        for old, new in MOVED_BASELINES.items()
+        if old.exists()
+    ]
 
 
 def check(scores, baseline, fork_baseline, upstream=()):
@@ -441,15 +464,19 @@ def check(scores, baseline, fork_baseline, upstream=()):
     recorded = {**baseline, **fork_baseline}
     for name, value in sorted(scores.items()):
         if name in upstream and value < UPSTREAM_FLOOR - TOLERANCE:
-            findings.append(f"{name}: {value:.1f} below the upstream floor "
-                            f"{UPSTREAM_FLOOR}")
+            findings.append(
+                f"{name}: {value:.1f} below the upstream floor {UPSTREAM_FLOOR}"
+            )
         if name in recorded:
             if value < recorded[name] - TOLERANCE:
-                findings.append(f"{name}: {value:.1f} below its baseline "
-                                f"{recorded[name]:.1f}")
+                findings.append(
+                    f"{name}: {value:.1f} below its baseline {recorded[name]:.1f}"
+                )
         elif value < NEW_FILE_FLOOR:
-            findings.append(f"{name}: {value:.1f}, no baseline row, below the "
-                            f"new-file floor {NEW_FILE_FLOOR}")
+            findings.append(
+                f"{name}: {value:.1f}, no baseline row, below the "
+                f"new-file floor {NEW_FILE_FLOOR}"
+            )
     for name in sorted(set(recorded) - set(scores)):
         findings.append(f"{name}: baseline row names no template")
     return findings
@@ -476,17 +503,20 @@ ESSAY_RULE = (
     "the failure is wrong data rather than slow data. It was seen in one "
     "project during an outage, where the reader trusted a value that had "
     "long since changed upstream and nothing reported it. The usual answer "
-    "is to invalidate where possible and generally to keep entries short.\n")
+    "is to invalidate where possible and generally to keep entries short.\n"
+)
 
-ESSAY = ("# Planted\n[ID: planted]\n\n## Caching\n\n"
-         + "Caching is a trade between speed and freshness, and every team "
-         "meets it sooner or later, usually after an incident that nobody "
-         "saw coming and that took a long time to trace back to a value "
-         "served from a cache long after the source had changed. The rules "
-         "below came out of several such incidents, and each of them "
-         "records what went wrong as much as what to do about it, so a "
-         "reader can follow the reasoning and apply it where the rule does "
-         "not quite reach.\n\n" + ESSAY_RULE * 6)
+ESSAY = (
+    "# Planted\n[ID: planted]\n\n## Caching\n\n"
+    + "Caching is a trade between speed and freshness, and every team "
+    "meets it sooner or later, usually after an incident that nobody "
+    "saw coming and that took a long time to trace back to a value "
+    "served from a cache long after the source had changed. The rules "
+    "below came out of several such incidents, and each of them "
+    "records what went wrong as much as what to do about it, so a "
+    "reader can follow the reasoning and apply it where the rule does "
+    "not quite reach.\n\n" + ESSAY_RULE * 6
+)
 
 
 def self_test():
@@ -496,73 +526,141 @@ def self_test():
     essay = score(Doc(ESSAY))[0]
     cases.append(("essay-like rules score 40 or below", essay <= 40, essay))
     cited = score(Doc(GOOD + "- Read the cache rules (#1234)\n"))
-    cases.append(("a ticket citation caps the score at 50",
-                  cited[0] <= 50 and cited[3], cited[0]))
+    cases.append(
+        (
+            "a ticket citation caps the score at 50",
+            cited[0] <= 50 and cited[3],
+            cited[0],
+        )
+    )
     quoted = score(Doc(GOOD + '- Never write "see #123" in a rule\n'))
     cases.append(("a quoted citation does not cap", not quoted[3], quoted[0]))
-    fenced = score(Doc(GOOD + "\n```bash\n" + "echo a very long line\n" * 80
-                       + "```\n"))[0]
-    cases.append(("fenced code does not move the score", fenced == good,
-                  fenced))
-    apostrophes = score(Doc(GOOD + "- Follow the team's ADR-123 for the "
-                            "cache's keys\n"))
-    cases.append(("apostrophes do not hide a citation",
-                  apostrophes[0] <= 50 and apostrophes[3], apostrophes[0]))
-    for quoted_form in ("- Never write 'see #123' in a rule\n",
-                        "- Never write 'don't cite #123' in a rule\n"):
+    fenced = score(
+        Doc(GOOD + "\n```bash\n" + "echo a very long line\n" * 80 + "```\n")
+    )[0]
+    cases.append(("fenced code does not move the score", fenced == good, fenced))
+    apostrophes = score(
+        Doc(GOOD + "- Follow the team's ADR-123 for the cache's keys\n")
+    )
+    cases.append(
+        (
+            "apostrophes do not hide a citation",
+            apostrophes[0] <= 50 and apostrophes[3],
+            apostrophes[0],
+        )
+    )
+    for quoted_form in (
+        "- Never write 'see #123' in a rule\n",
+        "- Never write 'don't cite #123' in a rule\n",
+    ):
         single = score(Doc(GOOD + quoted_form))
-        cases.append((f"a single-quoted citation does not cap: "
-                      f"{quoted_form.strip()}", not single[3], single[0]))
-    stated = score(Doc(GOOD + "- Handlers are thin\n- Thresholds MUST be derived\n"
-                       "- Every entry MUST have a TTL\n"))[0]
-    instructed = score(Doc(GOOD + "- Keep handlers thin\n- Derive thresholds\n"
-                           "- Give every entry a TTL\n"))[0]
-    cases.append(("a rule opening with a subject scores below its imperative",
-                  stated < instructed, (stated, instructed)))
+        cases.append(
+            (
+                f"a single-quoted citation does not cap: {quoted_form.strip()}",
+                not single[3],
+                single[0],
+            )
+        )
+    stated = score(
+        Doc(
+            GOOD + "- Handlers are thin\n- Thresholds MUST be derived\n"
+            "- Every entry MUST have a TTL\n"
+        )
+    )[0]
+    instructed = score(
+        Doc(
+            GOOD + "- Keep handlers thin\n- Derive thresholds\n"
+            "- Give every entry a TTL\n"
+        )
+    )[0]
+    cases.append(
+        (
+            "a rule opening with a subject scores below its imperative",
+            stated < instructed,
+            (stated, instructed),
+        )
+    )
     strength = Doc("- Paginate every endpoint (MUST)\n").items[0]
-    cases.append(("a trailing (MUST) does not read as a subject",
-                  not strength.opens_with_subject(), strength.text))
+    cases.append(
+        (
+            "a trailing (MUST) does not read as a subject",
+            not strength.opens_with_subject(),
+            strength.text,
+        )
+    )
     broken = Doc(GOOD + "- Load from\n  source,\n  then return the result\n")
-    whole = Doc(GOOD + "- Load from source, then\n  return the result\n"
-                "- Commit the lockfile, always\n  (MUST)\n")
-    cases.append(("a one-word line mid-rule counts as a broken wrap, a "
-                  "closing one does not",
-                  broken.broken_wraps == 1 and whole.broken_wraps == 0,
-                  (broken.broken_wraps, whole.broken_wraps)))
+    whole = Doc(
+        GOOD + "- Load from source, then\n  return the result\n"
+        "- Commit the lockfile, always\n  (MUST)\n"
+    )
+    cases.append(
+        (
+            "a one-word line mid-rule counts as a broken wrap, a closing one does not",
+            broken.broken_wraps == 1 and whole.broken_wraps == 0,
+            (broken.broken_wraps, whole.broken_wraps),
+        )
+    )
     table = "\n| Key | Meaning |\n|---|---|\n" + "| a | b |\n" * 40
     tabled = score(Doc(GOOD + table))[0]
     cases.append(("a table does not move the score", tabled == good, tabled))
-    fenced_heading = ("# P\n\n## Rules\n\n- Use X\n\n```markdown\n## Example\n"
-                      "- not a rule\n```\n\n- Never do Y\n")
+    fenced_heading = (
+        "# P\n\n## Rules\n\n- Use X\n\n```markdown\n## Example\n"
+        "- not a rule\n```\n\n- Never do Y\n"
+    )
     split = sections(fenced_heading)
     rules = [i.text for i in split[0][2].items] if split else []
-    cases.append(("a heading inside a fence is not a section boundary",
-                  len(split) == 1 and rules == ["Use X", "Never do Y"],
-                  [(t, len(d.items)) for t, _, d in split]))
-    manifest = ("core: [base-git]\nbase:\n  - id: base-git\n"
-                "    file: templates/core/git.md\n"
-                "imbra:\n  - id: imbra-cli\n    file: templates/core/cli.md\n")
+    cases.append(
+        (
+            "a heading inside a fence is not a section boundary",
+            len(split) == 1 and rules == ["Use X", "Never do Y"],
+            [(t, len(d.items)) for t, _, d in split],
+        )
+    )
+    manifest = (
+        "core: [base-git]\nbase:\n  - id: base-git\n"
+        "    file: templates/core/git.md\n"
+        "imbra:\n  - id: imbra-cli\n    file: templates/core/cli.md\n"
+    )
     upstream, fork = split_by_owner(
         {"templates/core/git.md": 90.0, "templates/core/cli.md": 50.0},
-        upstream_files(manifest))
-    cases.append(("ownership follows the manifest key, not the directory",
-                  list(upstream) == ["templates/core/git.md"]
-                  and list(fork) == ["templates/core/cli.md"],
-                  (sorted(upstream), sorted(fork))))
-    findings = check({"a": 79.0, "b": 80.05, "c": 60.0},
-                     {"a": 80.0, "b": 80.1, "gone": 75.0}, {})
+        upstream_files(manifest),
+    )
+    cases.append(
+        (
+            "ownership follows the manifest key, not the directory",
+            list(upstream) == ["templates/core/git.md"]
+            and list(fork) == ["templates/core/cli.md"],
+            (sorted(upstream), sorted(fork)),
+        )
+    )
+    findings = check(
+        {"a": 79.0, "b": 80.05, "c": 60.0}, {"a": 80.0, "b": 80.1, "gone": 75.0}, {}
+    )
     expect = {"a", "c", "gone"}
     named = {f.split(":")[0] for f in findings}
-    cases.append(("the ratchet fails a drop, a new file under the floor and "
-                  "a stale row, and passes a rounding drift",
-                  named == expect, sorted(named)))
-    floored = check({"up": 94.0, "edge": 94.95, "fork": 80.0},
-                    {"up": 94.0, "edge": 94.95}, {"fork": 80.0},
-                    upstream={"up", "edge"})
+    cases.append(
+        (
+            "the ratchet fails a drop, a new file under the floor and "
+            "a stale row, and passes a rounding drift",
+            named == expect,
+            sorted(named),
+        )
+    )
+    floored = check(
+        {"up": 94.0, "edge": 94.95, "fork": 80.0},
+        {"up": 94.0, "edge": 94.95},
+        {"fork": 80.0},
+        upstream={"up", "edge"},
+    )
     named = {f.split(":")[0] for f in floored}
-    cases.append(("the upstream floor fails an upstream file under 95 even "
-                  "at its row, and spares a fork's file and a rounding drift",
-                  named == {"up"}, sorted(named)))
+    cases.append(
+        (
+            "the upstream floor fails an upstream file under 95 even "
+            "at its row, and spares a fork's file and a rounding drift",
+            named == {"up"},
+            sorted(named),
+        )
+    )
     failed = 0
     for label, ok, value in cases:
         print(f"  {'PASS' if ok else 'FAIL'}  {label}  ({value})")
@@ -573,11 +671,20 @@ def self_test():
 
 # ---- CLI ---------------------------------------------------------------
 
-SHORT = {"rule_words": "rule", "long_rules": "long", "paragraph_share": "para",
-         "longest_paragraph": "maxP", "sentence_words": "sent",
-         "multi_sentence": "multi", "directive_share": "dir",
-         "subject_share": "subj", "broken_wraps": "wrap",
-         "hedges": "hedge", "narrative": "narr", "section_lines": "sect"}
+SHORT = {
+    "rule_words": "rule",
+    "long_rules": "long",
+    "paragraph_share": "para",
+    "longest_paragraph": "maxP",
+    "sentence_words": "sent",
+    "multi_sentence": "multi",
+    "directive_share": "dir",
+    "subject_share": "subj",
+    "broken_wraps": "wrap",
+    "hedges": "hedge",
+    "narrative": "narr",
+    "section_lines": "sect",
+}
 
 
 def score_all():
@@ -588,34 +695,43 @@ def score_all():
 
 
 def print_table(results):
-    print(f"{'template':40} {'score':>5}  "
-          + " ".join(f"{SHORT[n]:>5}" for n in CRITERIA) + "  caps")
-    for name, (value, subs, _, caps) in sorted(results.items(),
-                                               key=lambda kv: kv[1][0]):
-        print(f"{name:40} {value:5.1f}  "
-              + " ".join(f"{subs[n]:5.0f}" for n in CRITERIA)
-              + ("  " + ", ".join(caps) if caps else ""))
+    print(
+        f"{'template':40} {'score':>5}  "
+        + " ".join(f"{SHORT[n]:>5}" for n in CRITERIA)
+        + "  caps"
+    )
+    for name, (value, subs, _, caps) in sorted(
+        results.items(), key=lambda kv: kv[1][0]
+    ):
+        print(
+            f"{name:40} {value:5.1f}  "
+            + " ".join(f"{subs[n]:5.0f}" for n in CRITERIA)
+            + ("  " + ", ".join(caps) if caps else "")
+        )
     values = [r[0] for r in results.values()]
-    print(f"\ntemplates scored: {len(values)}, median "
-          f"{statistics.median(values):.1f}, below 50: "
-          f"{sum(v < 50 for v in values)}")
+    print(
+        f"\ntemplates scored: {len(values)}, median "
+        f"{statistics.median(values):.1f}, below 50: "
+        f"{sum(v < 50 for v in values)}"
+    )
 
 
 def print_detail(path):
     text = path.read_text(encoding="utf-8")
     doc = Doc(text)
     value, subs, raw, caps = score(doc)
-    print(f"{rel(path)}: {value:.1f}" + (f" (capped: {', '.join(caps)})"
-                                          if caps else ""))
+    print(
+        f"{rel(path)}: {value:.1f}" + (f" (capped: {', '.join(caps)})" if caps else "")
+    )
     for name in CRITERIA:
         print(f"  {name:18} {raw[name]:8.2f}  -> {subs[name]:5.1f}")
     print("  longest rules:")
     for item in sorted(doc.items, key=lambda i: -i.words)[:5]:
-        print(f"    line {item.line}: {item.words} words, "
-              f"{item.sentences} sentences")
+        print(f"    line {item.line}: {item.words} words, {item.sentences} sentences")
     print("  lowest sections:")
-    ranked = sorted((score(d)[0], title, line)
-                    for title, line, d in sections(text) if d.items)
+    ranked = sorted(
+        (score(d)[0], title, line) for title, line, d in sections(text) if d.items
+    )
     for value, title, line in ranked[:5]:
         print(f"    {value:5.1f}  line {line}: {title}")
 
@@ -634,13 +750,17 @@ def print_sections(limit=25):
 
 
 def calibrate():
-    rows = {name: metrics(Doc(p.read_text(encoding="utf-8")))
-            for name, p in ((rel(p), p) for p in templates())}
+    rows = {
+        name: metrics(Doc(p.read_text(encoding="utf-8")))
+        for name, p in ((rel(p), p) for p in templates())
+    }
     for metric in list(CRITERIA) + [m for m, _, _ in CAPS]:
         values = sorted(r[metric] for r in rows.values())
         deciles = statistics.quantiles(values, n=10)
-        print(f"{metric:18} p10 {deciles[0]:7.2f}  p50 "
-              f"{statistics.median(values):7.2f}  p90 {deciles[8]:7.2f}")
+        print(
+            f"{metric:18} p10 {deciles[0]:7.2f}  p50 "
+            f"{statistics.median(values):7.2f}  p90 {deciles[8]:7.2f}"
+        )
 
 
 def main(args):
@@ -680,9 +800,12 @@ def main(args):
             print("templates scored: 0 -- refusing: nothing was measured")
             return 1
         manifest = (TEMPLATES / "manifest.yaml").read_text(encoding="utf-8")
-        findings = check(scores, read_baseline(BASELINE),
-                         read_baseline(FORK_BASELINE),
-                         upstream_files(manifest))
+        findings = check(
+            scores,
+            read_baseline(BASELINE),
+            read_baseline(FORK_BASELINE),
+            upstream_files(manifest),
+        )
         print(f"templates scored: {len(scores)}")
         print(f"findings: {len(findings)}")
         for finding in findings:

@@ -77,8 +77,10 @@ def findings(text, release, previous):
     found = sections(text)
     cut = found.get(version, [])
     if len(cut) != 1:
-        out.append("%s holds %d section(s) named [%s], expected 1"
-                   % (RECORD, len(cut), version))
+        out.append(
+            "%s holds %d section(s) named [%s], expected 1"
+            % (RECORD, len(cut), version)
+        )
         return out
     date, body = cut[0]
     if date is None:
@@ -89,8 +91,10 @@ def findings(text, release, previous):
     for _, unreleased in found.get("Unreleased", []):
         left = [line for line in unreleased if BULLET.match(line)]
         if left:
-            out.append("Unreleased still holds %d entr%s the cut did not "
-                       "carry" % (len(left), "y" if len(left) == 1 else "ies"))
+            out.append(
+                "Unreleased still holds %d entr%s the cut did not "
+                "carry" % (len(left), "y" if len(left) == 1 else "ies")
+            )
     kinds = {line[4:].strip() for line in body if line.startswith("### ")}
     if "Breaking changes" in kinds:
         owed = "major"
@@ -100,27 +104,40 @@ def findings(text, release, previous):
         owed = "minor"
     step = bump(previous, release)
     if step is None:
-        out.append("v%s does not follow v%d.%d.%d by one SemVer step"
-                   % ((version,) + previous))
+        out.append(
+            "v%s does not follow v%d.%d.%d by one SemVer step" % ((version,) + previous)
+        )
     elif step != owed:
-        out.append("v%s is a %s, but [%s] holds %s, which owes a %s"
-                   % (version, step, version, sorted(kinds), owed))
+        out.append(
+            "v%s is a %s, but [%s] holds %s, which owes a %s"
+            % (version, step, version, sorted(kinds), owed)
+        )
     return out
 
 
 def previous_tag(release_name):
     """The newest `v*` tag reachable from HEAD other than the release."""
     proc = subprocess.run(
-        ["git", "describe", "--tags", "--abbrev=0", "--match", "v*",
-         "--exclude", release_name, "HEAD"], **RUN)
+        [
+            "git",
+            "describe",
+            "--tags",
+            "--abbrev=0",
+            "--match",
+            "v*",
+            "--exclude",
+            release_name,
+            "HEAD",
+        ],
+        **RUN,
+    )
     return proc.stdout.strip() if proc.returncode == 0 else None
 
 
 def check(release_name):
     match = VERSION.match(release_name or "")
     if not match:
-        print("no release named as vA.B.C (got %r); nothing was checked"
-              % release_name)
+        print("no release named as vA.B.C (got %r); nothing was checked" % release_name)
         return 2
     previous_name = previous_tag(release_name)
 
@@ -128,8 +145,9 @@ def check(release_name):
     # earlier tag the bump cannot be read, and reporting it as agreeing
     # would pass a version nothing was compared with.
     if previous_name is None or not VERSION.match(previous_name):
-        print("no previous v* tag is reachable from HEAD, so the bump "
-              "cannot be compared")
+        print(
+            "no previous v* tag is reachable from HEAD, so the bump cannot be compared"
+        )
         return 2
     shown = subprocess.run(["git", "show", "HEAD:" + RECORD], **RUN)
     if shown.returncode != 0:
@@ -149,8 +167,11 @@ def check(release_name):
 
 def named(version, titles):
     """The titles naming `version` alone or before " — " and a theme."""
-    return [title for title in titles
-            if title == version or title.startswith(version + " — ")]
+    return [
+        title
+        for title in titles
+        if title == version or title.startswith(version + " — ")
+    ]
 
 
 def milestone(release_name, titles):
@@ -167,22 +188,33 @@ def milestone(release_name, titles):
     if not found:
         found = named(".".join(release_name.split(".")[:2]), titles)
     if len(found) > 1:
-        raise ValueError("more than one milestone names %s: %s"
-                         % (release_name, "; ".join(found)))
+        raise ValueError(
+            "more than one milestone names %s: %s" % (release_name, "; ".join(found))
+        )
     return found[0] if found else None
 
 
 def print_milestone(release_name):
     repo = os.environ.get("GITHUB_REPOSITORY") or "{owner}/{repo}"
     proc = subprocess.run(
-        ["gh", "api", "repos/%s/milestones?state=all" % repo, "--paginate",
-         "--jq", ".[].title"], **RUN)
+        [
+            "gh",
+            "api",
+            "repos/%s/milestones?state=all" % repo,
+            "--paginate",
+            "--jq",
+            ".[].title",
+        ],
+        **RUN,
+    )
 
     # A failed listing is not an empty one: reading it as no milestone
     # would report a release scoped to one as scoped to none.
     if proc.returncode != 0:
-        print("the milestones could not be listed: %s" % proc.stderr.strip(),
-              file=sys.stderr)
+        print(
+            "the milestones could not be listed: %s" % proc.stderr.strip(),
+            file=sys.stderr,
+        )
         return 1
     try:
         title = milestone(release_name, proc.stdout.splitlines())
@@ -206,8 +238,10 @@ def print_notes(release_name):
     shown = subprocess.run(["git", "show", "HEAD:" + RECORD], **RUN)
     body = notes(shown.stdout, release_name[1:]) if match else None
     if shown.returncode != 0 or not body:
-        print("HEAD:%s holds no single section for %r"
-              % (RECORD, release_name), file=sys.stderr)
+        print(
+            "HEAD:%s holds no single section for %r" % (RECORD, release_name),
+            file=sys.stderr,
+        )
         return 1
     print(body)
     return 0
@@ -229,47 +263,93 @@ CUT = """## [Unreleased]
 # than the count keeps a case from passing on a finding other than its own.
 CASES = [
     ("a complete major cut", CUT, (3, 0, 0), (2, 90, 0), None),
-    ("no section for the release", CUT, (3, 1, 0), (3, 0, 0),
-     "0 section(s) named [3.1.0]"),
-    ("a minor where the section owes a major", CUT.replace(
-        "3.0.0", "2.91.0"), (2, 91, 0), (2, 90, 0), "owes a major"),
-    ("a skipped version", CUT.replace("## [2.90.0] - 2026-09-12\n", "")
-     .replace("3.0.0", "2.90.0").replace("Breaking changes", "Added"),
-     (2, 90, 0), (2, 88, 0), "does not follow v2.88.0 by one SemVer step"),
-    ("entries left under Unreleased", CUT.replace(
-        "## [Unreleased]\n", "## [Unreleased]\n\n- Left behind.\n"),
-     (3, 0, 0), (2, 90, 0), "Unreleased still holds 1 entry"),
-    ("an undated section", CUT.replace(" - 2026-10-20", ""),
-     (3, 0, 0), (2, 90, 0), "carries no date"),
-    ("a patch holding only fixes", CUT.replace("3.0.0", "2.90.1").replace(
-        "Breaking changes", "Fixed"), (2, 90, 1), (2, 90, 0), None),
-    ("a patch holding an addition", CUT.replace("3.0.0", "2.90.1").replace(
-        "Breaking changes", "Added"), (2, 90, 1), (2, 90, 0), "owes a minor"),
+    (
+        "no section for the release",
+        CUT,
+        (3, 1, 0),
+        (3, 0, 0),
+        "0 section(s) named [3.1.0]",
+    ),
+    (
+        "a minor where the section owes a major",
+        CUT.replace("3.0.0", "2.91.0"),
+        (2, 91, 0),
+        (2, 90, 0),
+        "owes a major",
+    ),
+    (
+        "a skipped version",
+        CUT.replace("## [2.90.0] - 2026-09-12\n", "")
+        .replace("3.0.0", "2.90.0")
+        .replace("Breaking changes", "Added"),
+        (2, 90, 0),
+        (2, 88, 0),
+        "does not follow v2.88.0 by one SemVer step",
+    ),
+    (
+        "entries left under Unreleased",
+        CUT.replace("## [Unreleased]\n", "## [Unreleased]\n\n- Left behind.\n"),
+        (3, 0, 0),
+        (2, 90, 0),
+        "Unreleased still holds 1 entry",
+    ),
+    (
+        "an undated section",
+        CUT.replace(" - 2026-10-20", ""),
+        (3, 0, 0),
+        (2, 90, 0),
+        "carries no date",
+    ),
+    (
+        "a patch holding only fixes",
+        CUT.replace("3.0.0", "2.90.1").replace("Breaking changes", "Fixed"),
+        (2, 90, 1),
+        (2, 90, 0),
+        None,
+    ),
+    (
+        "a patch holding an addition",
+        CUT.replace("3.0.0", "2.90.1").replace("Breaking changes", "Added"),
+        (2, 90, 1),
+        (2, 90, 0),
+        "owes a minor",
+    ),
 ]
 
 
-TITLES = ["v2.8 — Old line", "v2.80 — Later line", "v2.90.1 — A patch",
-          "v2.90 — Benchmark", "v3.0 — The split"]
+TITLES = [
+    "v2.8 — Old line",
+    "v2.80 — Later line",
+    "v2.90.1 — A patch",
+    "v2.90 — Benchmark",
+    "v3.0 — The split",
+]
 
 # Each case is (name, titles, release, the title owed, or None for no
 # milestone, or ValueError when the titles are ambiguous).
 MILESTONE_CASES = [
     ("a minor resolves to its line", TITLES, "v3.0.0", "v3.0 — The split"),
     ("a patch's own milestone wins", TITLES, "v2.90.1", "v2.90.1 — A patch"),
-    ("a patch without one falls back to its line", TITLES, "v2.90.2",
-     "v2.90 — Benchmark"),
-    ("v2.8 does not claim v2.80's title", TITLES, "v2.8.0",
-     "v2.8 — Old line"),
+    (
+        "a patch without one falls back to its line",
+        TITLES,
+        "v2.90.2",
+        "v2.90 — Benchmark",
+    ),
+    ("v2.8 does not claim v2.80's title", TITLES, "v2.8.0", "v2.8 — Old line"),
     ("a bare title names its release", ["v3.1"], "v3.1.0", "v3.1"),
     ("no milestone names the release", TITLES, "v4.0.0", None),
-    ("two titles name the release", TITLES + ["v3.0 — Again"], "v3.0.0",
-     ValueError),
+    ("two titles name the release", TITLES + ["v3.0 — Again"], "v3.0.0", ValueError),
 ]
 
 # Each case is (name, changelog, version, the notes owed, or None).
 NOTES_CASES = [
-    ("the section's body, trimmed", CUT, "3.0.0",
-     "### Breaking changes\n\n- Stacks move to forks."),
+    (
+        "the section's body, trimmed",
+        CUT,
+        "3.0.0",
+        "### Breaking changes\n\n- Stacks move to forks.",
+    ),
     ("no section for the version", CUT, "3.1.0", None),
     ("two sections for the version", CUT + CUT[16:], "3.0.0", None),
 ]
@@ -294,15 +374,16 @@ def self_test():
             got = milestone(release, titles)
         except ValueError as error:
             got = error
-        ok = (isinstance(got, ValueError) if owed is ValueError
-              else got == owed)
+        ok = isinstance(got, ValueError) if owed is ValueError else got == owed
         failed += report(ok, name, got)
     for name, text, version, owed in NOTES_CASES:
         got = notes(text, version)
         failed += report(got == owed, name, repr(got))
     total = len(CASES) + len(MILESTONE_CASES) + len(NOTES_CASES)
-    print("VERDICT: %s - %d case(s), %d failed"
-          % ("PASS" if not failed else "FAIL", total, failed))
+    print(
+        "VERDICT: %s - %d case(s), %d failed"
+        % ("PASS" if not failed else "FAIL", total, failed)
+    )
     return 1 if failed else 0
 
 

@@ -1,5 +1,4 @@
-"""Smoke checks of the SYS family: properties of the repository as a whole.
-"""
+"""Smoke checks of the SYS family: properties of the repository as a whole."""
 
 import io
 import os
@@ -16,15 +15,35 @@ from emit_context import EmitError
 from emit_context import build as emit_build
 from emit_context import write as emit_write
 from resolve_chain import (
-    LOAD_CHECK, entry_sections, is_fixture, load_catalogue, load_directives,
-    load_manifest, opt_in_roots, parse_manifest, read_file, resolve_chain,
-    task_kinds)
+    LOAD_CHECK,
+    entry_sections,
+    is_fixture,
+    load_catalogue,
+    load_directives,
+    load_manifest,
+    opt_in_roots,
+    parse_manifest,
+    read_file,
+    resolve_chain,
+    task_kinds,
+)
 
 from testkit import ROOT, repository_files, template_files
 from .common import (
-    _load_manifest, _resolve_stack, _roots_by_kind, _stacks,
-    all_template_files, depends_on_refs, HAS_YAML, Inspected,
-    iter_id_declarations, MISSING_YAML, read, TEMPLATE_DIRS, yaml)
+    _load_manifest,
+    _resolve_stack,
+    _roots_by_kind,
+    _stacks,
+    all_template_files,
+    depends_on_refs,
+    HAS_YAML,
+    Inspected,
+    iter_id_declarations,
+    MISSING_YAML,
+    read,
+    TEMPLATE_DIRS,
+    yaml,
+)
 
 
 def missing_template_dirs():
@@ -35,13 +54,13 @@ def missing_template_dirs():
     reports the same pass as a clean tree.
     """
     present = template_files()
-    return [d for d in TEMPLATE_DIRS
-            if not any(p.startswith(d + "/") for p in present)]
+    return [d for d in TEMPLATE_DIRS if not any(p.startswith(d + "/") for p in present)]
 
 
 # ---------------------------------------------------------------------------
 # SYS-01 — DEPENDS ON paths resolve to existing files
 # ---------------------------------------------------------------------------
+
 
 def check_sys_01():
     failures = []
@@ -65,6 +84,7 @@ def check_sys_01():
 # SYS-02 — all section IDs unique across all templates
 # ---------------------------------------------------------------------------
 
+
 def check_sys_02():
     failures = []
     seen = {}
@@ -76,10 +96,7 @@ def check_sys_02():
         rel = os.path.relpath(filepath, ROOT)
         for sid, _ in iter_id_declarations(content):
             if sid in seen:
-                failures.append(
-                    f"  Duplicate ID '{sid}': "
-                    f"{seen[sid]} and {rel}"
-                )
+                failures.append(f"  Duplicate ID '{sid}': {seen[sid]} and {rel}")
             else:
                 seen[sid] = rel
 
@@ -90,6 +107,7 @@ def check_sys_02():
 # ---------------------------------------------------------------------------
 # SYS-03 — every template file has a manifest entry
 # ---------------------------------------------------------------------------
+
 
 def check_sys_03():
     if not HAS_YAML:
@@ -103,9 +121,7 @@ def check_sys_03():
     for section in entry_sections(manifest):
         for entry in manifest[section]:
             if isinstance(entry, dict) and "file" in entry:
-                manifest_files.add(
-                    entry["file"].replace("/", os.sep)
-                )
+                manifest_files.add(entry["file"].replace("/", os.sep))
 
     failures = []
     seen = Inspected()
@@ -133,6 +149,7 @@ def check_sys_03():
 # ---------------------------------------------------------------------------
 # SYS-04 — DEPENDS ON headers match manifest depends_on
 # ---------------------------------------------------------------------------
+
 
 def check_sys_04():
     if not HAS_YAML:
@@ -231,8 +248,7 @@ def check_sys_06():
             if section == "Project structure" and is_lib:
                 continue
             asserted += 1
-            heading = re.compile(
-                r"^##\s+" + re.escape(section) + r"\s*$", re.MULTILINE)
+            heading = re.compile(r"^##\s+" + re.escape(section) + r"\s*$", re.MULTILINE)
             if not heading.search(blob):
                 failures.append(
                     f"  {sid}: resolved chain missing MUST section "
@@ -258,6 +274,8 @@ _AUDIT_DIR = "docs/audits"
 # dated report (*-360.md). The 360.md template itself matches neither.
 _AUDIT_NAME = re.compile(r"(?:360-audit.*|.*-360)\.md$")
 _DATED_AUDIT_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}-360\.md$")
+
+
 def check_sys_07():
     failures = []
     seen = Inspected()
@@ -384,8 +402,9 @@ def check_sys_10():
     failures = []
     seen = Inspected()
     seen.count("synthetic documents inspected", 1)
-    seen.count("directive occurrences in the document",
-               document.count("[DEPENDS ON:"), floor=3)
+    seen.count(
+        "directive occurrences in the document", document.count("[DEPENDS ON:"), floor=3
+    )
     seen.count("occurrences read as a declaration", len(refs))
 
     if refs != ["templates/core/git.md"]:
@@ -500,12 +519,13 @@ def check_sys_11():
     # Each kind is asserted on its own. A combined test passes on 17 stacks
     # and no opt-in root, which is the corpus half-empty and reading full.
     if not stack_roots:
-        failures.append("  resolved no stack chains — the check reached "
-                        "nothing")
+        failures.append("  resolved no stack chains — the check reached nothing")
     if not opt_in_roots:
-        failures.append("  resolved no opt-in roots — every extra and "
-                        "platform file went unread, and a reference "
-                        "dangling only there passes unseen")
+        failures.append(
+            "  resolved no opt-in roots — every extra and "
+            "platform file went unread, and a reference "
+            "dangling only there passes unseen"
+        )
     if references == 0:
         failures.append(
             "  found no cross-file prose ID references — either the pattern "
@@ -536,6 +556,7 @@ def check_sys_11():
 # mode, so a CRLF working copy and an LF one measure the same tree the
 # same. Nothing gates the size -- `sync_docs.py` writes it into the README's
 # model-limits table, which is where a reader meets it.
+
 
 def _measure_chains():
     """Sizes per root, with the two root kinds returned alongside them.
@@ -607,8 +628,9 @@ def check_sys_13():
 
     core_ids, entries, _ = _load_manifest()
     seen = Inspected()
-    core_files = seen.count("core-tier files seeded",
-                            _core_tier_files(core_ids, entries))
+    core_files = seen.count(
+        "core-tier files seeded", _core_tier_files(core_ids, entries)
+    )
     sizes, stacks, opt_in = _measure_chains()
     seen.count("stacks compared", stacks)
     seen.count("opt-in roots compared", opt_in)
@@ -664,9 +686,6 @@ def check_sys_13():
     return failures, notes
 
 
-
-
-
 # ---------------------------------------------------------------------------
 # Test registry
 # ---------------------------------------------------------------------------
@@ -689,7 +708,6 @@ RESOLVE_CASES = [
     (["stack-fixture", "bogus-root"], 1, "Roots resolve independently"),
     (["stack-fixture", "platform-fixture"], 1, "Roots resolve independently"),
     (["--bogus-flag"], 1, "Unknown flag"),
-
     # Bare invocation is the usage path, not an error -- same as --help.
     ([], 0, "resolve_chain.py"),
 ]
@@ -704,7 +722,8 @@ def check_sys_14():
     for args, want_code, want_phrase in RESOLVE_CASES:
         proc = subprocess.run(
             [sys.executable, resolver] + args,
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         shown = " ".join(args) or "(no arguments)"
         if proc.returncode != want_code:
@@ -756,8 +775,7 @@ def check_sys_15():
 
     stacks = _stacks(entries)
     seen.count("stacks classified by layer", stacks)
-    seen.count("exempt layers named with a reason",
-               SECURITY_EXEMPT_LAYERS)
+    seen.count("exempt layers named with a reason", SECURITY_EXEMPT_LAYERS)
 
     # The exemption is read off the manifest, so a stack that declares no
     # layer would be classified by omission. Fail rather than guess: an
@@ -840,8 +858,12 @@ def check_sys_16():
         return [MISSING_YAML]
 
     sys.path.insert(0, os.path.join(ROOT, "tools"))
-    from sync_docs import (CHARS_PER_TOKEN, OVERHEAD_TOKENS, CONTEXT_WINDOWS,
-                           _window_label)
+    from sync_docs import (
+        CHARS_PER_TOKEN,
+        OVERHEAD_TOKENS,
+        CONTEXT_WINDOWS,
+        _window_label,
+    )
     from resolve_chain import load_manifest, resolve_chain, concat_chain
 
     failures = []
@@ -852,8 +874,7 @@ def check_sys_16():
 
     largest = {}
     for stack in stacks:
-        size = len(concat_chain(resolve_chain(stack['id'], core_ids,
-                                              entries)))
+        size = len(concat_chain(resolve_chain(stack["id"], core_ids, entries)))
         layer = stack.get("layer", "unclassified")
         if size > largest.get(layer, (0, None))[0]:
             largest[layer] = (size, stack["id"])
@@ -901,6 +922,7 @@ def check_sys_16():
         )
 
     return seen.failures() + failures, seen.notes()
+
 
 # ---------------------------------------------------------------------------
 # SYS-17 -- every registered check names a spec document that exists
@@ -956,12 +978,12 @@ def check_sys_17():
     on_disk = {}
     for name in os.listdir(spec_dir):
         if name.endswith(".md"):
-            with io.open(os.path.join(spec_dir, name),
-                         encoding="utf-8") as handle:
+            with io.open(os.path.join(spec_dir, name), encoding="utf-8") as handle:
                 on_disk[os.path.splitext(name)[0]] = handle.read()
 
-    with io.open(os.path.join(ROOT, "docs", "tests", "index.md"),
-                 encoding="utf-8") as handle:
+    with io.open(
+        os.path.join(ROOT, "docs", "tests", "index.md"), encoding="utf-8"
+    ) as handle:
         index = handle.read()
 
     seen.count("checks registered", CHECKS)
@@ -973,8 +995,7 @@ def check_sys_17():
     runners = _runner_text()
     for spec in sorted(on_disk):
         if spec not in index:
-            failures.append(f"  {spec}: on disk with no row in "
-                            f"docs/tests/index.md")
+            failures.append(f"  {spec}: on disk with no row in docs/tests/index.md")
         if spec in cited or spec in runners:
             continue
         if MANUAL_SPEC.search(on_disk[spec]):
@@ -985,15 +1006,15 @@ def check_sys_17():
             f"procedure nothing runs"
         )
     for spec in sorted(indexed - set(on_disk)):
-        failures.append(f"  {spec}: named in docs/tests/index.md with no "
-                        f"document under docs/tests/specs/")
+        failures.append(
+            f"  {spec}: named in docs/tests/index.md with no "
+            f"document under docs/tests/specs/"
+        )
 
     for check in CHECKS:
         spec = check.get("spec")
         if not spec:
-            failures.append(
-                f"  {check['id']}: registered with no spec field"
-            )
+            failures.append(f"  {check['id']}: registered with no spec field")
             continue
         if spec not in on_disk:
             failures.append(
@@ -1009,6 +1030,7 @@ def check_sys_17():
             )
 
     return seen.failures() + failures, seen.notes()
+
 
 # ---------------------------------------------------------------------------
 # SYS-18 -- a stack outside the constrained categories resolves the gate tier
@@ -1048,8 +1070,9 @@ def check_sys_18():
 
     # Zero exemptions is a real answer: a tree whose only stack is the
     # fixture has no constrained category to exempt.
-    seen.count("exempt layers named with a reason",
-               QUALITY_GATES_EXEMPT_LAYERS, floor=0)
+    seen.count(
+        "exempt layers named with a reason", QUALITY_GATES_EXEMPT_LAYERS, floor=0
+    )
 
     # An exemption whose stated reason has expired is worse than none: it
     # reads as a decision and behaves as an omission.
@@ -1147,7 +1170,8 @@ def core_fault(depends_on):
     A fault under the core tier breaks every root, so each is planted in a
     manifest of its own, and the valid stack is the root asked for.
     """
-    return """core: [base-a]
+    return (
+        """core: [base-a]
 
 base:
   - id: base-a
@@ -1158,7 +1182,9 @@ stacks:
   - id: stack-valid
     file: templates/fixture/stack.md
     depends_on: [base-a]
-""" % depends_on
+"""
+        % depends_on
+    )
 
 
 # The core tier's entries are seeded before any root is walked, so their own
@@ -1172,15 +1198,26 @@ MANIFESTS = {
 
 BROKEN_CASES = [
     ("stacks", "stack-valid", 0, "templates/fixture/stack.md"),
-    ("stacks", "stack-missing", 1,
-     "Missing dependency: stack-missing depends on base-nowhere"),
-    ("stacks", "stack-cycle", 1,
-     "Dependency cycle: base-b -> base-c -> base-b"),
-    ("core-missing", "stack-valid", 1,
-     "Missing dependency: base-a depends on base-nowhere"),
+    (
+        "stacks",
+        "stack-missing",
+        1,
+        "Missing dependency: stack-missing depends on base-nowhere",
+    ),
+    ("stacks", "stack-cycle", 1, "Dependency cycle: base-b -> base-c -> base-b"),
+    (
+        "core-missing",
+        "stack-valid",
+        1,
+        "Missing dependency: base-a depends on base-nowhere",
+    ),
     ("core-self", "stack-valid", 1, "Dependency cycle: base-a -> base-a"),
-    ("core-through-stack", "stack-valid", 1,
-     "Dependency cycle: base-a -> stack-valid -> base-a"),
+    (
+        "core-through-stack",
+        "stack-valid",
+        1,
+        "Dependency cycle: base-a -> stack-valid -> base-a",
+    ),
 ]
 
 RESOLVE_WITH = (
@@ -1202,17 +1239,29 @@ def _resolve_cases(manifests, cases):
     failures = []
     with tempfile.TemporaryDirectory() as scratch:
         for name, text in manifests.items():
-            with io.open(os.path.join(scratch, name + ".yaml"), "w",
-                         encoding="utf-8", newline="\n") as handle:
+            with io.open(
+                os.path.join(scratch, name + ".yaml"),
+                "w",
+                encoding="utf-8",
+                newline="\n",
+            ) as handle:
                 handle.write(text)
 
         for name, root, want_code, want_phrase, *absent in cases:
             manifest = os.path.join(scratch, name + ".yaml")
             case = f"{root} in {name}"
             proc = subprocess.run(
-                [sys.executable, "-c", RESOLVE_WITH,
-                 os.path.join(ROOT, "tools"), manifest, root],
-                capture_output=True, text=True, encoding="utf-8",
+                [
+                    sys.executable,
+                    "-c",
+                    RESOLVE_WITH,
+                    os.path.join(ROOT, "tools"),
+                    manifest,
+                    root,
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
             )
             said = proc.stdout + proc.stderr
             if proc.returncode != want_code:
@@ -1290,29 +1339,39 @@ stacks:
 FORK_OUTSIDE_MANIFEST = FORK_MANIFEST.replace(
     "  - id: fork-readme\n    file: templates/core/docs.md\n",
     "  - id: fork-readme\n    file: templates/core/docs.md\n"
-    "    depends_on: [fork-lib]\n")
+    "    depends_on: [fork-lib]\n",
+)
 
-FORK_CHAIN = "\n".join([
-    "templates/core/quality.md", "templates/core/docs.md",
-    "templates/core/git.md", "templates/fixture/stack.md"])
+FORK_CHAIN = "\n".join(
+    [
+        "templates/core/quality.md",
+        "templates/core/docs.md",
+        "templates/core/git.md",
+        "templates/fixture/stack.md",
+    ]
+)
 
 FORK_CASES = [
     ("fork", "stack-fork", 0, "templates/core/quality.md"),
     ("fork", "stack-fork", 0, "templates/core/git.md"),
     ("fork", "stack-fork", 0, "templates/core/docs.md"),
     ("fork", "stack-fork", 0, FORK_CHAIN, "templates/core/testing.md"),
-    ("fork-outside", "stack-fork", 1,
-     "Core-tier entry fork-readme depends on fork-lib, which is outside the "
-     "core tier"),
+    (
+        "fork-outside",
+        "stack-fork",
+        1,
+        "Core-tier entry fork-readme depends on fork-lib, which is outside the "
+        "core tier",
+    ),
 ]
 
 
 def check_sys_21():
     seen = Inspected()
     seen.count("fork-manifest cases", FORK_CASES)
-    failures = _resolve_cases({"fork": FORK_MANIFEST,
-                               "fork-outside": FORK_OUTSIDE_MANIFEST},
-                              FORK_CASES)
+    failures = _resolve_cases(
+        {"fork": FORK_MANIFEST, "fork-outside": FORK_OUTSIDE_MANIFEST}, FORK_CASES
+    )
     return seen.failures() + failures, seen.notes()
 
 
@@ -1350,8 +1409,11 @@ def upstream_key_edits(was, now):
         for eid in sorted(set(new) - set(old)):
             found.append(f"{key}: {eid} added")
         for eid in sorted(set(old) & set(new)):
-            fields = sorted(k for k in set(old[eid]) | set(new[eid])
-                            if old[eid].get(k) != new[eid].get(k))
+            fields = sorted(
+                k
+                for k in set(old[eid]) | set(new[eid])
+                if old[eid].get(k) != new[eid].get(k)
+            )
             if fields:
                 found.append(f"{key}: {eid} changed ({', '.join(fields)})")
     return found
@@ -1376,38 +1438,60 @@ stacks:
 # check owes it. The appends are the control: a check that flagged them
 # would fail every fork that did what the contract allows.
 OWNERSHIP_CASES = [
-    ("a stack and a platform appended, and a key of the fork's own",
-     OWNED_BASE + """  - id: stack-b
+    (
+        "a stack and a platform appended, and a key of the fork's own",
+        OWNED_BASE
+        + """  - id: stack-b
     file: templates/stack/b.md
 platform:
   - id: platform-b
     file: templates/platform/b.md
 fork:
   - id: fork-note
-""", []),
-    ("the core tier edited",
-     OWNED_BASE.replace("core: [base-a]", "core: [base-a, backend-a]"),
-     ["core: ['base-a'] became ['base-a', 'backend-a']"]),
-    ("an upstream entry changed",
-     OWNED_BASE.replace("depends_on: [base-a]", "depends_on: []"),
-     ["backend: backend-a changed (depends_on)"]),
-    ("an entry added under an upstream key",
-     OWNED_BASE.replace("frontend: []", """frontend:
+""",
+        [],
+    ),
+    (
+        "the core tier edited",
+        OWNED_BASE.replace("core: [base-a]", "core: [base-a, backend-a]"),
+        ["core: ['base-a'] became ['base-a', 'backend-a']"],
+    ),
+    (
+        "an upstream entry changed",
+        OWNED_BASE.replace("depends_on: [base-a]", "depends_on: []"),
+        ["backend: backend-a changed (depends_on)"],
+    ),
+    (
+        "an entry added under an upstream key",
+        OWNED_BASE.replace(
+            "frontend: []",
+            """frontend:
   - id: frontend-b
-    file: templates/frontend/b.md"""),
-     ["frontend: frontend-b added"]),
-    ("an upstream entry removed",
-     OWNED_BASE.replace("""  - id: backend-a
+    file: templates/frontend/b.md""",
+        ),
+        ["frontend: frontend-b added"],
+    ),
+    (
+        "an upstream entry removed",
+        OWNED_BASE.replace(
+            """  - id: backend-a
     file: templates/backend/http.md
     depends_on: [base-a]
-""", ""),
-     ["backend: backend-a removed"]),
+""",
+            "",
+        ),
+        ["backend: backend-a removed"],
+    ),
 ]
 
 
 def _git(repo, *args):
-    return subprocess.run(["git", "-C", repo] + list(args),
-                          capture_output=True, text=True, encoding="utf-8")
+    return subprocess.run(
+        ["git", "-C", repo] + list(args),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
 
 
 def fork_baseline(repo, ref):
@@ -1420,24 +1504,42 @@ def fork_baseline(repo, ref):
     # A ref that does not resolve and a ref with no shared history are
     # different faults with different remedies -- fetch upstream, or point
     # at the right one -- so each is named as itself.
-    resolved = _git(repo, "rev-parse", "--verify", "--quiet",
-                    f"{ref}^{{commit}}")
+    resolved = _git(repo, "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}")
     if resolved.returncode != 0:
-        return None, None, (
-            f"{UPSTREAM_REF_ENV}={ref} names no commit in this repository, "
-            f"so there is no upstream to compare with; fetch it first")
+        return (
+            None,
+            None,
+            (
+                f"{UPSTREAM_REF_ENV}={ref} names no commit in this repository, "
+                f"so there is no upstream to compare with; fetch it first"
+            ),
+        )
     merged = _git(repo, "merge-base", "HEAD", ref)
     if merged.returncode != 0:
-        return None, None, (
-            f"{UPSTREAM_REF_ENV}={ref} shares no history with HEAD, so the "
-            f"revision the fork last merged is unknown")
+        return (
+            None,
+            None,
+            (
+                f"{UPSTREAM_REF_ENV}={ref} shares no history with HEAD, so the "
+                f"revision the fork last merged is unknown"
+            ),
+        )
     revision = merged.stdout.strip()
     shown = _git(repo, "show", f"{revision}:templates/manifest.yaml")
     if shown.returncode != 0:
-        return None, None, (f"the manifest at {revision[:12]} could not be "
-                            f"read: {shown.stderr.strip()}")
-    return shown.stdout, (f"  baseline: the merge base {revision[:12]} of "
-                          f"HEAD and {ref}"), None
+        return (
+            None,
+            None,
+            (
+                f"the manifest at {revision[:12]} could not be "
+                f"read: {shown.stderr.strip()}"
+            ),
+        )
+    return (
+        shown.stdout,
+        (f"  baseline: the merge base {revision[:12]} of HEAD and {ref}"),
+        None,
+    )
 
 
 # The git path, planted. Upstream sets no ref, so its own run never reaches
@@ -1447,8 +1549,11 @@ def fork_baseline(repo, ref):
 # OWNED_BASE and whose HEAD is the fork.
 GIT_CASES = [
     ("a fork that only appended since its last merge", "upstream", []),
-    ("a fork that edited the core tier since its last merge", "upstream",
-     ["core: ['base-a'] became ['base-a', 'backend-a']"]),
+    (
+        "a fork that edited the core tier since its last merge",
+        "upstream",
+        ["core: ['base-a'] became ['base-a', 'backend-a']"],
+    ),
     ("a ref that names no commit", "upstream/missing", "names no commit"),
     ("a ref with no history in common", "unrelated", "shares no history"),
 ]
@@ -1461,10 +1566,11 @@ def _git_cases():
     manifest = os.path.join("templates", "manifest.yaml")
     edits = {
         GIT_CASES[0][0]: OWNED_BASE + "  - id: stack-b\n"
-                                      "    file: templates/stack/b.md\n",
+        "    file: templates/stack/b.md\n",
         GIT_CASES[1][0]: OWNED_BASE.replace(
-            "core: [base-a]", "core: [base-a, backend-a]") +
-            "  - id: stack-b\n    file: templates/stack/b.md\n",
+            "core: [base-a]", "core: [base-a, backend-a]"
+        )
+        + "  - id: stack-b\n    file: templates/stack/b.md\n",
     }
     failures = []
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
@@ -1479,13 +1585,16 @@ def _git_cases():
             _git(repo, "add", manifest)
             done = _git(repo, "commit", "-q", "-m", message)
             if done.returncode != 0:
-                raise RuntimeError(f"planted commit {message!r} failed: "
-                                   f"{done.stderr.strip()}")
+                raise RuntimeError(
+                    f"planted commit {message!r} failed: {done.stderr.strip()}"
+                )
 
         _git(repo, "init", "-q")
-        for key, value in (("core.autocrlf", "false"),
-                           ("user.name", "smoke"),
-                           ("user.email", "smoke@localhost")):
+        for key, value in (
+            ("core.autocrlf", "false"),
+            ("user.name", "smoke"),
+            ("user.email", "smoke@localhost"),
+        ):
             _git(repo, "config", key, value)
         commit(OWNED_BASE, "upstream")
         _git(repo, "branch", "upstream")
@@ -1500,19 +1609,18 @@ def _git_cases():
             was, _, refused = fork_baseline(repo, ref)
             if isinstance(owed, str):
                 if not refused or owed not in refused:
-                    failures.append(f"  planted git, {label}: refused "
-                                    f"{refused!r}, owed {owed!r}")
+                    failures.append(
+                        f"  planted git, {label}: refused {refused!r}, owed {owed!r}"
+                    )
                 continue
             if refused:
                 failures.append(f"  planted git, {label}: refused {refused!r}")
                 continue
-            with io.open(os.path.join(repo, manifest),
-                         encoding="utf-8") as f:
+            with io.open(os.path.join(repo, manifest), encoding="utf-8") as f:
                 now = f.read()
             got = upstream_key_edits(yaml.safe_load(was), yaml.safe_load(now))
             if got != owed:
-                failures.append(f"  planted git, {label}: found {got}, "
-                                f"owed {owed}")
+                failures.append(f"  planted git, {label}: found {got}, owed {owed}")
     return failures
 
 
@@ -1545,12 +1653,13 @@ def check_sys_20():
             return seen.failures() + failures, seen.notes()
     else:
         was_text = now_text
-        basis = (f"  baseline: {UPSTREAM_REF_ENV} is unset, so this is "
-                 f"upstream and the manifest is compared with itself")
+        basis = (
+            f"  baseline: {UPSTREAM_REF_ENV} is unset, so this is "
+            f"upstream and the manifest is compared with itself"
+        )
 
     was, now = yaml.safe_load(was_text), yaml.safe_load(now_text)
-    seen.count("upstream keys compared",
-               [k for k in UPSTREAM_KEYS if k in was])
+    seen.count("upstream keys compared", [k for k in UPSTREAM_KEYS if k in was])
     for finding in upstream_key_edits(was, now):
         failures.append(
             f"  {finding}: a fork appends under stacks:, platform: and its "
@@ -1558,6 +1667,7 @@ def check_sys_20():
         )
 
     return seen.failures() + failures, seen.notes() + [basis]
+
 
 # ---------------------------------------------------------------------------
 # SYS-22 -- a deprecation names a live replacement
@@ -1571,28 +1681,49 @@ def check_sys_20():
 # run.
 
 DEPRECATION_CASES = [
-    ("a live replacement", """base:
+    (
+        "a live replacement",
+        """base:
   - {id: base-old, file: a.md, deprecated: base-new}
   - {id: base-new, file: b.md}
-""", []),
-    ("a replacement that does not exist", """base:
+""",
+        [],
+    ),
+    (
+        "a replacement that does not exist",
+        """base:
   - {id: base-old, file: a.md, deprecated: base-gone}
-""", ["base-old names base-gone, which no entry carries"]),
-    ("a replacement that is deprecated too", """base:
+""",
+        ["base-old names base-gone, which no entry carries"],
+    ),
+    (
+        "a replacement that is deprecated too",
+        """base:
   - {id: base-old, file: a.md, deprecated: base-mid}
   - {id: base-mid, file: b.md, deprecated: base-new}
   - {id: base-new, file: c.md}
-""", ["base-old names base-mid, which is deprecated too"]),
-    ("a field that names no ID", """base:
+""",
+        ["base-old names base-mid, which is deprecated too"],
+    ),
+    (
+        "a field that names no ID",
+        """base:
   - {id: base-old, file: a.md, deprecated: true}
-""", ["base-old carries deprecated: True, which names no ID"]),
+""",
+        ["base-old carries deprecated: True, which names no ID"],
+    ),
 ]
 
 
 def deprecation_findings(manifest):
     """Each deprecation that names no live replacement, as one finding."""
-    entries = [e for v in manifest.values() if isinstance(v, list)
-               for e in v if isinstance(e, dict) and "id" in e]
+    entries = [
+        e
+        for v in manifest.values()
+        if isinstance(v, list)
+        for e in v
+        if isinstance(e, dict) and "id" in e
+    ]
     by_id = {e["id"]: e for e in entries}
     found = []
     for entry in entries:
@@ -1600,14 +1731,13 @@ def deprecation_findings(manifest):
             continue
         target = entry["deprecated"]
         if not isinstance(target, str):
-            found.append(f"{entry['id']} carries deprecated: {target}, "
-                         f"which names no ID")
+            found.append(
+                f"{entry['id']} carries deprecated: {target}, which names no ID"
+            )
         elif target not in by_id:
-            found.append(f"{entry['id']} names {target}, which no entry "
-                         f"carries")
+            found.append(f"{entry['id']} names {target}, which no entry carries")
         elif "deprecated" in by_id[target]:
-            found.append(f"{entry['id']} names {target}, which is "
-                         f"deprecated too")
+            found.append(f"{entry['id']} names {target}, which is deprecated too")
     return found
 
 
@@ -1626,8 +1756,13 @@ def check_sys_22():
     manifest = os.path.join(ROOT, "templates", "manifest.yaml")
     with io.open(manifest, encoding="utf-8") as handle:
         data = yaml.safe_load(handle)
-    marked = [e for v in data.values() if isinstance(v, list)
-              for e in v if isinstance(e, dict) and "deprecated" in e]
+    marked = [
+        e
+        for v in data.values()
+        if isinstance(v, list)
+        for e in v
+        if isinstance(e, dict) and "deprecated" in e
+    ]
     seen.count("deprecated entries in the manifest", marked, floor=0)
     for finding in deprecation_findings(data):
         failures.append(f"  {finding}")
@@ -1729,8 +1864,7 @@ def section_splits(was, now):
     found = []
     for (owner, taker), lines in moved.items():
         first = lines[0] if len(lines[0]) <= 60 else lines[0][:57] + "..."
-        found.append(f"{len(lines)} line(s) left {owner} for {taker}, "
-                     f"from '{first}'")
+        found.append(f"{len(lines)} line(s) left {owner} for {taker}, from '{first}'")
     return found
 
 
@@ -1752,24 +1886,37 @@ SPLIT_BASE = """# Base
 # them would fail every minor that does what chapter 8.7 allows. The split
 # between two rules is the one a heading-only comparison passed.
 SPLIT_CASES = [
-    ("a section appended after the last frozen line",
-     SPLIT_BASE + "\n## Extra\n\n[ID: base-b]\n\n- New rule\n", []),
-    ("a heading reworded and a rule added",
-     SPLIT_BASE.replace("## Checks", "## Gates") + "- Rule two\n", []),
-    ("a heading-like line inside a fence after a new ID",
-     SPLIT_BASE + "\n## Extra\n\n[ID: base-b]\n\n```bash\n# Checks\n```\n",
-     []),
-    ("an ID inserted above a frozen heading",
-     SPLIT_BASE.replace("## Checks", "## Checks\n\n[ID: base-b]"),
-     ["2 line(s) left base-a for base-b, from 'Checks'"]),
-    ("an ID inserted between a frozen heading and its rule",
-     SPLIT_BASE.replace("- Check one\n",
-                        "## Late\n\n[ID: base-b]\n\n- Check one\n"),
-     ["1 line(s) left base-a for base-b, from '- Check one'"]),
-    ("a frozen heading moved under a later ID",
-     SPLIT_BASE.replace("## Checks\n\n- Check one\n", "") +
-     "\n## Extra\n\n[ID: base-b]\n\n## Checks\n\n- Check one\n",
-     ["2 line(s) left base-a for base-b, from 'Checks'"]),
+    (
+        "a section appended after the last frozen line",
+        SPLIT_BASE + "\n## Extra\n\n[ID: base-b]\n\n- New rule\n",
+        [],
+    ),
+    (
+        "a heading reworded and a rule added",
+        SPLIT_BASE.replace("## Checks", "## Gates") + "- Rule two\n",
+        [],
+    ),
+    (
+        "a heading-like line inside a fence after a new ID",
+        SPLIT_BASE + "\n## Extra\n\n[ID: base-b]\n\n```bash\n# Checks\n```\n",
+        [],
+    ),
+    (
+        "an ID inserted above a frozen heading",
+        SPLIT_BASE.replace("## Checks", "## Checks\n\n[ID: base-b]"),
+        ["2 line(s) left base-a for base-b, from 'Checks'"],
+    ),
+    (
+        "an ID inserted between a frozen heading and its rule",
+        SPLIT_BASE.replace("- Check one\n", "## Late\n\n[ID: base-b]\n\n- Check one\n"),
+        ["1 line(s) left base-a for base-b, from '- Check one'"],
+    ),
+    (
+        "a frozen heading moved under a later ID",
+        SPLIT_BASE.replace("## Checks\n\n- Check one\n", "")
+        + "\n## Extra\n\n[ID: base-b]\n\n## Checks\n\n- Check one\n",
+        ["2 line(s) left base-a for base-b, from 'Checks'"],
+    ),
 ]
 
 # The text the planted repositories commit over SPLIT_BASE: a split.
@@ -1787,13 +1934,17 @@ def frozen_baseline(repo):
     # pass every split, so each is refused rather than read as no baseline.
     shallow = _git(repo, "rev-parse", "--is-shallow-repository")
     if shallow.stdout.strip() == "true":
-        return None, ("the clone is shallow, so its release tags may not "
-                      "be reachable; fetch the full history")
+        return None, (
+            "the clone is shallow, so its release tags may not "
+            "be reachable; fetch the full history"
+        )
     listed = _git(repo, "tag", "--merged", "HEAD", "--sort=-v:refname")
     tags = listed.stdout.split()
     if listed.returncode != 0 or not tags:
-        return None, ("no release tag is reachable from HEAD, so the tags "
-                      "were not fetched; fetch them")
+        return None, (
+            "no release tag is reachable from HEAD, so the tags "
+            "were not fetched; fetch them"
+        )
     frozen = [t for t in tags if FROZEN_TAG.fullmatch(t)]
     return (frozen[0] if frozen else None), None
 
@@ -1809,8 +1960,15 @@ def frozen_splits(repo, files):
     if refused:
         return [], None, refused, 0
     if tag is None:
-        return [], (f"  baseline: no v{FROZEN_MAJOR}.x release is reachable "
-                    f"from HEAD, so no section is frozen yet"), None, 0
+        return (
+            [],
+            (
+                f"  baseline: no v{FROZEN_MAJOR}.x release is reachable "
+                f"from HEAD, so no section is frozen yet"
+            ),
+            None,
+            0,
+        )
     found, compared = [], 0
     for rel in files:
         shown = _git(repo, "show", f"{tag}:{rel}")
@@ -1827,8 +1985,11 @@ def frozen_splits(repo, files):
 # the findings or the refusal owed), run against a throwaway repository
 # whose base commit holds SPLIT_BASE and whose HEAD holds SPLIT_TEXT.
 TAG_CASES = [
-    ("a frozen release behind HEAD", ["v2.9.0", f"v{FROZEN_MAJOR}.0.0"],
-     SPLIT_CASES[3][2]),
+    (
+        "a frozen release behind HEAD",
+        ["v2.9.0", f"v{FROZEN_MAJOR}.0.0"],
+        SPLIT_CASES[3][2],
+    ),
     ("only an earlier major's release", ["v2.9.0"], []),
     ("no tag at all", [], "were not fetched"),
 ]
@@ -1844,8 +2005,7 @@ def frozen_files(files, entries):
 # kept, so an exemption that dropped nothing or everything fails here.
 FIXTURE_ENTRIES = [
     {"id": "base-a", "file": "templates/core/a.md"},
-    {"id": "stack-fixture", "file": "templates/stack/fixture.md",
-     "fixture": True},
+    {"id": "stack-fixture", "file": "templates/stack/fixture.md", "fixture": True},
 ]
 
 
@@ -1858,21 +2018,23 @@ def _tag_cases():
     for label, tags, owed in TAG_CASES:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
             _git(repo, "init", "-q")
-            for key, value in (("core.autocrlf", "false"),
-                               ("user.name", "smoke"),
-                               ("user.email", "smoke@localhost")):
+            for key, value in (
+                ("core.autocrlf", "false"),
+                ("user.name", "smoke"),
+                ("user.email", "smoke@localhost"),
+            ):
                 _git(repo, "config", key, value)
             path = os.path.join(repo, rel)
             os.makedirs(os.path.dirname(path))
-            for text, message in ((SPLIT_BASE, "base"),
-                                  (SPLIT_TEXT, "split")):
+            for text, message in ((SPLIT_BASE, "base"), (SPLIT_TEXT, "split")):
                 with io.open(path, "w", encoding="utf-8", newline="\n") as f:
                     f.write(text)
                 _git(repo, "add", rel)
                 done = _git(repo, "commit", "-q", "-m", message)
                 if done.returncode != 0:
-                    raise RuntimeError(f"planted commit {message!r} failed: "
-                                       f"{done.stderr.strip()}")
+                    raise RuntimeError(
+                        f"planted commit {message!r} failed: {done.stderr.strip()}"
+                    )
                 if message == "base":
                     for tag in tags:
                         _git(repo, "tag", tag)
@@ -1880,11 +2042,14 @@ def _tag_cases():
             found, _, refused, _ = frozen_splits(repo, [rel])
             if isinstance(owed, str):
                 if not refused or owed not in refused:
-                    failures.append(f"  planted tags, {label}: refused "
-                                    f"{refused!r}, owed {owed!r}")
+                    failures.append(
+                        f"  planted tags, {label}: refused {refused!r}, owed {owed!r}"
+                    )
             elif refused or found != [f"{rel}: {f}" for f in owed]:
-                failures.append(f"  planted tags, {label}: found {found}, "
-                                f"refused {refused!r}, owed {owed}")
+                failures.append(
+                    f"  planted tags, {label}: found {found}, "
+                    f"refused {refused!r}, owed {owed}"
+                )
     return failures
 
 
@@ -1904,16 +2069,14 @@ def check_sys_24():
     planted = ["templates/core/a.md", "templates/stack/fixture.md"]
     kept = frozen_files(planted, FIXTURE_ENTRIES)
     if kept != planted[:1]:
-        failures.append(f"  planted fixture exemption: kept {kept}, owed "
-                        f"{planted[:1]}")
+        failures.append(f"  planted fixture exemption: kept {kept}, owed {planted[:1]}")
 
     if not HAS_YAML:
         return seen.failures() + failures + [MISSING_YAML], seen.notes()
     _, entries, _ = _load_manifest()
     files = template_files()
     frozen = frozen_files(files, entries.values())
-    seen.count("fixture templates exempt", len(files) - len(frozen),
-               floor=0)
+    seen.count("fixture templates exempt", len(files) - len(frozen), floor=0)
 
     found, basis, refused, compared = frozen_splits(ROOT, frozen)
     if refused:
@@ -1923,7 +2086,8 @@ def check_sys_24():
     for finding in found:
         failures.append(
             f"  {finding}: a minor adds a section ID only on new content, "
-            f"never in front of lines a frozen section holds")
+            f"never in front of lines a frozen section holds"
+        )
     return seen.failures() + failures, seen.notes() + [basis]
 
 
@@ -1943,31 +2107,52 @@ def check_sys_24():
 GUARDED_TEMPLATES = ("templates/security/", "templates/backend/auth.md")
 PLANTED_KINDS = {"release": "Cutting a release"}
 LOAD_CASES = [
-    ("a listed kind", "templates/core/x.md",
-     "# T\n## A\n[ID: a]\n[LOAD: release]\n- rule\n",
-     []),
-    ("the check load", "templates/core/x.md",
-     "# T\n## A\n[LOAD: check]\n- rule\n",
-     []),
-    ("a kind no task lists", "templates/core/x.md",
-     "# T\n## A\n[LOAD: nowhere]\n- rule\n",
-     ["templates/core/x.md:3: names nowhere, which no task lists"]),
-    ("a directive after a rule", "templates/core/x.md",
-     "# T\n## A\n- rule\n[LOAD: release]\n",
-     ["templates/core/x.md:4: sits outside its heading's tags"]),
-    ("two directives under one heading", "templates/core/x.md",
-     "# T\n## A\n[LOAD: release]\n[LOAD: check]\n- rule\n",
-     ["templates/core/x.md:4: a second load for one heading"]),
-    ("a directive under a loaded heading", "templates/core/x.md",
-     "# T\n## A\n[LOAD: release]\n### B\n[LOAD: check]\n- rule\n",
-     ["templates/core/x.md:5: under a heading that loads as release"]),
-    ("a directive in a fence", "templates/core/x.md",
-     "# T\n## A\n```\n[LOAD: nowhere]\n```\n",
-     []),
-    ("a guarded template", "templates/security/x.md",
-     "# T\n## A\n[LOAD: check]\n- rule\n",
-     ["templates/security/x.md:3: a template that guards data, credentials "
-      "or authentication carries no load directive"]),
+    (
+        "a listed kind",
+        "templates/core/x.md",
+        "# T\n## A\n[ID: a]\n[LOAD: release]\n- rule\n",
+        [],
+    ),
+    ("the check load", "templates/core/x.md", "# T\n## A\n[LOAD: check]\n- rule\n", []),
+    (
+        "a kind no task lists",
+        "templates/core/x.md",
+        "# T\n## A\n[LOAD: nowhere]\n- rule\n",
+        ["templates/core/x.md:3: names nowhere, which no task lists"],
+    ),
+    (
+        "a directive after a rule",
+        "templates/core/x.md",
+        "# T\n## A\n- rule\n[LOAD: release]\n",
+        ["templates/core/x.md:4: sits outside its heading's tags"],
+    ),
+    (
+        "two directives under one heading",
+        "templates/core/x.md",
+        "# T\n## A\n[LOAD: release]\n[LOAD: check]\n- rule\n",
+        ["templates/core/x.md:4: a second load for one heading"],
+    ),
+    (
+        "a directive under a loaded heading",
+        "templates/core/x.md",
+        "# T\n## A\n[LOAD: release]\n### B\n[LOAD: check]\n- rule\n",
+        ["templates/core/x.md:5: under a heading that loads as release"],
+    ),
+    (
+        "a directive in a fence",
+        "templates/core/x.md",
+        "# T\n## A\n```\n[LOAD: nowhere]\n```\n",
+        [],
+    ),
+    (
+        "a guarded template",
+        "templates/security/x.md",
+        "# T\n## A\n[LOAD: check]\n- rule\n",
+        [
+            "templates/security/x.md:3: a template that guards data, credentials "
+            "or authentication carries no load directive"
+        ],
+    ),
 ]
 
 
@@ -1977,15 +2162,16 @@ def load_findings(rel, text, kinds):
     for d in load_directives(text):
         where = f"{rel}:{d['line']}"
         if rel.startswith(GUARDED_TEMPLATES) or rel in GUARDED_TEMPLATES:
-            found.append(f"{where}: a template that guards data, credentials "
-                         f"or authentication carries no load directive")
+            found.append(
+                f"{where}: a template that guards data, credentials "
+                f"or authentication carries no load directive"
+            )
         elif not d["placed"]:
             found.append(f"{where}: sits outside its heading's tags")
         elif d["second"]:
             found.append(f"{where}: a second load for one heading")
         elif d["inside"]:
-            found.append(f"{where}: under a heading that loads as "
-                         f"{d['inside']}")
+            found.append(f"{where}: under a heading that loads as {d['inside']}")
         elif d["kind"] != LOAD_CHECK and d["kind"] not in kinds:
             found.append(f"{where}: names {d['kind']}, which no task lists")
     return found
@@ -2036,44 +2222,59 @@ EMIT_TEMPLATE = (
     "```\n\n- It passes on exit 0; a warning\n  counts as a failure\n"
     "- Require violations zero\n\n"
     "## Optional\n\n- Declined rule\n\n"
-    "## Render\n[ID: demo-render]\n\n- Overridden rule\n")
-EMIT_STACK = ("# Stack — Demo\n\n## Render\n[OVERRIDE: demo-render]\n\n"
-              "- Overriding rule\n")
+    "## Render\n[ID: demo-render]\n\n- Overridden rule\n"
+)
+EMIT_STACK = (
+    "# Stack — Demo\n\n## Render\n[OVERRIDE: demo-render]\n\n- Overriding rule\n"
+)
 EMIT_KINDS = {"release": "Preparing a release"}
 EMIT_DECLINED = ["templates/core/demo.md#Optional"]
-EMIT_FILES = [("templates/core/demo.md", EMIT_TEMPLATE),
-              ("templates/fixture/stack.md", EMIT_STACK)]
+EMIT_FILES = [
+    ("templates/core/demo.md", EMIT_TEMPLATE),
+    ("templates/fixture/stack.md", EMIT_STACK),
+]
 
 
 def emit_findings(emitted, inline):
     """What the planted templates' emitted files get wrong, one per line."""
     root = emitted.get("AGENTS.md", "")
     skill = emitted.get(".agents/skills/release/SKILL.md")
-    owed = [("the every-turn rule is in the root file",
-             "Name every turn" in root),
-            ("the checked section keeps its command",
-             "ruff check ." in root),
-            ("the checked section keeps its whole pass condition",
-             "It passes on exit 0; a warning\n  counts as a failure" in root
-             and "Require violations zero" in root),
-            ("a fenced override example overrides nothing",
-             "Name every turn" in root),
-            ("the checked section's rule is left to its check, whole",
-             "Rule the check enforces" not in root
-             and "onto a second line" not in root),
-            ("the overridden rule is replaced",
-             "Overridden rule" not in root and "Overriding rule" in root),
-            ("the declined section is out", "Declined rule" not in root)]
+    owed = [
+        ("the every-turn rule is in the root file", "Name every turn" in root),
+        ("the checked section keeps its command", "ruff check ." in root),
+        (
+            "the checked section keeps its whole pass condition",
+            "It passes on exit 0; a warning\n  counts as a failure" in root
+            and "Require violations zero" in root,
+        ),
+        ("a fenced override example overrides nothing", "Name every turn" in root),
+        (
+            "the checked section's rule is left to its check, whole",
+            "Rule the check enforces" not in root and "onto a second line" not in root,
+        ),
+        (
+            "the overridden rule is replaced",
+            "Overridden rule" not in root and "Overriding rule" in root,
+        ),
+        ("the declined section is out", "Declined rule" not in root),
+    ]
     if inline:
-        owed += [("the procedure is inlined", "Tag in the skill" in root),
-                 ("no skill file is written", skill is None)]
+        owed += [
+            ("the procedure is inlined", "Tag in the skill" in root),
+            ("no skill file is written", skill is None),
+        ]
     else:
-        owed += [("the procedure is out of the root file",
-                  "Tag in the skill" not in root),
-                 ("the procedure is in its skill",
-                  skill is not None and "Tag in the skill" in skill),
-                 ("the trigger table names the skill",
-                  "| release | Preparing a release |" in root)]
+        owed += [
+            ("the procedure is out of the root file", "Tag in the skill" not in root),
+            (
+                "the procedure is in its skill",
+                skill is not None and "Tag in the skill" in skill,
+            ),
+            (
+                "the trigger table names the skill",
+                "| release | Preparing a release |" in root,
+            ),
+        ]
     return [label for label, ok in owed if not ok]
 
 
@@ -2096,8 +2297,7 @@ def rewrite_findings(work):
         rerun = handle.read()
     hand = os.path.join(work, "hand")
     os.makedirs(hand)
-    with io.open(os.path.join(hand, "AGENTS.md"), "w",
-                 encoding="utf-8") as handle:
+    with io.open(os.path.join(hand, "AGENTS.md"), "w", encoding="utf-8") as handle:
         handle.write("# Hand-written\n\n## Rules\n\n- A project policy\n")
     try:
         emit_write(hand, emit_build(EMIT_FILES, EMIT_KINDS))
@@ -2111,25 +2311,27 @@ def rewrite_findings(work):
     try:
         os.chdir(dot)
         emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS), [mirror])
-        emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS, declined),
-                   [mirror])
+        emit_write(".", emit_build(EMIT_FILES, EMIT_KINDS, declined), [mirror])
     finally:
         os.chdir(here)
-    dot_cleaned = not any(os.path.exists(os.path.join(dot, *parts))
-                          for parts in ((".agents", "skills", "release"),
-                                        (mirror, "release")))
-    owed = [("a filled-in fact survives a rerun", "Example Org" in rerun),
-            ("a declined skill is removed",
-             not os.path.exists(os.path.join(
-                 out, ".agents", "skills", "release"))),
-            ("its mirror is removed too",
-             not os.path.exists(os.path.join(out, mirror, "release"))),
-            ("a file the emitter never wrote survives",
-             os.path.exists(unrelated)),
-            ("a declined skill and its mirror are removed from `.`",
-             dot_cleaned),
-            ("a root file the emitter did not build is not overwritten",
-             refused)]
+    dot_cleaned = not any(
+        os.path.exists(os.path.join(dot, *parts))
+        for parts in ((".agents", "skills", "release"), (mirror, "release"))
+    )
+    owed = [
+        ("a filled-in fact survives a rerun", "Example Org" in rerun),
+        (
+            "a declined skill is removed",
+            not os.path.exists(os.path.join(out, ".agents", "skills", "release")),
+        ),
+        (
+            "its mirror is removed too",
+            not os.path.exists(os.path.join(out, mirror, "release")),
+        ),
+        ("a file the emitter never wrote survives", os.path.exists(unrelated)),
+        ("a declined skill and its mirror are removed from `.`", dot_cleaned),
+        ("a root file the emitter did not build is not overwritten", refused),
+    ]
     return [label for label, ok in owed if not ok]
 
 
@@ -2149,42 +2351,60 @@ def check_sys_26():
     failures = []
     for inline in (False, True):
         got = emit_findings(
-            emit_build(EMIT_FILES, EMIT_KINDS, EMIT_DECLINED, inline), inline)
+            emit_build(EMIT_FILES, EMIT_KINDS, EMIT_DECLINED, inline), inline
+        )
         mode = "inline" if inline else "with skills"
         failures.extend(f"  planted, {mode}: {label} fails" for label in got)
     seen.count("planted placements", 2)
 
     # An override the project declines leaves the section it replaced.
-    root = emit_build(EMIT_FILES, EMIT_KINDS,
-                      ["templates/fixture/stack.md#Render"])["AGENTS.md"]
+    root = emit_build(EMIT_FILES, EMIT_KINDS, ["templates/fixture/stack.md#Render"])[
+        "AGENTS.md"
+    ]
     if "Overridden rule" not in root or "Overriding rule" in root:
-        failures.append("  planted: a declined override still replaces its "
-                        "base section")
+        failures.append(
+            "  planted: a declined override still replaces its base section"
+        )
 
     trees = []
     work = tempfile.mkdtemp(prefix="sait-emit-")
     try:
-        failures.extend(f"  planted rerun: {label} fails"
-                        for label in rewrite_findings(work))
+        failures.extend(
+            f"  planted rerun: {label} fails" for label in rewrite_findings(work)
+        )
         for seed in ("1", "2"):
             out = os.path.join(work, seed)
             env = dict(os.environ, PYTHONHASHSEED=seed)
             proc = subprocess.run(
-                [sys.executable, os.path.join(ROOT, "tools", "resolve_chain.py"),
-                 "--emit", out, "base-quality", "--mirror", ".claude/skills"],
-                capture_output=True, text=True, encoding="utf-8", env=env)
+                [
+                    sys.executable,
+                    os.path.join(ROOT, "tools", "resolve_chain.py"),
+                    "--emit",
+                    out,
+                    "base-quality",
+                    "--mirror",
+                    ".claude/skills",
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                env=env,
+            )
             if proc.returncode != 0:
-                failures.append(f"  emit exited {proc.returncode}: "
-                                f"{(proc.stdout + proc.stderr).strip()}")
+                failures.append(
+                    f"  emit exited {proc.returncode}: "
+                    f"{(proc.stdout + proc.stderr).strip()}"
+                )
                 return seen.failures() + failures, seen.notes()
             trees.append(emitted_tree(out))
     finally:
         shutil.rmtree(work, ignore_errors=True)
     seen.count("files emitted for the core chain", trees[0])
     if trees[0] != trees[1]:
-        differ = sorted(set(trees[0]) ^ set(trees[1]) | {
-            k for k in set(trees[0]) & set(trees[1])
-            if trees[0][k] != trees[1][k]})
+        differ = sorted(
+            set(trees[0]) ^ set(trees[1])
+            | {k for k in set(trees[0]) & set(trees[1]) if trees[0][k] != trees[1][k]}
+        )
         failures.append(f"  two runs differ in: {', '.join(differ)}")
     return seen.failures() + failures, seen.notes()
 
@@ -2204,34 +2424,48 @@ def check_sys_26():
 # both ways proves the scan finds each form, and a planted second root that
 # overrides one of those sections proves each root is scanned on its own.
 
-PATH_TEMPLATE = ("# Base — Demo\n[ID: base-demo]\n\n## Review\n[LOAD: release]\n\n"
-                 "- `templates/core/demo.md` is the standard\n\n"
-                 "## Naming\n[ID: demo-naming]\n\n"
-                 "- See `core/demo.md`, \"Naming\"\n")
-PATH_STACK = ("# Stack — Demo\n\n## Naming\n[OVERRIDE: demo-naming]\n\n"
-              "- Name by role\n")
+PATH_TEMPLATE = (
+    "# Base — Demo\n[ID: base-demo]\n\n## Review\n[LOAD: release]\n\n"
+    "- `templates/core/demo.md` is the standard\n\n"
+    "## Naming\n[ID: demo-naming]\n\n"
+    '- See `core/demo.md`, "Naming"\n'
+)
+PATH_STACK = "# Stack — Demo\n\n## Naming\n[OVERRIDE: demo-naming]\n\n- Name by role\n"
 PATH_KINDS = {"release": "Preparing a release"}
 PATH_CHAINS = {
     "demo": [("templates/core/demo.md", PATH_TEMPLATE)],
-    "stack": [("templates/core/demo.md", PATH_TEMPLATE),
-              ("templates/fixture/stack.md", PATH_STACK)]}
+    "stack": [
+        ("templates/core/demo.md", PATH_TEMPLATE),
+        ("templates/fixture/stack.md", PATH_STACK),
+    ],
+}
 
 
 def path_findings(emitted, paths):
     """Each emitted file and line that names one of `paths`, a template's
     path under the repository."""
-    patterns = [(path, re.compile(
-        r"(?<![\w/.-])(?:templates/)?" + re.escape(path[len("templates/"):])
-        + r"(?![\w/-])")) for path in sorted(paths)]
+    patterns = [
+        (
+            path,
+            re.compile(
+                r"(?<![\w/.-])(?:templates/)?"
+                + re.escape(path[len("templates/") :])
+                + r"(?![\w/-])"
+            ),
+        )
+        for path in sorted(paths)
+    ]
     findings = []
     for rel in sorted(emitted):
         text = emitted[rel]
         if isinstance(text, bytes):
             text = text.decode("utf-8")
         for number, line in enumerate(text.splitlines(), 1):
-            findings.extend(f"{rel}:{number} names {path}"
-                            for path, pattern in patterns
-                            if pattern.search(line))
+            findings.extend(
+                f"{rel}:{number} names {path}"
+                for path, pattern in patterns
+                if pattern.search(line)
+            )
     return findings
 
 
@@ -2247,8 +2481,10 @@ def root_path_findings(chains, kinds, paths, emitted_counts=None):
             emitted = emit_build(chains[root], kinds, inline_skills=inline)
             if emitted_counts is not None:
                 emitted_counts[mode] += len(emitted)
-            findings.extend(f"{root}, {mode}: {finding}"
-                            for finding in path_findings(emitted, paths))
+            findings.extend(
+                f"{root}, {mode}: {finding}"
+                for finding in path_findings(emitted, paths)
+            )
     return findings
 
 
@@ -2256,37 +2492,44 @@ def check_sys_27():
     seen = Inspected()
     failures = []
     planted = ["templates/core/demo.md"]
-    alone = root_path_findings({"demo": PATH_CHAINS["demo"]}, PATH_KINDS,
-                               planted)
+    alone = root_path_findings({"demo": PATH_CHAINS["demo"]}, PATH_KINDS, planted)
     if len(alone) != 4:
-        failures.append(f"  planted: {len(alone)} of the 4 named paths "
-                        "found, 2 per mode")
+        failures.append(
+            f"  planted: {len(alone)} of the 4 named paths found, 2 per mode"
+        )
     seen.count("planted paths found", len(alone))
 
     # Built together, the stack's override drops the Naming line and only
     # the Review line is left; built per root, the demo root still has both.
-    together = path_findings(
-        emit_build(PATH_CHAINS["stack"], PATH_KINDS), planted)
+    together = path_findings(emit_build(PATH_CHAINS["stack"], PATH_KINDS), planted)
     split = root_path_findings(PATH_CHAINS, PATH_KINDS, planted)
     if len(together) != 1 or len(split) != 6:
-        failures.append(f"  planted override: {len(together)} found built "
-                        f"together, owed 1; {len(split)} per root, owed 6")
+        failures.append(
+            f"  planted override: {len(together)} found built "
+            f"together, owed 1; {len(split)} per root, owed 6"
+        )
 
     core_ids, entries, _ = load_manifest()
     _, offered, catalogue = load_catalogue()
-    roots = ([stack["id"] for stack in catalogue]
-             + list(opt_in_roots(core_ids, offered, catalogue)))
+    roots = [stack["id"] for stack in catalogue] + list(
+        opt_in_roots(core_ids, offered, catalogue)
+    )
     seen.count("roots emitted", len(roots))
     paths = template_files()
     seen.count("template paths scanned for", len(paths))
-    chains = {root: [(path, read_file(path))
-                     for path in resolve_chain(root, core_ids, entries)]
-              for root in roots}
-    kinds = task_kinds(parse_manifest(
-        read(os.path.join(ROOT, "templates", "manifest.yaml"))))
+    chains = {
+        root: [
+            (path, read_file(path)) for path in resolve_chain(root, core_ids, entries)
+        ]
+        for root in roots
+    }
+    kinds = task_kinds(
+        parse_manifest(read(os.path.join(ROOT, "templates", "manifest.yaml")))
+    )
     emitted = Counter()
-    failures.extend(f"  {finding}" for finding in
-                    root_path_findings(chains, kinds, paths, emitted))
+    failures.extend(
+        f"  {finding}" for finding in root_path_findings(chains, kinds, paths, emitted)
+    )
     for mode in ("skills", "inline"):
         seen.count(f"files emitted, {mode}", emitted[mode])
     return seen.failures() + failures, seen.notes()

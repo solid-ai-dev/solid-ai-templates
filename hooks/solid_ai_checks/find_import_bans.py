@@ -28,7 +28,7 @@ def importable_as(path):
     innermost src directory is another, listed first. A package's
     __init__ module is the package itself.
     """
-    parts = path[:-len(".py")].split("/")
+    parts = path[: -len(".py")].split("/")
     package = parts[:-1]
     if parts[-1] == "__init__":
         parts = package
@@ -53,16 +53,21 @@ def imported(tree, package):
         elif isinstance(node, ast.ImportFrom):
             base = []
             if node.level:
-
                 # A relative import reaching above the top-level package
                 # fails when it runs, so it names no module to check.
                 if node.level > len(package):
                     continue
-                base = package[:len(package) - node.level + 1]
+                base = package[: len(package) - node.level + 1]
             base = ".".join(base + ([node.module] if node.module else []))
-            yield node.lineno, [base] + ["%s.%s" % (base, alias.name)
-                                         for alias in node.names
-                                         if alias.name != "*"]
+            yield (
+                node.lineno,
+                [base]
+                + [
+                    "%s.%s" % (base, alias.name)
+                    for alias in node.names
+                    if alias.name != "*"
+                ],
+            )
 
 
 def crosses(name, banned):
@@ -71,12 +76,16 @@ def crosses(name, banned):
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="find-import-bans")
-    parser.add_argument("--forbid", action="append", default=[],
-                        metavar="IMPORTER:IMPORTED",
-                        help="module prefix that must not import another; "
-                             "repeatable")
-    parser.add_argument("--root", action="append", default=[],
-                        help="directory to scan; repeatable")
+    parser.add_argument(
+        "--forbid",
+        action="append",
+        default=[],
+        metavar="IMPORTER:IMPORTED",
+        help="module prefix that must not import another; repeatable",
+    )
+    parser.add_argument(
+        "--root", action="append", default=[], help="directory to scan; repeatable"
+    )
     args = parser.parse_args(argv)
 
     # A malformed ban dropped quietly leaves the boundary it meant to close
@@ -85,9 +94,12 @@ def main(argv, report):
     for raw in args.forbid:
         parts = [p.strip() for p in raw.split(":")]
         if len(parts) != 2 or not all(MODULE.match(p) for p in parts):
-            report.finding("--forbid", 0, "ARGUMENT",
-                           "%r is not IMPORTER:IMPORTED, two dotted module "
-                           "names" % raw)
+            report.finding(
+                "--forbid",
+                0,
+                "ARGUMENT",
+                "%r is not IMPORTER:IMPORTED, two dotted module names" % raw,
+            )
             continue
         bans.append(tuple(parts))
     report.count("import bans declared", bans)
@@ -108,10 +120,14 @@ def main(argv, report):
             for line, names in imported(tree, package):
                 for importer, banned in bans:
                     name = next((n for n in names if crosses(n, banned)), None)
-                    if (name and crosses(module, importer)
-                            and (line, importer, banned) not in flagged):
+                    if (
+                        name
+                        and crosses(module, importer)
+                        and (line, importer, banned) not in flagged
+                    ):
                         flagged.add((line, importer, banned))
-                        report.finding(path, line, "BANNED",
-                                       "%s imports %s" % (module, name))
+                        report.finding(
+                            path, line, "BANNED", "%s imports %s" % (module, name)
+                        )
     report.count("import-ban violations", report.findings)
     return report.finish(bool(report.findings) or not files)

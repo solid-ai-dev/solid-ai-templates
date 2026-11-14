@@ -6,8 +6,16 @@ import subprocess
 
 # Vendored and installed code is not the project's own. Tracked copies of
 # it still dominate any count they are left in.
-VENDORED = ("node_modules", "vendor", "site-packages", ".venv", "venv",
-            "build", "dist", ".tox")
+VENDORED = (
+    "node_modules",
+    "vendor",
+    "site-packages",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    ".tox",
+)
 
 
 class NotARepository(Exception):
@@ -26,8 +34,7 @@ def run_git(args):
     """
     env = dict(os.environ, LC_ALL="C", LANGUAGE="C")
     try:
-        return subprocess.run(["git"] + list(args), capture_output=True,
-                              env=env)
+        return subprocess.run(["git"] + list(args), capture_output=True, env=env)
     except OSError as error:
         raise GitFailed("cannot run git: %s" % error)
 
@@ -47,13 +54,15 @@ def ls_files(*args):
     # would pass a tree nobody scanned, so only git's own answer that this
     # is no work tree counts as one.
     probe = run_git(["rev-parse", "--is-inside-work-tree"])
-    if probe.stdout.strip() == b"false" \
-            or probe.stderr.startswith(b"fatal: not a git repository"):
+    if probe.stdout.strip() == b"false" or probe.stderr.startswith(
+        b"fatal: not a git repository"
+    ):
         raise NotARepository("not inside a git work tree")
     reason = listing.stderr.decode("utf-8", "replace").strip()
-    raise GitFailed("git ls-files exited %d: %s"
-                    % (listing.returncode, reason.splitlines()[0]
-                       if reason else "no message"))
+    raise GitFailed(
+        "git ls-files exited %d: %s"
+        % (listing.returncode, reason.splitlines()[0] if reason else "no message")
+    )
 
 
 def tracked(suffixes, roots=()):
@@ -66,10 +75,12 @@ def tracked(suffixes, roots=()):
     paths = ls_files()
     prefixes = normalised(roots)
     return sorted(
-        p for p in paths
+        p
+        for p in paths
         if p.endswith(tuple(suffixes))
         and (not prefixes or p.startswith(prefixes))
-        and not any(part in VENDORED for part in p.split("/")))
+        and not any(part in VENDORED for part in p.split("/"))
+    )
 
 
 def normalised(roots):

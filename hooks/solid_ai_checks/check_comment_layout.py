@@ -19,24 +19,36 @@ OPENERS = (":", "(", "[", "{")
 
 # Tokens that are layout, not code: a line whose last code token is none
 # of the rest holds no code that a comment below it could abut.
-LAYOUT = (tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE, tokenize.INDENT,
-          tokenize.DEDENT, tokenize.ENCODING, tokenize.ENDMARKER)
+LAYOUT = (
+    tokenize.COMMENT,
+    tokenize.NL,
+    tokenize.NEWLINE,
+    tokenize.INDENT,
+    tokenize.DEDENT,
+    tokenize.ENCODING,
+    tokenize.ENDMARKER,
+)
 
 
 def candidates(roots):
     """Tracked Python plus the untracked files a commit could still add."""
     listed = ls_files("--cached", "--others", "--exclude-standard", "*.py")
     prefixes = normalised(roots)
-    return sorted(set(
-        p for p in listed
-        if (not prefixes or p.startswith(prefixes))
-        and not any(part in VENDORED for part in p.split("/"))))
+    return sorted(
+        set(
+            p
+            for p in listed
+            if (not prefixes or p.startswith(prefixes))
+            and not any(part in VENDORED for part in p.split("/"))
+        )
+    )
 
 
 def main(argv, report):
     parser = argparse.ArgumentParser(prog="check-comment-layout")
-    parser.add_argument("--root", action="append", default=[],
-                        help="directory to scan; repeatable")
+    parser.add_argument(
+        "--root", action="append", default=[], help="directory to scan; repeatable"
+    )
     args = parser.parse_args(argv)
 
     files = report.count("python files checked", candidates(args.root))
@@ -60,13 +72,16 @@ def main(argv, report):
             if src[row - 1][:col].strip():
                 body = tok.string.lstrip("#").strip()
                 if not body.startswith(DIRECTIVES):
-                    report.finding(path, row, "ASIDE",
-                                   "comment to the right of code")
-            elif row > 1 and src[row - 2].strip() \
-                    and row - 1 in last_code \
-                    and last_code[row - 1] not in OPENERS:
-                report.finding(path, row, "ABUTS",
-                               "comment block with code directly above it")
+                    report.finding(path, row, "ASIDE", "comment to the right of code")
+            elif (
+                row > 1
+                and src[row - 2].strip()
+                and row - 1 in last_code
+                and last_code[row - 1] not in OPENERS
+            ):
+                report.finding(
+                    path, row, "ABUTS", "comment block with code directly above it"
+                )
     report.count("layout violations", report.findings)
     if not files:
         return report.not_applicable("no Python file to check")

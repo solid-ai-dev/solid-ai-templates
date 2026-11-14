@@ -24,7 +24,6 @@ for _stream in (sys.stdout, sys.stderr):
         pass
 
 
-
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "templates" / "manifest.yaml"
 DOCS_TEMPLATE = ROOT / "templates" / "core" / "docs.md"
@@ -98,8 +97,9 @@ def _readme_extras(core_ids, entries, stacks):
 
         # Every template's kind is its directory: templates/<kind>/x.md.
         kind = parts[1]
-        lines.append("| `%s` | %s | %s |"
-                     % (entry["file"], kind, entry.get("description", "")))
+        lines.append(
+            "| `%s` | %s | %s |" % (entry["file"], kind, entry.get("description", ""))
+        )
     return "\n".join(lines)
 
 
@@ -111,24 +111,29 @@ def _spec_context_cost(core_ids, entries, stacks):
     change that moves either shows in --check (ADR-058).
     """
     import emit_context
-    from resolve_chain import (
-        opt_in_roots, parse_manifest, resolve_chain, task_kinds)
+    from resolve_chain import opt_in_roots, parse_manifest, resolve_chain, task_kinds
 
-    kinds = task_kinds(parse_manifest(io.open(MANIFEST,
-                                               encoding="utf-8").read()))
-    roots = [s["id"] for s in stacks] + opt_in_roots(core_ids, entries,
-                                                      stacks)
-    lines = ["| Root | Every turn, words | Skills | Skill words |",
-             "|------|-------------------|--------|-------------|"]
+    kinds = task_kinds(parse_manifest(io.open(MANIFEST, encoding="utf-8").read()))
+    roots = [s["id"] for s in stacks] + opt_in_roots(core_ids, entries, stacks)
+    lines = [
+        "| Root | Every turn, words | Skills | Skill words |",
+        "|------|-------------------|--------|-------------|",
+    ]
     for root in roots:
         files = resolve_chain(root, core_ids, entries)
         emitted = emit_context.build(
-            [(f, io.open(ROOT / f, encoding="utf-8").read()) for f in files],
-            kinds)
+            [(f, io.open(ROOT / f, encoding="utf-8").read()) for f in files], kinds
+        )
         skills = [text for rel, text in emitted.items() if rel != "AGENTS.md"]
-        lines.append("| `%s` | %d | %d | %d |" % (
-            root, len(emitted["AGENTS.md"].split()), len(skills),
-            sum(len(text.split()) for text in skills)))
+        lines.append(
+            "| `%s` | %d | %d | %d |"
+            % (
+                root,
+                len(emitted["AGENTS.md"].split()),
+                len(skills),
+                sum(len(text.split()) for text in skills),
+            )
+        )
     return "\n".join(lines)
 
 
@@ -155,8 +160,7 @@ def _readme_root_counts(core_ids, entries, stacks):
     sentence = (
         "Measured: %d stacks and %d orthogonal templates, %d roots in all. "
         "An extra resolves to the %d core-tier files plus %s of its own."
-        % (len(stacks), len(extras), len(stacks) + len(extras),
-           len(core_ids), span)
+        % (len(stacks), len(extras), len(stacks) + len(extras), len(core_ids), span)
     )
 
     # Wrapped here rather than left as one long line: the width rule the
@@ -185,8 +189,11 @@ def _spec_core_tier(core_ids, entries):
     # (after `git add`) writes a different chapter. Union with the entries
     # the manifest already names, which come from the working-tree file
     # this function is already passed and needs no staging.
-    tracked = set(subprocess.check_output(
-        ["git", "ls-files", "templates/*.md"], text=True).split())
+    tracked = set(
+        subprocess.check_output(
+            ["git", "ls-files", "templates/*.md"], text=True
+        ).split()
+    )
     tracked |= {e["file"] for e in entries.values()}
     tracked = sorted(tracked)
     tokens, templates, declared = 0, set(), set()
@@ -202,8 +209,9 @@ def _spec_core_tier(core_ids, entries):
                     templates.add(path)
                     declared.add(names[os.path.basename(token)])
     seeded_only = [c for c in core_ids if c not in declared]
-    manifest_declarers = [k for k, e in entries.items()
-                          if set(e.get("depends_on") or []) & set(core_ids)]
+    manifest_declarers = [
+        k for k, e in entries.items() if set(e.get("depends_on") or []) & set(core_ids)
+    ]
 
     listing = NEWLINE.join("- `%s`" % entries[c]["file"] for c in core_ids)
     if seeded_only:
@@ -211,13 +219,18 @@ def _spec_core_tier(core_ids, entries):
             "Only the seeding reaches %s. A chain assembled by walking the "
             "directives misses %s and reports nothing, because nothing "
             "declares what is absent."
-            % (", ".join("`%s`" % c for c in seeded_only),
-               "it" if len(seeded_only) == 1 else "them"))
+            % (
+                ", ".join("`%s`" % c for c in seeded_only),
+                "it" if len(seeded_only) == 1 else "them",
+            )
+        )
     else:
-        tail = ("Every core file is declared somewhere as well, so the walk "
-                "happens to reach all of them; the seeding is what "
-                "guarantees it, and a directive being dropped would not "
-                "be reported.")
+        tail = (
+            "Every core file is declared somewhere as well, so the walk "
+            "happens to reach all of them; the seeding is what "
+            "guarantees it, and a directive being dropped would not "
+            "be reported."
+        )
     sentence = (
         "%d `[DEPENDS ON]` tokens across %d templates name one of these "
         "files, and %d manifest entries name a core id in `depends_on`. "
@@ -226,8 +239,7 @@ def _spec_core_tier(core_ids, entries):
         "a dependency a reader would otherwise infer. %s"
         % (tokens, len(templates), len(manifest_declarers), tail)
     )
-    return listing + NEWLINE + NEWLINE + NEWLINE.join(
-        textwrap.wrap(sentence, 76))
+    return listing + NEWLINE + NEWLINE + NEWLINE.join(textwrap.wrap(sentence, 76))
 
 
 def _interview_stacks(manifest):
@@ -266,8 +278,9 @@ except ModuleNotFoundError as exc:
         raise
     fork_examples = None
 SPEC_CHAIN_EXAMPLES = getattr(fork_examples, "SPEC_CHAIN_EXAMPLES", [])
-CHAIN_EXAMPLES_DOC = getattr(fork_examples, "CHAIN_EXAMPLES_DOC",
-                             "docs/architecture/06-runtime-view.md")
+CHAIN_EXAMPLES_DOC = getattr(
+    fork_examples, "CHAIN_EXAMPLES_DOC", "docs/architecture/06-runtime-view.md"
+)
 
 NEWLINE = "\n"
 
@@ -291,11 +304,21 @@ def _spec_chain_examples():
             raise SystemExit("sync: empty chain for " + stack_id)
         body = NEWLINE.join(files)
         blocks.append(
-            "### Example: " + heading + NEWLINE * 2
-            + "```bash" + NEWLINE
-            + "py tools/resolve_chain.py " + stack_id + NEWLINE
-            + "```" + NEWLINE * 2
-            + "```" + NEWLINE + body + NEWLINE + "```"
+            "### Example: "
+            + heading
+            + NEWLINE * 2
+            + "```bash"
+            + NEWLINE
+            + "py tools/resolve_chain.py "
+            + stack_id
+            + NEWLINE
+            + "```"
+            + NEWLINE * 2
+            + "```"
+            + NEWLINE
+            + body
+            + NEWLINE
+            + "```"
         )
 
     return (NEWLINE * 2).join(blocks)
@@ -367,8 +390,14 @@ def _readme_model_limits():
 
         lines.append(
             "| %s | %d | `%s` — %dK chars | ~%dK tokens | %s |"
-            % (layer, len(by_layer[layer]), largest, round(chars / 1000.0),
-               round(tokens / 1000.0), _window_label(window))
+            % (
+                layer,
+                len(by_layer[layer]),
+                largest,
+                round(chars / 1000.0),
+                round(tokens / 1000.0),
+                _window_label(window),
+            )
         )
     return NEWLINE.join(lines)
 
@@ -395,13 +424,9 @@ def _update_file(path, replacements, check_mode=False):
 
     for marker_id, content in replacements.items():
         pattern = re.compile(
-            r"(<!-- generated:"
-            + re.escape(marker_id)
-            + r" -->\n)"
+            r"(<!-- generated:" + re.escape(marker_id) + r" -->\n)"
             r"(.*?)"
-            r"(<!-- /generated:"
-            + re.escape(marker_id)
-            + r" -->)",
+            r"(<!-- /generated:" + re.escape(marker_id) + r" -->)",
             re.DOTALL,
         )
 
@@ -429,13 +454,13 @@ def _update_file(path, replacements, check_mode=False):
             # Pin the line ending as well as the encoding: this writes a
             # committed document, and an unpinned write translates every
             # newline on a platform whose default is CRLF.
-            io.open(path, "w", encoding="utf-8",
-                    newline="\n").write(text)
+            io.open(path, "w", encoding="utf-8", newline="\n").write(text)
         return True
     return False
 
 
 # ---- main ----
+
 
 def _catalogue(manifest):
     """The parsed manifest without its fixture entries."""
@@ -444,9 +469,11 @@ def _catalogue(manifest):
     # Every block this script writes describes what a project can pick. A
     # fixture is test input, so it stays off the README, spec and interview.
     return {
-        key: ([e for e in value
-               if not (isinstance(e, dict) and is_fixture(e))]
-              if isinstance(value, list) else value)
+        key: (
+            [e for e in value if not (isinstance(e, dict) and is_fixture(e))]
+            if isinstance(value, list)
+            else value
+        )
         for key, value in manifest.items()
     }
 
@@ -510,13 +537,15 @@ def _readme_hooks():
 
     templates = {
         path: io.open(path, encoding="utf-8").read()
-        for path in sorted((ROOT / "templates").rglob("*.md"))}
-    out = ["| Hook | What it does | Runs | Rules and arguments |",
-           "|------|--------------|------|---------------------|"]
+        for path in sorted((ROOT / "templates").rglob("*.md"))
+    }
+    out = [
+        "| Hook | What it does | Runs | Rules and arguments |",
+        "|------|--------------|------|---------------------|",
+    ]
     for block in blocks:
         hid = re.search(r"^- id: (\S+)", block).group(1)
-        name = re.search(r"^\s+name: \"?([^\"\n]+)\"?$", block,
-                         re.MULTILINE).group(1)
+        name = re.search(r"^\s+name: \"?([^\"\n]+)\"?$", block, re.MULTILINE).group(1)
         if name.startswith("Deprecated:"):
             continue
 
@@ -528,15 +557,17 @@ def _readme_hooks():
         # A template that states a hook's command also holds its rules and
         # the arguments a project sets, so the row links each one. A fork may
         # prescribe a shipped hook in a template of its own as well.
-        homes = [p.relative_to(ROOT).as_posix()
-                 for p, body in templates.items()
-                 if "pre-commit run %s " % hid in body]
+        homes = [
+            p.relative_to(ROOT).as_posix()
+            for p, body in templates.items()
+            if "pre-commit run %s " % hid in body
+        ]
         if not homes:
             raise SystemExit(
                 "sync: no template states the command of hook %s; the README "
-                "cannot link where its arguments are described" % hid)
-        links = ", ".join("[%s](%s)" % (rel[len("templates/"):], rel)
-                          for rel in homes)
+                "cannot link where its arguments are described" % hid
+            )
+        links = ", ".join("[%s](%s)" % (rel[len("templates/") :], rel) for rel in homes)
         out.append("| `%s` | %s | %s | %s |" % (hid, name, runs, links))
     return "\n".join(out)
 
@@ -595,19 +626,20 @@ def main():
     # a pair would otherwise leave a stale table outside every check.
     readme_blocks = {}
     for marker, content in (
-            ("readme-stacks", readme_content),
-            ("readme-extras", readme_extras),
-            ("readme-root-counts", readme_root_counts),
-            ("readme-agents", agent_outputs),
-            ("readme-hooks", readme_hooks),
-            ("readme-model-limits", model_limits)):
+        ("readme-stacks", readme_content),
+        ("readme-extras", readme_extras),
+        ("readme-root-counts", readme_root_counts),
+        ("readme-agents", agent_outputs),
+        ("readme-hooks", readme_hooks),
+        ("readme-model-limits", model_limits),
+    ):
         opens = "<!-- generated:%s -->" % marker in readme_text
         closes = "<!-- /generated:%s -->" % marker in readme_text
         if opens != closes:
             raise SystemExit(
                 "sync: README.md carries one marker of %s without the "
-                "other; restore the pair or delete both with the section"
-                % marker)
+                "other; restore the pair or delete both with the section" % marker
+            )
         if opens:
             readme_blocks[marker] = content
 
@@ -616,18 +648,26 @@ def main():
     # --check passes with nothing checked.
     targets = [
         (spec_doc, spec_blocks, True),
-        (ROOT / "docs" / "architecture" / "08-crosscutting-concepts.md",
-         {"spec-context-cost": context_cost}, True),
+        (
+            ROOT / "docs" / "architecture" / "08-crosscutting-concepts.md",
+            {"spec-context-cost": context_cost},
+            True,
+        ),
         (ROOT / "README.md", readme_blocks, True),
-        (ROOT / "templates" / "INTERVIEW.md",
-         {"interview-stacks": interview_content}, False),
+        (
+            ROOT / "templates" / "INTERVIEW.md",
+            {"interview-stacks": interview_content},
+            False,
+        ),
     ]
     if SPEC_CHAIN_EXAMPLES:
         # A named document that is absent would be skipped like an absent
         # INTERVIEW.md, and the examples would vanish with the run clean.
         if not examples_doc.exists():
-            raise SystemExit("sync: CHAIN_EXAMPLES_DOC names %s, which "
-                             "does not exist" % CHAIN_EXAMPLES_DOC)
+            raise SystemExit(
+                "sync: CHAIN_EXAMPLES_DOC names %s, which "
+                "does not exist" % CHAIN_EXAMPLES_DOC
+            )
         if examples_doc == spec_doc:
             spec_blocks.update(example_blocks)
         else:
@@ -637,8 +677,9 @@ def main():
     for path, replacements, required in targets:
         if not path.exists():
             if required:
-                raise SystemExit("sync: %s does not exist; update the "
-                                 "target list if it moved" % path)
+                raise SystemExit(
+                    "sync: %s does not exist; update the target list if it moved" % path
+                )
             print(f"  SKIP  {path.name} (not found)")
             continue
         if _update_file(path, replacements, check_mode):
@@ -649,6 +690,7 @@ def main():
 
     # Check generated/ files via resolve_chain.py
     from resolve_chain import load_catalogue as _load, check_generated, generate_all
+
     core_ids, entries, stacks = _load()
     stale, orphans = check_generated(core_ids, entries, stacks)
     for name in orphans:

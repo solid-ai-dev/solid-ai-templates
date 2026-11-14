@@ -35,8 +35,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / "templates"
 REPORTS = ROOT / "tests" / "reports"
 
-DEFAULT_MODELS = ("claude-opus-5-5", "claude-sonnet-5-5",
-                  "gpt-6.1-sol", "gpt-6-astra")
+DEFAULT_MODELS = ("claude-opus-5-5", "claude-sonnet-5-5", "gpt-6.1-sol", "gpt-6-astra")
 
 # What a consuming project adopts: the README and spec say what the
 # templates are for, the manifest how they compose. The fixture is test
@@ -46,13 +45,12 @@ EXCLUDED = ("fixture",)
 
 CRITERIA = {
     "consistency": "Agents following these templates produce the same "
-                   "conventions across teams, sessions and models",
+    "conventions across teams, sessions and models",
     "quality_lift": "The policies move typical agent output from average "
-                    "to good enough",
+    "to good enough",
     "human_effort": "Adopting and following them takes little effort from "
-                    "the human developers",
-    "focus": "They leave the humans free to concentrate on architecture "
-             "and design",
+    "the human developers",
+    "focus": "They leave the humans free to concentrate on architecture and design",
 }
 
 SCORE = {"type": "integer", "minimum": 1, "maximum": 10}
@@ -91,8 +89,15 @@ SCHEMA = {
         "drift_risks": {"type": "array", "items": FINDING},
         "recommendations": {"type": "array", "items": RECOMMENDATION},
     },
-    "required": ["score", "criteria", "summary", "strengths", "weaknesses",
-                 "drift_risks", "recommendations"],
+    "required": [
+        "score",
+        "criteria",
+        "summary",
+        "strengths",
+        "weaknesses",
+        "drift_risks",
+        "recommendations",
+    ],
     "additionalProperties": False,
 }
 
@@ -136,14 +141,18 @@ Name files by their path as given in the headers below.
 def bundle():
     """Return the files a reviewer reads, each under its path."""
     paths = [ROOT / name for name in CONTEXT_FILES]
-    paths += sorted(path for path in TEMPLATES.rglob("*.md")
-                    if path.relative_to(TEMPLATES).parts[0] not in EXCLUDED)
+    paths += sorted(
+        path
+        for path in TEMPLATES.rglob("*.md")
+        if path.relative_to(TEMPLATES).parts[0] not in EXCLUDED
+    )
     parts = []
 
     for path in paths:
         text = path.read_text(encoding="utf-8")
-        parts.append("===== %s =====\n%s" % (path.relative_to(ROOT).as_posix(),
-                                              text.rstrip()))
+        parts.append(
+            "===== %s =====\n%s" % (path.relative_to(ROOT).as_posix(), text.rstrip())
+        )
     return "\n\n".join(parts)
 
 
@@ -160,15 +169,24 @@ def claude_argv(executable, model, effort):
     neither the user's global CLAUDE.md nor this repository's reaches the
     reviewer.
     """
-    return [executable, "--print",
-            "--model", model,
-            "--effort", effort,
-            "--tools", "",
-            "--strict-mcp-config",
-            "--setting-sources", "",
-            "--no-session-persistence",
-            "--output-format", "json",
-            "--json-schema", json.dumps(SCHEMA)]
+    return [
+        executable,
+        "--print",
+        "--model",
+        model,
+        "--effort",
+        effort,
+        "--tools",
+        "",
+        "--strict-mcp-config",
+        "--setting-sources",
+        "",
+        "--no-session-persistence",
+        "--output-format",
+        "json",
+        "--json-schema",
+        json.dumps(SCHEMA),
+    ]
 
 
 def codex_argv(executable, model, effort, workdir, schema, last):
@@ -178,18 +196,27 @@ def codex_argv(executable, model, effort, workdir, schema, last):
     effort, and the effort is set on the command instead. The reviewer
     runs read-only in an empty directory, so no AGENTS.md reaches it.
     """
-    return [executable, "exec",
-            "--model", model,
-            "--ignore-user-config",
-            "--ignore-rules",
-            "-c", 'model_reasoning_effort="%s"' % effort,
-            "--sandbox", "read-only",
-            "--ephemeral",
-            "--skip-git-repo-check",
-            "-C", str(workdir),
-            "--output-schema", str(schema),
-            "--output-last-message", str(last),
-            "-"]
+    return [
+        executable,
+        "exec",
+        "--model",
+        model,
+        "--ignore-user-config",
+        "--ignore-rules",
+        "-c",
+        'model_reasoning_effort="%s"' % effort,
+        "--sandbox",
+        "read-only",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "-C",
+        str(workdir),
+        "--output-schema",
+        str(schema),
+        "--output-last-message",
+        str(last),
+        "-",
+    ]
 
 
 def review(model, effort, text, timeout, dry_run):
@@ -212,8 +239,9 @@ def review(model, effort, text, timeout, dry_run):
             argv = codex_argv(executable, model, effort, workdir, schema, last)
 
         # The schema argument is long and quoted; the record keeps its name.
-        record["argv"] = [part if part != json.dumps(SCHEMA) else "<schema>"
-                          for part in argv]
+        record["argv"] = [
+            part if part != json.dumps(SCHEMA) else "<schema>" for part in argv
+        ]
         if dry_run:
             return record
 
@@ -221,14 +249,19 @@ def review(model, effort, text, timeout, dry_run):
         # cmd.exe, which ends a command at a newline inside an argument.
         started = datetime.datetime.now()
         try:
-            outcome = subprocess.run(argv, input=text, cwd=workdir,
-                                     capture_output=True, encoding="utf-8",
-                                     errors="replace", timeout=timeout)
+            outcome = subprocess.run(
+                argv,
+                input=text,
+                cwd=workdir,
+                capture_output=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout,
+            )
         except subprocess.TimeoutExpired:
             record["error"] = "no answer within %d seconds" % timeout
             return record
-        record["seconds"] = round((datetime.datetime.now()
-                                   - started).total_seconds())
+        record["seconds"] = round((datetime.datetime.now() - started).total_seconds())
         said = (outcome.stderr or outcome.stdout or "").strip()[-600:]
 
         if cli == "claude":
@@ -268,11 +301,15 @@ def report(records, started):
     """Return the Markdown report over every reviewer's record."""
     answered = [r for r in records if "answer" in r]
     names = list(CRITERIA)
-    lines = ["# Template review by models", "",
-             "Run %s. Each reviewer read the same bundle and scored the "
-             "templates from 1 to 10." % started.strftime("%Y-%m-%d %H:%M"),
-             "", "| Model | CLI | Score | %s |" % " | ".join(names),
-             "|---|---|---|" + "---|" * len(names)]
+    lines = [
+        "# Template review by models",
+        "",
+        "Run %s. Each reviewer read the same bundle and scored the "
+        "templates from 1 to 10." % started.strftime("%Y-%m-%d %H:%M"),
+        "",
+        "| Model | CLI | Score | %s |" % " | ".join(names),
+        "|---|---|---|" + "---|" * len(names),
+    ]
 
     for record in records:
         if "answer" in record:
@@ -281,16 +318,19 @@ def report(records, started):
             cells += [str(answer["criteria"][name]) for name in names]
         else:
             cells = ["failed"] + ["-"] * len(names)
-        lines.append("| %s | %s | %s |" % (record["model"], record["cli"],
-                                            " | ".join(cells)))
+        lines.append(
+            "| %s | %s | %s |" % (record["model"], record["cli"], " | ".join(cells))
+        )
 
     # Each model is its own instrument, so the median and range describe
     # the spread of their verdicts rather than averaging them into one.
     if answered:
         scores = [r["answer"]["score"] for r in answered]
-        lines += ["", "Median score %s, range %d to %d, across %d reviewers."
-                  % (statistics.median(scores), min(scores), max(scores),
-                     len(scores))]
+        lines += [
+            "",
+            "Median score %s, range %d to %d, across %d reviewers."
+            % (statistics.median(scores), min(scores), max(scores), len(scores)),
+        ]
 
     for record in records:
         lines += ["", "## %s" % record["model"], ""]
@@ -300,24 +340,33 @@ def report(records, started):
         answer = record["answer"]
         lines += [answer["summary"].strip(), ""]
 
-        for key, title in (("strengths", "Strengths"),
-                           ("weaknesses", "Weaknesses"),
-                           ("drift_risks", "Drift risks")):
+        for key, title in (
+            ("strengths", "Strengths"),
+            ("weaknesses", "Weaknesses"),
+            ("drift_risks", "Drift risks"),
+        ):
             lines += ["### %s" % title, ""]
-            lines += ["- `%s`: %s" % (item["file"], item["point"])
-                      for item in answer[key]] or ["- none"]
+            lines += [
+                "- `%s`: %s" % (item["file"], item["point"]) for item in answer[key]
+            ] or ["- none"]
             lines.append("")
         lines += ["### Recommendations", ""]
-        lines += ["%d. `%s`: %s Effect: %s" % (number, item["file"],
-                                                item["change"], item["effect"])
-                  for number, item in enumerate(answer["recommendations"], 1)]
+        lines += [
+            "%d. `%s`: %s Effect: %s"
+            % (number, item["file"], item["change"], item["effect"])
+            for number, item in enumerate(answer["recommendations"], 1)
+        ]
     return "\n".join(lines).rstrip() + "\n"
 
 
 def options(args):
     """Return the parsed command line, or exit 2 on an unknown argument."""
-    parsed = {"models": list(DEFAULT_MODELS), "effort": "high",
-              "timeout": 1800, "dry_run": False}
+    parsed = {
+        "models": list(DEFAULT_MODELS),
+        "effort": "high",
+        "timeout": 1800,
+        "dry_run": False,
+    }
     args = list(args)
 
     while args:
@@ -325,8 +374,7 @@ def options(args):
         if arg == "--dry-run":
             parsed["dry_run"] = True
         elif arg == "--models" and args:
-            parsed["models"] = [m.strip() for m in args.pop(0).split(",")
-                                if m.strip()]
+            parsed["models"] = [m.strip() for m in args.pop(0).split(",") if m.strip()]
         elif arg == "--effort" and args:
             parsed["effort"] = args.pop(0)
         elif arg == "--timeout" and args and args[0].isdigit():
@@ -342,16 +390,22 @@ def main(args):
     parsed = options(args)
     text = prompt()
     started = datetime.datetime.now()
-    print("bundle: %d characters, reviewers: %s"
-          % (len(text), ", ".join(parsed["models"])))
+    print(
+        "bundle: %d characters, reviewers: %s"
+        % (len(text), ", ".join(parsed["models"]))
+    )
 
     # The reviewers run at once: each waits on its own model, not on the
     # machine, and a full run would otherwise take one review per model.
     with concurrent.futures.ThreadPoolExecutor(len(parsed["models"])) as pool:
-        records = list(pool.map(
-            lambda model: review(model, parsed["effort"], text,
-                                 parsed["timeout"], parsed["dry_run"]),
-            parsed["models"]))
+        records = list(
+            pool.map(
+                lambda model: review(
+                    model, parsed["effort"], text, parsed["timeout"], parsed["dry_run"]
+                ),
+                parsed["models"],
+            )
+        )
 
     if parsed["dry_run"]:
         for record in records:
@@ -362,12 +416,16 @@ def main(args):
     stem = REPORTS / ("%s-ask_reviewers" % started.strftime("%Y%m%d-%H%M%S"))
     markdown = stem.with_suffix(".md")
     markdown.write_text(report(records, started), encoding="utf-8")
-    stem.with_suffix(".json").write_text(json.dumps(records, indent=2),
-                                         encoding="utf-8")
+    stem.with_suffix(".json").write_text(
+        json.dumps(records, indent=2), encoding="utf-8"
+    )
 
     for record in records:
-        state = (record["answer"]["score"] if "answer" in record
-                 else "failed: %s" % record["error"][:200])
+        state = (
+            record["answer"]["score"]
+            if "answer" in record
+            else "failed: %s" % record["error"][:200]
+        )
         print("%-20s %s" % (record["model"], state))
     print("report: %s" % markdown.relative_to(ROOT).as_posix())
     return 0 if all("answer" in r for r in records) else 1
