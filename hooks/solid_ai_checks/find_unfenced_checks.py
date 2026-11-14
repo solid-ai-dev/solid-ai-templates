@@ -4,10 +4,14 @@ A check typed into a sentence cannot be extracted, counted or run, so a
 tool that runs the fenced checks reports clean over a rule nobody runs.
 """
 
+from __future__ import annotations
+
 import argparse
 import re
+from typing import List
 
 from .support.files import read_lines, tracked
+from .support.report import Report
 
 # A stated check pairs a verification phrase with the command it
 # introduces. The pair is matched over a paragraph, because a wrapped check
@@ -41,7 +45,9 @@ FENCE = "`" * 3
 BULLET = re.compile(r"\s*(?:[-*+]\s|\d+[.]\s)")
 
 
-def examine(path, para, numbers, marks, report):
+def examine(
+    path: str, para: List[str], numbers: List[int], marks: List[int], report: Report
+) -> int:
     """Record a finding where the paragraph states a check no fence holds."""
     if not para:
         return 0
@@ -60,7 +66,7 @@ def examine(path, para, numbers, marks, report):
     return 1
 
 
-def main(argv, report):
+def main(argv: List[str], report: Report) -> int:
     parser = argparse.ArgumentParser(prog="find-unfenced-checks")
     parser.add_argument(
         "--root",
@@ -77,7 +83,9 @@ def main(argv, report):
         marks = [
             n for n, line in enumerate(lines, 1) if line.lstrip().startswith(FENCE)
         ]
-        fenced, para, numbers = False, [], []
+        fenced = False
+        para: List[str] = []
+        numbers: List[int] = []
         for number, line in enumerate(lines, 1):
             stripped = line.lstrip()
             skip = (

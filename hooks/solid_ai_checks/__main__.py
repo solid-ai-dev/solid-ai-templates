@@ -6,7 +6,10 @@ fails a hook on any nonzero exit. A git failure inside a work tree fails
 the hook in either mode.
 """
 
+from __future__ import annotations
+
 import sys
+from typing import Dict, List, Optional, Protocol, Sequence
 
 from . import (
     check_ascii_identifiers,
@@ -24,8 +27,17 @@ from . import (
 from .support.files import GitFailed, NotARepository
 from .support.report import Report
 
+
+class Hook(Protocol):
+    """A hook module: its `main` takes the arguments and returns the exit."""
+
+    __name__: str
+
+    def main(self, argv: List[str], report: Report) -> int: ...
+
+
 # The hook IDs are frozen once shipped, like a section ID.
-HOOKS = {
+HOOKS: Dict[str, Hook] = {
     "find-unfenced-checks": find_unfenced_checks,
     "compile-embedded-checks": compile_embedded_checks,
     "find-line-continuations": find_line_continuations,
@@ -40,7 +52,7 @@ HOOKS = {
 }
 
 
-def main(argv=None):
+def main(argv: Optional[Sequence[str]] = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv or argv[0] not in HOOKS:
         print("usage: python -m solid_ai_checks <hook-id> [args]")

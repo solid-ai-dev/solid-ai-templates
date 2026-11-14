@@ -7,14 +7,20 @@ a hook on any nonzero exit, "does not apply" prints `not applicable:
 <reason>` and exits 0.
 """
 
+from __future__ import annotations
+
 import sys
+from typing import List, Sized, TypeVar, Union
 
 PASS = 0
 FAIL = 1
 NOT_APPLICABLE = 3
 
+# What a count prints: an int as it is, anything else by its length.
+Counted = TypeVar("Counted", bound=Union[int, Sized])
 
-def ascii_only(text):
+
+def ascii_only(text: str) -> str:
     """Replace every non-ASCII character with its code point.
 
     A console that cannot encode a character fails the print, and the
@@ -26,25 +32,25 @@ def ascii_only(text):
 class Report:
     """Collects a hook's counts and findings and prints them in order."""
 
-    def __init__(self, pre_commit=False):
+    def __init__(self, pre_commit: bool = False) -> None:
         self.pre_commit = pre_commit
-        self.findings = []
+        self.findings: List[str] = []
 
-    def count(self, label, value):
+    def count(self, label: str, value: Counted) -> Counted:
         """Print one inspected count and return the value."""
         n = value if isinstance(value, int) else len(value)
         print("%s: %d" % (label, n))
         return value
 
-    def finding(self, path, line, code, message):
+    def finding(self, path: str, line: int, code: str, message: str) -> None:
         """Record one violation. Line 0 means the finding is the whole file."""
         self.findings.append("%s:%d: %s %s" % (path, line, code, message))
 
-    def note(self, text):
+    def note(self, text: str) -> None:
         """Print a line that is neither a count nor a finding."""
         print(ascii_only(text))
 
-    def not_applicable(self, reason):
+    def not_applicable(self, reason: str) -> int:
         """Say why the check does not apply, and return the exit status."""
         if self.pre_commit:
             print("not applicable: %s" % ascii_only(reason))
@@ -52,7 +58,7 @@ class Report:
         print(ascii_only(reason))
         return NOT_APPLICABLE
 
-    def finish(self, failed):
+    def finish(self, failed: bool) -> int:
         """Print every finding, then return the exit status."""
         for line in self.findings:
             print(ascii_only(line))
