@@ -1,10 +1,16 @@
 # SOLID-AI Templates
 
-Markdown rule templates that turn into an `AGENTS.md` and `CLAUDE.md` for
-your project, so every AI agent and every session works to the same
-engineering standards. Made for solo developers and small teams. Part of
-[solid-ai-dev](https://github.com/solid-ai-dev), alongside orchestrators,
-skills and a benchmark that measures what the rules change.
+AI coding agents write code whose quality varies by agent, by session
+and by the context they are given. Each project writes its own agent
+instructions, and they drift, contradict one another and go unchecked.
+
+SOLID-AI Templates are shared engineering rules that a tool turns into an
+`AGENTS.md` and task skills for your project, so every agent and every
+session works to the same standards. Made for solo developers and small
+teams.
+
+Part of [solid-ai-dev](https://github.com/solid-ai-dev), alongside
+orchestrators, skills and a benchmark that measures what the rules change.
 
 ## Features
 
@@ -21,11 +27,12 @@ Paste this into your agent, opened in your project:
 
 ```text
 Clone https://github.com/solid-ai-dev/solid-ai-templates at its latest
-release tag (3.0.0 or later) next to this project. Run its
-tools/resolve_chain.py --roots, propose the roots that fit this project,
-and wait for me to confirm.
+release tag (3.0.0 or later) next to this project. List its roots with
+../solid-ai-templates/tools/resolve_chain.py --roots, propose the ones
+that fit this project, and wait for me to confirm.
 
-Then run tools/resolve_chain.py --emit . <roots> --mirror .claude/skills.
+Then build this project's AGENTS.md and skills from those roots:
+../solid-ai-templates/tools/resolve_chain.py --emit . <roots> --mirror .claude/skills
 Fill the {{...}} placeholders in AGENTS.md from this repository and ask
 me for any you cannot find. Write a CLAUDE.md that holds @AGENTS.md.
 ```
