@@ -1,6 +1,6 @@
 ---
 id: "058"
-status: Proposed
+status: Accepted
 date: 2026-10-26
 category: composition
 supersedes: []
