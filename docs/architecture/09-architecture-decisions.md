@@ -42,7 +42,7 @@ What a project's generated files hold, and how the rules reach them.
 | [ADR-022](../decisions/022-skill-authoring-in-scope.md) | A skill is an in-scope artifact, governed by a template of its own, and holds an on-demand procedure that never restates the context file | Accepted |
 | [ADR-052](../decisions/052-hybrid-is-the-delivery-floor.md) | A context file delivers rules inline or hybrid, never by reference alone, and inlines every rule whose breach is silent and which no tool enforces | Accepted |
 | [ADR-053](../decisions/053-declaration-block-is-a-target.md) | The declaration block leaves the frozen surface until a release ships a tool that writes it and one that reads it | Accepted |
-| [ADR-058](../decisions/058-task-procedures-load-on-demand.md) | Each section declares where its rules load, and a tool builds the root file and one skill per kind of task from the adopted rules | Proposed |
+| [ADR-058](../decisions/058-task-procedures-load-on-demand.md) | Each section declares where its rules load, and a tool builds the root file and one skill per kind of task from the adopted rules | Accepted |
 
 ## 9.3 Template content
 
