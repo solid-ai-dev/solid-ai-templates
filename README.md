@@ -2,7 +2,8 @@
 
 AI coding agents write code whose quality varies by agent, by session
 and by the context they are given. Each project writes its own agent
-instructions, and they drift, contradict one another and go unchecked.
+instructions, and over a long-running project they drift, contradict
+one another and go unchecked.
 
 SOLID-AI Templates are shared engineering rules that a tool turns into an
 `AGENTS.md` and task skills for your project, so every agent and every
@@ -14,12 +15,13 @@ orchestrators, skills and a benchmark that measures what the rules change.
 
 ## Features
 
-- Rules for testing, security, Git, CI/CD and APIs, composed into your
-  agent files
-- Pre-commit hooks that enforce the rules a script can check, such as
-  comment layout, import bans and ASCII identifiers
-- Add your own stacks, platforms and process rules in a fork, and keep
-  merging upstream's updates
+| What you get | How |
+|--------------|-----|
+| Same standards for every agent and session | One `AGENTS.md`, built by a tool from shared rules for testing, security, Git, CI/CD and APIs |
+| Rules that keep up | Move to a newer templates release and rebuild your files; the project facts you filled in are kept |
+| Checked, not only written | Some rules ship with a script that checks them; installed as [pre-commit hooks](docs/hooks.md), they stop a commit that breaks one, such as an import across a declared boundary |
+| A lean context | By default, each task's procedures sit in a skill that loads only when that task starts; for an agent without skills, they go into `AGENTS.md` |
+| Your own rules on top | Add stacks, platforms and process rules in a fork, and keep merging upstream's updates |
 
 ## Quick setup
 
@@ -32,13 +34,23 @@ release tag (3.0.0 or later) next to this project. List its roots with
 that fit this project, and wait for me to confirm.
 
 Then build this project's AGENTS.md and skills from those roots:
-../solid-ai-templates/tools/resolve_chain.py --emit . <roots> --mirror .claude/skills
+../solid-ai-templates/tools/resolve_chain.py --emit . <roots>
+If you read skills from a folder other than .agents/skills, add
+--mirror <that folder>.
+
+If you cannot load a SKILL.md file on demand when a task starts, add
+--inline-skills, so each task's procedures go into AGENTS.md instead.
+
 Fill the {{...}} placeholders in AGENTS.md from this repository and ask
-me for any you cannot find. Write a CLAUDE.md that holds @AGENTS.md.
+me for any you cannot find. If your context file is not AGENTS.md, write
+it so it points to AGENTS.md.
 ```
 
-Review the files before you commit them. 3.0.0 is not tagged yet; until
-it is, have the agent clone `main` and pin a commit.
+Check the result before you commit it:
+
+- `grep -n "{{" AGENTS.md` prints nothing, so every placeholder is filled
+- the commands under Commands in `AGENTS.md` run in your project
+- your agent's context file points to `AGENTS.md`
 
 ## Documentation
 
