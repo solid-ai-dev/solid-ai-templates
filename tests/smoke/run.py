@@ -26,12 +26,15 @@ Usage:
 """
 
 import datetime
+import io
 import sys
+from collections.abc import Sequence
+from typing import NotRequired, TypedDict, cast
 
 from testkit import PASS, FAIL, ERR, write_report, print_verdict
 from smoke import adr, common, manifest, system, templates
 from smoke.common import HAS_YAML, MISSING_YAML, TEMPLATE_DIRS
-from smoke.registry import CHECKS
+from smoke.registry import CHECKS, Check
 from smoke.system import QUALITY_GATES_EXEMPT_LAYERS
 from smoke.templates import CORE_DIRS
 
@@ -42,14 +45,16 @@ from smoke.templates import CORE_DIRS
 # line reaches a consumer with a trailing carriage return.
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
 
-def _helpers():
+def _helpers() -> dict[str, object]:
     """Every name this runner held before its checks moved to smoke/."""
-    names = {}
+    names: dict[str, object] = {}
     for module in (common, system, templates, manifest, adr):
         names.update(vars(module))
     names.update(globals())
@@ -78,18 +83,29 @@ else:
 # ---------------------------------------------------------------------------
 
 
-def _inspected(r):
+class Row(TypedDict):
+    """One check's result as the report renders it."""
+
+    id: str
+    title: str
+    status: str
+    failures: list[str]
+    notes: NotRequired[list[str]]
+    error: str | None
+
+
+def _inspected(r: Row) -> list[str]:
     """Render what a check reported inspecting, when it reported anything."""
     if not r.get("notes"):
         return []
     return ["**Inspected**:", "", "```"] + r["notes"] + ["```", ""]
 
 
-def render_pass(r):
+def render_pass(r: Row) -> list[str]:
     return [f"### {r['status']}  {r['id']} — {r['title']}", ""] + _inspected(r)
 
 
-def render_fail(r):
+def render_fail(r: Row) -> list[str]:
     lines = [f"### {r['status']}  {r['id']} — {r['title']}", ""]
     lines.extend(_inspected(r))
     lines.extend(
@@ -106,7 +122,7 @@ def render_fail(r):
     return lines
 
 
-def render_err(r):
+def render_err(r: Row) -> list[str]:
     return [
         f"### {r['status']}  {r['id']} — {r['title']}",
         "",
@@ -132,9 +148,9 @@ def render_err(r):
 # hand-kept list duplicates the guards and drifts from them; a guarded
 # check returns its one failure before touching the filesystem, so asking
 # costs nothing.
-def _blocked_on_yaml(checks):
+def _blocked_on_yaml(checks: Sequence[Check]) -> list[str]:
     """Return the IDs of `checks` whose only failure is the missing dependency."""
-    blocked = []
+    blocked: list[str] = []
     for check in checks:
         try:
             result = check["fn"]()
@@ -146,7 +162,7 @@ def _blocked_on_yaml(checks):
     return blocked
 
 
-def main():
+def main() -> None:
     started_at = datetime.datetime.now()
 
     args = sys.argv[1:]
@@ -181,7 +197,7 @@ def main():
             sys.exit(1)
 
     results = {PASS: 0, FAIL: 0, ERR: 0}
-    run_results = []
+    run_results: list[Row] = []
 
     print(f"Running {len(checks)} check(s)...\n")
 

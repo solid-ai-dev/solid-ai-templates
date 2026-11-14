@@ -10,7 +10,11 @@ import io
 import re
 import sys
 import textwrap
+from collections.abc import Mapping
 from pathlib import Path
+from typing import cast
+
+from resolve_chain import Entry, Manifest
 
 # Set the output encoding and the line ending at the boundary rather
 # than inheriting the console defaults. The encoding mangles any
@@ -19,7 +23,9 @@ from pathlib import Path
 # line reaches a consumer with a trailing carriage return.
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -43,14 +49,14 @@ SECTION_DIRS = {
 }
 
 
-def _check_sections(manifest):
+def _check_sections(manifest: Manifest) -> None:
     """Refuse a manifest entry filed outside the directory its section names."""
 
     # A section names a kind of template and the path names a directory, so
     # an entry registered under the wrong section is one kind to the tools
     # that group by section and another to a reader of the tree. Nothing
     # else reports the disagreement.
-    misfiled = []
+    misfiled: list[str] = []
     for section, dirnames in SECTION_DIRS.items():
         for e in manifest.get(section, []) or []:
             if Path(e["file"]).parts[1] not in dirnames:
@@ -62,7 +68,7 @@ def _check_sections(manifest):
         )
 
 
-def _readme_stacks(manifest):
+def _readme_stacks(manifest: Manifest) -> str:
     """Generate README.md supported stacks table."""
     stacks = manifest.get("stacks", [])
     lines = [
@@ -77,7 +83,9 @@ def _readme_stacks(manifest):
     return "\n".join(lines)
 
 
-def _readme_extras(core_ids, entries, stacks):
+def _readme_extras(
+    core_ids: list[str], entries: dict[str, Entry], stacks: list[Entry]
+) -> str:
     """Generate the README table of roots a project picks beside its stack.
 
     A stack is one of two kinds of root. The platform and every extra are
@@ -103,7 +111,9 @@ def _readme_extras(core_ids, entries, stacks):
     return "\n".join(lines)
 
 
-def _spec_context_cost(core_ids, entries, stacks):
+def _spec_context_cost(
+    core_ids: list[str], entries: dict[str, Entry], stacks: list[Entry]
+) -> str:
     """Generate the words each root puts in context, per load.
 
     The emitter places every section by its load, so what a root costs on
@@ -137,7 +147,9 @@ def _spec_context_cost(core_ids, entries, stacks):
     return "\n".join(lines)
 
 
-def _readme_root_counts(core_ids, entries, stacks):
+def _readme_root_counts(
+    core_ids: list[str], entries: dict[str, Entry], stacks: list[Entry]
+) -> str:
     """Generate the README's measured statement of the root model.
 
     Written by hand these counts sit outside every gate: rewriting
@@ -150,7 +162,7 @@ def _readme_root_counts(core_ids, entries, stacks):
     from resolve_chain import opt_in_roots, resolve_chain
 
     extras = opt_in_roots(core_ids, entries, stacks)
-    beyond = []
+    beyond: list[int] = []
     for root in extras:
         resolved = resolve_chain(root, core_ids, entries)
         files = resolved[0] if isinstance(resolved, tuple) else resolved
@@ -170,7 +182,7 @@ def _readme_root_counts(core_ids, entries, stacks):
     return NEWLINE.join(textwrap.wrap(sentence, 76))
 
 
-def _spec_core_tier(core_ids, entries):
+def _spec_core_tier(core_ids: list[str], entries: dict[str, Entry]) -> str:
     """Generate the statement of the core tier and how it is reached.
 
     Hand-written, the seeding claim sat outside every gate and was false:
@@ -195,9 +207,10 @@ def _spec_core_tier(core_ids, entries):
         ).split()
     )
     tracked |= {e["file"] for e in entries.values()}
-    tracked = sorted(tracked)
-    tokens, templates, declared = 0, set(), set()
-    for path in tracked:
+    tokens = 0
+    templates: set[str] = set()
+    declared: set[str] = set()
+    for path in sorted(tracked):
         body = io.open(ROOT / path, encoding="utf-8").read()
         for directive in re.finditer(r"\[DEPENDS ON:([^\]]*)\]", body):
             for token in directive.group(1).split(","):
@@ -242,7 +255,7 @@ def _spec_core_tier(core_ids, entries):
     return listing + NEWLINE + NEWLINE + NEWLINE.join(textwrap.wrap(sentence, 76))
 
 
-def _interview_stacks(manifest):
+def _interview_stacks(manifest: Manifest) -> str:
     """Generate INTERVIEW.md stack selection table."""
     stacks = manifest.get("stacks", [])
 
@@ -277,21 +290,23 @@ except ModuleNotFoundError as exc:
     if exc.name != "fork_examples":
         raise
     fork_examples = None
-SPEC_CHAIN_EXAMPLES = getattr(fork_examples, "SPEC_CHAIN_EXAMPLES", [])
-CHAIN_EXAMPLES_DOC = getattr(
+SPEC_CHAIN_EXAMPLES: list[tuple[str, str]] = getattr(
+    fork_examples, "SPEC_CHAIN_EXAMPLES", []
+)
+CHAIN_EXAMPLES_DOC: str = getattr(
     fork_examples, "CHAIN_EXAMPLES_DOC", "docs/architecture/06-runtime-view.md"
 )
 
 NEWLINE = "\n"
 
 
-def _spec_chain_examples():
+def _spec_chain_examples() -> str:
     """Render the worked chain examples from the resolver itself."""
     from resolve_chain import load_catalogue as _load, resolve_chain
 
     core_ids, entries, stacks = _load()
     known = set(entry["id"] for entry in stacks)
-    blocks = []
+    blocks: list[str] = []
 
     for heading, stack_id in SPEC_CHAIN_EXAMPLES:
         if stack_id not in known:
@@ -344,14 +359,14 @@ OVERHEAD_TOKENS = 18000
 CONTEXT_WINDOWS = [32000, 64000, 128000, 200000, 256000, 512000, 1000000]
 
 
-def _window_label(size):
+def _window_label(size: int) -> str:
     """Render a context window the way a model card names it."""
     if size >= 1000000:
         return "%gM" % (size / 1000000.0)
     return "%dK" % (size // 1000)
 
 
-def _readme_model_limits():
+def _readme_model_limits() -> str:
     """Render README.md's model table from the resolved chains themselves."""
     from resolve_chain import load_catalogue as _load, resolve_chain, concat_chain
 
@@ -360,7 +375,7 @@ def _readme_model_limits():
     # Concatenated here rather than read from generated/: this runs before
     # that directory is refreshed, so reading it would measure the previous
     # revision of every chain the table exists to describe.
-    by_layer = {}
+    by_layer: dict[str, list[tuple[int, str]]] = {}
     for stack in stacks:
         chain = concat_chain(resolve_chain(stack["id"], core_ids, entries))
         layer = stack.get("layer", "unclassified")
@@ -412,7 +427,9 @@ MARKER_RE = re.compile(
 )
 
 
-def _update_file(path, replacements, check_mode=False):
+def _update_file(
+    path: str | Path, replacements: Mapping[str, str], check_mode: bool = False
+) -> bool:
     """Replace content between markers. Returns True if the file differs.
 
     In check mode the comparison is made and nothing is written. A gate
@@ -433,10 +450,10 @@ def _update_file(path, replacements, check_mode=False):
         # A function replacement, not a template string: generated
         # content is data, and a backslash in it would otherwise be
         # read as a group reference and silently rewrite the block.
-        text, hits = pattern.subn(
-            lambda m, c=content: m.group(1) + c + NEWLINE + m.group(3),
-            text,
-        )
+        def fill(m: re.Match[str], c: str = content) -> str:
+            return m.group(1) + c + NEWLINE + m.group(3)
+
+        text, hits = pattern.subn(fill, text)
 
         # A marker the file does not carry substitutes nothing, so the
         # document keeps whatever was written there by hand and the gate
@@ -446,7 +463,7 @@ def _update_file(path, replacements, check_mode=False):
             raise SystemExit(
                 "sync: %s carries no marker for %s; generated content has "
                 "nowhere to go and the staleness gate cannot see it"
-                % (path.name, marker_id)
+                % (Path(path).name, marker_id)
             )
 
     if text != original:
@@ -462,7 +479,7 @@ def _update_file(path, replacements, check_mode=False):
 # ---- main ----
 
 
-def _catalogue(manifest):
+def _catalogue(manifest: Manifest) -> Manifest:
     """The parsed manifest without its fixture entries."""
     from resolve_chain import is_fixture
 
@@ -478,7 +495,7 @@ def _catalogue(manifest):
     }
 
 
-def _readme_agents():
+def _readme_agents() -> str:
     """Render the agent-to-output mapping the templates already state.
 
     The mapping is written once, in base-docs. The README's copy is
@@ -492,7 +509,7 @@ def _readme_agents():
             "README's agent table has no source to render from"
         )
 
-    rows = []
+    rows: list[tuple[str, str]] = []
     for line in section[1].splitlines():
         stripped = line.strip()
         if not stripped.startswith("|"):
@@ -517,7 +534,7 @@ def _readme_agents():
     return "\n".join(out)
 
 
-def _hooks_table(prefix=""):
+def _hooks_table(prefix: str = "") -> str:
     """Render the table of shipped hooks a project can run.
 
     Each link to a template starts with `prefix`, the path from the
@@ -547,8 +564,15 @@ def _hooks_table(prefix=""):
         "|------|--------------|------|---------------------|",
     ]
     for block in blocks:
-        hid = re.search(r"^- id: (\S+)", block).group(1)
-        name = re.search(r"^\s+name: \"?([^\"\n]+)\"?$", block, re.MULTILINE).group(1)
+        id_line = re.search(r"^- id: (\S+)", block)
+        name_line = re.search(r"^\s+name: \"?([^\"\n]+)\"?$", block, re.MULTILINE)
+        if id_line is None or name_line is None:
+            raise SystemExit(
+                "sync: a hook in .pre-commit-hooks.yaml has no id or no name "
+                "line; the hook table cannot name it"
+            )
+        hid = id_line.group(1)
+        name = name_line.group(1)
         if name.startswith("Deprecated:"):
             continue
 
@@ -577,7 +601,7 @@ def _hooks_table(prefix=""):
     return "\n".join(out)
 
 
-def main():
+def main() -> None:
     check_mode = "--check" in sys.argv
 
     manifest_text = io.open(MANIFEST, encoding="utf-8").read()
@@ -631,7 +655,7 @@ def main():
     # filled, so --check still sees its drift. A section is absent only when
     # both markers are: one marker deleted from a pair would otherwise leave
     # a stale table outside every check.
-    readme_blocks = {}
+    readme_blocks: dict[str, str] = {}
     for marker, content in (
         ("readme-stacks", readme_content),
         ("readme-extras", readme_extras),
@@ -647,7 +671,9 @@ def main():
                 "sync: README.md carries one marker of %s without the "
                 "other; restore the pair or delete both with the section" % marker
             )
-        if opens:
+        # A table is computed only where its opening marker is present, so
+        # its content is None only when opens is false.
+        if opens and content is not None:
             readme_blocks[marker] = content
 
     # The interview lives in forks, so its absence upstream is expected. The
@@ -681,7 +707,7 @@ def main():
         else:
             targets.append((examples_doc, example_blocks, True))
 
-    changed = []
+    changed: list[str] = []
     for path, replacements, required in targets:
         if not path.exists():
             if required:

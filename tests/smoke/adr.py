@@ -2,9 +2,15 @@
 
 import os
 import re
+from collections.abc import Iterable
+from typing import Any
 
 from testkit import ROOT
-from .common import HAS_YAML, Inspected, MISSING_YAML, read, yaml
+from .common import CheckResult, HAS_YAML, Inspected, MISSING_YAML, read, yaml
+
+# A record's parsed frontmatter. Its values are whatever YAML parsed, each
+# checked by key below, so they are typed by key, as parsed YAML is.
+Frontmatter = dict[str, Any]
 
 
 # ---------------------------------------------------------------------------
@@ -29,7 +35,7 @@ ADR_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 ADR_FRONTMATTER = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 
 
-def _parse_adr(filepath, content):
+def _parse_adr(filepath: str, content: str) -> tuple[Frontmatter | None, list[str]]:
     """Return (frontmatter dict, list of failures) for a single ADR file."""
     rel = os.path.relpath(filepath, ROOT).replace(os.sep, "/")
     fm_match = ADR_FRONTMATTER.match(content)
@@ -44,7 +50,7 @@ def _parse_adr(filepath, content):
     return data, []
 
 
-def check_adr_01():
+def check_adr_01() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -127,7 +133,7 @@ def check_adr_01():
 
     # Reciprocal-link consistency — pass 2 once every ADR is parsed.
     # Supersedes/superseded_by entries MUST also be quoted strings.
-    def _normalize_ids(values):
+    def _normalize_ids(values: Iterable[object] | None) -> list[str]:
         return [str(v) for v in (values or [])]
 
     for adr_id, (rel, data) in parsed.items():

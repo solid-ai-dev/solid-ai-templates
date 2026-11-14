@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter
+from collections.abc import Collection, Iterable, Mapping, Sequence
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
@@ -16,6 +17,8 @@ from emit_context import build as emit_build
 from emit_context import write as emit_write
 from resolve_chain import (
     LOAD_CHECK,
+    Entry,
+    Manifest,
     entry_sections,
     is_fixture,
     load_catalogue,
@@ -30,6 +33,7 @@ from resolve_chain import (
 
 from testkit import ROOT, repository_files, template_files
 from .common import (
+    CheckResult,
     _load_manifest,
     _resolve_stack,
     _roots_by_kind,
@@ -46,7 +50,7 @@ from .common import (
 )
 
 
-def missing_template_dirs():
+def missing_template_dirs() -> list[str]:
     """Expected directories that contribute no file to the corpus.
 
     A directory that is not there is a finding, not a skip. Skipping it
@@ -62,8 +66,8 @@ def missing_template_dirs():
 # ---------------------------------------------------------------------------
 
 
-def check_sys_01():
-    failures = []
+def check_sys_01() -> CheckResult:
+    failures: list[str] = []
     seen = Inspected()
     refs_checked = 0
 
@@ -85,9 +89,9 @@ def check_sys_01():
 # ---------------------------------------------------------------------------
 
 
-def check_sys_02():
-    failures = []
-    seen = {}
+def check_sys_02() -> CheckResult:
+    failures: list[str] = []
+    seen: dict[str, str] = {}
     inspected = Inspected()
 
     files = inspected.count("template files scanned", all_template_files())
@@ -109,7 +113,7 @@ def check_sys_02():
 # ---------------------------------------------------------------------------
 
 
-def check_sys_03():
+def check_sys_03() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -123,7 +127,7 @@ def check_sys_03():
             if isinstance(entry, dict) and "file" in entry:
                 manifest_files.add(entry["file"].replace("/", os.sep))
 
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
     seen.count("files named in the manifest", len(manifest_files))
 
@@ -151,7 +155,7 @@ def check_sys_03():
 # ---------------------------------------------------------------------------
 
 
-def check_sys_04():
+def check_sys_04() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -177,7 +181,7 @@ def check_sys_04():
                         dep_files.add(dep_file)
                 file_manifest_deps[entry["file"]] = dep_files
 
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
     seen.count("manifest entries carrying depends_on", len(file_manifest_deps))
 
@@ -222,12 +226,12 @@ def check_sys_04():
 _MUST_SECTIONS = ("Stack", "Commands", "Project structure")
 
 
-def check_sys_06():
+def check_sys_06() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
     core_ids, entries, _ = _load_manifest()
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
 
     stacks = seen.count("stacks resolved", _stacks(entries))
@@ -276,8 +280,8 @@ _AUDIT_NAME = re.compile(r"(?:360-audit.*|.*-360)\.md$")
 _DATED_AUDIT_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}-360\.md$")
 
 
-def check_sys_07():
-    failures = []
+def check_sys_07() -> CheckResult:
+    failures: list[str] = []
     seen = Inspected()
     reports = 0
     walked = repository_files()
@@ -312,7 +316,7 @@ def check_sys_07():
 # second assertion a function that did nothing at all would pass.
 
 
-def check_sys_09():
+def check_sys_09() -> CheckResult:
     import tempfile
 
     tools_dir = os.path.join(ROOT, "tools")
@@ -331,7 +335,7 @@ def check_sys_09():
         f"<!-- /generated:{marker} -->\n"
         "after\n"
     )
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
     assertions = 0
 
@@ -383,7 +387,7 @@ def check_sys_09():
 # extractor that returned nothing at all would pass.
 
 
-def check_sys_10():
+def check_sys_10() -> CheckResult:
     document = (
         "# Base — Example\n"
         "[ID: base-example]\n"
@@ -399,7 +403,7 @@ def check_sys_10():
     )
 
     refs = depends_on_refs(document)
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
     seen.count("synthetic documents inspected", 1)
     seen.count(
@@ -448,7 +452,7 @@ _BACKTICKED_TOKEN = re.compile(r"`([a-z0-9][a-z0-9-]*)`")
 _LAYER_SHAPED_ID = re.compile(r"^(?:base|backend|frontend|platform|stack)-[a-z0-9-]+$")
 
 
-def check_sys_11():
+def check_sys_11() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -473,17 +477,17 @@ def check_sys_11():
     # all_template_files() returns absolute paths; the manifest names files
     # repo-relative, and the chains are built from the manifest. Normalise to
     # the manifest's form or nothing matches and every chain looks empty.
-    def rel_of(path):
+    def rel_of(path: str) -> str:
         return os.path.relpath(path, ROOT).replace(os.sep, "/")
 
-    defined_in = {}
+    defined_in: dict[str, set[str]] = {}
     for path in all_template_files():
         for section_id, _line in iter_id_declarations(read(path)):
             defined_in.setdefault(section_id, set()).add(rel_of(path))
 
     references = 0
     cited = set()
-    failures = []
+    failures: list[str] = []
 
     for path in all_template_files():
         rel = rel_of(path)
@@ -558,7 +562,7 @@ def check_sys_11():
 # model-limits table, which is where a reader meets it.
 
 
-def _measure_chains():
+def _measure_chains() -> tuple[dict[str, int], list[str], list[str]]:
     """Sizes per root, with the two root kinds returned alongside them.
 
     Both kinds of root: a stack, and an orthogonal template picked
@@ -570,27 +574,28 @@ def _measure_chains():
     core_ids, entries, _ = _load_manifest()
     stacks, opt_in = _roots_by_kind(core_ids, entries)
 
-    sizes = {}
+    sizes: dict[str, int] = {}
     for root in list(stacks) + list(opt_in):
         files, _ = _resolve_stack(root, core_ids, entries)
         sizes[root] = sum(len(read(os.path.join(ROOT, f))) for f in files)
     return sizes, stacks, opt_in
 
 
-def _core_tier_files(core_ids, entries):
+def _core_tier_files(core_ids: list[str], entries: dict[str, Entry]) -> list[str]:
     """The files the resolver seeds into every chain regardless of what
     any template declares."""
     return [entries[cid]["file"] for cid in core_ids if cid in entries]
 
 
-def _declared_closure(start_file):
+def _declared_closure(start_file: str) -> set[str]:
     """Files reachable from `start_file` by following DEPENDS ON alone.
 
     This is the walk README instructs an adopter to perform by hand, so it
     reads the directives out of the files rather than the manifest's
     depends_on -- a reader following the README has only the files.
     """
-    seen, pending = set(), [start_file]
+    seen: set[str] = set()
+    pending = [start_file]
     while pending:
         current = pending.pop()
         if current in seen:
@@ -622,7 +627,7 @@ def _declared_closure(start_file):
 MANUAL_WALK_DOC = "docs/architecture/06-runtime-view.md"
 
 
-def check_sys_13():
+def check_sys_13() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -659,8 +664,8 @@ def check_sys_13():
             )
             continue
 
-        resolved, _ = _resolve_stack(root, core_ids, entries)
-        resolved = set(resolved)
+        chain_files, _ = _resolve_stack(root, core_ids, entries)
+        resolved = set(chain_files)
         walk = _declared_closure(entry["file"])
         missed_without_core += len(resolved - walk)
         instructed = walk | set(core_files)
@@ -713,11 +718,11 @@ RESOLVE_CASES = [
 ]
 
 
-def check_sys_14():
+def check_sys_14() -> CheckResult:
     seen = Inspected()
     resolver = os.path.join(ROOT, "tools", "resolve_chain.py")
     seen.count("resolve_chain.py argument cases", RESOLVE_CASES)
-    failures = []
+    failures: list[str] = []
 
     for args, want_code, want_phrase in RESOLVE_CASES:
         proc = subprocess.run(
@@ -765,12 +770,12 @@ SECURITY_EXEMPT_LAYERS = {
 SECURITY_TIER_ID = "base-security"
 
 
-def check_sys_15():
+def check_sys_15() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
     core_ids, entries, _ = _load_manifest()
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
 
     stacks = _stacks(entries)
@@ -828,7 +833,7 @@ def check_sys_15():
 CONTEXT_TIERS = os.path.join("tests", "smoke", "context-tiers.txt")
 
 
-def _tier_sort_key(label):
+def _tier_sort_key(label: str) -> float:
     """Order tier labels by the window they name, not by their text.
 
     `1M` sorts before `200K` lexically and after it numerically, and the
@@ -839,9 +844,9 @@ def _tier_sort_key(label):
     return float(label.rstrip("K"))
 
 
-def _recorded_tiers():
+def _recorded_tiers() -> dict[str, str]:
     """The tier recorded per stack category, as {layer: window label}."""
-    out = {}
+    out: dict[str, str] = {}
     path = os.path.join(ROOT, CONTEXT_TIERS)
     with io.open(path, encoding="utf-8") as handle:
         for line in handle:
@@ -853,7 +858,7 @@ def _recorded_tiers():
     return out
 
 
-def check_sys_16():
+def check_sys_16() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -866,13 +871,13 @@ def check_sys_16():
     )
     from resolve_chain import load_manifest, resolve_chain, concat_chain
 
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
 
     core_ids, entries, stacks = load_manifest()
     seen.count("stacks measured", stacks)
 
-    largest = {}
+    largest: dict[str, tuple[int, str]] = {}
     for stack in stacks:
         size = len(concat_chain(resolve_chain(stack["id"], core_ids, entries)))
         layer = stack.get("layer", "unclassified")
@@ -946,36 +951,36 @@ SPEC_ID = re.compile(r"SAIT-[A-Z0-9]+-[A-Z0-9]+-\d+-\d+[A-Z]")
 MANUAL_SPEC = re.compile(r"^automatable:\s*manual\s*$", re.M)
 
 
-def _runner_text():
+def _runner_text() -> str:
     """The text of the modules at tests/ and every suite's run.py but smoke's.
 
     The smoke registry is read as data; its runner's prose names specs it
     does not run, so it is not searched as text.
     """
     tests = os.path.join(ROOT, "tests")
-    paths = []
+    paths: list[str] = []
     for name in sorted(os.listdir(tests)):
         path = os.path.join(tests, name)
         if name.endswith(".py"):
             paths.append(path)
         elif name != "smoke" and os.path.isfile(os.path.join(path, "run.py")):
             paths.append(os.path.join(path, "run.py"))
-    texts = []
+    texts: list[str] = []
     for path in paths:
         with io.open(path, encoding="utf-8") as f:
             texts.append(f.read())
     return "\n".join(texts)
 
 
-def check_sys_17():
+def check_sys_17() -> CheckResult:
     # Imported here: the registry imports this module.
     from .registry import CHECKS
 
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
 
     spec_dir = os.path.join(ROOT, "docs", "tests", "specs")
-    on_disk = {}
+    on_disk: dict[str, str] = {}
     for name in os.listdir(spec_dir):
         if name.endswith(".md"):
             with io.open(os.path.join(spec_dir, name), encoding="utf-8") as handle:
@@ -1051,17 +1056,17 @@ def check_sys_17():
 # The exempt categories are a fork's, since only a fork carries stacks; it
 # names them in fork_checks.py.
 
-QUALITY_GATES_EXEMPT_LAYERS = {}
+QUALITY_GATES_EXEMPT_LAYERS: dict[str, str] = {}
 
 QUALITY_GATES_ID = "base-quality-gates"
 
 
-def check_sys_18():
+def check_sys_18() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
     core_ids, entries, _ = _load_manifest()
-    failures = []
+    failures: list[str] = []
     seen = Inspected()
 
     recorded = _recorded_tiers()
@@ -1098,15 +1103,15 @@ def check_sys_18():
 
     governed = []
     for stack in stacks:
-        layer = stack.get("layer")
-        if not layer:
+        stack_layer = stack.get("layer")
+        if not stack_layer:
             failures.append(
                 f"  {stack['id']}: no 'layer' in the manifest, so this "
                 f"check cannot tell whether {QUALITY_GATES_ID} is "
                 f"required of it"
             )
             continue
-        if layer not in QUALITY_GATES_EXEMPT_LAYERS:
+        if stack_layer not in QUALITY_GATES_EXEMPT_LAYERS:
             governed.append(stack)
 
     seen.count("stacks required to resolve the gate tier", governed)
@@ -1164,7 +1169,7 @@ stacks:
 """
 
 
-def core_fault(depends_on):
+def core_fault(depends_on: str) -> str:
     """A manifest whose one core entry depends on `depends_on`.
 
     A fault under the core tier breaks every root, so each is planted in a
@@ -1196,7 +1201,11 @@ MANIFESTS = {
     "core-through-stack": core_fault("stack-valid"),
 }
 
-BROKEN_CASES = [
+# A resolve case: the manifest's name, the root, the exit status owed and a
+# phrase the output owes, optionally followed by one it MUST NOT carry.
+ResolveCase = tuple[str, str, int, str] | tuple[str, str, int, str, str]
+
+BROKEN_CASES: list[ResolveCase] = [
     ("stacks", "stack-valid", 0, "templates/fixture/stack.md"),
     (
         "stacks",
@@ -1228,7 +1237,9 @@ RESOLVE_WITH = (
 )
 
 
-def _resolve_cases(manifests, cases):
+def _resolve_cases(
+    manifests: Mapping[str, str], cases: Sequence[ResolveCase]
+) -> list[str]:
     """Resolve each case's root in its planted manifest; return the misses.
 
     A case is (manifest name, root, owed exit status, phrase the output owes),
@@ -1236,7 +1247,7 @@ def _resolve_cases(manifests, cases):
     """
     import tempfile
 
-    failures = []
+    failures: list[str] = []
     with tempfile.TemporaryDirectory() as scratch:
         for name, text in manifests.items():
             with io.open(
@@ -1288,7 +1299,7 @@ def _resolve_cases(manifests, cases):
     return failures
 
 
-def check_sys_19():
+def check_sys_19() -> CheckResult:
     seen = Inspected()
     seen.count("broken-manifest cases", BROKEN_CASES)
     failures = _resolve_cases(MANIFESTS, BROKEN_CASES)
@@ -1351,7 +1362,7 @@ FORK_CHAIN = "\n".join(
     ]
 )
 
-FORK_CASES = [
+FORK_CASES: list[ResolveCase] = [
     ("fork", "stack-fork", 0, "templates/core/quality.md"),
     ("fork", "stack-fork", 0, "templates/core/git.md"),
     ("fork", "stack-fork", 0, "templates/core/docs.md"),
@@ -1366,7 +1377,7 @@ FORK_CASES = [
 ]
 
 
-def check_sys_21():
+def check_sys_21() -> CheckResult:
     seen = Inspected()
     seen.count("fork-manifest cases", FORK_CASES)
     failures = _resolve_cases(
@@ -1393,9 +1404,9 @@ UPSTREAM_KEYS = ("core", "base", "backend", "frontend")
 UPSTREAM_REF_ENV = "SAIT_UPSTREAM_REF"
 
 
-def upstream_key_edits(was, now):
+def upstream_key_edits(was: Manifest, now: Manifest) -> list[str]:
     """Each edit to an upstream-owned manifest key, as one finding."""
-    found = []
+    found: list[str] = []
     for key in UPSTREAM_KEYS:
         before, after = was.get(key) or [], now.get(key) or []
         if key == "core":
@@ -1485,7 +1496,7 @@ fork:
 ]
 
 
-def _git(repo, *args):
+def _git(repo: str, *args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["git", "-C", repo] + list(args),
         capture_output=True,
@@ -1494,7 +1505,9 @@ def _git(repo, *args):
     )
 
 
-def fork_baseline(repo, ref):
+def fork_baseline(
+    repo: str, ref: str
+) -> tuple[None, None, str] | tuple[str, str, None]:
     """The manifest the fork in `repo` last merged from `ref`.
 
     Returns (text, basis, refusal): the manifest text and a line naming
@@ -1547,7 +1560,7 @@ def fork_baseline(repo, ref):
 # case is (label, the ref the fork names, the findings or the refusal owed),
 # run in order against one throwaway repository whose `upstream` branch is
 # OWNED_BASE and whose HEAD is the fork.
-GIT_CASES = [
+GIT_CASES: list[tuple[str, str, list[str] | str]] = [
     ("a fork that only appended since its last merge", "upstream", []),
     (
         "a fork that edited the core tier since its last merge",
@@ -1559,7 +1572,7 @@ GIT_CASES = [
 ]
 
 
-def _git_cases():
+def _git_cases() -> list[str]:
     """Run GIT_CASES; return a failure line per case that missed."""
     import tempfile
 
@@ -1572,10 +1585,10 @@ def _git_cases():
         )
         + "  - id: stack-b\n    file: templates/stack/b.md\n",
     }
-    failures = []
+    failures: list[str] = []
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
 
-        def commit(text, message):
+        def commit(text: str, message: str) -> None:
             # Each commit MUST change the manifest, or the case after it
             # reads the state before it and passes for the wrong reason.
             path = os.path.join(repo, manifest)
@@ -1624,12 +1637,12 @@ def _git_cases():
     return failures
 
 
-def check_sys_20():
+def check_sys_20() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
 
     seen.count("planted fork manifests", OWNERSHIP_CASES)
     base = yaml.safe_load(OWNED_BASE)
@@ -1647,10 +1660,11 @@ def check_sys_20():
 
     ref = os.environ.get(UPSTREAM_REF_ENV)
     if ref:
-        was_text, basis, refused = fork_baseline(ROOT, ref)
-        if refused:
-            failures.append(f"  {refused}")
+        baseline = fork_baseline(ROOT, ref)
+        if baseline[2] is not None:
+            failures.append(f"  {baseline[2]}")
             return seen.failures() + failures, seen.notes()
+        was_text, basis, _ = baseline
     else:
         was_text = now_text
         basis = (
@@ -1715,7 +1729,7 @@ DEPRECATION_CASES = [
 ]
 
 
-def deprecation_findings(manifest):
+def deprecation_findings(manifest: Manifest) -> list[str]:
     """Each deprecation that names no live replacement, as one finding."""
     entries = [
         e
@@ -1725,7 +1739,7 @@ def deprecation_findings(manifest):
         if isinstance(e, dict) and "id" in e
     ]
     by_id = {e["id"]: e for e in entries}
-    found = []
+    found: list[str] = []
     for entry in entries:
         if "deprecated" not in entry:
             continue
@@ -1741,12 +1755,12 @@ def deprecation_findings(manifest):
     return found
 
 
-def check_sys_22():
+def check_sys_22() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
     seen.count("planted manifests", DEPRECATION_CASES)
     for label, text, want in DEPRECATION_CASES:
         got = deprecation_findings(yaml.safe_load(text))
@@ -1795,7 +1809,7 @@ FENCE_RUN = re.compile(r"^\s*(`{3,}|~{3,})")
 CONTENT = re.compile(r"\w")
 
 
-def line_owners(text):
+def line_owners(text: str) -> dict[str, list[str | None]]:
     """Map each content line's text to the IDs of the sections holding it.
 
     A content line is any line with a letter or digit other than a
@@ -1804,7 +1818,10 @@ def line_owners(text):
     line above the first ID belongs to none.
     """
     declared = {n: sid for sid, n in iter_id_declarations(text)}
-    owners, current, pending, fence = {}, None, None, None
+    owners: dict[str, list[str | None]] = {}
+    current: str | None = None
+    pending: str | None = None
+    fence: str | None = None
     for number, line in enumerate(text.splitlines(), start=1):
         if number in declared:
             current = declared[number]
@@ -1840,28 +1857,31 @@ def line_owners(text):
     return owners
 
 
-def section_splits(was, now):
+def section_splits(was: str, now: str) -> list[str]:
     """Each section that lost lines to another, as one finding.
 
     A finding names the two sections, the count of lines moved and the
     first of them, so one inserted ID reads as one split.
     """
     before, after = line_owners(was), line_owners(now)
-    moved = {}
+    moved: dict[tuple[str, str], list[str]] = {}
     for line, held in before.items():
         if line not in after:
             continue
 
         # Counted, not compared in order: a line repeated across sections
         # is a split only when one section loses it while another gains it.
-        lost = Counter(o for o in held if o) - Counter(after[line])
+        # Only a section that held the line can lose it, so the unowned
+        # entries are left out of both sides, which subtracting them would
+        # not change.
+        lost = Counter(o for o in held if o) - Counter(o for o in after[line] if o)
         gained = Counter(after[line]) - Counter(held)
         if not gained:
             continue
         taker = ", ".join(sorted(str(o) for o in gained))
         for owner in sorted(lost):
             moved.setdefault((owner, taker), []).append(line)
-    found = []
+    found: list[str] = []
     for (owner, taker), lines in moved.items():
         first = lines[0] if len(lines[0]) <= 60 else lines[0][:57] + "..."
         found.append(f"{len(lines)} line(s) left {owner} for {taker}, from '{first}'")
@@ -1923,7 +1943,7 @@ SPLIT_CASES = [
 SPLIT_TEXT = SPLIT_CASES[3][1]
 
 
-def frozen_baseline(repo):
+def frozen_baseline(repo: str) -> tuple[str | None, str | None]:
     """The newest frozen release tag reachable from HEAD in `repo`.
 
     Returns (tag, refusal). Both are None when no release of the frozen
@@ -1949,7 +1969,9 @@ def frozen_baseline(repo):
     return (frozen[0] if frozen else None), None
 
 
-def frozen_splits(repo, files):
+def frozen_splits(
+    repo: str, files: Iterable[str]
+) -> tuple[list[str], None, str, int] | tuple[list[str], str, None, int]:
     """Compare `files` in the working tree of `repo` with the baseline.
 
     Returns (findings, basis, refusal, compared): each split as
@@ -1969,7 +1991,8 @@ def frozen_splits(repo, files):
             None,
             0,
         )
-    found, compared = [], 0
+    found: list[str] = []
+    compared = 0
     for rel in files:
         shown = _git(repo, "show", f"{tag}:{rel}")
         if shown.returncode != 0:
@@ -1984,7 +2007,7 @@ def frozen_splits(repo, files):
 # The tag path, planted. Each case is (label, the tags on the base commit,
 # the findings or the refusal owed), run against a throwaway repository
 # whose base commit holds SPLIT_BASE and whose HEAD holds SPLIT_TEXT.
-TAG_CASES = [
+TAG_CASES: list[tuple[str, list[str], list[str] | str]] = [
     (
         "a frozen release behind HEAD",
         ["v2.9.0", f"v{FROZEN_MAJOR}.0.0"],
@@ -1995,7 +2018,7 @@ TAG_CASES = [
 ]
 
 
-def frozen_files(files, entries):
+def frozen_files(files: Iterable[str], entries: Iterable[Entry]) -> list[str]:
     """`files` less those a fixture entry holds, which are test input."""
     exempt = {e["file"] for e in entries if is_fixture(e)}
     return [f for f in files if f not in exempt]
@@ -2003,18 +2026,18 @@ def frozen_files(files, entries):
 
 # The exemption, planted: a fixture entry's file is dropped and a template's
 # kept, so an exemption that dropped nothing or everything fails here.
-FIXTURE_ENTRIES = [
+FIXTURE_ENTRIES: list[Entry] = [
     {"id": "base-a", "file": "templates/core/a.md"},
     {"id": "stack-fixture", "file": "templates/stack/fixture.md", "fixture": True},
 ]
 
 
-def _tag_cases():
+def _tag_cases() -> list[str]:
     """Run TAG_CASES; return a failure line per case that missed."""
     import tempfile
 
     rel = "templates/core/a.md"
-    failures = []
+    failures: list[str] = []
     for label, tags, owed in TAG_CASES:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
             _git(repo, "init", "-q")
@@ -2053,9 +2076,9 @@ def _tag_cases():
     return failures
 
 
-def check_sys_24():
+def check_sys_24() -> CheckResult:
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
 
     seen.count("planted texts", SPLIT_CASES)
     for label, text, want in SPLIT_CASES:
@@ -2078,10 +2101,11 @@ def check_sys_24():
     frozen = frozen_files(files, entries.values())
     seen.count("fixture templates exempt", len(files) - len(frozen), floor=0)
 
-    found, basis, refused, compared = frozen_splits(ROOT, frozen)
-    if refused:
-        failures.append(f"  {refused}")
+    splits = frozen_splits(ROOT, frozen)
+    if splits[2] is not None:
+        failures.append(f"  {splits[2]}")
         return seen.failures() + failures, seen.notes()
+    found, basis, _, compared = splits
     seen.count("templates compared with the baseline", compared, floor=0)
     for finding in found:
         failures.append(
@@ -2156,9 +2180,9 @@ LOAD_CASES = [
 ]
 
 
-def load_findings(rel, text, kinds):
+def load_findings(rel: str, text: str, kinds: Mapping[str, str]) -> list[str]:
     """Each misplaced or unknown load directive in one template."""
-    found = []
+    found: list[str] = []
     for d in load_directives(text):
         where = f"{rel}:{d['line']}"
         if rel.startswith(GUARDED_TEMPLATES) or rel in GUARDED_TEMPLATES:
@@ -2177,9 +2201,9 @@ def load_findings(rel, text, kinds):
     return found
 
 
-def check_sys_25():
+def check_sys_25() -> CheckResult:
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
     seen.count("planted templates", LOAD_CASES)
     for label, rel, text, want in LOAD_CASES:
         got = load_findings(rel, text, PLANTED_KINDS)
@@ -2235,7 +2259,7 @@ EMIT_FILES = [
 ]
 
 
-def emit_findings(emitted, inline):
+def emit_findings(emitted: Mapping[str, str], inline: bool) -> list[str]:
     """What the planted templates' emitted files get wrong, one per line."""
     root = emitted.get("AGENTS.md", "")
     skill = emitted.get(".agents/skills/release/SKILL.md")
@@ -2278,7 +2302,7 @@ def emit_findings(emitted, inline):
     return [label for label, ok in owed if not ok]
 
 
-def rewrite_findings(work):
+def rewrite_findings(work: str) -> list[str]:
     """What a rerun of the emitter gets wrong about what a project kept."""
     out = os.path.join(work, "rerun")
     mirror = "my skills"
@@ -2335,9 +2359,9 @@ def rewrite_findings(work):
     return [label for label, ok in owed if not ok]
 
 
-def emitted_tree(out):
+def emitted_tree(out: str) -> dict[str, bytes]:
     """Every emitted file's bytes, keyed by its path under `out`."""
-    tree = {}
+    tree: dict[str, bytes] = {}
     for folder, _, names in os.walk(out):
         for name in names:
             path = os.path.join(folder, name)
@@ -2346,9 +2370,9 @@ def emitted_tree(out):
     return tree
 
 
-def check_sys_26():
+def check_sys_26() -> CheckResult:
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
     for inline in (False, True):
         got = emit_findings(
             emit_build(EMIT_FILES, EMIT_KINDS, EMIT_DECLINED, inline), inline
@@ -2366,7 +2390,7 @@ def check_sys_26():
             "  planted: a declined override still replaces its base section"
         )
 
-    trees = []
+    trees: list[dict[str, bytes]] = []
     work = tempfile.mkdtemp(prefix="sait-emit-")
     try:
         failures.extend(
@@ -2441,7 +2465,9 @@ PATH_CHAINS = {
 }
 
 
-def path_findings(emitted, paths):
+def path_findings(
+    emitted: Mapping[str, str | bytes], paths: Iterable[str]
+) -> list[str]:
     """Each emitted file and line that names one of `paths`, a template's
     path under the repository."""
     patterns = [
@@ -2455,7 +2481,7 @@ def path_findings(emitted, paths):
         )
         for path in sorted(paths)
     ]
-    findings = []
+    findings: list[str] = []
     for rel in sorted(emitted):
         text = emitted[rel]
         if isinstance(text, bytes):
@@ -2469,12 +2495,17 @@ def path_findings(emitted, paths):
     return findings
 
 
-def root_path_findings(chains, kinds, paths, emitted_counts=None):
+def root_path_findings(
+    chains: Mapping[str, Sequence[tuple[str, str]]],
+    kinds: Mapping[str, str],
+    paths: Collection[str],
+    emitted_counts: Counter[str] | None = None,
+) -> list[str]:
     """Each root's emitted lines that name one of `paths`, the root built
     alone with skills and inlined. `chains` maps a root to its (path, text)
     pairs in resolution order; `emitted_counts`, a Counter, takes the files
     emitted per mode."""
-    findings = []
+    findings: list[str] = []
     for root in sorted(chains):
         for inline in (False, True):
             mode = "inline" if inline else "skills"
@@ -2488,9 +2519,9 @@ def root_path_findings(chains, kinds, paths, emitted_counts=None):
     return findings
 
 
-def check_sys_27():
+def check_sys_27() -> CheckResult:
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
     planted = ["templates/core/demo.md"]
     alone = root_path_findings({"demo": PATH_CHAINS["demo"]}, PATH_KINDS, planted)
     if len(alone) != 4:
@@ -2526,7 +2557,7 @@ def check_sys_27():
     kinds = task_kinds(
         parse_manifest(read(os.path.join(ROOT, "templates", "manifest.yaml")))
     )
-    emitted = Counter()
+    emitted: Counter[str] = Counter()
     failures.extend(
         f"  {finding}" for finding in root_path_findings(chains, kinds, paths, emitted)
     )

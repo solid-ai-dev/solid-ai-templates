@@ -8,6 +8,7 @@ import sys
 
 from testkit import ROOT
 from .common import (
+    CheckResult,
     _load_manifest,
     _resolve_stack,
     _stacks,
@@ -24,7 +25,7 @@ from .common import (
 # ---------------------------------------------------------------------------
 
 
-def check_mnf_01():
+def check_mnf_01() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -43,7 +44,7 @@ def check_mnf_01():
     # Every declaration of each ID, as (section, file). The resolver keys
     # entries by ID, so a second declaration would silently replace the
     # first; a fork adding an ID upstream later adds too must fail here.
-    declarations = {}
+    declarations: dict[str, list[tuple[str, str]]] = {}
     for key, section in manifest.items():
         if isinstance(section, list):
             for entry in section:
@@ -87,7 +88,7 @@ def check_mnf_01():
 # ---------------------------------------------------------------------------
 
 
-def check_mnf_02():
+def check_mnf_02() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -123,7 +124,7 @@ def check_mnf_02():
 # ---------------------------------------------------------------------------
 
 
-def check_mnf_03():
+def check_mnf_03() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -150,7 +151,7 @@ def check_mnf_03():
 # ---------------------------------------------------------------------------
 
 
-def check_mnf_04():
+def check_mnf_04() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -201,7 +202,7 @@ def check_mnf_04():
 # silently drift again regardless of which parser is edited next.
 
 
-def check_mnf_05():
+def check_mnf_05() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 

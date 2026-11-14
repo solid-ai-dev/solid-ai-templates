@@ -13,8 +13,25 @@ the wrong one.
 
 import os
 import sys
+from typing import NotRequired, TypedDict
 
 from conformance import MANUAL, READ, RUN, SKIP, findings_only
+
+
+class Disposition(TypedDict):
+    """What happens to one fenced check; the keys are described below."""
+
+    file: str
+    find: str
+    title: str
+    do: str
+    expect: NotRequired[list[str] | str]
+    reason: NotRequired[str]
+    reading: NotRequired[str]
+    args: NotRequired[list[str]]
+    substitute: NotRequired[dict[str, str]]
+    grep: NotRequired[bool]
+
 
 # Pass predicates, named here and implemented in the runner.
 #
@@ -67,7 +84,7 @@ SKIP_BUDGET = 2
 # so the block runs the one already running.
 PYTHON = '"%s"' % sys.executable.replace(os.sep, "/")
 
-CHECKS = [
+CHECKS: list[Disposition] = [
     # -- core/git.md -------------------------------------------------
     # This repository's regenerator is sync_docs.py, and what it writes depends
     # on the tree -- a fork's examples document among them -- so the diff
@@ -259,8 +276,10 @@ except ModuleNotFoundError as exc:
 
 # Each registry's entries beside the skip count it declares. A fork's file
 # that declares none is reported with None, which the runner refuses.
-SKIP_BUDGETS = [("tests/conformance/dispositions.py", CHECKS, SKIP_BUDGET)]
-FORK_CHECKS = []
+SKIP_BUDGETS: list[tuple[str, list[Disposition], int | None]] = [
+    ("tests/conformance/dispositions.py", CHECKS, SKIP_BUDGET)
+]
+FORK_CHECKS: list[Disposition] = []
 if fork_dispositions is not None:
     FORK_CHECKS = fork_dispositions.CHECKS
     SKIP_BUDGETS.append(

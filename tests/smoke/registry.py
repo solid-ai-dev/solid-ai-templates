@@ -2,7 +2,11 @@
 in place, so a check reading it sees the fork's checks too.
 """
 
+from collections.abc import Callable
+from typing import TypedDict
+
 from .adr import check_adr_01
+from .common import CheckResult
 from .hooks import check_sys_23
 from .manifest import (
     check_mnf_01,
@@ -49,7 +53,16 @@ from .templates import (
 )
 
 
-CHECKS = [
+class Check(TypedDict):
+    """One smoke check: its short ID, its spec ID, its title and its function."""
+
+    id: str
+    spec: str
+    title: str
+    fn: Callable[[], CheckResult]
+
+
+CHECKS: list[Check] = [
     {
         "id": "SYS-01",
         "spec": "SAIT-SMK-SYS-01-001A",

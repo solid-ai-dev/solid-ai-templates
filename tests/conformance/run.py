@@ -32,9 +32,11 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections.abc import Iterator
+from typing import NotRequired, TypedDict
 
 from conformance import FINDINGS_ONLY, SKIP, MANUAL, READ
-from conformance.dispositions import CHECKS, SKIP_BUDGETS
+from conformance.dispositions import CHECKS, SKIP_BUDGETS, Disposition
 from testkit import (
     PASS,
     FAIL,
@@ -75,15 +77,30 @@ HEREDOC_OPEN = re.compile(r"^\s*py - <<'EOF'\s*$")
 HOOK_COMMAND = re.compile(r"^\s*pre-commit run ([a-z0-9-]+)\b")
 HOOKS_DIR = os.path.join(ROOT, "hooks")
 
+# One fenced block: its template, its first line, its language and its body.
+Block = tuple[str, int, str, list[str]]
 
-def hook_id(body):
+
+class Row(TypedDict):
+    """One check's result, as the report renders it."""
+
+    id: str
+    title: str
+    status: str
+    failures: list[str]
+    error: str
+    output: NotRequired[list[str]]
+    seconds: NotRequired[float]
+
+
+def hook_id(body: list[str]) -> str | None:
     """The hook a block runs, or None when it is not a hook command."""
     lines = [l for l in body if l.strip()]
     match = HOOK_COMMAND.match(lines[0]) if len(lines) == 1 else None
     return match.group(1) if match else None
 
 
-def iter_blocks():
+def iter_blocks() -> Iterator[Block]:
     """Yield (rel_path, line, language, body) for every fenced block.
 
     Counts blocks in every language AND the untagged ones, not only the
@@ -114,7 +131,7 @@ def iter_blocks():
             index += 1
 
 
-def unwrap(body):
+def unwrap(body: list[str]) -> list[str]:
     """Strip a heredoc wrapper and the indent a list item added.
 
     A fence nested under a bullet is indented, and the indent is part of
@@ -128,11 +145,11 @@ def unwrap(body):
     return [l[pad:] if l.strip() else l for l in inner]
 
 
-def is_python(body):
+def is_python(body: list[str]) -> bool:
     return any(HEREDOC_OPEN.match(line) for line in body)
 
 
-def run_hook(hook, args):
+def run_hook(hook: str, args: list[str] | None) -> tuple[int, list[str]]:
     """Run a shipped hook directly, as `python -m solid_ai_checks`."""
     env = dict(os.environ, PYTHONPATH=HOOKS_DIR)
     proc = subprocess.run(
@@ -149,7 +166,12 @@ def run_hook(hook, args):
     return proc.returncode, [l for l in out.splitlines() if l.strip()]
 
 
-def run_block(body, language, workdir, substitute=None):
+def run_block(
+    body: list[str],
+    language: str,
+    workdir: str,
+    substitute: dict[str, str] | None = None,
+) -> tuple[int, list[str]]:
     """Run one check FROM the repository root, with its source OUTSIDE it.
 
     A check written into the tree it inspects can match its own source, so
@@ -190,7 +212,7 @@ def run_block(body, language, workdir, substitute=None):
     return proc.returncode, [l for l in out.splitlines() if l.strip()]
 
 
-def verdict(entry, code, out):
+def verdict(entry: Disposition, code: int, out: list[str]) -> list[str]:
     """Apply the entry's pass predicate. Returns a list of failures.
 
     `expect` is either MANUAL or a list naming what each line the
@@ -247,7 +269,7 @@ def verdict(entry, code, out):
     return []
 
 
-def reading(result):
+def reading(result: Row) -> list[str]:
     """Render a check, carrying what it printed.
 
     Every result carries its output, a failure included. A failure names
@@ -276,7 +298,7 @@ def reading(result):
 BUDGET = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reading-budget.txt")
 
 
-def budgeted():
+def budgeted() -> list[str]:
     """The check titles allowed to await a reading.
 
     A reading is not a failure, so the run stays green over one and the set
@@ -300,7 +322,7 @@ def budgeted():
     return titles
 
 
-def main():
+def main() -> None:
     started_at = datetime.datetime.now()
     args = sys.argv[1:]
     listing = "--list" in args
@@ -322,7 +344,9 @@ def main():
     # and a block matching nothing are different defects and both are
     # reported: a registry drifting out of step with the templates is how
     # a check goes unexamined.
-    matched, problems, reviewed = {}, [], []
+    matched: dict[tuple[str, int], tuple[Disposition, Block]] = {}
+    problems: list[str] = []
+    reviewed: list[str] = []
     for entry in CHECKS:
         # A judgement with no stated reason is indistinguishable from a
         # verdict nobody got round to writing, and the pile is where the
@@ -428,8 +452,8 @@ def main():
     # count is held to the number each registry declares, so a new skip
     # arrives as a moved number in the diff rather than as one more
     # sentence in the pile.
-    for where, entries, budget in SKIP_BUDGETS:
-        skips = sum(1 for e in entries if e["do"] == SKIP)
+    for where, registry, budget in SKIP_BUDGETS:
+        skips = sum(1 for e in registry if e["do"] == SKIP)
         print("skips in %s: %d, budgeted: %s" % (where, skips, budget))
         if budget is None:
             problems.append(
@@ -466,14 +490,14 @@ def main():
             sys.exit(1)
 
     results = {PASS: 0, FAIL: 0, SKIPPED: 0, ERR: 0, REVIEW: 0, NA: 0}
-    run_results = []
+    run_results: list[Row] = []
     workdir = tempfile.mkdtemp(prefix="sait-conformance-")
 
     try:
         for entry, block in entries:
-            rel, line = block[0], block[1]
+            rel, lineno = block[0], block[1]
             title = entry["title"]
-            where = "%s:%d" % (rel, line)
+            where = "%s:%d" % (rel, lineno)
 
             if entry["do"] == SKIP:
                 if not listing:

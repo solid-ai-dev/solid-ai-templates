@@ -5,10 +5,12 @@ what a check reports it inspected.
 import io
 import os
 import re
+from collections.abc import Iterator, Sized
+from typing import TypeVar
 
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
-from resolve_chain import core_tier, entry_sections
+from resolve_chain import Entry, core_tier, entry_sections
 
 from testkit import ROOT, template_files
 
@@ -16,7 +18,9 @@ from testkit import ROOT, template_files
 # Bound to None without PyYAML, so a check can import it and guard on
 # HAS_YAML rather than on an import of its own.
 try:
-    import yaml
+    # Imported under its own name again, which marks it as re-exported for
+    # the families that import it from here.
+    import yaml as yaml
 
     HAS_YAML = True
 except ImportError:
@@ -29,6 +33,10 @@ except ImportError:
 # preflight can recognise it, instead of keeping a second list of which
 # checks need the dependency.
 MISSING_YAML = "  PyYAML not installed — run: pip install pyyaml"
+
+# What a check returns: its failures, or its failures and the notes saying
+# what it inspected.
+CheckResult = list[str] | tuple[list[str], list[str]]
 
 
 # ---------------------------------------------------------------------------
@@ -43,7 +51,7 @@ MISSING_YAML = "  PyYAML not installed — run: pip install pyyaml"
 _DECL_LINE = re.compile(r"^\s*\[ID:\s*([^\]]+)\]\s*$")
 
 
-def iter_id_declarations(content):
+def iter_id_declarations(content: str) -> Iterator[tuple[str, int]]:
     """Yield (section_id, line_number) for each [ID:] declaration line."""
     for i, line in enumerate(content.splitlines(), start=1):
         m = _DECL_LINE.match(line)
@@ -56,13 +64,13 @@ def iter_id_declarations(content):
 # ---------------------------------------------------------------------------
 
 
-def _load_manifest():
+def _load_manifest() -> tuple[list[str], dict[str, Entry], dict[str, str]]:
     """Load manifest.yaml and return (core_ids, entries, file_to_id)."""
     manifest_path = os.path.join(ROOT, "templates", "manifest.yaml")
     with io.open(manifest_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
-    entries = {}
+    entries: dict[str, Entry] = {}
     for section in entry_sections(data):
         for entry in data[section]:
             entries[entry["id"]] = entry
@@ -71,7 +79,7 @@ def _load_manifest():
     return core_tier(data), entries, file_to_id
 
 
-def _stacks(entries):
+def _stacks(entries: dict[str, Entry]) -> list[Entry]:
     """The entries the manifest files under its stacks: key, in its order.
 
     Selected by key rather than by directory. The fixture stack lives under
@@ -85,15 +93,17 @@ def _stacks(entries):
     return [entries[e["id"]] for e in data.get("stacks", []) if e["id"] in entries]
 
 
-def _resolve_stack(stack_id, core_ids, entries):
+def _resolve_stack(
+    stack_id: str, core_ids: list[str], entries: dict[str, Entry]
+) -> tuple[list[str], set[str]]:
     """Resolve full dependency chain for a stack.
 
     Returns (ordered_files, resolved_ids).
     """
-    resolved = set()
-    files = []
+    resolved: set[str] = set()
+    files: list[str] = []
 
-    def add(eid):
+    def add(eid: str) -> None:
         if eid in resolved:
             return
         resolved.add(eid)
@@ -101,7 +111,7 @@ def _resolve_stack(stack_id, core_ids, entries):
         if entry:
             files.append(entry["file"])
 
-    def resolve(eid):
+    def resolve(eid: str) -> None:
         if eid in resolved:
             return
         entry = entries.get(eid)
@@ -118,7 +128,7 @@ def _resolve_stack(stack_id, core_ids, entries):
     return files, resolved
 
 
-def _opt_in_roots(core_ids, entries):
+def _opt_in_roots(core_ids: list[str], entries: dict[str, Entry]) -> list[str]:
     """The manifest IDs a project picks directly, that no stack chain carries.
 
     A project resolves its stack, then its extras, then its platform, each as
@@ -129,14 +139,16 @@ def _opt_in_roots(core_ids, entries):
     with. Resolving stacks alone leaves these roots unexamined, and a check
     that examines nothing reports the same result as a clean tree.
     """
-    reached = set()
+    reached: set[str] = set()
     for entry in _stacks(entries):
         _, ids = _resolve_stack(entry["id"], core_ids, entries)
         reached |= ids
     return sorted(set(entries) - reached)
 
 
-def _roots_by_kind(core_ids, entries):
+def _roots_by_kind(
+    core_ids: list[str], entries: dict[str, Entry]
+) -> tuple[list[str], list[str]]:
     """The two kinds of root a project picks, returned apart.
 
     A check covering both kinds reports each count rather than their sum.
@@ -168,7 +180,7 @@ TEMPLATE_DIRS = [
 # ---------------------------------------------------------------------------
 
 
-def all_template_files():
+def all_template_files() -> list[str]:
     """Absolute paths to every template the manifest governs.
 
     Sourced from git rather than from a walk of TEMPLATE_DIRS. A hardcoded
@@ -180,9 +192,14 @@ def all_template_files():
     return [os.path.join(ROOT, p.replace("/", os.sep)) for p in template_files()]
 
 
-def read(path):
+def read(path: str) -> str:
     with io.open(path, encoding="utf-8") as f:
         return f.read()
+
+
+# What Inspected.count takes and hands back unchanged: a count, or a
+# collection whose length is the count.
+V = TypeVar("V", bound=int | Sized)
 
 
 class Inspected:
@@ -196,10 +213,10 @@ class Inspected:
     check answered a question it never asked.
     """
 
-    def __init__(self):
-        self._counts = []
+    def __init__(self) -> None:
+        self._counts: list[tuple[str, int, int]] = []
 
-    def count(self, label, value, floor=1):
+    def count(self, label: str, value: V, floor: int = 1) -> V:
         """Record an input count and return the value it was taken from.
 
         `value` may be a number or anything with a length, so a call can
@@ -209,10 +226,10 @@ class Inspected:
         self._counts.append((label, n, floor))
         return value
 
-    def notes(self):
+    def notes(self) -> list[str]:
         return [f"  {label}: {n}" for label, n, _ in self._counts]
 
-    def failures(self):
+    def failures(self) -> list[str]:
         return [
             f"  {label}: {n} — below the floor of {floor}; the check reached "
             f"nothing and an empty corpus reports the same result as a clean "
@@ -236,9 +253,9 @@ HEADER_END_RE = re.compile(r"^## ")
 DEPENDS_RE = re.compile(r"\[DEPENDS ON:\s*([^\]]+)\]")
 
 
-def depends_on_refs(content):
+def depends_on_refs(content: str) -> list[str]:
     """Return the paths declared by the header's DEPENDS ON directive."""
-    refs = []
+    refs: list[str] = []
     for line in content.splitlines():
         if HEADER_END_RE.match(line):
             break
