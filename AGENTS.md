@@ -17,7 +17,8 @@ file. What the project is: `README.md`; how it works: `docs/spec.md`.
 
 ### 1.2 Commands
 
-`py` is the Windows launcher; on macOS and Linux run `python3`.
+`py` is the Windows launcher; use `py -3.12` where the default Python
+lacks PyYAML. On macOS and Linux run `python3`.
 
 ```bash
 py tools/sync_docs.py              # regenerate generated sections
@@ -29,6 +30,8 @@ py tests/run.py smoke         # structure and resolution
 py tests/run.py conformance   # the templates' own checks, run here
 py tests/run.py fork_sync     # the change merged into a simulated fork
 PYTHONPATH=hooks py -m solid_ai_checks <hook-id>   # run one hook directly
+py -m mypy                    # strict type check, as pyproject.toml sets it
+py -m ruff format --check -q tools tests hooks     # exit 1 if a file is unformatted
 ```
 
 The playbook lists the rest: release check, redundancy audit, quality
@@ -42,15 +45,15 @@ scorer.
   feat, fix, chore, docs or refactor
 - Title a PR the same way, ending with the issues it closes:
   `<type>(<scope>): <summary> (#issue)`
-- Put the issue number in the commit subject of a single-commit PR too;
-  GitHub squashes with the commit subject when the branch holds one commit
-- Leave the issue number out of the title and commit subject of a PR that
-  closes none, such as a changelog cut or one part of a split issue; the
-  squash appends the PR number
 - Never name an issue in a subject whose PR does not close it; the
   merged-work sweep fails on every open issue a merged subject names
-- Mark each part PR of a split issue "Part of #N" in its body; only the PR
-  that closes the issue carries `(#N)`
+
+| The PR | Its title and commit subject |
+|--------|------------------------------|
+| Closes an issue | End with `(#N)`, in a single commit's subject too, since GitHub squashes with it |
+| Closes none, such as a changelog cut | Carry no issue number; the squash appends the PR number |
+| Is one part of a split issue | Carry no issue number, and say "Part of #N" in the body; only the closing PR carries `(#N)` |
+
 - Keep each PR small, one concern per PR
 - Never merge a PR as an agent; the maintainer approves each merge
   explicitly
@@ -186,6 +189,7 @@ MUST / MUST NOT, or carries an RFC 2119 keyword where strength matters
   PR:
   - `AGENTS.md` — if a rule agents apply here changes
   - `README.md` — if the features or the quick setup change
+  - `docs/hooks.md` — if the hook setup changes
   - `docs/architecture/` — if the composition model, inheritance rules
     or ID system change
   - `templates/manifest.yaml` — if a template is added, removed,
@@ -247,11 +251,12 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
 
 ### 6.1 Checks
 
-- CI runs smoke, conformance, fork sync, `check_release.py --self-test`,
-  `cut_changelog.py --self-test`, `sync_docs.py --check`,
-  `resolve_chain.py --check`, the redundancy audit, the template-quality
-  ratchet, pyflakes, markdownlint, the pre-commit hooks and gitleaks on
-  every PR and on push to `main`
+- CI runs these on every PR and on push to `main`:
+  - smoke, conformance and fork sync
+  - `check_release.py --self-test` and `cut_changelog.py --self-test`
+  - `sync_docs.py --check` and `resolve_chain.py --check`
+  - the redundancy audit and the template-quality ratchet
+  - pyflakes, markdownlint, the pre-commit hooks and gitleaks
 - The changelog-label gate runs on every upstream PR, except a dependency
   bump, and fails unless the PR carries exactly one valid `changelog:` label
 - Every runner writes a timestamped report to `tests/reports/`
@@ -272,12 +277,11 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
 
 ### 7.1 Startup
 
-1. Read `AGENTS.md` (this file) and `docs/spec.md`
+1. Read `docs/spec.md`
 2. Run `git branch --no-merged main` and flag any unmerged branch to the
    user — it may hold lost work
-3. Confirm the scope with the user before making changes
-4. If the task is ambiguous, ask: "What is the specific deliverable
-   for this session?"
+3. Confirm the scope with the user before making changes; on an ambiguous
+   task, ask "What is the specific deliverable for this session?"
 
 ### 7.2 During the session
 
@@ -287,6 +291,7 @@ These hold for `docs/spec.md` and the chapters in `docs/architecture/`.
   - Run `py tests/run.py conformance` as well for any template prose edit;
     smoke reads structure, and every rule about the templates' own text is
     enforced from conformance
+  - Run `py -m ruff format tools tests hooks` for any Python change
   - Run markdownlint and a scan for lines over 88 characters for a
     documentation-only change, and push once
 - Read a conformance run's judgement readings before calling it clean;
