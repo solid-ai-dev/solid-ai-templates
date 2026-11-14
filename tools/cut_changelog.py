@@ -24,23 +24,43 @@ Usage:
     py tools/cut_changelog.py --self-test     # the planted cases below
 """
 
+from __future__ import annotations
+
 import argparse
 import datetime
+import io
 import json
 import re
 import subprocess
 import sys
 import textwrap
+from collections.abc import Iterable, Sequence
+from typing import Literal, TypedDict, cast
 
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
 RECORD = "CHANGELOG.md"
 REPO = "https://github.com/solid-ai-dev/solid-ai-templates/pull/"
-RUN = dict(capture_output=True, text=True, encoding="utf-8")
+
+
+class _Run(TypedDict):
+    """The keywords every `subprocess.run` here takes: text, captured."""
+
+    capture_output: bool
+    text: Literal[True]
+    encoding: str
+
+
+RUN = _Run(capture_output=True, text=True, encoding="utf-8")
+
+# An entry to add: its section heading, the pull request number, the text.
+Entry = tuple[str, int, str]
 
 # Pull requests before this one carry hand-written entries, so the
 # generator leaves them alone; from this one on, the label decides.
@@ -66,7 +86,7 @@ WIDTH = 80
 BOTS = {"app/dependabot", "dependabot[bot]", "dependabot"}
 
 
-def entry_text(title, body=""):
+def entry_text(title: str, body: str | None = "") -> str:
     """The plain-words entry for a pull request."""
     override = OVERRIDE.search((body or "").replace("\r\n", "\n"))
     text = (
@@ -75,7 +95,7 @@ def entry_text(title, body=""):
     return text[:1].upper() + text[1:]
 
 
-def section_of(labels):
+def section_of(labels: Iterable[str]) -> str | None:
     """The section a pull request's labels name: a heading, '' or None.
 
     '' means `changelog:none`; None means no label or more than one.
@@ -88,7 +108,7 @@ def section_of(labels):
     return SECTIONS.get(kinds[0])
 
 
-def unreleased_span(lines):
+def unreleased_span(lines: Sequence[str]) -> tuple[int, int]:
     """The index range of the `Unreleased` section's body."""
     start = next(
         i for i, line in enumerate(lines) if line.startswith("## [Unreleased]")
@@ -100,7 +120,7 @@ def unreleased_span(lines):
     return start + 1, end
 
 
-def add_entries(text, entries):
+def add_entries(text: str, entries: Iterable[Entry]) -> tuple[str, list[int]]:
     """Add (heading, number, text) entries to `Unreleased`, with their links.
 
     A pull request already linked anywhere in the file is left alone, so a
@@ -116,7 +136,7 @@ def add_entries(text, entries):
     links = [i for i, line in enumerate(body) if re.match(r"^\[#\d+\]: ", line)]
     content = body[: links[0]] if links else body
     refs = body[links[0] :] if links else []
-    added = []
+    added: list[int] = []
     for heading, number, words in entries:
         if str(number) in listed:
             continue
@@ -168,7 +188,7 @@ def add_entries(text, entries):
     return "\n".join(lines), added
 
 
-def cut(text, version, day):
+def cut(text: str, version: str, day: str) -> str:
     """Rename `Unreleased` to the version and open an empty one above it.
 
     Refuses a version already in the file and an `Unreleased` with no
@@ -185,14 +205,14 @@ def cut(text, version, day):
     )
 
 
-def merged_since(tag):
+def merged_since(tag: str) -> list[int]:
     """The pull request numbers the squash subjects since `tag` name."""
     log = subprocess.run(["git", "log", "--format=%s", tag + "..HEAD"], **RUN)
     if log.returncode != 0:
         raise SystemExit(
             "cut_changelog: git log %s..HEAD failed: %s" % (tag, log.stderr.strip())
         )
-    found = []
+    found: list[int] = []
     for subject in log.stdout.splitlines():
         match = NUMBER.search(subject)
         if match:
@@ -200,7 +220,7 @@ def merged_since(tag):
     return found
 
 
-def fetch(number):
+def fetch(number: int) -> tuple[str, list[str], str]:
     """The title, labels and body of a pull request, through `gh`.
 
     A dependency bump carries no entry, and the label gate exempts its
@@ -220,12 +240,12 @@ def fetch(number):
     return data["title"], labels, data["body"]
 
 
-def run(args):
+def run(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="cut_changelog")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--cut", metavar="vA.B.C")
     options = parser.parse_args(args)
-    version = None
+    version: str | None = None
     if options.cut is not None:
         match = VERSION.match(options.cut)
         if not match:
@@ -239,7 +259,8 @@ def run(args):
         print("cut_changelog: no previous v* tag to read from")
         return 2
     numbers = [n for n in merged_since(tag) if n >= LABELS_SINCE]
-    entries, unlabelled = [], []
+    entries: list[Entry] = []
+    unlabelled: list[str] = []
     for number in sorted(numbers):
         title, labels, body = fetch(number)
         heading = section_of(labels)
@@ -278,14 +299,14 @@ def run(args):
     return 0
 
 
-def self_test():
+def self_test() -> int:
     sample = (
         "# Changelog\n\n## [Unreleased]\n\n### Added\n\n"
         "- Old entry ([#10])\n\n### Fixed\n\n- Old fix ([#11])\n\n"
         "[#10]: %s10\n[#11]: %s11\n\n## [1.0.0] - 2026-01-01\n\n"
         "### Added\n\n- First ([#1])\n" % (REPO, REPO)
     )
-    cases = []
+    cases: list[tuple[str, bool]] = []
     cases.append(
         (
             "the prefix and issue numbers are dropped",
@@ -354,7 +375,7 @@ def self_test():
         )
     )
     emptied = sample.replace("- Old entry ([#10])", "").replace("- Old fix ([#11])", "")
-    refused = []
+    refused: list[str] = []
     for text_in, version in ((sample, "1.0.0"), (emptied, "1.1.0")):
         try:
             cut(text_in, version, "2026-02-02")

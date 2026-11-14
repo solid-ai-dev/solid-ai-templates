@@ -32,12 +32,22 @@ Usage:
     py tools/audit_redundancy.py --self-test  # the planted cases only
 """
 
+from __future__ import annotations
+
 import io
 import re
 import sys
+from collections.abc import Iterator, Mapping, Sequence
 from difflib import SequenceMatcher
+from typing import TypedDict, cast
 
-from resolve_chain import load_manifest, opt_in_roots, resolve_chain, read_file
+from resolve_chain import (
+    Entry,
+    load_manifest,
+    opt_in_roots,
+    read_file,
+    resolve_chain,
+)
 
 # Set the output encoding and the line ending at the boundary rather
 # than inheriting the console defaults. The encoding mangles any
@@ -46,7 +56,9 @@ from resolve_chain import load_manifest, opt_in_roots, resolve_chain, read_file
 # line reaches a consumer with a trailing carriage return.
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -61,15 +73,53 @@ BULLET = re.compile(r"^\s*(?:[-*]|\d+\.)\s+(.*)$")
 MIN_LEN = 30
 NEAR_THRESHOLD = 0.87
 
+
+class Section(TypedDict):
+    """One heading's section: its tags and its rules by fingerprint."""
+
+    file: str
+    heading: str
+    ids: list[str]
+    overrides: list[str]
+    rules: dict[str, str]
+
+
+# An exact finding's key: the fingerprint and the two sites, sorted.
+ExactKey = tuple[str, tuple[str, ...]]
+
+# A near finding's key: the two fingerprints, sorted, then the two sites.
+NearKey = tuple[str | tuple[str, ...], ...]
+
+
+class ExactRecord(TypedDict):
+    """One exact duplicate and the chains that carry it."""
+
+    original: str
+    sites: tuple[str, ...]
+    fp: str
+    files: tuple[str, ...]
+    chains: set[str]
+
+
+class NearRecord(TypedDict):
+    """One near duplicate, its similarity, and the chains that carry it."""
+
+    ratio: float
+    a: str
+    b: str
+    sites: tuple[str, ...]
+    chains: set[str]
+
+
 # Known in-chain exact duplicates accepted for now. `--check` ignores
 # these and fails only on NEW duplicates. Each key is
 # (fingerprint, (fileA, fileB)) with files sorted; the value is the
 # reason / owning issue. Remove an entry once its duplicate is resolved.
 # Currently empty — `--check` enforces a true zero.
-BASELINE = {}
+BASELINE: dict[tuple[str, tuple[str, ...]], str] = {}
 
 
-def normalize(text):
+def normalize(text: str) -> str:
     """Reduce a rule line to a comparable fingerprint."""
     t = re.sub(r"`[^`]*`", " ", text)
     t = re.sub(r"\*\*([^*]*)\*\*", r"\1", t)
@@ -78,7 +128,7 @@ def normalize(text):
     return re.sub(r"\s+", " ", t).strip()
 
 
-def parse_sections(rel_path):
+def parse_sections(rel_path: str) -> list[Section]:
     """Split a template file into sections with their tags and rules.
 
     Returns a list of dicts: {file, heading, ids, overrides, rules}
@@ -87,10 +137,10 @@ def parse_sections(rel_path):
     return parse_text(read_file(rel_path), rel_path)
 
 
-def parse_text(text, rel_path):
+def parse_text(text: str, rel_path: str) -> list[Section]:
     """parse_sections() over a file's text, labelled with `rel_path`."""
-    sections = []
-    current = None
+    sections: list[Section] = []
+    current: Section | None = None
     in_fence = False
 
     for raw in text.splitlines():
@@ -136,32 +186,34 @@ def parse_text(text, rel_path):
     return sections
 
 
-def chain_sections(stack_id, core_ids, entries):
+def chain_sections(
+    stack_id: str, core_ids: Sequence[str], entries: dict[str, Entry]
+) -> tuple[list[Section], dict[int, set[int]]]:
     """All sections across a stack's resolved chain, plus a supersedes
     relation derived from [OVERRIDE] tags (transitive closure)."""
     files = resolve_chain(stack_id, core_ids, entries)
-    sections = []
+    sections: list[Section] = []
     for f in files:
         sections.extend(parse_sections(f))
     return sections, supersession(sections)
 
 
-def supersession(sections):
+def supersession(sections: Sequence[Section]) -> dict[int, set[int]]:
     """Each section's index -> the indices it supersedes via [OVERRIDE]."""
-    id_to_idx = {}
+    id_to_idx: dict[str, int] = {}
     for i, s in enumerate(sections):
         for sid in s["ids"]:
             id_to_idx[sid] = i
 
     # direct: idx -> set of section indices it overrides
-    direct = {i: set() for i in range(len(sections))}
+    direct: dict[int, set[int]] = {i: set() for i in range(len(sections))}
     for i, s in enumerate(sections):
         for target in s["overrides"]:
             if target in id_to_idx:
                 direct[i].add(id_to_idx[target])
 
     # transitive closure
-    supersedes = {i: set() for i in range(len(sections))}
+    supersedes: dict[int, set[int]] = {i: set() for i in range(len(sections))}
     for i in range(len(sections)):
         stack = list(direct[i])
         while stack:
@@ -173,15 +225,17 @@ def supersession(sections):
     return supersedes
 
 
-def related(a, b, supersedes):
+def related(a: int, b: int, supersedes: Mapping[int, set[int]]) -> bool:
     """True if section a and b are in an override relationship."""
     return b in supersedes[a] or a in supersedes[b]
 
 
-def find_exact(sections, supersedes):
+def find_exact(
+    sections: Sequence[Section], supersedes: Mapping[int, set[int]]
+) -> Iterator[tuple[str, str, int, int]]:
     """Yield (fingerprint, original, idx_a, idx_b) for exact in-chain
     duplicates across non-override section pairs."""
-    by_fp = {}
+    by_fp: dict[str, list[tuple[int, str]]] = {}
     for i, s in enumerate(sections):
         for fp, original in s["rules"].items():
             by_fp.setdefault(fp, []).append((i, original))
@@ -197,27 +251,29 @@ def find_exact(sections, supersedes):
                 yield fp, original, ia, ib
 
 
-_RATIO = {}
+_RATIO: dict[tuple[str, ...], float] = {}
 
 
-def find_near(sections, supersedes):
+def find_near(
+    sections: Sequence[Section], supersedes: Mapping[int, set[int]]
+) -> Iterator[tuple[float, str, str, int, int]]:
     """Yield (ratio, fp_a, fp_b, idx_a, idx_b) for near-duplicate rules
     across non-override section pairs in different files. Candidate pairs
     are prefiltered to those sharing a token of length >= 6, keeping the
     comparison count tractable on large chains."""
 
     # (fp, idx)
-    rules = []
+    rules: list[tuple[str, int]] = []
     for i, s in enumerate(sections):
         for fp in s["rules"]:
             rules.append((fp, i))
 
-    token_index = {}
+    token_index: dict[str, list[int]] = {}
     for idx, (fp, _) in enumerate(rules):
         for tok in set(t for t in fp.split() if len(t) >= 6):
             token_index.setdefault(tok, []).append(idx)
 
-    candidates = set()
+    candidates: set[tuple[int, int]] = set()
     for hits in token_index.values():
         # skip ubiquitous tokens
         if len(hits) > 80:
@@ -226,7 +282,7 @@ def find_near(sections, supersedes):
             for b in range(a + 1, len(hits)):
                 candidates.add((hits[a], hits[b]))
 
-    seen = set()
+    seen: set[tuple[str, ...]] = set()
     for ra, rb in candidates:
         fa, ia = rules[ra]
         fb, ib = rules[rb]
@@ -252,7 +308,12 @@ def find_near(sections, supersedes):
             yield ratio, fa, fb, ia, ib
 
 
-def collect(core_ids, entries, roots, want_near=False):
+def collect(
+    core_ids: Sequence[str],
+    entries: dict[str, Entry],
+    roots: Sequence[str],
+    want_near: bool = False,
+) -> tuple[dict[ExactKey, ExactRecord], dict[NearKey, NearRecord], dict[str, int]]:
     """Run exact (and optionally near) detection over every root,
     aggregating each unique finding to the set of chains it affects.
 
@@ -263,11 +324,11 @@ def collect(core_ids, entries, roots, want_near=False):
     """
 
     # key -> {"original", "sites", "chains"}
-    exact = {}
-    near = {}
+    exact: dict[ExactKey, ExactRecord] = {}
+    near: dict[NearKey, NearRecord] = {}
 
     # root -> rules read from its chain, which is what the floor reads.
-    read = {}
+    read: dict[str, int] = {}
     for sid in roots:
         sections, supersedes = chain_sections(sid, core_ids, entries)
         read[sid] = sum(len(s["rules"]) for s in sections)
@@ -283,7 +344,7 @@ def collect(core_ids, entries, roots, want_near=False):
                 )
             )
             key = (fp, sites)
-            rec = exact.setdefault(
+            record = exact.setdefault(
                 key,
                 {
                     "original": original,
@@ -293,7 +354,7 @@ def collect(core_ids, entries, roots, want_near=False):
                     "chains": set(),
                 },
             )
-            rec["chains"].add(sid)
+            record["chains"].add(sid)
 
         if not want_near:
             continue
@@ -306,12 +367,12 @@ def collect(core_ids, entries, roots, want_near=False):
                     ]
                 )
             )
-            key = tuple(sorted([fa, fb])) + (sites,)
-            rec = near.setdefault(
-                key,
+            near_key: NearKey = tuple(sorted([fa, fb])) + (sites,)
+            pair = near.setdefault(
+                near_key,
                 {"ratio": ratio, "a": fa, "b": fb, "sites": sites, "chains": set()},
             )
-            rec["chains"].add(sid)
+            pair["chains"].add(sid)
     return exact, near, read
 
 
@@ -321,7 +382,7 @@ def collect(core_ids, entries, roots, want_near=False):
 # (label, {file: text}, exact findings owed, near findings owed).
 PLANTED_RULE = "- MUST state each planted rule once, in the file that owns it"
 PLANTED_NEAR = "- MUST state every planted rule once, in the file that owns it"
-PLANTED_CASES = [
+PLANTED_CASES: list[tuple[str, dict[str, str], int, int]] = [
     (
         "a rule stated in two unrelated sections",
         {
@@ -365,11 +426,11 @@ PLANTED_CASES = [
 ]
 
 
-def self_test():
+def self_test() -> list[str]:
     """Run the planted cases; return a line per case that missed."""
-    misses = []
+    misses: list[str] = []
     for label, files, want_exact, want_near in PLANTED_CASES:
-        sections = []
+        sections: list[Section] = []
         for name, text in files.items():
             sections.extend(parse_text(text, name))
         supersedes = supersession(sections)
@@ -384,7 +445,7 @@ def self_test():
     return misses
 
 
-def run_self_test():
+def run_self_test() -> None:
     """Print the planted-case verdict; exit 1 on a miss."""
     misses = self_test()
     print(f"planted cases: {len(PLANTED_CASES)}, missed: {len(misses)}")
@@ -398,7 +459,7 @@ def run_self_test():
         sys.exit(1)
 
 
-def main():
+def main() -> None:
     args = sys.argv[1:]
     if "--help" in args:
         print(__doc__)
@@ -412,7 +473,7 @@ def main():
         run_self_test()
 
     core_ids, entries, stacks = load_manifest()
-    roots = [s["id"] for s in stacks]
+    roots: list[str] = [s["id"] for s in stacks]
     roots += opt_in_roots(core_ids, entries, stacks)
     if not roots:
         print("no root resolved; refusing to report a clean audit over an empty corpus")
@@ -460,17 +521,17 @@ def main():
         print("\n" + "=" * 70)
         print(f"NEAR in-chain duplicates (>= {NEAR_THRESHOLD})")
         print("=" * 70)
-        for rec in sorted(
+        for pair in sorted(
             near.values(), key=lambda r: (-len(r["chains"]), -r["ratio"])
         ):
-            chains = sorted(rec["chains"])
+            chains = sorted(pair["chains"])
             print(
-                f"\n~{rec['ratio']:.2f} | {len(chains)} chain(s): {', '.join(chains)}"
+                f"\n~{pair['ratio']:.2f} | {len(chains)} chain(s): {', '.join(chains)}"
             )
-            for site in rec["sites"]:
+            for site in pair["sites"]:
                 print(f"    {site}")
-            print(f"    A: {rec['a'][:80]}")
-            print(f"    B: {rec['b'][:80]}")
+            print(f"    A: {pair['a'][:80]}")
+            print(f"    B: {pair['b'][:80]}")
         print(f"\n>>> {len(near)} near in-chain duplicate(s)")
 
     if "--check" in args:
@@ -480,8 +541,8 @@ def main():
         # the tier it does not score (ADR-038).
         print(f"\nnear-duplicate pairs found (not gated, see ADR-038): {len(near)}")
 
-        present = set()
-        new_dups = []
+        present: set[tuple[str, tuple[str, ...]]] = set()
+        new_dups: list[ExactRecord] = []
         for rec in exact.values():
             bkey = (rec["fp"], rec["files"])
             if bkey in BASELINE:

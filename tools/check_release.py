@@ -25,14 +25,21 @@ Usage:
     py tools/check_release.py --self-test         # the planted cases below
 """
 
+from __future__ import annotations
+
+import io
 import os
 import re
 import subprocess
 import sys
+from collections.abc import Callable, Sequence
+from typing import Literal, TypedDict, cast
 
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -41,12 +48,29 @@ VERSION = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 HEADING = re.compile(r"^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?\s*$")
 BULLET = re.compile(r"^\s*[-*] ")
 PATCH_KINDS = {"Fixed", "Security"}
-RUN = dict(capture_output=True, text=True, encoding="utf-8")
 
 
-def sections(text):
+class _Run(TypedDict):
+    """The keywords every `subprocess.run` here takes: text, captured."""
+
+    capture_output: bool
+    text: Literal[True]
+    encoding: str
+
+
+RUN = _Run(capture_output=True, text=True, encoding="utf-8")
+
+# A version as its three numbers.
+Version = tuple[int, ...]
+
+# Each `## [name]` section's date, or None, and its body lines.
+Sections = dict[str, list[tuple[str | None, list[str]]]]
+
+
+def sections(text: str) -> Sections:
     """Map each `## [name]` heading to its date and body lines."""
-    found, name = {}, None
+    found: Sections = {}
+    name: str | None = None
     for line in text.splitlines():
         match = HEADING.match(line)
         if match:
@@ -59,7 +83,7 @@ def sections(text):
     return found
 
 
-def bump(previous, release):
+def bump(previous: Version, release: Version) -> str | None:
     """Name the SemVer step from one version tuple to the next, or None."""
     if release == (previous[0] + 1, 0, 0):
         return "major"
@@ -70,9 +94,9 @@ def bump(previous, release):
     return None
 
 
-def findings(text, release, previous):
+def findings(text: str, release: Version, previous: Version) -> list[str]:
     """Return what keeps `text` from being the cut for `release`."""
-    out = []
+    out: list[str] = []
     version = "%d.%d.%d" % release
     found = sections(text)
     cut = found.get(version, [])
@@ -105,7 +129,8 @@ def findings(text, release, previous):
     step = bump(previous, release)
     if step is None:
         out.append(
-            "v%s does not follow v%d.%d.%d by one SemVer step" % ((version,) + previous)
+            "v%s does not follow v%s by one SemVer step"
+            % (version, "%d.%d.%d" % previous)
         )
     elif step != owed:
         out.append(
@@ -115,7 +140,7 @@ def findings(text, release, previous):
     return out
 
 
-def previous_tag(release_name):
+def previous_tag(release_name: str) -> str | None:
     """The newest `v*` tag reachable from HEAD other than the release."""
     proc = subprocess.run(
         [
@@ -134,9 +159,12 @@ def previous_tag(release_name):
     return proc.stdout.strip() if proc.returncode == 0 else None
 
 
-def check(release_name):
+def check(release_name: str | None) -> int:
     match = VERSION.match(release_name or "")
-    if not match:
+
+    # A missing name never matches, so its test changes no verdict; it
+    # narrows the name to a string for the steps below.
+    if release_name is None or not match:
         print("no release named as vA.B.C (got %r); nothing was checked" % release_name)
         return 2
     previous_name = previous_tag(release_name)
@@ -144,7 +172,8 @@ def check(release_name):
     # A baseline the command did not produce is not a baseline: with no
     # earlier tag the bump cannot be read, and reporting it as agreeing
     # would pass a version nothing was compared with.
-    if previous_name is None or not VERSION.match(previous_name):
+    previous_match = None if previous_name is None else VERSION.match(previous_name)
+    if previous_match is None:
         print(
             "no previous v* tag is reachable from HEAD, so the bump cannot be compared"
         )
@@ -154,7 +183,7 @@ def check(release_name):
         print("HEAD carries no %s" % RECORD)
         return 1
     release = tuple(int(n) for n in match.groups())
-    previous = tuple(int(n) for n in VERSION.match(previous_name).groups())
+    previous = tuple(int(n) for n in previous_match.groups())
     print("release: %s" % release_name)
     print("previous release: %s" % previous_name)
     print("changelog read from: HEAD:%s" % RECORD)
@@ -165,7 +194,7 @@ def check(release_name):
     return 1 if found else 0
 
 
-def named(version, titles):
+def named(version: str, titles: Sequence[str]) -> list[str]:
     """The titles naming `version` alone or before " — " and a theme."""
     return [
         title
@@ -174,7 +203,7 @@ def named(version, titles):
     ]
 
 
-def milestone(release_name, titles):
+def milestone(release_name: str, titles: Sequence[str]) -> str | None:
     """Return the one title naming the release, or None if none does.
 
     Raises ValueError when more than one title names it.
@@ -194,7 +223,7 @@ def milestone(release_name, titles):
     return found[0] if found else None
 
 
-def print_milestone(release_name):
+def print_milestone(release_name: str) -> int:
     repo = os.environ.get("GITHUB_REPOSITORY") or "{owner}/{repo}"
     proc = subprocess.run(
         [
@@ -225,7 +254,7 @@ def print_milestone(release_name):
     return 0
 
 
-def notes(text, version):
+def notes(text: str, version: str) -> str | None:
     """Return the body of the one `## [version]` section, or None."""
     cut = sections(text).get(version, [])
     if len(cut) != 1:
@@ -233,7 +262,7 @@ def notes(text, version):
     return "\n".join(cut[0][1]).strip("\n")
 
 
-def print_notes(release_name):
+def print_notes(release_name: str) -> int:
     match = VERSION.match(release_name or "")
     shown = subprocess.run(["git", "show", "HEAD:" + RECORD], **RUN)
     body = notes(shown.stdout, release_name[1:]) if match else None
@@ -261,7 +290,7 @@ CUT = """## [Unreleased]
 # Each case is (name, changelog, release, previous, the one finding owed as
 # a fragment of its text, or None for a clean cut). Matching the text rather
 # than the count keeps a case from passing on a finding other than its own.
-CASES = [
+CASES: list[tuple[str, str, Version, Version, str | None]] = [
     ("a complete major cut", CUT, (3, 0, 0), (2, 90, 0), None),
     (
         "no section for the release",
@@ -327,7 +356,7 @@ TITLES = [
 
 # Each case is (name, titles, release, the title owed, or None for no
 # milestone, or ValueError when the titles are ambiguous).
-MILESTONE_CASES = [
+MILESTONE_CASES: list[tuple[str, list[str], str, str | type[ValueError] | None]] = [
     ("a minor resolves to its line", TITLES, "v3.0.0", "v3.0 — The split"),
     ("a patch's own milestone wins", TITLES, "v2.90.1", "v2.90.1 — A patch"),
     (
@@ -343,7 +372,7 @@ MILESTONE_CASES = [
 ]
 
 # Each case is (name, changelog, version, the notes owed, or None).
-NOTES_CASES = [
+NOTES_CASES: list[tuple[str, str, str, str | None]] = [
     (
         "the section's body, trimmed",
         CUT,
@@ -355,10 +384,10 @@ NOTES_CASES = [
 ]
 
 
-def self_test():
+def self_test() -> int:
     failed = 0
 
-    def report(ok, name, got):
+    def report(ok: bool, name: str, got: object) -> bool:
         print("  %s  %s: %s" % ("ok  " if ok else "FAIL", name, got))
         return not ok
 
@@ -369,16 +398,21 @@ def self_test():
         else:
             ok = len(got) == 1 and owed in got[0]
         failed += report(ok, name, "; ".join(got) or "clean")
-    for name, titles, release, owed in MILESTONE_CASES:
+    for name, titles, release_name, owed_title in MILESTONE_CASES:
+        title: str | ValueError | None
         try:
-            got = milestone(release, titles)
+            title = milestone(release_name, titles)
         except ValueError as error:
-            got = error
-        ok = isinstance(got, ValueError) if owed is ValueError else got == owed
-        failed += report(ok, name, got)
-    for name, text, version, owed in NOTES_CASES:
-        got = notes(text, version)
-        failed += report(got == owed, name, repr(got))
+            title = error
+        ok = (
+            isinstance(title, ValueError)
+            if owed_title is ValueError
+            else title == owed_title
+        )
+        failed += report(ok, name, title)
+    for name, text, version, owed_notes in NOTES_CASES:
+        body = notes(text, version)
+        failed += report(body == owed_notes, name, repr(body))
     total = len(CASES) + len(MILESTONE_CASES) + len(NOTES_CASES)
     print(
         "VERDICT: %s - %d case(s), %d failed"
@@ -387,7 +421,10 @@ def self_test():
     return 1 if failed else 0
 
 
-ACTIONS = {"--milestone": print_milestone, "--notes": print_notes}
+ACTIONS: dict[str, Callable[[str], int]] = {
+    "--milestone": print_milestone,
+    "--notes": print_notes,
+}
 
 
 if __name__ == "__main__":

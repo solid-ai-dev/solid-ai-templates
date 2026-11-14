@@ -18,10 +18,14 @@ The resolution algorithm follows ADR-004:
   3. Append extras (if any)
 """
 
+from __future__ import annotations
+
 import io
 import re
 import sys
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any, NoReturn, TypedDict, cast
 
 # Set the output encoding and line ending at the boundary rather than
 # inheriting the console defaults. The encoding mangles any non-ASCII this
@@ -31,7 +35,9 @@ from pathlib import Path
 # and a reach measurement reports zero for a file that is in the chain.
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -46,17 +52,27 @@ ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "templates" / "manifest.yaml"
 GENERATED = ROOT / "generated"
 
+# One template entry. Its `id` and `file` hold a string and `depends_on` a
+# list of IDs, but the parser writes whatever key a line names, so its
+# values are typed by key, as the manifest's are.
+Entry = dict[str, Any]
+
+# The parsed manifest. A key holds a list of entries, a list of IDs or a
+# task mapping, so its shape is known per key, as parsed YAML's is; the
+# readers below return each shape typed.
+Manifest = dict[str, Any]
+
 
 # ---- minimal YAML parser (shared with sync_docs.py) ----
 
 
-def parse_manifest(text):
+def parse_manifest(text: str) -> Manifest:
     """Parse manifest.yaml into {section: [entries]}, and each task key into
     {kind: description}."""
-    sections = {}
-    current_section = None
-    current_entry = None
-    list_key = None
+    sections: Manifest = {}
+    current_section: str | None = None
+    current_entry: Entry | None = None
+    list_key: str | None = None
 
     for raw_line in text.splitlines():
         stripped = raw_line.strip()
@@ -152,7 +168,7 @@ TASK_KEYS = ("tasks", "fork_tasks")
 NON_ENTRY_KEYS = ("version", "core", "fork_core") + TASK_KEYS
 
 
-def entry_sections(manifest):
+def entry_sections(manifest: Manifest) -> list[str]:
     """The manifest's sections of template entries, in manifest order."""
     return [
         key
@@ -163,7 +179,7 @@ def entry_sections(manifest):
     ]
 
 
-def core_tier(manifest):
+def core_tier(manifest: Manifest) -> list[str]:
     """Every chain's core tier: upstream's `core`, then a fork's `fork_core`.
 
     A fork MUST NOT edit `core`, so a template it adds to every chain goes in
@@ -172,10 +188,10 @@ def core_tier(manifest):
     return list(manifest.get("core") or []) + list(manifest.get("fork_core") or [])
 
 
-def task_kinds(manifest):
+def task_kinds(manifest: Manifest) -> dict[str, str]:
     """Every kind of task a load directive may name, with the description its
     skill carries: upstream's, then a fork's."""
-    kinds = {}
+    kinds: dict[str, str] = {}
     for key in TASK_KEYS:
         kinds.update(manifest.get(key) or {})
     return kinds
@@ -191,13 +207,35 @@ HEADING_LINE = re.compile(r"^(#{1,6})\s+\S")
 FENCE_LINE = re.compile(r"^\s*(`{3,}|~{3,})")
 
 
-def load_directives(text):
+class Directive(TypedDict):
+    """One load directive and the findings about its place."""
+
+    line: int
+    kind: str
+    heading: int | None
+    placed: bool
+    second: bool
+    inside: str | None
+
+
+class _Heading(TypedDict):
+    """An open heading: its level, its line, and the kind it loads as."""
+
+    level: int
+    line: int
+    kind: str | None
+
+
+def load_directives(text: str) -> list[Directive]:
     """Each load directive in a template, in order, as a dict: `line`, its
     `kind`, the `heading` line it governs or None, and the findings about
     its place: `placed` is False after a content line or under no heading,
     `second` is True for a heading's second directive, and `inside` names
     the kind an enclosing heading already loads as."""
-    found, stack, in_tags, fence = [], [], False, None
+    found: list[Directive] = []
+    stack: list[_Heading] = []
+    in_tags = False
+    fence: str | None = None
     for number, line in enumerate(text.splitlines(), start=1):
         run = FENCE_LINE.match(line)
         if run:
@@ -241,7 +279,7 @@ def load_directives(text):
     return found
 
 
-def load_manifest():
+def load_manifest() -> tuple[list[str], dict[str, Entry], list[Entry]]:
     """Load and parse manifest.yaml.
 
     Returns (core_ids, entries_by_id, stacks).
@@ -249,7 +287,7 @@ def load_manifest():
     text = io.open(MANIFEST, encoding="utf-8").read()
     manifest = parse_manifest(text)
 
-    entries = {}
+    entries: dict[str, Entry] = {}
     for section in entry_sections(manifest):
         for entry in manifest[section]:
             # A second entry under one ID would replace the first, and the
@@ -264,18 +302,18 @@ def load_manifest():
 
     core_ids = core_tier(manifest)
 
-    stacks = manifest.get("stacks", [])
+    stacks: list[Entry] = manifest.get("stacks", [])
     return core_ids, entries, stacks
 
 
-def is_fixture(entry):
+def is_fixture(entry: Entry) -> bool:
     """True for an entry that is test input rather than a template to pick."""
 
     # This parser reads the flag as the string "true"; PyYAML reads a bool.
     return entry.get("fixture") in (True, "true")
 
 
-def load_catalogue():
+def load_catalogue() -> tuple[list[str], dict[str, Entry], list[Entry]]:
     """load_manifest() without the fixture entries.
 
     Returns (core_ids, entries_by_id, stacks), as load_manifest() does.
@@ -299,16 +337,18 @@ class ResolveError(Exception):
 CORE_TIER = object()
 
 
-def _check_graph(roots, entries, named_by):
+def _check_graph(
+    roots: Sequence[str], entries: dict[str, Entry], named_by: object
+) -> None:
     """Raise ResolveError where the trees under `roots` break.
 
     An ID with no manifest entry is named with the entry that names it, and
     a dependency cycle is named as a path.
     """
-    checked = set()
-    path = []
+    checked: set[str] = set()
+    path: list[str] = []
 
-    def visit(eid, by):
+    def visit(eid: str, by: object) -> None:
         if eid in checked:
             return
         if eid not in entries:
@@ -336,7 +376,9 @@ def _check_graph(roots, entries, named_by):
         visit(root, named_by)
 
 
-def _resolve_order(root, core_ids, entries):
+def _resolve_order(
+    root: str, core_ids: Sequence[str], entries: dict[str, Entry]
+) -> list[str]:
     """The IDs a root's chain adds after the core tier, dependencies first.
 
     Raises ResolveError for an ID with no manifest entry, naming it and the
@@ -365,9 +407,9 @@ def _resolve_order(root, core_ids, entries):
                 )
 
     done = set(core_ids)
-    order = []
+    order: list[str] = []
 
-    def visit(eid):
+    def visit(eid: str) -> None:
         if eid in done:
             return
         done.add(eid)
@@ -379,7 +421,9 @@ def _resolve_order(root, core_ids, entries):
     return order
 
 
-def resolve_chain(stack_id, core_ids, entries):
+def resolve_chain(
+    stack_id: str, core_ids: Sequence[str], entries: dict[str, Entry]
+) -> list[str]:
     """Resolve full dependency chain for a stack.
 
     Returns ordered list of file paths (relative to repo root). Raises
@@ -389,7 +433,9 @@ def resolve_chain(stack_id, core_ids, entries):
     return [entries[eid]["file"] for eid in order if "file" in entries[eid]]
 
 
-def opt_in_roots(core_ids, entries, stacks):
+def opt_in_roots(
+    core_ids: Sequence[str], entries: dict[str, Entry], stacks: Sequence[Entry]
+) -> list[str]:
     """The IDs a project picks directly that no stack chain carries.
 
     A project resolves its stack, then its extras, then its platform, each
@@ -397,19 +443,21 @@ def opt_in_roots(core_ids, entries, stacks):
     is guaranteed the core tier plus its own dependency tree and nothing
     more, so measuring reach over stacks alone leaves it out of the count.
     """
-    reached = set()
+    reached: set[str] = set()
     for stack in stacks:
         for eid in resolve_ids(stack["id"], core_ids, entries):
             reached.add(eid)
     return sorted(set(entries) - reached)
 
 
-def resolve_ids(stack_id, core_ids, entries):
+def resolve_ids(
+    stack_id: str, core_ids: Sequence[str], entries: dict[str, Entry]
+) -> set[str]:
     """Resolve a chain and return the IDs in it rather than the files."""
     return set(core_ids) | set(_resolve_order(stack_id, core_ids, entries))
 
 
-def read_file(rel_path):
+def read_file(rel_path: str | Path) -> str:
     """Read a file relative to the repo root."""
     return io.open(ROOT / rel_path, encoding="utf-8").read()
 
@@ -422,7 +470,7 @@ BANNER = (
 )
 
 
-def concat_chain(files):
+def concat_chain(files: Sequence[str]) -> str:
     """Read and concatenate all files in the chain."""
     parts = []
     for f in files:
@@ -431,7 +479,9 @@ def concat_chain(files):
     return BANNER + "\n" + "\n\n".join(parts)
 
 
-def generate_all(core_ids, entries, stacks):
+def generate_all(
+    core_ids: Sequence[str], entries: dict[str, Entry], stacks: Sequence[Entry]
+) -> None:
     """Generate cached resolved files for all stacks."""
     GENERATED.mkdir(exist_ok=True)
     count = 0
@@ -451,7 +501,9 @@ def generate_all(core_ids, entries, stacks):
     print(f"\n{count} file(s) generated.")
 
 
-def check_generated(core_ids, entries, stacks):
+def check_generated(
+    core_ids: Sequence[str], entries: dict[str, Entry], stacks: Sequence[Entry]
+) -> tuple[list[str], list[str]]:
     """Check that generated/ files match current resolution.
 
     Returns (stale stack IDs, orphaned cache files). An orphan is a file
@@ -496,7 +548,7 @@ KNOWN_FLAGS = {
 VALUE_FLAGS = ("--emit", "--declined", "--mirror")
 
 
-def _emit(args, core_ids, entries):
+def _emit(args: list[str], core_ids: Sequence[str], entries: dict[str, Entry]) -> None:
     """--emit: build a project's root file and skills from its roots.
 
     A project picks several roots, so the chain is their union in
@@ -504,7 +556,9 @@ def _emit(args, core_ids, entries):
     """
     import emit_context
 
-    values, roots, i = {}, [], 0
+    values: dict[str, list[str]] = {}
+    roots: list[str] = []
+    i = 0
     while i < len(args):
         if args[i] in VALUE_FLAGS:
             if i + 1 >= len(args):
@@ -529,7 +583,8 @@ def _emit(args, core_ids, entries):
             if path not in files:
                 files.append(path)
     kinds = task_kinds(parse_manifest(io.open(MANIFEST, encoding="utf-8").read()))
-    declined = emit_context.read_declined((values.get("--declined") or [None])[0])
+    declined_paths = values.get("--declined")
+    declined = emit_context.read_declined(declined_paths[0] if declined_paths else None)
     emitted = emit_context.build(
         [(path, read_file(path)) for path in files],
         kinds,
@@ -547,7 +602,12 @@ def _emit(args, core_ids, entries):
     print(f"{len(written)} file(s) emitted from {len(files)} templates into {out_dir}.")
 
 
-def _check(core_ids, offered, catalogue, stacks):
+def _check(
+    core_ids: Sequence[str],
+    offered: dict[str, Entry],
+    catalogue: Sequence[Entry],
+    stacks: Sequence[Entry],
+) -> NoReturn:
     """--check: compare generated/ with the catalogue; exit with the verdict.
 
     `stacks` is every stack the manifest holds, fixtures included, and
@@ -584,7 +644,7 @@ def _check(core_ids, offered, catalogue, stacks):
     sys.exit(0)
 
 
-def main():
+def main() -> None:
     try:
         _cli(sys.argv[1:])
     except ResolveError as error:
@@ -592,7 +652,7 @@ def main():
         sys.exit(1)
 
 
-def _cli(args):
+def _cli(args: list[str]) -> None:
 
     if not args or args == ["--help"]:
         print(__doc__)
