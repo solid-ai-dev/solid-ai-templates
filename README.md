@@ -44,13 +44,13 @@ If you cannot load a SKILL.md file on demand when a task starts, add
 Fill the {{...}} placeholders in AGENTS.md from this repository and ask
 me for any you cannot find. If your context file is not AGENTS.md, write
 it so it points to AGENTS.md.
+
+Finally, check the result and report each item: no {{ left in AGENTS.md,
+the commands under Commands run, every skill in the Skills table has its
+file, and your context file points to AGENTS.md.
 ```
 
-Check the result before you commit it:
-
-- `grep -n "{{" AGENTS.md` prints nothing, so every placeholder is filled
-- the commands under Commands in `AGENTS.md` run in your project
-- your agent's context file points to `AGENTS.md`
+Read the agent's report and the files before you commit them.
 
 ## Documentation
 
