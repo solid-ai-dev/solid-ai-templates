@@ -81,9 +81,9 @@ To report a problem:
 
 ## License
 
-[MIT](LICENSE). Use, copy and adapt the templates and tools for any
-purpose, including in closed and commercial projects, keeping the copyright
-notice.
+[MIT](LICENSE). Use, copy and adapt the templates, tools and hooks for
+any purpose, including in closed and commercial projects, keeping the
+copyright and licence notice.
 
 ## Author
 
