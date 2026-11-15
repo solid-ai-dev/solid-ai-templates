@@ -23,7 +23,7 @@ The givens the design accepts rather than chooses.
 | # | Constraint | In practice | Source |
 |---|------------|-------------|--------|
 | 1 | One maintainer | Automated checks carry the review load, the maintainer approves every merge, and triage runs in batches | Chapter 1, Maintainer |
-| 2 | MIT licence | Anyone may fork the templates, use them commercially and keep the fork private, so upstream cannot rely on seeing its forks | `LICENSE` |
+| 2 | CC0 rule text, MIT code | Anyone may fork the templates, use them commercially and keep the fork private, so upstream cannot rely on seeing its forks. A project copies the rule text and owes no notice | `templates/LICENSE`, `LICENSE` |
 | 3 | Built by agents | Agents develop and review upstream, and the maintainer specifies and approves. Every procedure is one an agent can follow | Chapter 1, Team |
 | 4 | Hosted on GitHub | Issues, pull requests, CI and the fork model all run on GitHub | - |
 

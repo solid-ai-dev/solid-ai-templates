@@ -82,9 +82,12 @@ To report a problem:
 
 ## License
 
-[MIT](LICENSE). Use, copy and adapt the templates, tools and hooks for
-any purpose, including in closed and commercial projects, keeping the
-copyright and licence notice.
+The templates are [CC0 1.0](templates/LICENSE). Use, copy and adapt the
+rule text for any purpose, including in closed and commercial projects,
+with no notice owed, so an emitted `AGENTS.md` carries none.
+
+The tools and hooks are [MIT](LICENSE). Use them for any purpose too,
+keeping the copyright and licence notice in a copy of their code.
 
 ## Author
 
