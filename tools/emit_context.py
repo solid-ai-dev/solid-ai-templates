@@ -331,13 +331,15 @@ def _tidy(lines: Sequence[str]) -> list[str]:
 
 
 class Adopted(NamedTuple):
-    """One file of the chain as the project adopts it: its `path`, its
-    parsed `rows`, tag lines kept and declined ones dropped, and its `runs`,
-    each a load with the rows it keeps, an overridden section dropped and a
-    checked run cut to its command."""
+    """One file of the chain as the project adopts it: its `path`, every
+    parsed row in `rows`, tag lines and declined ones included, the
+    `declined` rows by identity, and its `runs`, each a load with the rows
+    it keeps, a declined or overridden section dropped and a checked run cut
+    to its command."""
 
     path: str
     rows: list[Row]
+    declined: set[int]
     runs: list[tuple[str | None, list[Row]]]
 
 
@@ -346,13 +348,14 @@ def _adopt(
 ) -> list[Adopted]:
     """Each file of the chain as the project adopts it, in chain order."""
     files = list(files)
+    every = [_blocks(text) for _, text in files]
     parsed = [
-        [row for row in _blocks(text) if not _declined(row, path, declined)]
-        for path, text in files
+        [row for row in rows if not _declined(row, path, declined)]
+        for (path, _), rows in zip(files, every)
     ]
     overridden = _overridden(parsed)
     adopted: list[Adopted] = []
-    for (path, _), parsed_rows in zip(files, parsed):
+    for (path, _), all_rows, parsed_rows in zip(files, every, parsed):
         rows = [
             row
             for row in parsed_rows
@@ -370,7 +373,8 @@ def _adopt(
                 run = _checked(run)
             runs.append((load, run))
             i = j
-        adopted.append(Adopted(path, parsed_rows, runs))
+        gone = {id(row) for row in all_rows} - {id(row) for row in parsed_rows}
+        adopted.append(Adopted(path, all_rows, gone, runs))
     return adopted
 
 
@@ -510,19 +514,20 @@ def _relate(
 
     A section runs from its tags to the next `[ID:]`, not to the next
     heading, so a heading with no tags of its own stays in the section
-    above it. A replaced section's tags still count, since an override
-    chain is read through them, but only a surviving rule line takes a
-    relationship: a blank line under a heading comes before its tags, and a
-    replaced subsection's rows are not its heading's.
+    above it. Where a section runs is read from every row, declined and
+    replaced ones too, and which rules it reaches from the delivered ones:
+    only a surviving rule line takes a relationship, since a blank line
+    under a heading comes before its tags, and a replaced subsection's rows
+    are not its heading's. A declined override replaces nothing, so it
+    relates nothing.
     """
     kept = {id(row) for _, run in one.runs for row in run}
     extends: set[str] = set()
     overrides: set[str] = set()
     fresh = False
-    declared: str | None = None
     for row in one.rows:
         if row["heading"]:
-            fresh, declared = True, None
+            fresh = True
             continue
         line = row["line"].strip()
         if row["tag"]:
@@ -534,14 +539,16 @@ def _relate(
                 # The first relationship under a heading opens a section.
                 if fresh:
                     extends, overrides, fresh = set(), set(), False
-                if pattern is ID_TAG:
-                    declared = match.group(1)
-                elif pattern is EXTEND_TAG:
+                if pattern is EXTEND_TAG:
                     extends.add(match.group(1))
-                else:
+                elif pattern is OVERRIDE_TAG and id(row) not in one.declined:
                     overrides.add(match.group(1))
-                    if declared:
-                        replaced.setdefault(match.group(1), set()).add(declared)
+
+                    # An override replaces with the section it sits in,
+                    # whether its heading declares that ID or inherits it
+                    # from a heading above.
+                    if row["section"]:
+                        replaced.setdefault(match.group(1), set()).add(row["section"])
             continue
         if not line:
             continue

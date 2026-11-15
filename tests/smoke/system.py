@@ -2566,6 +2566,7 @@ SECTION_BASE = (
     "## Render\n[ID: demo-render]\n\n- Overridden rule\n\n"
     "## Target\n[ID: demo-target]\n\n- Target rule\n\n"
     "## Content\n[ID: demo-content]\n\n- Base content rule\n\n"
+    "## Theme\n[ID: demo-theme]\n\n- Base theme rule\n\n"
     "## Shared\n[ID: demo-shared]\n\n- Shared first rule\n\n"
     "## Follow\n\n- Follow the rules of `demo-shared`\n\n"
     "## Parent\n[ID: demo-parent]\n\n- Parent rule\n\n"
@@ -2599,14 +2600,29 @@ SECTION_MORE = (
     "## First\n[EXTEND: demo-target]\n\n- First extension rule\n\n"
     "## Second\n\n- Second extension rule\n\n"
     "## Fresh\n\n[ID: more-fresh]\n\n- Fresh rule\n\n"
-    "## Later\n[ID: more-later]\n\n- Follow the content rules (`demo-content`)\n\n"
+    "## Gone\n[EXTEND: demo-naming]\n\n- Gone rule\n\n"
+    "## Kept\n\n- Kept rule\n\n"
+    "## Later\n[ID: more-later]\n\n- Follow the content rules (`demo-content`)\n"
+    "- Follow the theme rules (`demo-theme`)\n\n"
     "## Extra\n[EXTEND: demo-content]\n\n- Extra content rule\n"
+)
+# Two levels of override where the first sits under a heading with no ID
+# of its own, inside its title's section, which the second overrides.
+SECTION_SKIN = (
+    "# Skin — Demo\n[ID: skin-demo]\n\n"
+    "## Theme\n[OVERRIDE: demo-theme]\n\n- Skin theme rule\n"
+)
+SECTION_BRAND = (
+    "# Brand — Demo\n[ID: brand-demo]\n\n"
+    "## Skin\n[OVERRIDE: skin-demo]\n\n- Brand theme rule\n"
 )
 SECTION_FILES = [
     ("templates/core/demo.md", SECTION_BASE),
     ("templates/backend/layer.md", SECTION_LAYER),
     ("templates/backend/mid.md", SECTION_MID),
     ("templates/fixture/top.md", SECTION_TOP),
+    ("templates/backend/skin.md", SECTION_SKIN),
+    ("templates/fixture/brand.md", SECTION_BRAND),
     ("templates/fixture/more.md", SECTION_MORE),
     ("templates/data/other.md", SECTION_TITLE_ONLY),
 ]
@@ -2615,11 +2631,13 @@ SECTION_TEMPLATES = {
     "templates/backend/layer.md": ("backend-layer", "Layer rules"),
     "templates/backend/mid.md": ("backend-mid", "Mid rules"),
     "templates/fixture/top.md": ("stack-top", "Top rules"),
+    "templates/backend/skin.md": ("backend-skin", "Skin rules"),
+    "templates/fixture/brand.md": ("stack-brand", "Brand rules"),
     "templates/fixture/more.md": ("stack-more", "More rules"),
     "templates/data/other.md": ("base-other", "Other rules"),
 }
 SECTION_KINDS = {"release": "Preparing a release"}
-SECTION_DECLINED = ["templates/core/demo.md#Optional"]
+SECTION_DECLINED = ["templates/core/demo.md#Optional", "templates/fixture/more.md#Gone"]
 SECTION_LEAD = "read them before the work starts"
 SECTION_PATH = re.compile(r"`(" + re.escape(SECTIONS_DIR) + r"/[^`]+)`")
 
@@ -2768,6 +2786,7 @@ def planted_section_findings() -> list[str]:
     second = emitted.get(f"{SECTIONS_DIR}/stack-more/second.md", "")
     later = emitted.get(f"{SECTIONS_DIR}/stack-more/later.md", "")
     fresh = emitted.get(f"{SECTIONS_DIR}/stack-more/fresh.md", "")
+    kept = emitted.get(f"{SECTIONS_DIR}/stack-more/kept.md", "")
     follow = emitted.get(f"{SECTIONS_DIR}/base-demo/follow.md", "")
     extra = emitted.get(f"{SECTIONS_DIR}/stack-more/extra.md", "")
     top = emitted.get(f"{SECTIONS_DIR}/stack-top/content.md", "")
@@ -2803,6 +2822,18 @@ def planted_section_findings() -> list[str]:
             "Target rule" in second,
         ),
         ("an extension ends at the next ID", "Target rule" not in later),
+        (
+            "a declined heading's relationship reaches its adopted siblings",
+            "Name by role" in kept
+            and "Kept rule" in base
+            and "Gone rule" not in everything,
+        ),
+        (
+            "an override under an untagged heading is replaced through its section",
+            "Brand theme rule" in later
+            and "Skin theme rule" not in everything
+            and "Base theme rule" not in everything,
+        ),
         (
             "a heading whose ID follows a blank line extends nothing",
             "Target rule" not in fresh and "Fresh rule" not in target,
