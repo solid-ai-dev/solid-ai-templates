@@ -93,7 +93,9 @@ The emitter splits the rules by when they are needed:
 
 An agent that cannot load a skill on demand gets everything in `AGENTS.md`
 instead. An agent with a file of its own, such as Claude Code's `CLAUDE.md`,
-gets a one-line file that points to `AGENTS.md`.
+gets a one-line file that points to `AGENTS.md`. Codex reads only the first
+32 KiB of `AGENTS.md` unless its limit is raised, as the README's quick setup
+shows.
 
 ## 4. A worked example
 

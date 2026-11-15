@@ -53,6 +53,13 @@ file, and your context file points to AGENTS.md.
 
 Read the agent's report and the files before you commit them.
 
+Codex reads only the first 32 KiB of `AGENTS.md` by default, and a file built
+from several roots is often larger. Raise the limit in `~/.codex/config.toml`:
+
+```toml
+project_doc_max_bytes = 131072
+```
+
 ## Documentation
 
 To use the templates in your project:
