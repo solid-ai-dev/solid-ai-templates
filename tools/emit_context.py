@@ -613,16 +613,19 @@ def _topics(adopted: Sequence[Adopted]) -> list[Topic]:
             if topic.path == one.path and len(topic.key) == 2:
                 topic.governed = title & gone
 
-    # An override that declares an ID of its own may be overridden in turn,
-    # and then none of its rows survive to hold the ID it replaced. The last
-    # surviving replacement stands for every ID down the chain, so a rule
-    # that names or extends the first still finds it.
+    # An override's section may be overridden in turn, and then none of its
+    # rows survive to hold the ID it replaced. The last surviving
+    # replacement stands for every ID down the chain, so a rule that names
+    # or extends the first still finds it. Where an override's own rules
+    # survive, they alone replace it: the section it sits in may be its
+    # template's title, whose other headings replace nothing.
+    chained = {old: new & gone for old, new in replaced.items() if new & gone}
     for topic in topics:
         stands = topic.ids | topic.overrides
         grown = True
         while grown:
             grown = False
-            for old, new in replaced.items():
+            for old, new in chained.items():
                 if old not in stands and new & stands:
                     stands.add(old)
                     grown = True
@@ -644,10 +647,8 @@ def _topics(adopted: Sequence[Adopted]) -> list[Topic]:
     # override, as a named ID does.
     index = _heading_index(adopted)
     for topic in topics:
-        for row in topic.rows:
-            if row["fence"] or row["heading"]:
-                continue
-            for text in _heading_refs(row["line"], index):
+        for prose in _prose(topic.rows):
+            for text in _heading_refs(prose, index):
                 for path, key, sections in _resolve_heading(index, text, topic.path):
                     target = by_key.get((path, key))
                     if target is not None and target is not topic:
@@ -689,6 +690,26 @@ def _heading_index(adopted: Iterable[Adopted]) -> dict[str, list[HeadingPlace]]:
     return index
 
 
+def _prose(rows: Iterable[Row]) -> list[str]:
+    """Each paragraph or bullet of the rows outside code, its wrapped lines
+    joined, so a heading named across a line break is read whole."""
+    chunks: list[list[str]] = []
+    open_chunk = False
+    key: object = None
+    for row in rows:
+        line = row["line"].strip()
+        prose = line and not (row["heading"] or row["tag"] or row["fence"])
+        here = tuple(row["path"][:2])
+        if not prose:
+            open_chunk = False
+            continue
+        if not open_chunk or BULLET_LINE.match(row["line"]) or here != key:
+            chunks.append([])
+        chunks[-1].append(line)
+        open_chunk, key = True, here
+    return [" ".join(chunk) for chunk in chunks]
+
+
 def _heading_refs(line: str, headings: Collection[str]) -> list[str]:
     """The headings a line of prose names, by their text."""
     anchors = {_anchor(text): text for text in headings}
@@ -727,13 +748,10 @@ def heading_references(
     resolved: list[str] = []
     unresolved: list[str] = []
     for one in adopted:
-        for _, run in one.runs:
-            for row in run:
-                if row["fence"] or row["heading"]:
-                    continue
-                for text in _heading_refs(row["line"], known):
-                    into = resolved if text in index else unresolved
-                    into.append(f"{one.path}: {text}")
+        for prose in _prose([row for _, run in one.runs for row in run]):
+            for text in _heading_refs(prose, known):
+                into = resolved if text in index else unresolved
+                into.append(f"{one.path}: {text}")
     return resolved, unresolved
 
 
