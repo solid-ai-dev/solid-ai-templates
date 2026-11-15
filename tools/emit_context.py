@@ -103,6 +103,14 @@ MAP_HEADER = ["| When the work first touches | Read first |", "| --- | --- |"]
 # A section ID named in a rule's prose, in backticks.
 NAMED_ID = re.compile(r"`([a-z0-9][a-z0-9-]*)`")
 
+# A section named in a rule's prose by its heading, in the forms the
+# templates write: the heading in double quotes, "see" and the heading, or a
+# link to the heading's anchor. Only a match of a heading's whole text, case
+# and all, counts, so ordinary prose names none.
+QUOTED_HEADING = re.compile(r'"([^"\n]+)"')
+SEE_HEADING = re.compile(r"\b[Ss]ee ([^\s\"(),.;:\]][^\"(),.;:\]]*)")
+LINKED_HEADING = re.compile(r"\]\(#([^)\s]+)\)")
+
 
 class EmitError(Exception):
     """An emission refused rather than written."""
@@ -487,8 +495,9 @@ class Topic:
 
     `order` is its place in the chain, `ids` the section IDs its rows sit
     in, `extends` and `overrides` the IDs its tags name, `names` the
-    adopted IDs its prose names, and `governed` the IDs of its template's
-    title that an override replaces.
+    adopted IDs its prose names, `governed` the IDs of its template's
+    title that an override replaces, and `refs` the topics its prose names
+    by heading.
     """
 
     order: int
@@ -500,6 +509,7 @@ class Topic:
     overrides: set[str] = field(default_factory=set)
     names: set[str] = field(default_factory=set)
     governed: set[str] = field(default_factory=set)
+    refs: list[Topic] = field(default_factory=list)
 
     def content(self) -> bool:
         return any(r["line"].strip() and not r["heading"] for r in self.rows)
@@ -628,7 +638,103 @@ def _topics(adopted: Sequence[Adopted]) -> list[Topic]:
         # own section's ID still needs the others; the topic itself is
         # already carried.
         topic.names &= known
+
+    # A heading its prose names is read from the unfiltered rows, so a
+    # named heading whose section an override replaces resolves to the
+    # override, as a named ID does.
+    index = _heading_index(adopted)
+    for topic in topics:
+        for row in topic.rows:
+            if row["fence"] or row["heading"]:
+                continue
+            for text in _heading_refs(row["line"], index):
+                for path, key, sections in _resolve_heading(index, text, topic.path):
+                    target = by_key.get((path, key))
+                    if target is not None and target is not topic:
+                        topic.refs.append(target)
+                    topic.names |= sections & gone
     return topics
+
+
+# Where a heading sits: its template's path, the key of the topic that holds
+# it, and the section IDs its rows sit in.
+HeadingPlace = tuple[str, Key, set[str]]
+
+
+def _anchor(text: str) -> str:
+    """A heading's anchor, as a Markdown renderer writes it."""
+    return re.sub(r"[^\w\- ]", "", text.lower()).replace(" ", "-")
+
+
+def _heading_index(adopted: Iterable[Adopted]) -> dict[str, list[HeadingPlace]]:
+    """Every heading of the chain by its text, read from every parsed row,
+    with each place it sits in, in chain order."""
+    index: dict[str, list[HeadingPlace]] = {}
+    for one in adopted:
+        for row in one.rows:
+            if not row["heading"]:
+                continue
+            path = row["path"]
+            sections = {
+                other["section"]
+                for other in one.rows
+                if other["path"][: len(path)] == path
+                and other["section"]
+                and not other["tag"]
+                and other["line"].strip()
+            }
+            index.setdefault(path[-1][1], []).append(
+                (one.path, tuple(path[:2]), sections)
+            )
+    return index
+
+
+def _heading_refs(line: str, headings: Collection[str]) -> list[str]:
+    """The headings a line of prose names, by their text."""
+    anchors = {_anchor(text): text for text in headings}
+    found = [m.group(1) for m in QUOTED_HEADING.finditer(line)]
+    found += [m.group(1).rstrip() for m in SEE_HEADING.finditer(line)]
+    found = [text for text in found if text in headings]
+    found += [
+        anchors[m.group(1)]
+        for m in LINKED_HEADING.finditer(line)
+        if m.group(1) in anchors
+    ]
+    return found
+
+
+def _resolve_heading(
+    index: Mapping[str, list[HeadingPlace]], text: str, path: str
+) -> list[HeadingPlace]:
+    """Where a named heading sits: in the naming template where it has one,
+    and otherwise wherever the chain has it."""
+    places = index.get(text, [])
+    return [place for place in places if place[0] == path] or places
+
+
+def heading_references(
+    files: Iterable[tuple[str, str]],
+    declined: Iterable[str] = (),
+    headings: Collection[str] = (),
+) -> tuple[list[str], list[str]]:
+    """Each adopted rule's reference to a heading, as `path: heading`, split
+    into those the chain resolves and those it does not. `headings` adds
+    texts that count as headings, such as every template's, so a reference
+    to one outside the chain is reported rather than missed."""
+    adopted = _adopt(files, set(declined))
+    index = _heading_index(adopted)
+    known = set(index) | set(headings)
+    resolved: list[str] = []
+    unresolved: list[str] = []
+    for one in adopted:
+        for _, run in one.runs:
+            for row in run:
+                if row["fence"] or row["heading"]:
+                    continue
+                for text in _heading_refs(row["line"], known):
+                    into = resolved if text in index else unresolved
+                    into.append(f"{one.path}: {text}")
+    return resolved, unresolved
 
 
 def _carried(topics: Sequence[Topic]) -> dict[int, list[Topic]]:
@@ -659,6 +765,7 @@ def _carried(topics: Sequence[Topic]) -> dict[int, list[Topic]]:
         # left to a reference is one the agent never reads.
         for i in sorted(topic.extends | topic.names):
             found += [(other, True) for other in holding.get(i, [])]
+        found += [(other, True) for other in topic.refs]
 
         # An extension applies on top of the section it extends, so it goes
         # with that section's rules. Rules carried only because they govern

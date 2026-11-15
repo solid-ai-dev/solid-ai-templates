@@ -14,6 +14,7 @@ from collections.abc import Collection, Iterable, Mapping, Sequence
 # so a fork's own key is read here exactly as it is resolved there.
 from emit_context import EmitError
 from emit_context import BUILT_LINE, MAP_HEADER, SECTIONS_DIR, section_rules
+from emit_context import heading_references
 from emit_context import EXTEND_TAG, ID_TAG, OVERRIDE_TAG
 
 # The emitter's line parser, which only reads a template; the reference
@@ -2575,7 +2576,8 @@ SECTION_BASE = (
     "## Shared\n[ID: demo-shared]\n\n- Shared first rule\n\n"
     "## Follow\n\n- Follow the rules of `demo-shared`\n\n"
     "## Parent\n[ID: demo-parent]\n\n- Parent rule\n\n"
-    "### Child\n[ID: demo-child]\n[EXTEND: demo-naming]\n\n- Child rule\n"
+    "### Child\n[ID: demo-child]\n[EXTEND: demo-naming]\n\n- Child rule\n\n"
+    "## Paths\n[ID: demo-paths]\n\n- Keep paths short (see Naming)\n"
 )
 SECTION_LAYER = (
     "# Layer — Demo\n[ID: layer-demo]\n\n"
@@ -2609,7 +2611,10 @@ SECTION_MORE = (
     "## Kept\n\n- Kept rule\n\n"
     "## Later\n[ID: more-later]\n\n- Follow the content rules (`demo-content`)\n"
     "- Follow the theme rules (`demo-theme`)\n\n"
-    "## Extra\n[EXTEND: demo-content]\n\n- Extra content rule\n"
+    "## Extra\n[EXTEND: demo-content]\n\n- Extra content rule\n\n"
+    "## Refs\n[ID: more-refs]\n\n"
+    '- Follow "Target" and see Shared; keep [the theme](#theme)\n'
+    "- See the naming rules too, in plain prose\n"
 )
 # Two levels of override where the first sits under a heading with no ID
 # of its own, inside its title's section, which the second overrides.
@@ -2765,6 +2770,30 @@ def relation_findings(
     titles: dict[str, set[str]] = {}
     span: dict[str, set[str]] = {}
     runs: list[_Run] = []
+    headed_of: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
+    places: dict[str, list[tuple[str, tuple[tuple[int, str], ...], set[str]]]] = {}
+    for path, text in files:
+        rows = parse_rows(text)
+        for row in rows:
+            if row["heading"]:
+                where = row["path"]
+                places.setdefault(where[-1][1], []).append(
+                    (
+                        path,
+                        tuple(where[:2]),
+                        {
+                            r["section"]
+                            for r in rows
+                            if r["path"][: len(where)] == where
+                            and r["section"]
+                            and not r["tag"]
+                            and r["line"].strip()
+                        },
+                    )
+                )
+    anchors = {
+        re.sub(r"[^\w\- ]", "", text.lower()).replace(" ", "-"): text for text in places
+    }
     for path, text in files:
         extends: set[str] = set()
         run: _Run | None = None
@@ -2810,6 +2839,20 @@ def relation_findings(
                 names_of.setdefault(key, set()).update(
                     re.findall(r"`([a-z0-9][a-z0-9-]*)`", row["line"])
                 )
+                said = re.findall(r'"([^"\n]+)"', row["line"]) + [
+                    found.rstrip()
+                    for found in re.findall(
+                        r"\b[Ss]ee ([^\s\"(),.;:\]][^\"(),.;:\]]*)", row["line"]
+                    )
+                ]
+                headed_of.setdefault(key, set()).update(
+                    {found for found in said if found in places}
+                    | {
+                        anchors[found]
+                        for found in re.findall(r"\]\(#([^)\s]+)\)", row["line"])
+                        if found in anchors
+                    }
+                )
             if row["section"]:
                 span.setdefault(row["section"], set()).add(row["line"])
             if run is not None:
@@ -2845,6 +2888,16 @@ def relation_findings(
                 owes[f"`{target}`, which it extends"] = survives(target, set())
             for target in sorted(names_of.get(key, ())):
                 owes[f"`{target}`, which it names"] = survives(target, set())
+            for named in sorted(headed_of.get(key, ())):
+                at = [p for p in places[named] if p[0] == path] or places[named]
+                needed: set[str] = set()
+                for in_file, place_key, secs in at:
+                    if (in_file, place_key) != key:
+                        needed |= topics.get((in_file, place_key), set())
+                    for sec in sorted(secs):
+                        if not span.get(sec):
+                            needed |= survives(sec, set())
+                owes[f'"{named}", which it names by heading'] = needed
             findings += [
                 f"{rel} carries {heading} and lacks {what}"
                 for what, needed in owes.items()
@@ -2928,6 +2981,8 @@ def planted_section_findings() -> list[str]:
     fresh = emitted.get(f"{SECTIONS_DIR}/stack-more/fresh.md", "")
     kept = emitted.get(f"{SECTIONS_DIR}/stack-more/kept.md", "")
     door = emitted.get(f"{SECTIONS_DIR}/backend-facade/door.md", "")
+    paths = emitted.get(f"{SECTIONS_DIR}/base-demo/paths.md", "")
+    refs = emitted.get(f"{SECTIONS_DIR}/stack-more/refs.md", "")
     follow = emitted.get(f"{SECTIONS_DIR}/base-demo/follow.md", "")
     extra = emitted.get(f"{SECTIONS_DIR}/stack-more/extra.md", "")
     top = emitted.get(f"{SECTIONS_DIR}/stack-top/content.md", "")
@@ -2979,6 +3034,19 @@ def planted_section_findings() -> list[str]:
             "a heading under an overridden title carries the title's replacement",
             "Front title rule." in door and "Facade title rule." not in everything,
         ),
+        (
+            "a section named by its heading in its own template is carried",
+            "Name by role" in paths,
+        ),
+        (
+            "a heading quoted, after see, or linked in another template is carried",
+            "Target rule" in refs and "Shared first rule" in refs,
+        ),
+        (
+            "a named heading an override replaces resolves to the override",
+            "Brand theme rule" in refs,
+        ),
+        ("plain prose names no heading", "Name by role" not in refs),
         (
             "a heading whose ID follows a blank line extends nothing",
             "Target rule" not in fresh and "Fresh rule" not in target,
@@ -3060,7 +3128,18 @@ def check_sys_28() -> CheckResult:
         parse_manifest(read(os.path.join(ROOT, "templates", "manifest.yaml")))
     )
     names = template_names(entries)
+
+    # A reference to a heading no template of the chain has is listed, not
+    # failed: the text names a section the chain does not carry.
+    headings = {
+        row["path"][-1][1]
+        for path in template_files()
+        for row in parse_rows(read_file(path))
+        if row["heading"]
+    }
     files = 0
+    resolved = 0
+    unresolved: set[str] = set()
     for root in roots:
         chain = [
             (path, read_file(path)) for path in resolve_chain(root, core_ids, entries)
@@ -3071,7 +3150,13 @@ def check_sys_28() -> CheckResult:
             f"  {root}: {finding}"
             for finding in section_findings(chain, kinds, emitted)
         ]
+        found, missed = heading_references(chain, (), headings)
+        resolved += len(found)
+        unresolved.update(f"{root}, {where}" for where in missed)
     seen.count("section files emitted", files)
+    seen.count("heading references resolved, over every root", resolved)
+    seen.count("heading references no chain template has", len(unresolved), 0)
+    listed = [f"  unresolved: {where}" for where in sorted(unresolved)]
 
     # Two runs of the real tool, under different hash seeds, over roots
     # whose chains extend and name sections in another template.
@@ -3100,7 +3185,7 @@ def check_sys_28() -> CheckResult:
                     f"  emit exited {proc.returncode}: "
                     f"{(proc.stdout + proc.stderr).strip()}"
                 )
-                return seen.failures() + failures, seen.notes()
+                return seen.failures() + failures, seen.notes() + listed
             trees.append(emitted_tree(out))
     finally:
         shutil.rmtree(work, ignore_errors=True)
@@ -3111,4 +3196,4 @@ def check_sys_28() -> CheckResult:
             | {k for k in set(trees[0]) & set(trees[1]) if trees[0][k] != trees[1][k]}
         )
         failures.append(f"  two runs differ in: {', '.join(differ)}")
-    return seen.failures() + failures, seen.notes()
+    return seen.failures() + failures, seen.notes() + listed

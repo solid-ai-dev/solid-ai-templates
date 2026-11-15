@@ -24,7 +24,7 @@ from the same chain (solid-ai-dev/solid-ai-benchmark#169).
   450 to 1,700 words each, and nothing hands an agent one topic of one
 - A topic's rules can depend on rules elsewhere: the rules under the
   template's title, a section it extends, a section its prose names by
-  ID, and an extension a later template adds on top of it
+  ID or by heading, and an extension a later template adds on top of it
 - Template paths and section IDs are frozen for 3.x, so a delivery that
   splits templates or anchors each heading changes the frozen surface
 
@@ -55,9 +55,14 @@ first touches it.
    title alone get a file only where no topic's file carries them
 2. **Carried rules** — a topic's file carries, in chain order, the rules
    under its template's title, each section it extends, each section its
-   prose names by ID in backticks, each extension of its own sections,
-   and what each of those carries in turn. Rules carried only because they
-   sit under a title do not bring that title's extensions (MUST)
+   prose names by ID in backticks or by heading, each extension of its own
+   sections, and what each of those carries in turn. A heading is named
+   by its exact text in double quotes, after "see", or as a link to its
+   anchor, and resolves in the naming template first, then anywhere in the
+   chain. Each relationship is read from the template as written and
+   resolved through the overrides to the rules that survive. Rules carried
+   only because they sit under a title do not bring that title's
+   extensions (MUST)
 3. **Same rule set** — the files together hold exactly the rules the
    inlined root file holds, and every copy of a rule matches its source
    (MUST)

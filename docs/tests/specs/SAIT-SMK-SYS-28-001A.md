@@ -62,7 +62,10 @@ on two roots written to a temporary directory that is removed afterwards)
    and an overridden subsection that carries an extension; decline an
    extension's first heading, and add a two-level override whose first
    level sits under a heading inside its title's section, and a title a
-   later template overrides while its headings keep IDs of their own
+   later template overrides while its headings keep IDs of their own; add
+   headings named in prose, quoted, after "see" and as a link, in the same
+   template and in another, one of them replaced by an override, and a
+   line of plain prose that names no heading
 2. Build every root `--roots` lists on its own, as section files and with
    skills inlined
 3. Cut every section file at its headings, keep one copy of each block,
@@ -94,11 +97,14 @@ on two roots written to a temporary directory that is removed afterwards)
    section its heading inherits
 5. Assert, for the planted chain and every root, that the lines held equal
    the adopted lines, that two copies of a block never differ, and that a
-   file naming a section in backticks carries its rules
+   file naming a section in backticks carries its rules, and that a
+   section named by its heading is carried, resolved through overrides,
+   while plain prose names none
 6. Assert, by a reading of the unfiltered chain apart from the emitter's,
    that every file carrying a heading holds what each of its relationships
    owes: the rules under its title, each section its section extends, and
-   each ID its prose names, each resolved to the rules that survive for
+   each ID and each heading its prose names, each resolved to the rules
+   that survive for
    it, its own or those of the override that replaces it, down the chain
 7. Assert the root file maps each section file once, maps no other, holds
    no rule line, and says not to read the files before the work starts
