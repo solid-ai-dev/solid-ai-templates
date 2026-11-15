@@ -1090,7 +1090,21 @@ nothing was compared.
    repository's release proposal: it names every step here and the result it produced,
    and the quality evidence that moved since the previous release — a benchmark round,
    the template-quality scores — or says that none was taken. The qualities and their
-   instruments are in `docs/architecture/10-quality-requirements.md`.
+   instruments are in `docs/architecture/10-quality-requirements.md`. It also reports
+   the share of the pull requests merged since the previous tag that carry
+   `changelog:none` (QG-04-03). Read them from the tag's commit range, as
+   `cut_changelog.py` does, since a date filter counts the previous release again:
+
+   ```bash
+   git log --format=%s vPREV..HEAD | grep -oE '\(#[0-9]+\)$' | tr -d '(#)' \
+     | while read -r n; do gh pr view "$n" --json labels \
+         --jq '[.labels[].name] | index("changelog:none") != null'; done \
+     | sort | uniq -c
+   ```
+
+   Pass condition: it prints a `true` count, the unnoticed pull requests, and a
+   `false` count, the rest. Run it on `main`, where each squash subject ends with its
+   pull request number.
 3. Tag and push. The tag is annotated and names step 2's changelog-cut commit, not
    `main`. The theme in the tag message is the milestone's, which is where this
    repository keeps it:
