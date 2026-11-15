@@ -19,19 +19,26 @@ and turned into a project's context file by a tool.
 
 ## 2. An analogy
 
-Think of a building code:
+Think of a restaurant franchise. Head office wants every branch's dish to
+taste the same, whoever cooks it. The templates want the same of every
+agent and every session.
 
-| In a building code | In the templates |
-| ------------------ | ---------------- |
-| The national code every building follows | The **core tier**: quality, Git, docs, testing and review rules for every project |
-| A chapter for one kind of building, such as a hospital | A **root** a project picks, such as `backend-api` |
-| The chapters that chapter relies on | The **chain**: the root and every template it depends on, in order |
-| A local amendment that adds or replaces a clause | A section marked to extend or override another, by its **ID** |
-| The city's own edition, kept in step with the national one | A **fork**, which adds its own stacks and merges upstream's updates |
-| The inspector's checklist | The shipped checks and **hooks** that test whether the code follows a rule |
+![The templates as a restaurant franchise. Head office's manual is upstream, the core and the layers. A regional franchise is a fork: it adds local dishes and keeps taking head-office updates. One restaurant is a project, using one dated edition of the manual, its pin. From that edition the cook, the coding agent, reads the rules at the station, AGENTS.md, every shift, and fetches a recipe card, a task skill, when that dish is ordered. The inspector, the hooks and checks, checks the dish](diagrams/primer-franchise.png)
 
-A project does not read the library. It picks its roots, and a tool hands
-it the rules those roots resolve to.
+| In a franchise | In the templates |
+| -------------- | ---------------- |
+| Head office's operations manual | Upstream, this repository |
+| The basics every branch follows, such as hygiene | The **core tier**: quality, Git, docs, testing and review |
+| The menu sections a restaurant offers | The **roots** a project picks, such as `backend-api` |
+| A regional franchise that adds local dishes and keeps taking head-office updates | A **fork** |
+| A local recipe that adds to or replaces a head-office one | A section that extends or overrides another, by its **ID** |
+| The dated edition of the manual one restaurant uses | The project's **pin**, a released tag |
+| The rules posted at the station, read every shift | `AGENTS.md`, read on every turn |
+| The recipe card fetched when a dish is ordered | A **task skill**, loaded when its task starts |
+| The inspector who checks the dishes | The shipped checks and **hooks** |
+
+A cook does not read the whole manual before each shift. The restaurant
+picks its menu, and a tool hands the cook the rules that menu needs.
 
 ## 3. From roots to files
 
