@@ -355,7 +355,9 @@ py tests/run.py smoke              # structural checks — seconds
 py tests/run.py conformance        # the templates' own checks, run here
 py tests/run.py conformance --list # dispositions only, run nothing
 py tests/run.py fork_sync         # a fork that only appends merges HEAD
-py -m pyflakes tools tests        # the tooling's own lint
+py -m mypy                         # strict, as pyproject.toml sets it
+git ls-files -- '*.py' | xargs py -m pyflakes   # tracked files only
+py -m ruff format --check -q tools tests hooks  # unformatted files
 npx markdownlint-cli2 --config .github/linters/.markdownlint-cli2.jsonc
 pre-commit run --all-files         # whitespace, final newline, YAML
 ```
