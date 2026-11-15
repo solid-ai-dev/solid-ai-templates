@@ -8,10 +8,14 @@ unchanged, so the same chain and the same declined list always give
 byte-identical files. The project's facts are slots the agent or the
 interview fills, and a regeneration keeps what was filled.
 
+With `--sections` it builds one file per topic instead, each a heading of
+a template with every rule it needs, and a root file that maps each topic
+to its file, to be read when the work first touches it.
+
 Run it through the resolver:
 
     py tools/resolve_chain.py --emit <out-dir> <root> [<root> ...]
-        [--declined <file>] [--inline-skills] [--mirror <dir>]
+        [--declined <file>] [--inline-skills | --sections] [--mirror <dir>]
 """
 
 from __future__ import annotations
@@ -21,7 +25,8 @@ import io
 import os
 import re
 from collections.abc import Collection, Iterable, Mapping, Sequence
-from typing import TypedDict, cast
+from dataclasses import dataclass, field
+from typing import NamedTuple, TypedDict, cast
 
 from resolve_chain import (
     FENCE_LINE,
@@ -32,6 +37,11 @@ from resolve_chain import (
 )
 
 SKILLS_DIR = ".agents/skills"
+
+# Where the section files go: one folder per template, named by its manifest
+# ID, so no emitted path names a template file.
+SECTIONS_DIR = ".agents/sections"
+
 ROOT_FILE = "AGENTS.md"
 RULES_HEADING = "## Rules"
 
@@ -50,6 +60,7 @@ BUILT_LINE = (
 BULLET_LINE = re.compile(r"^(\s*)(?:[-*+]|\d+\.)\s")
 ID_TAG = re.compile(r"^\[ID:\s*([^\]]+?)\s*\]$")
 OVERRIDE_TAG = re.compile(r"^\[OVERRIDE:\s*([^\]]+?)\s*\]$")
+EXTEND_TAG = re.compile(r"^\[EXTEND:\s*([^\]]+?)\s*\]$")
 
 # The facts no template knows: the agent or the interview replaces each
 # slot, and nothing else in the file.
@@ -71,6 +82,26 @@ FACTS = """# {{project-name}}
 - How work is tracked: {{tracker}}
 - What a release is: {{release}}
 """
+
+
+# The facts' model line, which names how the rules are delivered.
+MODEL_LINE = "- Model: root and skills"
+SECTIONS_MODEL_LINE = "- Model: root and sections"
+
+# What the root file says of the section files. The map is read on demand:
+# an agent told to read every file at the start loads the whole chain, and
+# the section files would save nothing.
+SECTIONS_LEAD = [
+    "The adopted rules are in the section files below, one topic each. Do not",
+    "read them before the work starts. The first time the work touches a",
+    "section's topic, read its file; then apply every rule it holds.",
+]
+
+# The map's header rows, one table per template.
+MAP_HEADER = ["| When the work first touches | Read first |", "| --- | --- |"]
+
+# A section ID named in a rule's prose, in backticks.
+NAMED_ID = re.compile(r"`([a-z0-9][a-z0-9-]*)`")
 
 
 class EmitError(Exception):
@@ -299,23 +330,35 @@ def _tidy(lines: Sequence[str]) -> list[str]:
     return kept
 
 
-def _place(
+class Adopted(NamedTuple):
+    """One file of the chain as the project adopts it: its `path`, its
+    parsed `rows`, tag lines kept and declined ones dropped, and its `runs`,
+    each a load with the rows it keeps, an overridden section dropped and a
+    checked run cut to its command."""
+
+    path: str
+    rows: list[Row]
+    runs: list[tuple[str | None, list[Row]]]
+
+
+def _adopt(
     files: Iterable[tuple[str, str]], declined: Collection[str]
-) -> tuple[list[str], dict[str, list[str]]]:
-    """Split the chain into the root file's rows and each kind's rows."""
+) -> list[Adopted]:
+    """Each file of the chain as the project adopts it, in chain order."""
+    files = list(files)
     parsed = [
         [row for row in _blocks(text) if not _declined(row, path, declined)]
         for path, text in files
     ]
     overridden = _overridden(parsed)
-    root: list[str] = []
-    skills: dict[str, list[str]] = {}
-    for adopted in parsed:
+    adopted: list[Adopted] = []
+    for (path, _), parsed_rows in zip(files, parsed):
         rows = [
             row
-            for row in adopted
+            for row in parsed_rows
             if not row["tag"] and row["section"] not in overridden
         ]
+        runs: list[tuple[str | None, list[Row]]] = []
         i = 0
         while i < len(rows):
             load = rows[i]["load"]
@@ -325,6 +368,20 @@ def _place(
             run = rows[i:j]
             if load == LOAD_CHECK:
                 run = _checked(run)
+            runs.append((load, run))
+            i = j
+        adopted.append(Adopted(path, parsed_rows, runs))
+    return adopted
+
+
+def _place(
+    files: Iterable[tuple[str, str]], declined: Collection[str]
+) -> tuple[list[str], dict[str, list[str]]]:
+    """Split the chain into the root file's rows and each kind's rows."""
+    root: list[str] = []
+    skills: dict[str, list[str]] = {}
+    for adopted in _adopt(files, declined):
+        for load, run in adopted.runs:
             if load is None or load == LOAD_CHECK:
                 # A template's title sits under the root file's `## Rules`.
                 root += [
@@ -340,7 +397,6 @@ def _place(
                     else r["line"]
                     for r in run
                 )
-            i = j
         root.append("")
     return root, skills
 
@@ -415,6 +471,205 @@ def build(
     return out
 
 
+# A topic's place in its template: the headings down to its own, the
+# template's title alone for the rules under the title.
+Key = tuple[tuple[int, str], ...]
+
+
+@dataclass
+class Topic:
+    """One heading under a template's title, with its subheadings, or the
+    rules under the title itself: the unit a section file is built around.
+
+    `order` is its place in the chain, `ids` the section IDs its rows sit
+    in, `extends` and `overrides` the IDs its tags name, and `names` the
+    adopted IDs its prose names.
+    """
+
+    order: int
+    path: str
+    key: Key
+    rows: list[Row] = field(default_factory=list)
+    ids: set[str] = field(default_factory=set)
+    extends: set[str] = field(default_factory=set)
+    overrides: set[str] = field(default_factory=set)
+    names: set[str] = field(default_factory=set)
+
+    def content(self) -> bool:
+        return any(r["line"].strip() and not r["heading"] for r in self.rows)
+
+
+def _topics(adopted: Iterable[Adopted]) -> list[Topic]:
+    """The adopted chain's topics, in chain order. One that holds no rule
+    gets no file, and a title with none still heads the files below it."""
+    topics: list[Topic] = []
+    by_key: dict[tuple[str, Key], Topic] = {}
+    for one in adopted:
+        for _, run in one.runs:
+            for row in run:
+                at = (one.path, tuple(row["path"][:2]))
+                if at not in by_key:
+                    by_key[at] = Topic(len(topics), one.path, at[1])
+                    topics.append(by_key[at])
+                by_key[at].rows.append(row)
+
+                # A topic sits in the sections its rules do. The blank line
+                # between a heading and its `[ID:]` still belongs to the
+                # section before, and holds no rule of it.
+                if row["section"] and row["line"].strip() and not row["heading"]:
+                    by_key[at].ids.add(row["section"])
+        for row in one.rows:
+            topic = by_key.get((one.path, tuple(row["path"][:2])))
+            if not row["tag"] or topic is None:
+                continue
+            for tag, into in (
+                (EXTEND_TAG, topic.extends),
+                (OVERRIDE_TAG, topic.overrides),
+            ):
+                match = tag.match(row["line"].strip())
+                if match:
+                    into.add(match.group(1))
+    known = {i for topic in topics if topic.content() for i in topic.ids}
+    known |= {i for topic in topics for i in topic.overrides}
+    for topic in topics:
+        for row in topic.rows:
+            if not row["fence"]:
+                topic.names.update(NAMED_ID.findall(row["line"]))
+        topic.names = (topic.names & known) - topic.ids
+    return topics
+
+
+def _carried(topics: Sequence[Topic]) -> dict[int, list[Topic]]:
+    """Each topic's order mapped to what its section file carries, in chain
+    order: the topic, the rules under its template's title, the sections it
+    extends or names, the extensions of its own, and theirs in turn."""
+    holding: dict[str, list[Topic]] = {}
+    extending: dict[str, list[Topic]] = {}
+    for topic in topics:
+        for i in topic.ids | topic.overrides:
+            holding.setdefault(i, []).append(topic)
+        for i in topic.extends:
+            extending.setdefault(i, []).append(topic)
+
+    def needs(topic: Topic, whole: bool) -> list[tuple[Topic, bool]]:
+        # The rules under a title govern every heading beneath it.
+        found = [
+            (other, False)
+            for other in topics
+            if other.path == topic.path
+            and len(other.key) < len(topic.key)
+            and topic.key[: len(other.key)] == other.key
+        ]
+
+        # A section is read with the one it extends or names, since a rule
+        # left to a reference is one the agent never reads.
+        for i in sorted(topic.extends | topic.names):
+            found += [(other, True) for other in holding.get(i, [])]
+
+        # An extension applies on top of the section it extends, so it goes
+        # with that section's rules. Rules carried only because they govern
+        # a heading do not bring theirs: a title's ID runs to the next ID,
+        # and its extensions extend that run, not every heading below it.
+        if whole:
+            for i in sorted(topic.ids | topic.overrides):
+                found += [(other, True) for other in extending.get(i, [])]
+        return found
+
+    carried: dict[int, list[Topic]] = {}
+    for topic in topics:
+        seen = {topic.order: topic}
+        done: set[tuple[int, bool]] = set()
+        todo = [(topic, True)]
+        while todo:
+            current, whole = todo.pop()
+            if (current.order, whole) in done:
+                continue
+            done.add((current.order, whole))
+            for other, other_whole in needs(current, whole):
+                seen[other.order] = other
+                todo.append((other, other_whole))
+        carried[topic.order] = [seen[order] for order in sorted(seen)]
+    return carried
+
+
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "section"
+
+
+def build_sections(
+    files: Iterable[tuple[str, str]],
+    templates: Mapping[str, tuple[str, str]],
+    declined: Iterable[str] = (),
+) -> dict[str, str]:
+    """The root file and one section file per topic, as {relative path:
+    text}.
+
+    `files` is the chain as (path, text) pairs in resolution order,
+    `templates` maps each path to its manifest ID and description, and
+    `declined` holds the `path#Heading` entries the project does not adopt.
+    Every adopted rule is in a section file and none in the root file, which
+    maps each topic to its file.
+    """
+    topics = _topics(_adopt(files, set(declined)))
+    carried = _carried(topics)
+    headings = [topic for topic in topics if len(topic.key) == 2 and topic.content()]
+    governing = {
+        other.order
+        for topic in headings
+        for other in carried[topic.order]
+        if other.path == topic.path and len(other.key) < len(topic.key)
+    }
+
+    # A heading that holds a rule gets a file of its own. The rules under a
+    # title get one only where no such heading's file carries them.
+    owners = [
+        topic
+        for topic in topics
+        if topic.content() and (len(topic.key) == 2 or topic.order not in governing)
+    ]
+    out: dict[str, str] = {}
+    groups: dict[str, list[str]] = {}
+    for topic in owners:
+        if topic.path not in templates:
+            raise EmitError(f"{topic.path} has no manifest entry to name it by")
+        folder = f"{SECTIONS_DIR}/{templates[topic.path][0]}"
+        name = topic.key[-1][1] if topic.key else templates[topic.path][0]
+        rel = f"{folder}/{_slug(name)}.md"
+        suffix = 2
+        while rel in out:
+            rel = f"{folder}/{_slug(name)}-{suffix}.md"
+            suffix += 1
+        lines: list[str] = []
+        for other in carried[topic.order]:
+            lines += [r["line"] for r in other.rows] + [""]
+        out[rel] = "\n".join(_tidy(lines)) + "\n"
+        topic_cell = name.replace("|", "\\|")
+        groups.setdefault(topic.path, []).append(f"| {topic_cell} | `{rel}` |")
+
+    table: list[str] = []
+    for path, rows in groups.items():
+        first = next(t for t in topics if t.path == path)
+        title = first.key[0][1] if first.key else templates[path][0]
+        table += [f"### {title}", "", templates[path][1], ""] + MAP_HEADER + rows + [""]
+    head = [FACTS.replace(MODEL_LINE, SECTIONS_MODEL_LINE).rstrip("\n"), ""]
+    rules = [RULES_HEADING, "", BUILT_LINE, ""] + SECTIONS_LEAD + [""] + table
+    return {ROOT_FILE: "\n".join(_tidy(head + rules)) + "\n", **out}
+
+
+def section_rules(
+    files: Iterable[tuple[str, str]], declined: Iterable[str] = ()
+) -> dict[str, list[str]]:
+    """Each adopted section ID with its rule lines, the non-blank lines that
+    are not headings, in chain order."""
+    rules: dict[str, list[str]] = {}
+    for adopted in _adopt(files, set(declined)):
+        for _, run in adopted.runs:
+            for row in run:
+                if row["section"] and row["line"].strip() and not row["heading"]:
+                    rules.setdefault(row["section"], []).append(row["line"])
+    return rules
+
+
 def read_declined(path: str | None) -> list[str]:
     """The `path#Heading` entries of a declined list, one per line."""
     if not path:
@@ -466,6 +721,13 @@ def _keep_facts(previous: str, emitted: str, recorded: Collection[str]) -> str:
         )
     facts = ("\n" + previous).split(marker, 1)[0][1:]
     rules = ("\n" + emitted).split(marker, 1)[1]
+
+    # The model line is the emitter's, not a fact: a project that moves to
+    # section files, or back, gets the line that names what it now holds.
+    model, other = MODEL_LINE, SECTIONS_MODEL_LINE
+    if "\n" + other + "\n" in "\n" + emitted.split(marker, 1)[0]:
+        model, other = other, model
+    facts = ("\n" + facts).replace("\n" + other + "\n", "\n" + model + "\n")[1:]
     return facts + marker[1:] + rules
 
 

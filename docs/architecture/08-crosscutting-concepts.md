@@ -160,6 +160,7 @@ These elements are not frozen.
 | The wording inside a section | Prose is free while the section keeps its ID | ADR-051 |
 | The declaration block | A target with no producer and no reader | ADR-053 |
 | The fixture, `stack-fixture` and `platform-fixture` | Test input; no listing offers it and no project resolves it | - |
+| The emitter's `--sections` flag and the `.agents/sections/` layout it writes | Opt-in and not yet measured; a benchmark round decides whether it is a delivery | ADR-060 |
 | The helpers `bind()` hands `fork_checks.py` | Every name in the smoke modules; a change to one is listed in the changelog | - |
 
 ## 8.8 Deprecation

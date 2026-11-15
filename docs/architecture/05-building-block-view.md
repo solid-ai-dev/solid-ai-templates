@@ -89,6 +89,7 @@ misses it and reports nothing, because nothing declares what is absent.
 | `--emit <dir> <root>...` | Roots and the declined list | The root file and one skill per kind of task | FR-06-03, FR-06-04, FR-06-06 |
 | `--inline-skills` | As `--emit` | One root file with the skills inlined, for an agent without skills | ADR-058 |
 | `--mirror <dir>` | As `--emit` | A copy of the skills where an agent reads only its own folder | ADR-058 |
+| `--sections` | As `--emit` | A root file that maps each topic to its file, and one file per topic under `.agents/sections/`, read on demand | FR-06-08, FR-06-09 |
 
 ## 5.5 Level 2: self-checks
 

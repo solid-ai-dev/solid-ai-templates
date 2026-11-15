@@ -13,9 +13,13 @@ from collections.abc import Collection, Iterable, Mapping, Sequence
 # One definition of what a manifest section is, shared with the resolver,
 # so a fork's own key is read here exactly as it is resolved there.
 from emit_context import EmitError
+from emit_context import BUILT_LINE, MAP_HEADER, SECTIONS_DIR, section_rules
 from emit_context import build as emit_build
+from emit_context import build_sections as emit_sections
 from emit_context import write as emit_write
 from resolve_chain import (
+    FENCE_LINE,
+    HEADING_LINE as LEVEL_HEADING,
     LOAD_CHECK,
     Entry,
     Manifest,
@@ -29,6 +33,7 @@ from resolve_chain import (
     read_file,
     resolve_chain,
     task_kinds,
+    template_names,
 )
 
 from testkit import ROOT, template_files
@@ -2413,6 +2418,10 @@ PATH_TEMPLATE = (
 )
 PATH_STACK = "# Stack — Demo\n\n## Naming\n[OVERRIDE: demo-naming]\n\n- Name by role\n"
 PATH_KINDS = {"release": "Preparing a release"}
+PATH_TEMPLATES = {
+    "templates/core/demo.md": ("base-demo", "Demo rules"),
+    "templates/fixture/stack.md": ("stack-demo", "Demo stack"),
+}
 PATH_CHAINS = {
     "demo": [("templates/core/demo.md", PATH_TEMPLATE)],
     "stack": [
@@ -2456,17 +2465,22 @@ def root_path_findings(
     chains: Mapping[str, Sequence[tuple[str, str]]],
     kinds: Mapping[str, str],
     paths: Collection[str],
+    templates: Mapping[str, tuple[str, str]],
     emitted_counts: Counter[str] | None = None,
 ) -> list[str]:
     """Each root's emitted lines that name one of `paths`, the root built
-    alone with skills and inlined. `chains` maps a root to its (path, text)
-    pairs in resolution order; `emitted_counts`, a Counter, takes the files
-    emitted per mode."""
+    alone with skills, inlined and as section files. `chains` maps a root to
+    its (path, text) pairs in resolution order, `templates` each path to its
+    manifest ID and description; `emitted_counts`, a Counter, takes the
+    files emitted per mode."""
     findings: list[str] = []
     for root in sorted(chains):
-        for inline in (False, True):
-            mode = "inline" if inline else "skills"
-            emitted = emit_build(chains[root], kinds, inline_skills=inline)
+        for mode in ("skills", "inline", "sections"):
+            emitted = (
+                emit_sections(chains[root], templates)
+                if mode == "sections"
+                else emit_build(chains[root], kinds, inline_skills=mode == "inline")
+            )
             if emitted_counts is not None:
                 emitted_counts[mode] += len(emitted)
             findings.extend(
@@ -2480,21 +2494,23 @@ def check_sys_27() -> CheckResult:
     seen = Inspected()
     failures: list[str] = []
     planted = ["templates/core/demo.md"]
-    alone = root_path_findings({"demo": PATH_CHAINS["demo"]}, PATH_KINDS, planted)
-    if len(alone) != 4:
+    alone = root_path_findings(
+        {"demo": PATH_CHAINS["demo"]}, PATH_KINDS, planted, PATH_TEMPLATES
+    )
+    if len(alone) != 6:
         failures.append(
-            f"  planted: {len(alone)} of the 4 named paths found, 2 per mode"
+            f"  planted: {len(alone)} of the 6 named paths found, 2 per mode"
         )
     seen.count("planted paths found", len(alone))
 
     # Built together, the stack's override drops the Naming line and only
     # the Review line is left; built per root, the demo root still has both.
     together = path_findings(emit_build(PATH_CHAINS["stack"], PATH_KINDS), planted)
-    split = root_path_findings(PATH_CHAINS, PATH_KINDS, planted)
-    if len(together) != 1 or len(split) != 6:
+    split = root_path_findings(PATH_CHAINS, PATH_KINDS, planted, PATH_TEMPLATES)
+    if len(together) != 1 or len(split) != 9:
         failures.append(
             f"  planted override: {len(together)} found built "
-            f"together, owed 1; {len(split)} per root, owed 6"
+            f"together, owed 1; {len(split)} per root, owed 9"
         )
 
     core_ids, entries, _ = load_manifest()
@@ -2516,8 +2532,327 @@ def check_sys_27() -> CheckResult:
     )
     emitted: Counter[str] = Counter()
     failures.extend(
-        f"  {finding}" for finding in root_path_findings(chains, kinds, paths, emitted)
+        f"  {finding}"
+        for finding in root_path_findings(
+            chains, kinds, paths, template_names(entries), emitted
+        )
     )
-    for mode in ("skills", "inline"):
+    for mode in ("skills", "inline", "sections"):
         seen.count(f"files emitted, {mode}", emitted[mode])
+    return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-28 -- section files hold every adopted rule, and the map reads them
+# on demand
+# ---------------------------------------------------------------------------
+
+# With `--sections` the emitter builds one file per topic and a root file
+# that maps each topic to its file. The files must hold exactly the rules
+# the other modes deliver: a rule no file holds is one the agent never
+# reads, and a copy that differs from its source contradicts it. A section
+# that extends or names another carries it, since a rule left to a
+# reference is one the agent never reads, and the root file holds only the
+# map, read on demand. Planted templates exercise each of these, every root
+# is built alone, and two runs under different hash seeds agree.
+
+SECTION_BASE = (
+    "# Base — Demo\n[ID: base-demo]\n\nTitle rule for every heading.\n\n"
+    "## Naming\n[ID: demo-naming]\n\n- Name by role\n\n"
+    "## Releases\n[LOAD: release]\n\n- Tag the release\n\n"
+    "## Lint\n[LOAD: check]\n\n- Rule the check enforces\n\n- Run the linter:\n\n"
+    "```bash\nruff check .\n```\n\n"
+    "## Optional\n\n- Declined rule\n\n"
+    "## Render\n[ID: demo-render]\n\n- Overridden rule\n"
+)
+SECTION_LAYER = (
+    "# Layer — Demo\n[ID: layer-demo]\n\n"
+    "The layer adds to the naming rules (`demo-naming`).\n\n"
+    "## Naming\n[EXTEND: demo-naming]\n\n- Prefix a layer name\n\n"
+    "## Render\n[OVERRIDE: demo-render]\n\n- Overriding rule\n\n"
+    "## Paging\n\n- Page every list\n"
+)
+SECTION_TITLE_ONLY = "# Other — Demo\n[ID: other-demo]\n\n- Rule under a bare title\n"
+SECTION_FILES = [
+    ("templates/core/demo.md", SECTION_BASE),
+    ("templates/backend/layer.md", SECTION_LAYER),
+    ("templates/data/other.md", SECTION_TITLE_ONLY),
+]
+SECTION_TEMPLATES = {
+    "templates/core/demo.md": ("base-demo", "Demo rules"),
+    "templates/backend/layer.md": ("backend-layer", "Layer rules"),
+    "templates/data/other.md": ("base-other", "Other rules"),
+}
+SECTION_KINDS = {"release": "Preparing a release"}
+SECTION_DECLINED = ["templates/core/demo.md#Optional"]
+SECTION_LEAD = "read them before the work starts"
+SECTION_PATH = re.compile(r"`(" + re.escape(SECTIONS_DIR) + r"/[^`]+)`")
+
+# The inline root file's own lines, which carry no rule.
+INLINE_OWN = (
+    BUILT_LINE,
+    "The adopted rules that apply on every task.",
+    "This agent loads no skills, so each task's procedures are here.",
+)
+
+
+def unfenced(text: str) -> list[str]:
+    """A Markdown text's lines outside its fences."""
+    kept: list[str] = []
+    fence: str | None = None
+    for line in text.splitlines():
+        run = FENCE_LINE.match(line)
+        if run:
+            mark = run.group(1)
+            if fence is None:
+                fence = mark
+            elif mark[0] == fence[0] and len(mark) >= len(fence):
+                fence = None
+            continue
+        if fence is None:
+            kept.append(line)
+    return kept
+
+
+def heading_blocks(text: str) -> list[tuple[tuple[str, ...], tuple[str, ...]]]:
+    """A Markdown text cut at each heading outside a fence: each block's
+    heading path and its non-blank lines that are not headings."""
+    blocks: list[tuple[tuple[str, ...], list[str]]] = [((), [])]
+    stack: list[tuple[int, str]] = []
+    fence: str | None = None
+    for line in text.splitlines():
+        run = FENCE_LINE.match(line)
+        heading = None if (fence or run) else LEVEL_HEADING.match(line)
+        if run:
+            mark = run.group(1)
+            if fence is None:
+                fence = mark
+            elif mark[0] == fence[0] and len(mark) >= len(fence):
+                fence = None
+        if heading:
+            level = len(heading.group(1))
+            while stack and stack[-1][0] >= level:
+                stack.pop()
+            stack.append((level, line))
+            blocks.append((tuple(h for _, h in stack), []))
+        elif line.strip():
+            blocks[-1][1].append(line)
+    return [(path, tuple(body)) for path, body in blocks]
+
+
+def adopted_lines(
+    files: Sequence[tuple[str, str]],
+    kinds: Mapping[str, str],
+    declined: Iterable[str] = (),
+) -> Counter[str]:
+    """Every rule line the inlined root file delivers, counted: the adopted
+    rule set the other modes carry."""
+    root = emit_build(files, kinds, declined, inline_skills=True)["AGENTS.md"]
+    rules = root.split("\n## Rules\n", 1)[1]
+    lines: Counter[str] = Counter()
+    for path, body in heading_blocks(rules):
+        lines.update(body)
+        # A procedure's heading names its kind, and its first line is the
+        # kind's description, which the emitter writes and no template does.
+        kind = path[-1][len("### ") :] if path and path[-1].startswith("### ") else ""
+        if len(path) == 2 and path[0] == "## Procedures" and kind in kinds:
+            lines[kinds[kind]] -= 1
+    for own in INLINE_OWN:
+        lines[own] -= 1 if lines[own] else 0
+    return +lines
+
+
+def section_findings(
+    files: Sequence[tuple[str, str]],
+    kinds: Mapping[str, str],
+    emitted: Mapping[str, str],
+    declined: Iterable[str] = (),
+) -> list[str]:
+    """What the section files emitted from `files` get wrong: a rule no file
+    holds, a line no adopted rule is, two copies of one block that differ, a
+    named section a file does not carry, and a root file that holds a rule
+    or maps a file other than once."""
+    declined = list(declined)
+    findings: list[str] = []
+    owed = adopted_lines(files, kinds, declined)
+    sections = {rel: text for rel, text in emitted.items() if rel != "AGENTS.md"}
+    seen: dict[tuple[str, ...], tuple[str, ...]] = {}
+    held: Counter[str] = Counter()
+    for rel in sorted(sections):
+        for path, body in heading_blocks(sections[rel]):
+            if path in seen and seen[path] != body:
+                findings.append(f"{rel}: its copy of {' > '.join(path)} differs")
+            elif path not in seen:
+                seen[path] = body
+                held.update(body)
+    findings += [f"no section file holds: {line}" for line in owed - held]
+    findings += [f"no adopted rule is: {line}" for line in held - owed]
+
+    rules = section_rules(files, declined)
+    for rel in sorted(sections):
+        lines = set(sections[rel].splitlines())
+        prose = "\n".join(unfenced(sections[rel]))
+        for name in sorted(set(re.findall(r"`([a-z0-9][a-z0-9-]*)`", prose))):
+            if name in rules and not set(rules[name]) <= lines:
+                findings.append(f"{rel} names `{name}` and does not carry it")
+
+    root = emitted.get("AGENTS.md", "")
+    mapped = Counter(SECTION_PATH.findall(root))
+    findings += [
+        f"the root file maps {rel} {mapped[rel]} times, owed once"
+        for rel in sorted(sections)
+        if mapped[rel] != 1
+    ]
+    findings += [
+        f"the root file maps {rel}, which is not emitted"
+        for rel in sorted(set(mapped) - set(sections))
+    ]
+    # The map's own header rows are the emitter's, and a template's table
+    # may share them.
+    in_root = [
+        line
+        for line in root.split("\n## Rules\n", 1)[-1].splitlines()
+        if owed[line] and line not in MAP_HEADER
+    ]
+    findings += [f"the root file holds a rule: {line}" for line in in_root]
+    if SECTION_LEAD not in " ".join(root.split()):
+        findings.append("the root file does not say to read a file on demand")
+    return findings
+
+
+def planted_section_findings() -> list[str]:
+    """What the planted templates' section files get wrong, beyond the
+    general findings: where each rule lands and what each file carries."""
+    emitted = emit_sections(SECTION_FILES, SECTION_TEMPLATES, SECTION_DECLINED)
+    root = emitted.get("AGENTS.md", "")
+    base = emitted.get(f"{SECTIONS_DIR}/base-demo/naming.md", "")
+    layer = emitted.get(f"{SECTIONS_DIR}/backend-layer/naming.md", "")
+    paging = emitted.get(f"{SECTIONS_DIR}/backend-layer/paging.md", "")
+    other = emitted.get(f"{SECTIONS_DIR}/base-other/other-demo.md", "")
+    everything = "\n".join(emitted.values())
+    owed = [
+        ("the overridden rule is replaced", "Overridden rule" not in everything),
+        ("the override is delivered", "Overriding rule" in everything),
+        ("the declined section is out", "Declined rule" not in everything),
+        ("the checked rule is left to its check", "check enforces" not in everything),
+        ("the check's command is kept", "ruff check ." in everything),
+        ("the procedure is out of the root file", "Tag the release" not in root),
+        ("the procedure has a file", "Tag the release" in everything),
+        (
+            "a section carries its extension, after it",
+            0 <= base.find("Name by role") < base.find("Prefix a layer name"),
+        ),
+        (
+            "an extension carries the section it extends, before it",
+            0 <= layer.find("Name by role") < layer.find("Prefix a layer name"),
+        ),
+        ("a section carries the rules under its title", "Title rule" in base),
+        ("a section carries what its title names", "Name by role" in paging),
+        ("a bare title gets a file", "Rule under a bare title" in other),
+        ("the map names a template's topic", "| Paging |" in root),
+        ("the map gives a template's description", "Layer rules" in root),
+        ("the model line names section files", "Model: root and sections" in root),
+    ]
+    findings = [label for label, ok in owed if not ok]
+    findings += section_findings(
+        SECTION_FILES, SECTION_KINDS, emitted, SECTION_DECLINED
+    )
+
+    # Each finding the check owes, planted: a file dropped, a copy edited,
+    # and a carried section left out.
+    controls = {
+        "a dropped file": {
+            rel: text for rel, text in emitted.items() if not rel.endswith("/paging.md")
+        },
+        "an edited copy": dict(
+            emitted,
+            **{
+                f"{SECTIONS_DIR}/backend-layer/paging.md": paging.replace(
+                    "Title rule", "Edited rule"
+                )
+            },
+        ),
+        "a reference left alone": dict(
+            emitted,
+            **{
+                f"{SECTIONS_DIR}/backend-layer/paging.md": paging.replace(
+                    "- Name by role\n", ""
+                )
+            },
+        ),
+    }
+    for label, mutated in controls.items():
+        if not section_findings(
+            SECTION_FILES, SECTION_KINDS, mutated, SECTION_DECLINED
+        ):
+            findings.append(f"{label} goes unreported")
+    return findings
+
+
+def check_sys_28() -> CheckResult:
+    seen = Inspected()
+    failures = [f"  planted: {label}" for label in planted_section_findings()]
+    seen.count("planted section files", 1)
+
+    core_ids, entries, _ = load_manifest()
+    _, offered, catalogue = load_catalogue()
+    roots = [stack["id"] for stack in catalogue] + list(
+        opt_in_roots(core_ids, offered, catalogue)
+    )
+    seen.count("roots built as section files", len(roots))
+    kinds = task_kinds(
+        parse_manifest(read(os.path.join(ROOT, "templates", "manifest.yaml")))
+    )
+    names = template_names(entries)
+    files = 0
+    for root in roots:
+        chain = [
+            (path, read_file(path)) for path in resolve_chain(root, core_ids, entries)
+        ]
+        emitted = emit_sections(chain, names)
+        files += len(emitted)
+        failures += [
+            f"  {root}: {finding}"
+            for finding in section_findings(chain, kinds, emitted)
+        ]
+    seen.count("section files emitted", files)
+
+    # Two runs of the real tool, under different hash seeds, over roots
+    # whose chains extend and name sections in another template.
+    trees: list[dict[str, bytes]] = []
+    work = tempfile.mkdtemp(prefix="sait-sections-")
+    try:
+        for seed in ("1", "2"):
+            out = os.path.join(work, seed)
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    os.path.join(ROOT, "tools", "resolve_chain.py"),
+                    "--emit",
+                    out,
+                    "--sections",
+                    "backend-auth",
+                    "backend-database",
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                env=dict(os.environ, PYTHONHASHSEED=seed),
+            )
+            if proc.returncode != 0:
+                failures.append(
+                    f"  emit exited {proc.returncode}: "
+                    f"{(proc.stdout + proc.stderr).strip()}"
+                )
+                return seen.failures() + failures, seen.notes()
+            trees.append(emitted_tree(out))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    seen.count("files emitted by the tool", trees[0])
+    if trees[0] != trees[1]:
+        differ = sorted(
+            set(trees[0]) ^ set(trees[1])
+            | {k for k in set(trees[0]) & set(trees[1]) if trees[0][k] != trees[1][k]}
+        )
+        failures.append(f"  two runs differ in: {', '.join(differ)}")
     return seen.failures() + failures, seen.notes()

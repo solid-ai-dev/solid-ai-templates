@@ -10,7 +10,7 @@ Usage:
     py tools/resolve_chain.py --list                # list available stack IDs
     py tools/resolve_chain.py --roots               # list every root a project picks
     py tools/resolve_chain.py --emit <dir> <root>...  # build the root file and skills
-        [--declined <file>] [--inline-skills] [--mirror <dir>]
+        [--declined <file>] [--inline-skills | --sections] [--mirror <dir>]
 
 The resolution algorithm follows ADR-004:
   1. Add all core tier IDs
@@ -541,11 +541,23 @@ KNOWN_FLAGS = {
     "--emit",
     "--declined",
     "--inline-skills",
+    "--sections",
     "--mirror",
 }
 
 # The flags that take a value, so the value is not read as a root.
 VALUE_FLAGS = ("--emit", "--declined", "--mirror")
+
+
+def template_names(entries: dict[str, Entry]) -> dict[str, tuple[str, str]]:
+    """Each template file's manifest ID and description, a live entry
+    before a deprecated one that names the same file."""
+    names: dict[str, tuple[str, str]] = {}
+    for live in (True, False):
+        for eid, entry in entries.items():
+            if "file" in entry and ("deprecated" not in entry) == live:
+                names.setdefault(entry["file"], (eid, entry.get("description", "")))
+    return names
 
 
 def _emit(args: list[str], core_ids: Sequence[str], entries: dict[str, Entry]) -> None:
@@ -585,12 +597,17 @@ def _emit(args: list[str], core_ids: Sequence[str], entries: dict[str, Entry]) -
     kinds = task_kinds(parse_manifest(io.open(MANIFEST, encoding="utf-8").read()))
     declined_paths = values.get("--declined")
     declined = emit_context.read_declined(declined_paths[0] if declined_paths else None)
-    emitted = emit_context.build(
-        [(path, read_file(path)) for path in files],
-        kinds,
-        declined,
-        inline_skills="--inline-skills" in args,
-    )
+    chain = [(path, read_file(path)) for path in files]
+    if "--sections" in args:
+        if "--inline-skills" in args:
+            raise ResolveError(
+                "--sections and --inline-skills are two deliveries; pick one"
+            )
+        emitted = emit_context.build_sections(chain, template_names(entries), declined)
+    else:
+        emitted = emit_context.build(
+            chain, kinds, declined, inline_skills="--inline-skills" in args
+        )
     out_dir = values["--emit"][0]
     try:
         written = emit_context.write(out_dir, emitted, values.get("--mirror", []))
