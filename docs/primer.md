@@ -34,7 +34,7 @@ from none:
 The food is sometimes good and sometimes not, and the customer cannot tell
 in advance which it will be.
 
-### 2.2 Franchise roles mapped
+### 2.2 A franchise brings order
 
 Think of a restaurant franchise. Head office wants every branch to cook to
 the same standards, whoever is on shift. The templates aim for the same of
