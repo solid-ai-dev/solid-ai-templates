@@ -29,8 +29,7 @@ Paste this into your agent, opened in your project:
 
 ```text
 Clone https://github.com/solid-ai-dev/solid-ai-templates at its latest
-release tag (3.0.0 or later; until 3.0.0 is tagged, clone main and pin
-the commit) next to this project. List its roots with
+release tag (3.0.0 or later) next to this project. List its roots with
 ../solid-ai-templates/tools/resolve_chain.py --roots, propose the ones
 that fit this project, and wait for me to confirm.
 
