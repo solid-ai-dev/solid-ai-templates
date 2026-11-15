@@ -59,6 +59,7 @@ To use the templates in your project:
 
 | Document | Use it to |
 |----------|-----------|
+| [Primer](docs/primer.md) | Learn what the templates are and how a project uses them, in plain words |
 | [Pre-commit hooks](docs/hooks.md) | Run the shipped checks, with or without the templates |
 | [Adapt the rules](docs/playbook.md#61-sync-with-upstream-as-a-fork) | Fork the templates and keep your changes across updates |
 | [Migrating from 2.x](docs/migrations/v3.md) | Move a 2.x project or fork to 3.0 |
