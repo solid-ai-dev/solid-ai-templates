@@ -14,8 +14,10 @@ table.
 
 ## 6.1 Context generation
 
-The agent writes the project's context files from the chain the resolver
-orders, placing each rule where the output contract says.
+The emitter builds the project's root file and task skills from the chain
+the resolver orders, and the agent fills in the project's facts. An agent
+without Python can still write an inline or hybrid file by hand, placing
+each rule where the output contract says.
 
 ![Context generation. The team asks the coding agent to generate the context for a root. The agent reads the fork's interview questions and asks the team each one, getting the answers and the adopted rules. It runs the resolver, which seeds the core tier and walks depends_on, and gets the ordered file list. For an inline or hybrid file, it reads each template in order, applies overrides then extensions, places each rule, writes AGENTS.md and CLAUDE.md, and runs the self-check. For a root file with skills, it runs the emitter with the declined list, which places each section by its load and returns the root file and task skills with fact slots, and the agent fills the facts. The agent hands the files to the team for review](../diagrams/runtime-generate.png)
 
@@ -33,8 +35,8 @@ orders, placing each rule where the output contract says.
 Without Python, the agent walks the chain by hand. It loads every file in
 the manifest's `core:` list, then every file in a fork's `fork_core:`
 list, then the root's file and every file its dependency lines name,
-transitively. Skipping either list loses rules with no error, because no
-template declares those files.
+transitively. Skipping either list loses rules with no error, because the
+seeding, not a declaration, is what reliably reaches every core file.
 
 ## 6.2 Task skill loading
 
@@ -78,8 +80,7 @@ that removes what forks carry is marked `Fork-merge: ours`.
 | 6-8 | The fork's smoke reads upstream through `SAIT_UPSTREAM_REF` | FR-08-01 |
 
 `py tests/run.py fork_sync` runs the same merge on every pull request
-upstream, in a simulated fork that appends a stack and edits its own files
-(FR-10-02).
+upstream, in a simulated fork that appends a stack and edits its own files.
 
 ## 6.5 Release adoption
 
@@ -92,8 +93,8 @@ takes, and only a regeneration or an edit changes its context files.
 |------|--------------|--------|
 | 2 | Within 3.x, a release removes or renames nothing frozen, except for a security fix | FR-09-01 |
 | 3-4 | Each template rule is a candidate, which the project adopts only for a named defect, requirement or risk | - |
-| 5 | The project pins a released tag, by submodule or clone | FR-08-04 |
-| 6 | Moving the pin changes nothing in an existing context file. A regeneration does not widen the adopted set | FR-09-03 |
+| 5 | The project pins a released tag, by submodule, clone or copy | FR-08-04 |
+| 6 | Moving the pin changes nothing in an existing context file. A regeneration with `--emit` takes every section the new tag holds except those the project declines, so the team reviews its diff before committing it | FR-09-03, ADR-058 |
 
 ## 6.6 Other scenarios
 

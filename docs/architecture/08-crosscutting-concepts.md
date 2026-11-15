@@ -13,13 +13,16 @@ extends or replaces it by naming that ID; with neither, the section is used
 as written.
 
 ```markdown
-## Git conventions [ID: base-git]
+## Git conventions
+[ID: base-git]
 - Base rules
 
-## Git conventions [EXTEND: base-git]
+## Git conventions
+[EXTEND: base-git]
 - Do not commit `dist/`            <- added on top of the base rules
 
-## Git conventions [OVERRIDE: base-git]
+## Git conventions
+[OVERRIDE: base-git]
 - Always run `npm run dev` first   <- replaces the base rules
 ```
 
@@ -148,6 +151,7 @@ elements, and deprecate one by naming its replacement.
 | Fork entry points | The fork-owned module names (8.6), and the names upstream reads from them, `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |
 | Fork baseline | The `SAIT_UPSTREAM_REF` variable smoke reads | ADR-051, applied to forks |
 | Resolver CLI | `tools/resolve_chain.py <id>` and its `--concat`, `--generate`, `--list`, `--roots` and `--check` flags | ADR-051, applied to forks |
+| Emitter CLI | `tools/resolve_chain.py --emit <dir> <root>...` and its `--declined`, `--inline-skills` and `--mirror` flags, the `.agents/skills/<task>/SKILL.md` layout it writes, and the fact slots it leaves | ADR-051, applied to projects; ADR-058 |
 
 These elements are not frozen.
 
@@ -197,8 +201,9 @@ A fork names its own files.
 
 ## 8.10 Context cost
 
-Every rule in a widely resolved file is read on every turn by every project
-on that chain. A stack category's context-window tier moves only on
+Every rule a widely resolved file places in the root file is read on every
+turn by every project on that chain; a task's procedures load only with
+their skill. A stack category's context-window tier moves only on
 purpose, recorded in `tests/smoke/context-tiers.txt`, and SYS-16 checks it
 (QG-02-02). A rule in context costs attention as well as tokens, so a
 shorter file is better only when every rule it drops is one the agent did

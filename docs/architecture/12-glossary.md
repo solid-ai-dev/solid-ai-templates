@@ -24,7 +24,7 @@ requirement in [requirements.md](../requirements.md).
 | Layer template | A template under `frontend/` or `backend/` |
 | Load | Where a heading's rules are delivered, on every turn or in the skill for one kind of task (chapter 8.1) |
 | Manifest | `templates/manifest.yaml`, the dependency graph and single source of truth |
-| Opt-in | A template that reaches a chain only when a stack declares it |
+| Opt-in | A template outside the core tier, which reaches a chain only when the project picks it as a root or a chosen root's dependencies name it |
 | Orthogonal template | A template no stack declares, resolved as its own root |
 | Pin | The released tag a project takes the templates or the hooks from |
 | Platform | A fork's template mapping CI and security tools to one hosting platform |

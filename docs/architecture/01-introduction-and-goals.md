@@ -1,18 +1,20 @@
 # 1. Introduction and goals
 
-solid-ai-templates is a library of composable rule templates. An LLM agent
-reads them to write a project's context files, `AGENTS.md` and `CLAUDE.md`.
+solid-ai-templates is a library of composable rule templates. A tool, the
+emitter, turns a project's chosen templates into its `AGENTS.md` and task
+skills, and the project's agent fills in the project's facts.
 Each template covers one concern, extends others without editing them, and
 composes into one chain for the roots a project picks.
 
-The templates are one of three parts of the solid-ai-dev group, which aims
-at autonomous development with little technical supervision.
+The templates are one part of the solid-ai-dev group, which aims at
+autonomous development with little technical supervision.
 
 | Part | Repository | Role |
 |------|------------|------|
 | Templates | solid-ai-templates | Rules that get an agent to good enough code on the first attempt |
 | Orchestrator | solid-ai-dirigent | Runs one agent that develops and a second that reviews |
 | Skills | solid-ai-skills | Procedures an agent loads for one kind of task |
+| Benchmark | solid-ai-benchmark | Measures whether a context file helps an agent, and at what cost |
 
 The team owns the high-level design, the specifications, the test
 expectations, acceptance and dogfooding. Agents implement and review, and
@@ -40,8 +42,7 @@ interview, and stay current by merging upstream.
 
 What upstream provides to a fork and to a project. Each
 capability is detailed in [requirements.md](../requirements.md), where every
-requirement has an ID to cite. Terms are defined in the
-[glossary](12-glossary.md).
+requirement has an ID to cite.
 
 | # | Capability | What the system does |
 | - | ---------- | -------------------- |
