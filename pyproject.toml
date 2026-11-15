@@ -36,11 +36,10 @@ files = ["tools", "tests", "hooks"]
 # copy of the tree, whose duplicate modules stop mypy before it checks any.
 exclude = ["^tests/reports/"]
 
-# PyYAML ships no type information, and its stubs are not among the pinned
-# dependencies. The fork modules exist only in a fork, which the tooling
-# imports when present; there mypy finds them and checks them.
+# The fork modules exist only in a fork, which the tooling imports when
+# present; there mypy finds them and checks them.
 [[tool.mypy.overrides]]
-module = ["yaml", "fork_checks", "fork_dispositions", "fork_examples"]
+module = ["fork_checks", "fork_dispositions", "fork_examples"]
 ignore_missing_imports = true
 
 [tool.ruff]

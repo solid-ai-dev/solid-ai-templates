@@ -1626,7 +1626,7 @@ def _git_cases() -> list[str]:
                         f"  planted git, {label}: refused {refused!r}, owed {owed!r}"
                     )
                 continue
-            if refused:
+            if refused or was is None:
                 failures.append(f"  planted git, {label}: refused {refused!r}")
                 continue
             with io.open(os.path.join(repo, manifest), encoding="utf-8") as f:
