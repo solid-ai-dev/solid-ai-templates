@@ -19,6 +19,7 @@ from emit_context import EXTEND_TAG, ID_TAG, OVERRIDE_TAG
 
 # The emitter's line parser, which only reads a template; the reference
 # reading of a chain's relationships in SYS-28 is the check's own.
+from emit_context import Row
 from emit_context import _blocks as parse_rows
 from emit_context import build as emit_build
 from emit_context import build_sections as emit_sections
@@ -2577,7 +2578,9 @@ SECTION_BASE = (
     "## Follow\n\n- Follow the rules of `demo-shared`\n\n"
     "## Parent\n[ID: demo-parent]\n\n- Parent rule\n\n"
     "### Child\n[ID: demo-child]\n[EXTEND: demo-naming]\n\n- Child rule\n\n"
-    "## Paths\n[ID: demo-paths]\n\n- Keep paths short (see Naming)\n"
+    "## Paths\n[ID: demo-paths]\n\n- Keep paths short (see Naming)\n\n"
+    "## Error budget\n[ID: demo-budget]\n\n- Budget rule\n\n"
+    "## Venue\n[ID: demo-venue]\n\n- Base venue rule\n"
 )
 SECTION_LAYER = (
     "# Layer — Demo\n[ID: layer-demo]\n\n"
@@ -2615,6 +2618,9 @@ SECTION_MORE = (
     "## Refs\n[ID: more-refs]\n\n"
     '- Follow "Target" and see Shared; keep [the theme](#theme)\n'
     "- See the naming rules too, in plain prose\n"
+    '- Spend within the "Error\n  budget" each month\n'
+    "- Hold it at the venue (`demo-venue`)\n\n"
+    "## Venue extra\n[EXTEND: demo-venue]\n\n- Venue extension rule\n"
 )
 # Two levels of override where the first sits under a heading with no ID
 # of its own, inside its title's section, which the second overrides.
@@ -2635,6 +2641,13 @@ SECTION_FACADE = (
 SECTION_FRONT = (
     "# Front — Demo\n[ID: front-demo]\n[OVERRIDE: facade-demo]\n\nFront title rule.\n"
 )
+# A stack whose override of a base section sits under an untagged
+# heading, after a heading of its own it leaves alone.
+SECTION_STAGE = (
+    "# Stage — Demo\n[ID: stage-demo]\n\n"
+    "## Unrelated\n\n- Unrelated rule\n\n"
+    "## Replacement\n[OVERRIDE: demo-venue]\n\n- Replacement rule\n"
+)
 SECTION_FILES = [
     ("templates/core/demo.md", SECTION_BASE),
     ("templates/backend/layer.md", SECTION_LAYER),
@@ -2644,6 +2657,7 @@ SECTION_FILES = [
     ("templates/backend/skin.md", SECTION_SKIN),
     ("templates/fixture/brand.md", SECTION_BRAND),
     ("templates/fixture/front.md", SECTION_FRONT),
+    ("templates/fixture/stage.md", SECTION_STAGE),
     ("templates/fixture/more.md", SECTION_MORE),
     ("templates/data/other.md", SECTION_TITLE_ONLY),
 ]
@@ -2656,6 +2670,7 @@ SECTION_TEMPLATES = {
     "templates/backend/skin.md": ("backend-skin", "Skin rules"),
     "templates/fixture/front.md": ("stack-front", "Front rules"),
     "templates/fixture/brand.md": ("stack-brand", "Brand rules"),
+    "templates/fixture/stage.md": ("stack-stage", "Stage rules"),
     "templates/fixture/more.md": ("stack-more", "More rules"),
     "templates/data/other.md": ("base-other", "Other rules"),
 }
@@ -2738,6 +2753,19 @@ def adopted_lines(
     return +lines
 
 
+# A row past a template's last line, so a paragraph ending the file is read.
+_END_ROW: Row = {
+    "line": "",
+    "path": [],
+    "load": None,
+    "anchor": None,
+    "section": None,
+    "tag": False,
+    "heading": False,
+    "fence": False,
+}
+
+
 class _Run:
     """One override's section: the IDs it replaces, the sections its rows
     sit in, and the rule lines it delivers."""
@@ -2746,6 +2774,7 @@ class _Run:
         self.targets: set[str] = set()
         self.sections: set[str] = set()
         self.lines: set[str] = set()
+        self.keys: set[tuple[str, tuple[tuple[int, str], ...]]] = set()
 
 
 def relation_findings(
@@ -2753,15 +2782,20 @@ def relation_findings(
     declined: Iterable[str],
     owed: Counter[str],
     sections: Mapping[str, str],
+    root: str = "",
 ) -> list[str]:
-    """Each section file that lacks rules a relationship owes it.
+    """Each section file that lacks rules a relationship owes it, and each
+    that holds rules no relationship of its topic reaches.
 
     A reference reading, apart from the emitter's: every relationship is
     read from the unfiltered chain, the rules under a title, each section a
     heading's section extends, and each ID its prose names, and each owes
     the rules that survive for it, the ID's own or, where it is replaced,
     those of the override that replaces it, followed down the chain. A file
-    carries a heading when it holds every rule the heading delivers.
+    carries a heading when it holds every rule the heading delivers. The
+    dual: from the topic the root file maps a file to, following the same
+    relationships and every extension of what the topic and the sections it
+    extends or names stand for, no other heading's rules are reached.
     """
     gone_list = set(declined)
     topics: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
@@ -2771,6 +2805,7 @@ def relation_findings(
     span: dict[str, set[str]] = {}
     runs: list[_Run] = []
     headed_of: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
+    key_secs: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
     places: dict[str, list[tuple[str, tuple[tuple[int, str], ...], set[str]]]] = {}
     for path, text in files:
         rows = parse_rows(text)
@@ -2794,11 +2829,42 @@ def relation_findings(
     anchors = {
         re.sub(r"[^\w\- ]", "", text.lower()).replace(" ", "-"): text for text in places
     }
+
+    def said(key: tuple[str, tuple[tuple[int, str], ...]], prose: str) -> None:
+        quoted = re.findall(r'"([^"]+)"', prose) + [
+            found.rstrip()
+            for found in re.findall(r"\b[Ss]ee ([^\s\"(),.;:\]][^\"(),.;:\]]*)", prose)
+        ]
+        headed_of.setdefault(key, set()).update(
+            {found for found in quoted if found in places}
+            | {
+                anchors[found]
+                for found in re.findall(r"\]\(#([^)\s]+)\)", prose)
+                if found in anchors
+            }
+        )
+
     for path, text in files:
         extends: set[str] = set()
         run: _Run | None = None
         fresh = False
-        for row in parse_rows(text):
+        chunk: list[str] = []
+        chunk_key: tuple[str, tuple[tuple[int, str], ...]] | None = None
+        for row in parse_rows(text) + [_END_ROW]:
+            key = (path, tuple(row["path"][:2]))
+            delivered = (
+                bool(row["line"].strip())
+                and not (row["heading"] or row["tag"] or row["fence"])
+                and not any(f"{path}#{h}" in gone_list for _, h in row["path"])
+                and bool(owed[row["line"]])
+            )
+            starts = bool(re.match(r"^\s*(?:[-*+]|\d+\.)\s", row["line"]))
+            if chunk_key is not None and (not delivered or starts or key != chunk_key):
+                said(chunk_key, " ".join(chunk))
+                chunk, chunk_key = [], None
+            if delivered:
+                chunk.append(row["line"].strip())
+                chunk_key = key
             gone = any(f"{path}#{h}" in gone_list for _, h in row["path"])
             line = row["line"].strip()
             if row["heading"]:
@@ -2834,24 +2900,14 @@ def relation_findings(
                 continue
             key = (path, tuple(row["path"][:2]))
             topics.setdefault(key, set()).add(row["line"])
+            if row["section"]:
+                key_secs.setdefault(key, set()).add(row["section"])
+            if run is not None:
+                run.keys.add(key)
             extends_of.setdefault(key, set()).update(extends)
             if not row["fence"]:
                 names_of.setdefault(key, set()).update(
                     re.findall(r"`([a-z0-9][a-z0-9-]*)`", row["line"])
-                )
-                said = re.findall(r'"([^"\n]+)"', row["line"]) + [
-                    found.rstrip()
-                    for found in re.findall(
-                        r"\b[Ss]ee ([^\s\"(),.;:\]][^\"(),.;:\]]*)", row["line"]
-                    )
-                ]
-                headed_of.setdefault(key, set()).update(
-                    {found for found in said if found in places}
-                    | {
-                        anchors[found]
-                        for found in re.findall(r"\]\(#([^)\s]+)\)", row["line"])
-                        if found in anchors
-                    }
                 )
             if row["section"]:
                 span.setdefault(row["section"], set()).add(row["line"])
@@ -2866,8 +2922,12 @@ def relation_findings(
         for one in runs:
             if section in one.targets:
                 found |= one.lines
+                # The section an override sits in stands for it only
+                # where that section is replaced in turn; otherwise the
+                # override's own rules are what survive.
                 for inner in sorted(one.sections):
-                    found |= survives(inner, seen)
+                    if any(inner in other.targets for other in runs):
+                        found |= survives(inner, seen)
         return found
 
     findings: list[str] = []
@@ -2903,6 +2963,131 @@ def relation_findings(
                 for what, needed in owes.items()
                 if not needed <= lines
             ]
+    return findings + _overreach(
+        sections,
+        root,
+        owed,
+        topics,
+        key_secs,
+        runs,
+        extends_of,
+        names_of,
+        headed_of,
+        titles,
+        span,
+        places,
+    )
+
+
+_Key = tuple[str, tuple[tuple[int, str], ...]]
+
+
+def _overreach(
+    sections: Mapping[str, str],
+    root: str,
+    owed: Counter[str],
+    topics: Mapping[_Key, set[str]],
+    key_secs: Mapping[_Key, set[str]],
+    runs: Sequence[_Run],
+    extends_of: Mapping[_Key, set[str]],
+    names_of: Mapping[_Key, set[str]],
+    headed_of: Mapping[_Key, set[str]],
+    titles: Mapping[str, set[str]],
+    span: Mapping[str, set[str]],
+    places: Mapping[str, list[tuple[str, tuple[tuple[int, str], ...], set[str]]]],
+) -> list[str]:
+    """Each section file holding a rule its own topic's relationships do not
+    reach, by the reference reading `relation_findings` takes."""
+
+    def holders(section: str, seen: set[str]) -> set[_Key]:
+        if section in seen:
+            return set()
+        seen.add(section)
+        found = {key for key, secs in key_secs.items() if section in secs}
+        for one in runs:
+            if section in one.targets:
+                found |= one.keys
+                for inner in sorted(one.sections):
+                    if any(inner in other.targets for other in runs):
+                        found |= holders(inner, seen)
+        return found
+
+    every = set(span) | {target for one in runs for target in one.targets}
+    held_by = {section: holders(section, set()) for section in sorted(every)}
+    extensions: dict[str, set[_Key]] = {}
+    for key, targets in extends_of.items():
+        for target in targets:
+            extensions.setdefault(target, set()).add(key)
+
+    def reach(owner: _Key) -> set[_Key]:
+        out = {owner}
+        done: set[tuple[_Key, bool]] = set()
+        todo = [(owner, True)]
+        while todo:
+            key, whole = todo.pop()
+            if (key, whole) in done:
+                continue
+            done.add((key, whole))
+            path, place = key
+            step: list[tuple[_Key, bool]] = []
+            if len(place) == 2:
+                if (path, place[:1]) in topics:
+                    step.append(((path, place[:1]), False))
+                for title in sorted(titles.get(path, ())):
+                    if not span.get(title):
+                        step += [(h, False) for h in held_by.get(title, ())]
+            for target in sorted(extends_of.get(key, set()) | names_of.get(key, set())):
+                step += [(h, True) for h in held_by.get(target, ())]
+            for named in sorted(headed_of.get(key, ())):
+                at = [p for p in places[named] if p[0] == path] or places[named]
+                for in_file, place_key, secs in at:
+                    if (in_file, place_key) in topics:
+                        step.append(((in_file, place_key), True))
+                    for sec in sorted(secs):
+                        if not span.get(sec):
+                            step += [(h, True) for h in held_by.get(sec, ())]
+            if whole:
+                for section, held in held_by.items():
+                    if key in held:
+                        step += [(e, True) for e in extensions.get(section, ())]
+            for item in step:
+                out.add(item[0])
+                todo.append(item)
+        return out
+
+    # The root file's map: each template's title, then a row per topic.
+    title_of = {key[0]: key[1][0] for key in topics if key[1]}
+    path_of = {title[1]: path for path, title in title_of.items()}
+    owners: dict[str, _Key] = {}
+    group: str | None = None
+    for line in root.splitlines():
+        if line.startswith("### "):
+            group = path_of.get(line[4:])
+            continue
+        row = re.match(r"^\| (.+) \| `([^`]+)` \|$", line)
+        if row and group:
+            cell = row.group(1).replace("\\|", "|")
+            title = title_of[group]
+            heading = (group, (title, (2, cell)))
+            owners[row.group(2)] = heading if heading in topics else (group, (title,))
+
+    findings: list[str] = []
+    for rel in sorted(sections):
+        if rel not in owners:
+            continue
+        allowed: set[str] = set()
+        for key in reach(owners[rel]):
+            allowed |= topics.get(key, set())
+        stray = sorted(
+            line
+            for line in set(sections[rel].splitlines())
+            if owed[line] and line not in allowed
+        )
+        if stray:
+            findings.append(
+                f"{rel} holds {len(stray)} rule line(s) its topic does not "
+                f"reach, such as: {stray[0].strip()}"
+            )
     return findings
 
 
@@ -2932,7 +3117,9 @@ def section_findings(
     findings += [f"no section file holds: {line}" for line in owed - held]
     findings += [f"no adopted rule is: {line}" for line in held - owed]
 
-    findings += relation_findings(files, declined, owed, sections)
+    findings += relation_findings(
+        files, declined, owed, sections, emitted.get("AGENTS.md", "")
+    )
 
     rules = section_rules(files, declined)
     for rel in sorted(sections):
@@ -2983,6 +3170,8 @@ def planted_section_findings() -> list[str]:
     door = emitted.get(f"{SECTIONS_DIR}/backend-facade/door.md", "")
     paths = emitted.get(f"{SECTIONS_DIR}/base-demo/paths.md", "")
     refs = emitted.get(f"{SECTIONS_DIR}/stack-more/refs.md", "")
+    replacement = emitted.get(f"{SECTIONS_DIR}/stack-stage/replacement.md", "")
+    unrelated = emitted.get(f"{SECTIONS_DIR}/stack-stage/unrelated.md", "")
     follow = emitted.get(f"{SECTIONS_DIR}/base-demo/follow.md", "")
     extra = emitted.get(f"{SECTIONS_DIR}/stack-more/extra.md", "")
     top = emitted.get(f"{SECTIONS_DIR}/stack-top/content.md", "")
@@ -3047,6 +3236,16 @@ def planted_section_findings() -> list[str]:
             "Brand theme rule" in refs,
         ),
         ("plain prose names no heading", "Name by role" not in refs),
+        ("a heading quoted across a wrapped line is carried", "Budget rule" in refs),
+        (
+            "a section named by an overridden ID carries the override alone",
+            "Replacement rule" in refs and "Unrelated rule" not in refs,
+        ),
+        (
+            "an extension of an overridden ID goes with the override alone",
+            "Venue extension rule" in replacement
+            and "Venue extension rule" not in unrelated,
+        ),
         (
             "a heading whose ID follows a blank line extends nothing",
             "Target rule" not in fresh and "Fresh rule" not in target,

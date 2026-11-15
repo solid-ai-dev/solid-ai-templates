@@ -58,11 +58,11 @@ first touches it.
    prose names by ID in backticks or by heading, each extension of its own
    sections, and what each of those carries in turn. A heading is named
    by its exact text in double quotes, after "see", or as a link to its
-   anchor, and resolves in the naming template first, then anywhere in the
-   chain. Each relationship is read from the template as written and
-   resolved through the overrides to the rules that survive. Rules carried
-   only because they sit under a title do not bring that title's
-   extensions (MUST)
+   anchor, read across a wrapped line, and resolves in the naming
+   template first, then anywhere in the chain. Each relationship is read
+   from the template as written and resolved through the overrides to the
+   rules that survive. Rules carried only because they sit under a title
+   do not bring that title's extensions (MUST)
 3. **Same rule set** — the files together hold exactly the rules the
    inlined root file holds, and every copy of a rule matches its source
    (MUST)

@@ -64,8 +64,10 @@ on two roots written to a temporary directory that is removed afterwards)
    level sits under a heading inside its title's section, and a title a
    later template overrides while its headings keep IDs of their own; add
    headings named in prose, quoted, after "see" and as a link, in the same
-   template and in another, one of them replaced by an override, and a
-   line of plain prose that names no heading
+   template and in another, one of them replaced by an override, one
+   quoted across a wrapped line, and a line of plain prose that names no
+   heading; add a stack that overrides a base section under an untagged
+   heading after a heading it leaves alone
 2. Build every root `--roots` lists on its own, as section files and with
    skills inlined
 3. Cut every section file at its headings, keep one copy of each block,
@@ -99,13 +101,17 @@ on two roots written to a temporary directory that is removed afterwards)
    the adopted lines, that two copies of a block never differ, and that a
    file naming a section in backticks carries its rules, and that a
    section named by its heading is carried, resolved through overrides,
-   while plain prose names none
+   while plain prose names none, and that a section named or extended by
+   an ID an untagged override replaces carries that override and not the
+   stack's other headings
 6. Assert, by a reading of the unfiltered chain apart from the emitter's,
    that every file carrying a heading holds what each of its relationships
    owes: the rules under its title, each section its section extends, and
    each ID and each heading its prose names, each resolved to the rules
    that survive for
-   it, its own or those of the override that replaces it, down the chain
+   it, its own or those of the override that replaces it, down the chain;
+   and, its dual, that a file holds no rule its own topic's relationships
+   and the extensions of what they stand for do not reach
 7. Assert the root file maps each section file once, maps no other, holds
    no rule line, and says not to read the files before the work starts
 8. Assert each planted fault is reported
@@ -143,7 +149,9 @@ on two roots written to a temporary directory that is removed afterwards)
    section mode, the reading of the unfiltered chain alone reports every
    omission later fixed: an extension past its heading, a declined first
    heading, an override chain, a heading naming its own section's ID, and
-   an overridden title
+   an overridden title. Its dual reports every rule carried too far: a
+   relationship given to a blank or replaced row, and an untagged
+   override's title section standing for it
 
 ## Related
 
