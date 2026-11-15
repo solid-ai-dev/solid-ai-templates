@@ -24,7 +24,7 @@ TESTS = os.path.dirname(os.path.abspath(__file__))
 ALL = ["smoke", "conformance", "fork_sync"]
 
 
-def suites():
+def suites() -> list[str]:
     """Every folder under tests/ holding a run.py, by name."""
     return sorted(
         name
@@ -33,14 +33,14 @@ def suites():
     )
 
 
-def run_all():
+def run_all() -> int:
     """Run each suite in ALL in its own process; fail if any fails."""
     found = suites()
     missing = [name for name in ALL if name not in found]
     if missing:
         print(f"missing suite(s): {', '.join(missing)}")
         return 1
-    failed = []
+    failed: list[str] = []
     for name in ALL:
         print(f"\n=== {name}", flush=True)
         code = subprocess.run([sys.executable, __file__, name]).returncode
@@ -56,7 +56,7 @@ def run_all():
     return 1 if failed else 0
 
 
-def main(args):
+def main(args: list[str]) -> int:
     found = suites()
     if not args or args[0] in ("-h", "--help"):
         print(__doc__.strip())

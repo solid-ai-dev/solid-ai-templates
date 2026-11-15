@@ -20,7 +20,7 @@ READ = "read"
 FINDINGS_ONLY = " || { s=$?; [ $s -eq 1 ] || exit $s; }"
 
 
-def findings_only(python, module, args):
+def findings_only(python: str, module: str, args: str) -> str:
     """A checker command whose findings are read, not scored.
 
     A missing checker also exits 1, with "No module named ...", so the

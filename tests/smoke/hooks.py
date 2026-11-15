@@ -12,9 +12,10 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Mapping, Sequence
 
 from testkit import ROOT, template_files
-from .common import HAS_YAML, Inspected, MISSING_YAML, read, yaml
+from .common import HAS_YAML, CheckResult, Inspected, MISSING_YAML, read, yaml
 
 HOOKS_DIR = os.path.join(ROOT, "hooks")
 HOOK_COMMAND = re.compile(r"^\s*pre-commit run ([a-z0-9-]+)\b", re.M)
@@ -635,7 +636,7 @@ CASES = [
 ]
 
 
-def git(cwd, *args):
+def git(cwd: str, *args: str) -> None:
     subprocess.run(
         ["git", "-c", "user.name=smoke", "-c", "user.email=smoke@example.invalid"]
         + list(args),
@@ -645,7 +646,9 @@ def git(cwd, *args):
     )
 
 
-def run_hook(cwd, hook, args, pre_commit=False):
+def run_hook(
+    cwd: str, hook: str, args: Sequence[str], pre_commit: bool = False
+) -> tuple[int, list[str], list[str]]:
     env = dict(os.environ, PYTHONPATH=HOOKS_DIR)
     argv = [sys.executable, "-m", "solid_ai_checks", hook] + list(args)
     if pre_commit:
@@ -664,7 +667,7 @@ def run_hook(cwd, hook, args, pre_commit=False):
     return proc.returncode, lines, findings
 
 
-def planted_repo(files):
+def planted_repo(files: Mapping[str, str]) -> str:
     """A throwaway repository holding `files`, all committed."""
     work = tempfile.mkdtemp(prefix="sait-hooks-")
     git(work, "init", "-q")
@@ -678,9 +681,9 @@ def planted_repo(files):
     return work
 
 
-def test_edit_cases():
+def test_edit_cases() -> list[str]:
     """report-test-edits against a base, an added test and an edited one."""
-    failures = []
+    failures: list[str] = []
     work = planted_repo({"README.md": "x\n"})
     try:
         os.makedirs(os.path.join(work, "tests"))
@@ -736,9 +739,9 @@ def test_edit_cases():
     return failures
 
 
-def off_limits_cases():
+def off_limits_cases() -> list[str]:
     """report-off-limits-paths on a branch touching a declared path."""
-    failures = []
+    failures: list[str] = []
     work = planted_repo({"README.md": "x\n"})
     try:
         git(work, "branch", "base")
@@ -852,13 +855,13 @@ def off_limits_cases():
     return failures
 
 
-def git_failure_cases():
+def git_failure_cases() -> list[str]:
     """A tree scan where git fails, and the same scan outside a repository.
 
     Outside a repository the hook does not apply. Inside one, a git that
     cannot list the tree read nothing, so the hook fails in either mode.
     """
-    failures = []
+    failures: list[str] = []
     work = planted_repo({"app.py": "x = 1\n"})
     plain = tempfile.mkdtemp(prefix="sait-plain-")
     try:
@@ -890,12 +893,12 @@ def git_failure_cases():
     return failures
 
 
-def check_sys_23():
+def check_sys_23() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
     seen = Inspected()
-    failures = []
+    failures: list[str] = []
 
     manifest = yaml.safe_load(read(os.path.join(ROOT, ".pre-commit-hooks.yaml")))
     shipped = {h["id"]: h for h in seen.count("hooks in the manifest", manifest or [])}

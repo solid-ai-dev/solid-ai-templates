@@ -6,11 +6,13 @@ import datetime
 import io
 import os
 import subprocess
+from collections.abc import Callable, Mapping, Sequence
+from typing import TypedDict, TypeVar
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def load_dotenv():
+def load_dotenv() -> None:
     """Load .env from repo root into os.environ (no dependencies)."""
     env_path = os.path.join(ROOT, ".env")
     if not os.path.isfile(env_path):
@@ -44,7 +46,19 @@ SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".idea", ".claude"}
 GENERATED_TEMPLATE_DOCS = frozenset(["templates/INTERVIEW.md"])
 
 
-def repository_files():
+class Result(TypedDict):
+    """The fields every runner's result carries, whatever else it adds."""
+
+    id: str
+    status: str
+
+
+# A runner's own result type, which carries these fields and more; the
+# report renders each through the runner's own renderers.
+R = TypeVar("R", bound=Result)
+
+
+def repository_files() -> list[str]:
     """Every repo-relative path git tracks or would track, ignored ones out.
 
     A filesystem walk cannot read .gitignore, so it descends into build
@@ -71,7 +85,7 @@ def repository_files():
     return [p for p in paths if not any(part in SKIP_DIRS for part in p.split("/"))]
 
 
-def template_documents(prefix="templates/"):
+def template_documents(prefix: str = "templates/") -> list[str]:
     """Every Markdown file the repository holds under templates/.
 
     A hardcoded directory list defines what the checks reading it can see,
@@ -84,7 +98,7 @@ def template_documents(prefix="templates/"):
     )
 
 
-def template_files(prefix="templates/"):
+def template_files(prefix: str = "templates/") -> list[str]:
     """The template corpus the manifest governs, repo-relative.
 
     Every Markdown file under templates/ except the documents sync_docs.py
@@ -93,13 +107,13 @@ def template_files(prefix="templates/"):
     return [p for p in template_documents(prefix) if p not in GENERATED_TEMPLATE_DOCS]
 
 
-def read(rel_path):
+def read(rel_path: str) -> str:
     """Read a file relative to the repo root."""
     with io.open(os.path.join(ROOT, rel_path), encoding="utf-8") as f:
         return f.read()
 
 
-def tree_id():
+def tree_id() -> str | None:
     """Name the tree a run measured, or None where there is no naming it.
 
     A report records when it ran, and a time is not a tree: two runs
@@ -111,7 +125,7 @@ def tree_id():
     still a run: the caller falls back to the plain name.
     """
 
-    def git(*args):
+    def git(*args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             ["git", "-C", ROOT] + list(args),
             capture_output=True,
@@ -134,7 +148,13 @@ def tree_id():
     return short + ("-dirty" if status.stdout.strip() else "")
 
 
-def write_report(run_results, started_at, runner_name, columns, header=None):
+def write_report(
+    run_results: Sequence[R],
+    started_at: datetime.datetime,
+    runner_name: str,
+    columns: Mapping[str, Callable[[R], list[str]] | None],
+    header: Mapping[str, object] | None = None,
+) -> None:
     """Write a timestamped Markdown report to tests/reports/.
 
     Args:
@@ -162,7 +182,7 @@ def write_report(run_results, started_at, runner_name, columns, header=None):
     # judgement rather than a pass. Count it by name rather than dropping
     # it, so the summary's parts add up to the total it states.
     named = {PASS, FAIL, SKIP, ERR}
-    other = {}
+    other: dict[str, int] = {}
     for r in run_results:
         if r["status"] not in named:
             other[r["status"]] = other.get(r["status"], 0) + 1
@@ -213,7 +233,7 @@ def write_report(run_results, started_at, runner_name, columns, header=None):
     print(f"\nReport: {os.path.relpath(report_path, ROOT)}")
 
 
-def print_verdict(ok, detail):
+def print_verdict(ok: bool, detail: str) -> None:
     """Print the run outcome as the very last line the runner emits.
 
     Args:
@@ -229,11 +249,11 @@ def print_verdict(ok, detail):
     print("VERDICT: %s - %s" % ("PASS" if ok else "FAIL", detail))
 
 
-def parse_args(argv):
+def parse_args(argv: Sequence[str]) -> tuple[list[str], set[str], str | None]:
     """Parse common CLI args: filter IDs, --fail-fast, --area, --dry-run, --all."""
-    flags = set()
-    area = None
-    filter_ids = []
+    flags: set[str] = set()
+    area: str | None = None
+    filter_ids: list[str] = []
 
     for arg in argv:
         if arg == "--fail-fast":

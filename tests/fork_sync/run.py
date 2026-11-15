@@ -11,6 +11,7 @@ Usage:
 """
 
 import datetime
+import io
 import os
 import re
 import shutil
@@ -18,6 +19,8 @@ import stat
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
+from typing import NotRequired, TypedDict, cast
 
 from testkit import ROOT, PASS, FAIL, ERR, write_report, print_verdict
 
@@ -26,7 +29,9 @@ from testkit import ROOT, PASS, FAIL, ERR, write_report, print_verdict
 # carriage returns.
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8", newline="\n")
+        # The stream is typed TextIO, which declares no reconfigure; one
+        # without it raises the AttributeError caught below.
+        cast(io.TextIOWrapper, _stream).reconfigure(encoding="utf-8", newline="\n")
     except (AttributeError, ValueError):
         pass
 
@@ -64,8 +69,31 @@ OURS_TRAILER = re.compile(r"^Fork-merge:\s*ours\s*$", re.M | re.I)
 UPSTREAM_ENTRY_KEYS = ("base", "backend", "frontend")
 FORK_KEY = "fork"
 
+# An edit a commit makes: it takes the checkout and returns the paths it owes.
+Edit = Callable[[str], list[str]]
 
-def git(cwd, *args, check=True):
+
+class Outcome(TypedDict):
+    """What a scenario found, before the runner gives it a status."""
+
+    id: str
+    title: str
+    notes: list[str]
+    failures: list[str]
+
+
+class Row(TypedDict):
+    """One scenario's result, as the report renders it."""
+
+    id: str
+    title: str
+    status: str
+    notes: list[str]
+    failures: list[str]
+    error: NotRequired[str]
+
+
+def git(cwd: str, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     """Run git in cwd and return the completed process."""
     run = subprocess.run(
         ["git", "-C", cwd] + list(args),
@@ -78,29 +106,29 @@ def git(cwd, *args, check=True):
     return run
 
 
-def out(cwd, *args):
+def out(cwd: str, *args: str) -> str:
     return git(cwd, *args).stdout.strip()
 
 
-def read(repo, rel):
+def read(repo: str, rel: str) -> str:
     with open(os.path.join(repo, rel), encoding="utf-8", newline="") as f:
         return f.read()
 
 
-def write(repo, rel, text):
+def write(repo: str, rel: str, text: str) -> None:
     path = os.path.join(repo, rel)
     os.makedirs(os.path.dirname(path) or repo, exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.write(text)
 
 
-def insert_after_title(text, line):
+def insert_after_title(text: str, line: str) -> str:
     """Put line under a document's first line, where a fork brands it."""
     head, sep, rest = text.partition("\n")
     return f"{head}\n\n{line}\n{sep}{rest}"
 
 
-def commit(repo, base, message, edit):
+def commit(repo: str, base: str, message: str, edit: Edit) -> str:
     """Commit edit(repo) on top of base, detached, and return the commit.
 
     The commit MUST change what it claims to: an edit that lands nothing
@@ -123,7 +151,7 @@ def commit(repo, base, message, edit):
 # ---------------------------------------------------------------------------
 
 
-def fork_edits(repo):
+def fork_edits(repo: str) -> list[str]:
     """What a fork does under ADR-049: append, and own its documents."""
     stack = read(repo, FIXTURE)
     stack = stack.replace("# Stack — Fixture", "# Stack — Fork sync")
@@ -143,7 +171,7 @@ def fork_edits(repo):
     return [FORK_STACK, MANIFEST, *owned]
 
 
-def upstream_base_edit(repo):
+def upstream_base_edit(repo: str) -> list[str]:
     """A change to `base:`, for a run whose own upstream change is empty."""
     lines = read(repo, MANIFEST).split("\n")
     start = lines.index("base:")
@@ -155,7 +183,7 @@ def upstream_base_edit(repo):
     return [MANIFEST]
 
 
-def upstream_appends_a_stack(repo):
+def upstream_appends_a_stack(repo: str) -> list[str]:
     """Planted: upstream appends where the fork appends, so the two collide."""
     manifest = read(repo, MANIFEST)
     if not manifest.endswith("\n"):
@@ -168,7 +196,7 @@ def upstream_appends_a_stack(repo):
     return [MANIFEST]
 
 
-def upstream_edits_readme(repo):
+def upstream_edits_readme(repo: str) -> list[str]:
     """Planted: upstream edits the README where the fork brands it."""
     text = read(repo, "README.md")
     write(repo, "README.md", insert_after_title(text, "Upstream edit under the title."))
@@ -180,7 +208,9 @@ def upstream_edits_readme(repo):
 # ---------------------------------------------------------------------------
 
 
-def merge(repo, fork, upstream):
+def merge(
+    repo: str, fork: str, upstream: str
+) -> tuple[str | None, list[str], list[str]]:
     """Merge upstream into fork the way a fork syncs.
 
     Returns (merged, owned, unexpected): the merge commit, or None when a
@@ -209,7 +239,9 @@ def merge(repo, fork, upstream):
     return out(repo, "rev-parse", "HEAD"), owned, unexpected
 
 
-def follow_renames(repo, base, upstream, fork, merged):
+def follow_renames(
+    repo: str, base: str, upstream: str, fork: str, merged: str
+) -> tuple[str, list[tuple[str, ...]]]:
     """Point the fork's own files at the paths upstream renamed.
 
     A rename is the one breaking change a fork migrates mechanically, so the
@@ -223,7 +255,7 @@ def follow_renames(repo, base, upstream, fork, merged):
     own = out(repo, "diff", "--name-only", "--diff-filter=A", base, fork).splitlines()
 
     git(repo, "checkout", "-q", "--detach", merged)
-    touched = []
+    touched: list[str] = []
     for rel in own:
         text = read(repo, rel)
         moved = text
@@ -234,7 +266,7 @@ def follow_renames(repo, base, upstream, fork, merged):
     if not touched:
         return merged, renames
 
-    def edit(target):
+    def edit(target: str) -> list[str]:
         for rel in touched:
             text = read(target, rel)
             for old, new in renames:
@@ -254,7 +286,7 @@ SMOKE_ENTRY_POINTS = [
 ]
 
 
-def smoke_command(repo):
+def smoke_command(repo: str) -> list[str] | None:
     """The merged tree's smoke command, or None if it ships neither."""
     for command in SMOKE_ENTRY_POINTS:
         if os.path.isfile(os.path.join(repo, command[0])):
@@ -262,7 +294,7 @@ def smoke_command(repo):
     return None
 
 
-def nested_smoke(repo, upstream):
+def nested_smoke(repo: str, upstream: str) -> tuple[int, str | None, list[str]]:
     """Run the merged tree's own smoke suite, with SYS-20 against upstream."""
     command = smoke_command(repo)
     if command is None:
@@ -289,7 +321,16 @@ def nested_smoke(repo, upstream):
 # ---------------------------------------------------------------------------
 
 
-def planted(repo, base, fork, rid, title, edit, owed_owned, owed_unexpected):
+def planted(
+    repo: str,
+    base: str,
+    fork: str,
+    rid: str,
+    title: str,
+    edit: Edit,
+    owed_owned: list[str],
+    owed_unexpected: list[str],
+) -> Outcome:
     """A planted upstream change whose conflicts are known in advance."""
     upstream = commit(repo, base, f"upstream: {title}", edit)
     merged, owned, unexpected = merge(repo, fork, upstream)
@@ -297,7 +338,7 @@ def planted(repo, base, fork, rid, title, edit, owed_owned, owed_unexpected):
         f"  conflicts in fork-owned files: {owned or 'none'}",
         f"  conflicts elsewhere: {unexpected or 'none'}",
     ]
-    failures = []
+    failures: list[str] = []
     if owned != owed_owned or unexpected != owed_unexpected:
         failures.append(
             f"  owed fork-owned {owed_owned} and elsewhere {owed_unexpected}"
@@ -307,7 +348,7 @@ def planted(repo, base, fork, rid, title, edit, owed_owned, owed_unexpected):
     return {"id": rid, "title": title, "notes": notes, "failures": failures}
 
 
-def pending_splits(repo, base, upstream):
+def pending_splits(repo: str, base: str, upstream: str) -> list[str]:
     """The commits in the range declaring `Fork-merge: ours` and not yet taken.
 
     A fork that took a split already has it in its history, under its own
@@ -321,7 +362,7 @@ def pending_splits(repo, base, upstream):
         for rev in revs
         if OURS_TRAILER.search(out(repo, "log", "-1", "--format=%B", rev))
     ]
-    absorbed = set()
+    absorbed: set[str] = set()
     for rev in out(repo, "rev-list", "--merges", f"{base}..{upstream}").split():
         parents = out(repo, "rev-list", "--parents", "-n", "1", rev).split()[1:]
         if len(parents) > 1 and out(repo, "rev-parse", f"{rev}^{{tree}}") == out(
@@ -331,14 +372,16 @@ def pending_splits(repo, base, upstream):
     return [rev for rev in declared if rev not in absorbed]
 
 
-def merge_ours(repo, fork, upstream):
+def merge_ours(repo: str, fork: str, upstream: str) -> str:
     """Take upstream's history and keep the fork's tree, as a split asks."""
     git(repo, "checkout", "-q", "--detach", fork)
     git(repo, "merge", "--no-edit", "-q", "-s", "ours", upstream)
     return out(repo, "rev-parse", "HEAD")
 
 
-def leave_upstream_keys(repo, merged, upstream):
+def leave_upstream_keys(
+    repo: str, merged: str, upstream: str
+) -> tuple[str, list[str], list[str]]:
     """Move what upstream dropped out of its keys and into the fork's own.
 
     After the split the fork still lists the templates upstream removed
@@ -363,8 +406,11 @@ def leave_upstream_keys(repo, merged, upstream):
     if not moving and not extra_core:
         return merged, moving, extra_core
 
-    def edit(target):
-        kept, moved, section, current = [], [], None, False
+    def edit(target: str) -> list[str]:
+        kept: list[str] = []
+        moved: list[str] = []
+        section: str | None = None
+        current = False
         for line in read(target, MANIFEST).split("\n"):
             top = re.match(r"^(\w[\w-]*):", line)
             if top:
@@ -389,9 +435,9 @@ def leave_upstream_keys(repo, merged, upstream):
     )
 
 
-def real(repo, base, head, fork):
+def real(repo: str, base: str, head: str, fork: str) -> Outcome:
     """The change under test, merged into the fork, then smoke on the result."""
-    notes = []
+    notes: list[str] = []
     upstream = head
     if not out(repo, "diff", "--name-only", base, head):
         upstream = commit(repo, base, "upstream: edit base:", upstream_base_edit)
@@ -436,7 +482,7 @@ def real(repo, base, head, fork):
     return smoke_result(repo, upstream, notes, title)
 
 
-def split(repo, upstream, fork, notes, title):
+def split(repo: str, upstream: str, fork: str, notes: list[str], title: str) -> Outcome:
     """A change declaring `Fork-merge: ours`: merge it the way a fork must."""
     notes.append(
         "  the change declares `Fork-merge: ours`, so the fork "
@@ -452,11 +498,11 @@ def split(repo, upstream, fork, notes, title):
     return smoke_result(repo, upstream, notes, title)
 
 
-def smoke_result(repo, upstream, notes, title):
+def smoke_result(repo: str, upstream: str, notes: list[str], title: str) -> Outcome:
     """FS-03's verdict: the merged tree's own smoke, with SYS-20 upstream."""
     code, verdict, failing = nested_smoke(repo, upstream)
     notes.append(f"  smoke in the merged tree: {verdict or 'no verdict line'}")
-    failures = []
+    failures: list[str] = []
     if code != 0 or verdict is None:
         failures.append("  smoke fails in the merged tree")
         failures.extend(failing)
@@ -468,7 +514,7 @@ def smoke_result(repo, upstream, notes, title):
 # ---------------------------------------------------------------------------
 
 
-def base_commit(ref):
+def base_commit(ref: str) -> str:
     """The commit the fork was made from, or exit naming what is missing.
 
     A baseline that cannot be derived is a refusal, never a pass: a run
@@ -490,16 +536,16 @@ def base_commit(ref):
     return found.stdout.strip()
 
 
-def remove(path):
+def remove(path: str) -> None:
     # Git marks its object files read-only, which Windows refuses to delete.
-    def retry(func, target, _info):
+    def retry(func: Callable[[str], object], target: str, _info: object) -> None:
         os.chmod(target, stat.S_IWRITE)
         func(target)
 
     shutil.rmtree(path, onerror=retry)
 
 
-def render(r):
+def render(r: Row) -> list[str]:
     lines = [f"### {r['status']}  {r['id']} — {r['title']}", ""]
     if r.get("notes"):
         lines.extend(["**Inspected**:", "", "```", *r["notes"], "```", ""])
@@ -510,7 +556,7 @@ def render(r):
     return lines
 
 
-def main():
+def main() -> None:
     started_at = datetime.datetime.now()
     ref = DEFAULT_BASE
     for arg in sys.argv[1:]:
@@ -527,7 +573,7 @@ def main():
     )
 
     repo = tempfile.mkdtemp(prefix="sait-fork-sync-")
-    results = []
+    results: list[Row] = []
     try:
         # A shared clone borrows ROOT's objects, so HEAD resolves even when
         # it is CI's detached merge commit, which no branch names.
@@ -540,7 +586,7 @@ def main():
             git(repo, "config", key, value)
         fork = commit(repo, base, "fork: append a stack, own the documents", fork_edits)
 
-        scenarios = [
+        scenarios: list[tuple[str, Callable[[], Outcome]]] = [
             (
                 "FS-01",
                 lambda: planted(
@@ -572,8 +618,14 @@ def main():
         ]
         for rid, scenario in scenarios:
             try:
-                r = scenario()
-                r["status"] = FAIL if r["failures"] else PASS
+                outcome = scenario()
+                r: Row = {
+                    "id": outcome["id"],
+                    "title": outcome["title"],
+                    "notes": outcome["notes"],
+                    "failures": outcome["failures"],
+                    "status": FAIL if outcome["failures"] else PASS,
+                }
             except RuntimeError as e:
                 r = {
                     "id": rid,

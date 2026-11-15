@@ -7,6 +7,7 @@ import re
 
 from testkit import ROOT, template_files
 from .common import (
+    CheckResult,
     _load_manifest,
     _opt_in_roots,
     _resolve_stack,
@@ -27,7 +28,7 @@ from .common import (
 # ---------------------------------------------------------------------------
 
 
-def check_tpl_04():
+def check_tpl_04() -> CheckResult:
     failures = []
     seen = Inspected()
     ref_pattern = re.compile(r"\[(EXTEND|OVERRIDE):\s*([^\]]+)\]")
@@ -60,7 +61,7 @@ def check_tpl_04():
 # ---------------------------------------------------------------------------
 
 
-def _collect_chain(rel_path, visited=None):
+def _collect_chain(rel_path: str, visited: set[str] | None = None) -> set[str]:
     if visited is None:
         visited = set()
     if rel_path in visited:
@@ -74,7 +75,7 @@ def _collect_chain(rel_path, visited=None):
     return visited
 
 
-def check_tpl_01():
+def check_tpl_01() -> CheckResult:
     failures = []
 
     # The fixture, not a real stack: it is the one stack upstream keeps, so
@@ -103,10 +104,10 @@ def check_tpl_01():
 # ---------------------------------------------------------------------------
 
 
-def _extract_section(filepath, section_id):
+def _extract_section(filepath: str, section_id: str) -> list[str]:
     content = read(filepath)
     lines = content.splitlines()
-    result = []
+    result: list[str] = []
     in_section = False
     tag = f"[ID: {section_id}]"
     extend_tag = f"[EXTEND: {section_id}]"
@@ -127,7 +128,7 @@ def _extract_section(filepath, section_id):
     return [l for l in result if l.strip()]
 
 
-def check_tpl_02():
+def check_tpl_02() -> CheckResult:
     failures = []
     seen = Inspected()
 
@@ -157,7 +158,7 @@ def check_tpl_02():
 # ---------------------------------------------------------------------------
 
 
-def check_tpl_03():
+def check_tpl_03() -> CheckResult:
     failures = []
     seen = Inspected()
 
@@ -195,7 +196,7 @@ def check_tpl_03():
 # ---------------------------------------------------------------------------
 
 
-def check_tpl_06():
+def check_tpl_06() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -248,11 +249,11 @@ def check_tpl_06():
 # ---------------------------------------------------------------------------
 
 
-def _extract_bullets(filepath, section_id):
+def _extract_bullets(filepath: str, section_id: str) -> list[str]:
     """Return list of bullet-point texts from the section tagged with ID."""
     content = read(filepath)
     lines = content.splitlines()
-    bullets = []
+    bullets: list[str] = []
     in_section = False
     tag = f"[ID: {section_id}]"
 
@@ -272,12 +273,12 @@ def _extract_bullets(filepath, section_id):
     return bullets
 
 
-def _word_set(text):
+def _word_set(text: str) -> set[str]:
     """Return set of lowercase words (3+ chars) from text."""
     return {w.lower() for w in re.findall(r"[a-zA-Z]{3,}", text)}
 
 
-def check_tpl_07():
+def check_tpl_07() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -321,7 +322,7 @@ def check_tpl_07():
                     break
 
             # Collect child bullets after the EXTEND line
-            child_bullets = []
+            child_bullets: list[str] = []
             for line in child_lines[extend_lineno + 1 :]:
                 if re.match(r"^#{1,4} ", line) and child_bullets:
                     break
@@ -369,7 +370,7 @@ def check_tpl_07():
 # declares an [ID:] of its own, and the next level overrides that.
 
 
-def check_tpl_10():
+def check_tpl_10() -> CheckResult:
     if not HAS_YAML:
         return [MISSING_YAML]
 
@@ -390,7 +391,7 @@ def check_tpl_10():
         chain_files, _ = _resolve_stack(sid, core_ids, entries)
 
         # rel path -> the IDs it overrides, in chain order
-        overridden = {}
+        overridden: dict[str, list[str]] = {}
         for f in chain_files:
             rel = f.replace("\\", "/")
             content = read(os.path.join(ROOT, f))
@@ -428,7 +429,7 @@ CORE_DIRS = [
 ]
 
 
-def check_tpl_08():
+def check_tpl_08() -> CheckResult:
     failures = []
     seen = Inspected()
     seen.count("directories the check is pointed at", len(CORE_DIRS))
@@ -461,7 +462,7 @@ def check_tpl_08():
 # ---------------------------------------------------------------------------
 
 
-def check_tpl_09():
+def check_tpl_09() -> CheckResult:
     failures = []
     seen = Inspected()
     meta_pattern = re.compile(r"^\[(DEPENDS ON|EXTEND|OVERRIDE|LOAD):")

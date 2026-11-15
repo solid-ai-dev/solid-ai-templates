@@ -13,8 +13,25 @@ the wrong one.
 
 import os
 import sys
+from typing import NotRequired, TypedDict
 
-from conformance import MANUAL, READ, RUN, SKIP, findings_only
+from conformance import MANUAL, READ, RUN, SKIP
+
+
+class Disposition(TypedDict):
+    """What happens to one fenced check; the keys are described below."""
+
+    file: str
+    find: str
+    title: str
+    do: str
+    expect: NotRequired[list[str] | str]
+    reason: NotRequired[str]
+    reading: NotRequired[str]
+    args: NotRequired[list[str]]
+    substitute: NotRequired[dict[str, str]]
+    grep: NotRequired[bool]
+
 
 # Pass predicates, named here and implemented in the runner.
 #
@@ -67,7 +84,7 @@ SKIP_BUDGET = 2
 # so the block runs the one already running.
 PYTHON = '"%s"' % sys.executable.replace(os.sep, "/")
 
-CHECKS = [
+CHECKS: list[Disposition] = [
     # -- core/git.md -------------------------------------------------
     # This repository's regenerator is sync_docs.py, and what it writes depends
     # on the tree -- a fork's examples document among them -- so the diff
@@ -134,28 +151,22 @@ CHECKS = [
     },
     # The project's own static checks: mypy strict and the ruff formatter,
     # configured in pyproject.toml, and pyflakes as the linter CI already
-    # runs. Each prints nothing clean. The tooling still carries type errors
-    # and unformatted files, so for now each command's findings exit is
-    # carried past with findings_only and the check is a budgeted reading: it
-    # awaits a person and never reads as clean, while a checker that cannot
-    # run still fails it. Once the tooling is clean it prints nothing, which
-    # fails a manual check, and the gate comes back: the expectation becomes
-    # [], findings_only goes, and the budget line with it.
+    # runs. Each prints nothing clean, so any line is a finding and fails.
+    # pyflakes has no exclude option, so it reads the tracked Python files;
+    # a directory walk would reach the gitignored reports under tests/.
     {
         "file": "core/quality.md",
         "find": "<type-check-command>",
         "title": "The type checker, the linter and the formatter are clean",
         "do": RUN,
-        "expect": MANUAL,
-        "reason": "Every line is a type error, a lint finding or a file the "
-        "formatter would change, in tooling still being cleaned. "
-        "Each is read, and none scored, until the tooling is clean.",
+        "expect": [],
         "substitute": {
-            "<type-check-command>": findings_only(PYTHON, "mypy", "--no-error-summary"),
-            "<lint-command>": findings_only(PYTHON, "pyflakes", "tools tests hooks"),
-            "<format-check-command>": findings_only(
-                PYTHON, "ruff", "format --check -q tools tests hooks"
-            ),
+            "<type-check-command>": PYTHON + " -m mypy --no-error-summary",
+            "<lint-command>": "git ls-files -- '*.py' | xargs "
+            + PYTHON
+            + " -m pyflakes",
+            "<format-check-command>": PYTHON
+            + " -m ruff format --check -q tools tests hooks",
         },
     },
     {
@@ -259,8 +270,10 @@ except ModuleNotFoundError as exc:
 
 # Each registry's entries beside the skip count it declares. A fork's file
 # that declares none is reported with None, which the runner refuses.
-SKIP_BUDGETS = [("tests/conformance/dispositions.py", CHECKS, SKIP_BUDGET)]
-FORK_CHECKS = []
+SKIP_BUDGETS: list[tuple[str, list[Disposition], int | None]] = [
+    ("tests/conformance/dispositions.py", CHECKS, SKIP_BUDGET)
+]
+FORK_CHECKS: list[Disposition] = []
 if fork_dispositions is not None:
     FORK_CHECKS = fork_dispositions.CHECKS
     SKIP_BUDGETS.append(
