@@ -31,7 +31,7 @@ Each exchange of 3.1, the channel that carries it and who opens it.
 | Chain and task skills to an agent | Files in the project's checkout, read through `tools/resolve_chain.py` | The agent | FR-04-01, FR-05-01 |
 | Hooks to a project's CI | pre-commit fetches upstream at a pinned revision | The project's pre-commit | FR-07-02, ADR-055 |
 | A release to the benchmark | A clone of upstream or a fork at the release registered for the round | The benchmark | QG-01-02 |
-| Efficacy results to upstream | A pull request adding the round's report under `docs/audits/` | The maintainer | QG-01-02 |
+| Efficacy results to the maintainer | A dated report in the benchmark's own `docs/reports/`, cited here by link | The benchmark | QG-01-02, ADR-059 |
 | Repository and CI runs | `git push` to GitHub, and Actions on every pull request and push to `main` | The maintainer and CI | FR-10-01 |
 
 ## 3.3 Out of scope

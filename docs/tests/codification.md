@@ -65,7 +65,7 @@ reused for a different component within the same area.
 | `04` | Header–manifest sync — DEPENDS ON headers match manifest depends_on |
 | `05` | *fork* — Generation fidelity — end-of-session audit inlined verbatim or hard-delegated, never paraphrased |
 | `06` | Stack structure — every usable stack's resolved chain carries the ADR-017 MUST sections |
-| `07` | Audit storage — 360 audit reports live only under docs/audits/ with dated names |
+| `07` | — retired (audit reports moved out of the repository) |
 | `08` | *fork* — Example coverage — every showcased stack keeps its example CLAUDE.md |
 | `09` | Sync check — `sync_docs.py --check` inspects without writing |
 | `10` | Quoted directive — a DEPENDS ON quoted in prose is not a declaration |

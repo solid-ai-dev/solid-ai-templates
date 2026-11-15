@@ -21,7 +21,6 @@ from .system import (
     check_sys_03,
     check_sys_04,
     check_sys_06,
-    check_sys_07,
     check_sys_09,
     check_sys_10,
     check_sys_11,
@@ -158,12 +157,6 @@ CHECKS: list[Check] = [
         "spec": "SAIT-SMK-SYS-06-001A",
         "title": "Every usable stack's chain carries the MUST sections",
         "fn": check_sys_06,
-    },
-    {
-        "id": "SYS-07",
-        "spec": "SAIT-SMK-SYS-07-001A",
-        "title": "360 audit reports live only under docs/audits/",
-        "fn": check_sys_07,
     },
     {
         "id": "TPL-08",

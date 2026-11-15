@@ -32,7 +32,6 @@ restated in each.
 | `SAIT-SMK-SYS-03-001A` | SMK | P0 | Every template file has a corresponding manifest entry |
 | `SAIT-SMK-SYS-04-001A` | SMK | P0 | DEPENDS ON headers match manifest depends_on |
 | `SAIT-SMK-SYS-06-001A` | SMK | P1 | Every usable stack's resolved chain carries the MUST sections |
-| `SAIT-SMK-SYS-07-001A` | SMK | P2 | 360 audit reports live only under docs/audits/ |
 | `SAIT-SMK-SYS-09-001A` | SMK | P2 | sync_docs.py --check inspects without writing |
 | `SAIT-SMK-SYS-10-001A` | SMK | P2 | A quoted DEPENDS ON in prose is not a declaration |
 | `SAIT-SMK-SYS-11-001A` | SMK | P2 | Prose ID references resolve in every chain carrying the file |
