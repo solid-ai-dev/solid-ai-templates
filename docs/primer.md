@@ -72,14 +72,6 @@ Each row answers the failure in the same row of 2.1:
 | A dated edition sent to every branch | A fix found at head office reaches every branch | Moving the pin and rebuilding brings every upstream fix |
 | An inspector with a checklist | A slip is caught before the customer sees it | Hooks stop a commit that breaks a checked rule |
 
-Two more gains have no failure above, because a kitchen without a
-franchise never had them:
-
-| The franchise adds | So that | In the templates |
-| ------------------ | ------- | ---------------- |
-| Local menu items on top of the manual | A branch fits its market without losing head-office updates | A fork adds its stacks and keeps merging upstream |
-| A recipe card handed out per order | The cook is not buried in recipes for dishes nobody ordered | Task skills load only when their task starts |
-
 A franchise does not make every cook brilliant. It makes the good result
 the usual one, and the bad one rare and visible. Whether the templates do
 the same for agents is measured, not assumed: the benchmark,
