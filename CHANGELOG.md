@@ -7,6 +7,8 @@ Releases up to 2.63.0 are listed in
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-15
+
 ### Breaking changes
 
 - The tools are named verb-first: resolve_chain, sync_docs, check_release
@@ -151,6 +153,8 @@ Releases up to 2.63.0 are listed in
   ([#2278])
 - The README shows how to run the shipped checks without the templates
   ([#2423])
+- The base quality rules ask for a strict type checker, a linter and a formatter
+  ([#2440])
 
 ### Changed
 
@@ -252,6 +256,12 @@ Releases up to 2.63.0 are listed in
   check covers any key derived from the source ([#2336])
 - The deployment template drops its air-gapped mirror, external-call audit and L7
   preference ([#2335])
+- Write the changelog's entries from the merged pull requests' labels ([#2431])
+- A shorter front page with one setup prompt, and the hook setup on its own page
+  ([#2449])
+- Stop a generated context file inventing tools, checklists and an override
+  order ([#2463])
+- License the templates' rule text under CC0 1.0 ([#2467])
 
 ### Deprecated
 
@@ -495,6 +505,11 @@ Releases up to 2.63.0 are listed in
 [#2415]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2415
 [#2423]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2423
 [#2428]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2428
+[#2431]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2431
+[#2440]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2440
+[#2449]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2449
+[#2463]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2463
+[#2467]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2467
 
 ## [2.90.0] - 2026-09-12
 
