@@ -61,8 +61,13 @@ How a project's agent context files are structured and written.
   never restate it unless the model below inlines it
 - State the override order near the top when more than one rule source
   governs the project
+- State no override order for an inline file that is the only rule source
+- Count a `CLAUDE.md` that imports the file as part of that one source
 - Name the check beside each mechanically checkable rule: the command in a
   fenced block, the pass condition in prose
+- Name the project's own tool where the chain names none for a check
+- Never invent a tool the project does not use
+- Mark the check open when the project has no such tool, and keep the rule
 
 ### Self-check
 
@@ -74,7 +79,10 @@ not a note.
 - [ ] No prose restates a rule authoritative elsewhere, beyond what the
       model inlines
 - [ ] The precedence order is stated where several authorities govern
-- [ ] Every mechanically checkable constraint names its check
+- [ ] Every mechanically checkable constraint names its check, or marks
+      it open
+- [ ] No tool, check or checklist appears that neither the chain nor the
+      project names
 - [ ] The project-structure section points to the README map, with no
       second directory tree
 
@@ -95,6 +103,7 @@ not a note.
 - Render an end-of-session checklist verbatim, or delegate it with an
   order to read it and execute each item in sequence, without summarizing
   or skipping any; never paraphrase it into a shorter list (MUST NOT)
+- Never write an end-of-session checklist the chain does not carry
 
 ## Inline model
 
