@@ -24,7 +24,7 @@ try:
 
     HAS_YAML = True
 except ImportError:
-    yaml = None
+    yaml = None  # type: ignore[assignment]
     HAS_YAML = False
 
 
