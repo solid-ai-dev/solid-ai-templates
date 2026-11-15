@@ -1,10 +1,10 @@
 ---
 id: "018"
-status: Accepted
+status: Superseded
 date: 2026-06-26
 category: process
 supersedes: []
-superseded_by: []
+superseded_by: ["059"]
 ---
 
 # ADR-018: docs/audits is the sole 360 audit-storage convention

@@ -1,6 +1,11 @@
 .idea/
 .claude/
 tests/reports/
+
+# Reports live outside the repository, so a run that still writes here
+# must not commit one.
+docs/audits/
+
 tmp/
 __pycache__/
 .env

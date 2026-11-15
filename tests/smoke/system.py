@@ -31,7 +31,7 @@ from resolve_chain import (
     task_kinds,
 )
 
-from testkit import ROOT, repository_files, template_files
+from testkit import ROOT, template_files
 from .common import (
     CheckResult,
     _load_manifest,
@@ -260,49 +260,6 @@ def check_sys_06() -> CheckResult:
                 )
 
     seen.count("MUST sections asserted across those chains", asserted)
-    return seen.failures() + failures, seen.notes()
-
-
-# ---------------------------------------------------------------------------
-# SYS-07 — 360 audit reports live only under docs/audits/
-# ---------------------------------------------------------------------------
-# templates/workflow/360.md [ID: 360-tracking] mandates one audit-storage
-# convention: each audit is a dated report at docs/audits/YYYY-MM-DD-360.md,
-# and the single-file docs/360-audit.md form is prohibited. This guards the
-# rule mechanically — no audit report may live outside docs/audits/, and a
-# file inside it MUST use the dated YYYY-MM-DD-360.md name.
-
-_AUDIT_DIR = "docs/audits"
-
-# An audit report file: the prohibited single-file form (360-audit*.md) or a
-# dated report (*-360.md). The 360.md template itself matches neither.
-_AUDIT_NAME = re.compile(r"(?:360-audit.*|.*-360)\.md$")
-_DATED_AUDIT_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}-360\.md$")
-
-
-def check_sys_07() -> CheckResult:
-    failures: list[str] = []
-    seen = Inspected()
-    reports = 0
-    walked = repository_files()
-    for rel in walked:
-        name = rel.rsplit("/", 1)[-1]
-        if _AUDIT_NAME.match(name):
-            reports += 1
-            if not rel.startswith(_AUDIT_DIR + "/"):
-                failures.append(
-                    f"  {rel}: 360 audit report outside {_AUDIT_DIR}/ — move "
-                    f"it to {_AUDIT_DIR}/YYYY-MM-DD-360.md "
-                    f"(360.md [ID: 360-tracking])"
-                )
-            elif not _DATED_AUDIT_NAME.match(name):
-                failures.append(
-                    f"  {rel}: audit file must use the YYYY-MM-DD-360.md "
-                    f"dated-report name (360.md [ID: 360-tracking])"
-                )
-
-    seen.count("repository files read", walked)
-    seen.count("audit reports found", reports)
     return seen.failures() + failures, seen.notes()
 
 

@@ -1374,9 +1374,9 @@ headless adaptation re-projects Quality into engineering dimensions. Run one on
 demand: before a launch, after a milestone or a major feature, or when a stakeholder
 needs the whole picture.
 
-- Store each audit as a dated report at `docs/audits/YYYY-MM-DD-360.md`. This is the
-  only audit location; never use a single-file `docs/360-audit.md` history. All audit
-  history lives in the folder
+- Store each audit as a dated report, `reports/YYYY-MM-DD-360.md`, in
+  `solid-ai-dev/solid-ai-audits`, through a pull request there; never commit a report
+  to this repository (ADR-059)
 - Give each report a scores table, the issues created, the current bottleneck, and
   per-dimension findings tables with a grade rationale
 - File a labelled issue for every actionable finding (`AGENTS.md` section 3) and
