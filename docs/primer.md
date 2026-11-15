@@ -35,11 +35,7 @@ it the rules those roots resolve to.
 
 ## 3. From roots to files
 
-```text
-roots you pick ──► manifest ──► chain ──► emitter ──► AGENTS.md
-  backend-api      the graph    ordered    one run     .agents/skills/<task>/SKILL.md
-                                files
-```
+![From roots to files. The project picks its roots, such as backend-api. The manifest records which template depends on which, and resolves the roots to a chain, the root and its dependencies in order. The emitter, resolve_chain.py --emit, writes two kinds of file the agent reads: AGENTS.md, read on every turn, and the task skills under .agents/skills, each read when its task starts](diagrams/primer-flow.png)
 
 - The **manifest**, `templates/manifest.yaml`, records which template depends
   on which
@@ -60,10 +56,11 @@ gets a one-line file that points to `AGENTS.md`.
 
 ## 4. A worked example
 
-A project building an HTTP API picks one root and looks at its chain:
+A project building an HTTP API picks one root and looks at its chain, from
+a clone of the templates beside the project:
 
 ```bash
-py tools/resolve_chain.py backend-api
+py ../solid-ai-templates/tools/resolve_chain.py backend-api
 ```
 
 ```text
@@ -76,11 +73,14 @@ templates/backend/http.md
 templates/backend/api.md
 ```
 
+![The chain of backend-api. The core tier comes first, in every chain: core quality, git, docs, testing and review. Then backend http, a layer backend-api depends on, and last backend api, the root the project picked](diagrams/primer-chain.png)
+
 The core files come first, then the layers `backend-api` depends on, then
-`backend-api` itself. The project then writes its files:
+`backend-api` itself. From the project's own folder, the project then
+writes its files:
 
 ```bash
-py tools/resolve_chain.py --emit . backend-api
+py ../solid-ai-templates/tools/resolve_chain.py --emit . backend-api
 ```
 
 The emitter writes `AGENTS.md` and one skill per task kind the chain
@@ -89,6 +89,8 @@ placeholders, such as `{{project-name}}` and the build and test commands,
 for the project to fill in.
 
 ## 5. The choices a project makes
+
+![Where a project takes its rules from. Upstream, solid-ai-templates, holds the core, the layers, the tools and the hooks. A fork merges upstream and adds stacks, platforms and process rules. The project pins one released tag from either. From the pin, the emitter writes the project's AGENTS.md and task skills, and pre-commit runs the hooks at the pin on its commits and in CI](diagrams/primer-sources.png)
 
 | Choice | Options | Where it is set |
 | ------ | ------- | --------------- |
