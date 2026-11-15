@@ -1090,7 +1090,13 @@ nothing was compared.
    repository's release proposal: it names every step here and the result it produced,
    and the quality evidence that moved since the previous release — a benchmark round,
    the template-quality scores — or says that none was taken. The qualities and their
-   instruments are in `docs/architecture/10-quality-requirements.md`.
+   instruments are in `docs/architecture/10-quality-requirements.md`. It also reports
+   the share of the pull requests merged since the previous tag that carry
+   `changelog:none` (QG-04-03):
+
+   ```bash
+   gh pr list --state merged --limit 500 --search "merged:>=YYYY-MM-DD"      --json labels --jq 'length as $all | map(select(any(.labels[]; .name == "changelog:none"))) | "\(length)/\($all)"'
+   ```
 3. Tag and push. The tag is annotated and names step 2's changelog-cut commit, not
    `main`. The theme in the tag message is the milestone's, which is where this
    repository keeps it:

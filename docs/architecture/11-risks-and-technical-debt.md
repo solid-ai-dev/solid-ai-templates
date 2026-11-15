@@ -12,7 +12,7 @@ mitigation shows a dash.
 | R01 | Attention dilution | Relevant rules are buried even when the window holds the chain | Context tiers (SYS-16); the template-quality ratchet; task procedures load only with their skill | QG-02-02, QG-04-02, ADR-058 |
 | R02 | Literalism | Hundreds of MUSTs drive overengineering or irrelevant work | Rule language reserves MUST for what matters; the scorer flags long rules | FR-01-01, QG-04-02 |
 | R03 | False confidence | Green structural checks read as evidence that agents do better | Chapter 10 keeps effectiveness separate; the benchmark measures it | QG-01-02 |
-| R04 | Recursive governance | Rules about checks, audits and releases create more surfaces than they retire | A decision record is owed only for the composition model | - |
+| R04 | Recursive governance | Rules about checks, audits and releases create more surfaces than they retire | A decision record is owed only for the composition model; each release reports the share of work a consuming project does not notice | QG-04-03 |
 | R05 | Backlog exhaustion | The tracker becomes an inventory, not a set of commitments | Intake dispositions; only a milestone means scheduled | ADR-024 |
 | R06 | Product displacement | Keeping policy consistent takes the time meant for adopters | - | - |
 | R07 | Supply chain | Remote policy changes behaviour without review | A project pins a released tag of upstream or a fork, moving the pin changes no context file, and the team reviews a regeneration's diff | FR-08-04, FR-09-03 |
@@ -24,7 +24,7 @@ mitigation shows a dash.
 | R13 | Unloaded skills | An agent never loads a task's skill, so that task's procedure goes unread | Security sections stay in the root file. Whether an agent loads a skill on demand is not yet measured | ADR-058 |
 | R14 | Truncated context | An agent reads only the first part of a large root file, such as Codex's 32 KiB default, and never sees the rest | - | - |
 | R15 | Model change | A new model follows the same file differently, better or worse | The benchmark measures each builder model as a setting of its own | QG-01-02 |
-| R16 | Fork drift | A fork falls behind upstream, and each merge grows harder | Fork sync merges every upstream change into a simulated fork; `Fork-merge: ours` marks the removals | FR-10-02, ADR-049 |
+| R16 | Fork drift | A fork falls behind upstream, and each merge grows harder | Upstream cannot merge a change that breaks a fork's merge, since fork sync gates every pull request; `Fork-merge: ours` marks the removals. Keeping a fork current is its maintainer's job | FR-10-02, ADR-049 |
 | R17 | Format churn | Agents change the file names they read, their size caps or the skill format | Plain Markdown any agent reads; task skills in the open Agent Skills format | FR-05-04, ADR-058 |
 
 ## 11.2 Technical debt

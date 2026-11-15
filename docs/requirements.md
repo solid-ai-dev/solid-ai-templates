@@ -130,6 +130,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | ID | Subcharacteristic | Requirement | Source | Checked by |
 |----|-------------------|-------------|--------|------------|
 | QG-04-02 | Modifiability | No template shall score more than 0.1 below its baseline. | Chapter 8.12 | score ratchet |
+| QG-04-03 | Modifiability | Each release proposal shall report the share of merged pull requests labelled `changelog:none`, the work a consuming project does not notice. | Chapter 11.1, R04 | Release proposal |
 
 ## Removed
 
