@@ -124,6 +124,7 @@ Releases up to 2.63.0 are listed in
 
 ### Added
 
+- Tell Codex users to raise their AGENTS.md size limit ([#2491])
 - A template section can name where its rules load, a task kind or check
   ([#2385])
 - The resolver emits a project's root context file and task skills, the same
@@ -510,6 +511,7 @@ Releases up to 2.63.0 are listed in
 [#2449]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2449
 [#2463]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2463
 [#2467]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2467
+[#2491]: https://github.com/solid-ai-dev/solid-ai-templates/pull/2491
 
 ## [2.90.0] - 2026-09-12
 
