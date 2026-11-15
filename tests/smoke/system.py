@@ -2563,7 +2563,9 @@ SECTION_BASE = (
     "## Lint\n[LOAD: check]\n\n- Rule the check enforces\n\n- Run the linter:\n\n"
     "```bash\nruff check .\n```\n\n"
     "## Optional\n\n- Declined rule\n\n"
-    "## Render\n[ID: demo-render]\n\n- Overridden rule\n"
+    "## Render\n[ID: demo-render]\n\n- Overridden rule\n\n"
+    "## Target\n[ID: demo-target]\n\n- Target rule\n\n"
+    "## Content\n[ID: demo-content]\n\n- Base content rule\n"
 )
 SECTION_LAYER = (
     "# Layer — Demo\n[ID: layer-demo]\n\n"
@@ -2573,14 +2575,41 @@ SECTION_LAYER = (
     "## Paging\n\n- Page every list\n"
 )
 SECTION_TITLE_ONLY = "# Other — Demo\n[ID: other-demo]\n\n- Rule under a bare title\n"
+
+# Three levels of override, each declaring an ID of its own, as a section
+# that expects further specialisation does.
+SECTION_MID = (
+    "# Mid — Demo\n[ID: mid-demo]\n\n"
+    "## Content\n[ID: mid-content]\n[OVERRIDE: demo-content]\n\n- Mid content rule\n"
+)
+SECTION_TOP = (
+    "# Top — Demo\n[ID: top-demo]\n\n"
+    "## Content\n[ID: top-content]\n[OVERRIDE: mid-content]\n\n- Top content rule\n"
+)
+
+# An extension whose section runs past its heading to the next ID, a section
+# naming the base of the override chain, and an extension of that base.
+SECTION_MORE = (
+    "# More — Demo\n[ID: more-demo]\n\n"
+    "## First\n[EXTEND: demo-target]\n\n- First extension rule\n\n"
+    "## Second\n\n- Second extension rule\n\n"
+    "## Later\n[ID: more-later]\n\n- Follow the content rules (`demo-content`)\n\n"
+    "## Extra\n[EXTEND: demo-content]\n\n- Extra content rule\n"
+)
 SECTION_FILES = [
     ("templates/core/demo.md", SECTION_BASE),
     ("templates/backend/layer.md", SECTION_LAYER),
+    ("templates/backend/mid.md", SECTION_MID),
+    ("templates/fixture/top.md", SECTION_TOP),
+    ("templates/fixture/more.md", SECTION_MORE),
     ("templates/data/other.md", SECTION_TITLE_ONLY),
 ]
 SECTION_TEMPLATES = {
     "templates/core/demo.md": ("base-demo", "Demo rules"),
     "templates/backend/layer.md": ("backend-layer", "Layer rules"),
+    "templates/backend/mid.md": ("backend-mid", "Mid rules"),
+    "templates/fixture/top.md": ("stack-top", "Top rules"),
+    "templates/fixture/more.md": ("stack-more", "More rules"),
     "templates/data/other.md": ("base-other", "Other rules"),
 }
 SECTION_KINDS = {"release": "Preparing a release"}
@@ -2729,6 +2758,11 @@ def planted_section_findings() -> list[str]:
     layer = emitted.get(f"{SECTIONS_DIR}/backend-layer/naming.md", "")
     paging = emitted.get(f"{SECTIONS_DIR}/backend-layer/paging.md", "")
     other = emitted.get(f"{SECTIONS_DIR}/base-other/other-demo.md", "")
+    target = emitted.get(f"{SECTIONS_DIR}/base-demo/target.md", "")
+    second = emitted.get(f"{SECTIONS_DIR}/stack-more/second.md", "")
+    later = emitted.get(f"{SECTIONS_DIR}/stack-more/later.md", "")
+    extra = emitted.get(f"{SECTIONS_DIR}/stack-more/extra.md", "")
+    top = emitted.get(f"{SECTIONS_DIR}/stack-top/content.md", "")
     everything = "\n".join(emitted.values())
     owed = [
         ("the overridden rule is replaced", "Overridden rule" not in everything),
@@ -2752,6 +2786,32 @@ def planted_section_findings() -> list[str]:
         ("the map names a template's topic", "| Paging |" in root),
         ("the map gives a template's description", "Layer rules" in root),
         ("the model line names section files", "Model: root and sections" in root),
+        (
+            "a section carries an extension's heading up to the next ID",
+            "Second extension rule" in target,
+        ),
+        (
+            "an extension's later heading carries the section it extends",
+            "Target rule" in second,
+        ),
+        ("an extension ends at the next ID", "Target rule" not in later),
+        (
+            "each replaced level of an override chain is out",
+            "Base content rule" not in everything
+            and "Mid content rule" not in everything,
+        ),
+        (
+            "a section naming an overridden ID carries its last override",
+            "Top content rule" in later,
+        ),
+        (
+            "an extension of an overridden ID carries its last override, before it",
+            0 <= extra.find("Top content rule") < extra.find("Extra content rule"),
+        ),
+        (
+            "the last override carries the extension of the ID it replaces",
+            0 <= top.find("Top content rule") < top.find("Extra content rule"),
+        ),
     ]
     findings = [label for label, ok in owed if not ok]
     findings += section_findings(
