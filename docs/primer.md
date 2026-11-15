@@ -55,10 +55,6 @@ every agent and every session.
 | A recipe card, taken from the binder when a matching order comes in | A **task skill**, loaded when a matching task starts |
 | The inspector, who checks named standards in the dishes | The **hooks** and checks, run on the project's files and changes |
 
-No cook reads the whole manual. The restaurant picks its menu, and a tool
-builds the binder from it: the station rules, with the basics every branch
-follows, and a recipe card for each kind of order.
-
 ### 2.3 What the franchise changes
 
 Each row answers the failure in the same row of 2.1:
