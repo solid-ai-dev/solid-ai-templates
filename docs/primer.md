@@ -19,6 +19,26 @@ and turned into a project's context file by a tool.
 
 ## 2. An analogy
 
+### 2.1 A kitchen without a franchise
+
+Picture a restaurant where each cook keeps their own notes. The same
+failures show up in projects whose agents work from hand-written notes, or
+from none:
+
+| In the kitchen | With coding agents |
+| -------------- | ------------------ |
+| Monday's cook salts the soup, Tuesday's does not | One session writes tests for its change, the next session does not |
+| A cook improvises with an ingredient the kitchen stopped buying | An agent runs a tool the project dropped, because an old note still names it |
+| Two notes on the wall give two cooking times for the same dish | Two rules in the context file disagree, and the agent has to guess which holds |
+| A new cook learns by watching, and copies a colleague's shortcut | A new session copies the pattern it finds in the code, good or bad |
+| A fix one cook finds never reaches the other branches | A lesson one project learns stays in that project's notes |
+| Nobody tastes the dish before it leaves the kitchen | Nothing checks the change before it is committed |
+
+The food is sometimes good and sometimes not, and the customer cannot tell
+in advance which it will be.
+
+### 2.2 The franchise
+
 Think of a restaurant franchise. Head office wants every branch to cook to
 the same standards, whoever is on shift. The templates aim for the same of
 every agent and every session.
@@ -41,6 +61,23 @@ every agent and every session.
 A cook does not read the whole manual before each shift. The restaurant
 chooses its menu from one edition; a tool adds the basics they rely on
 and assembles the binder, placing each rule where the manual says it goes.
+
+### 2.3 What the franchise changes
+
+| The franchise adds | So that | In the templates |
+| ------------------ | ------- | ---------------- |
+| One written manual for every branch | Every cook follows the same standard, on every shift | Every session reads the same `AGENTS.md` |
+| Reviewed recipes, not each cook's habits | A dish is made the way that was tested, not the way someone remembers | Rules written once, reviewed, and scored for clarity |
+| A dated edition, replaced as a whole | A fix found at head office reaches every branch at its next edition | Moving the pin and rebuilding brings every upstream fix |
+| Local dishes on top of the manual | A branch fits its market without losing head-office updates | A fork adds its stacks and keeps merging upstream |
+| A recipe card handed out per dish | The cook is not buried in recipes for dishes nobody ordered | Task skills load only when their task starts |
+| An inspector with a checklist | A slip is caught before the customer sees it | Hooks stop a commit that breaks a checked rule |
+
+A franchise does not make every cook brilliant. It makes the good result
+the usual one, and the bad one rare and visible. Whether the templates do
+the same for agents is measured, not assumed: the benchmark,
+`solid-ai-dev/solid-ai-benchmark`, compares the same agent with the files
+and without them.
 
 ## 3. From roots to files
 
