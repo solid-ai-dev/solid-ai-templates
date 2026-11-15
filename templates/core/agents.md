@@ -141,7 +141,7 @@ not a note.
 [Priority order and checklists from the review rules]
 
 ## 5. Session protocol
-[How a session starts, proceeds and ends]
+[How a session starts, proceeds and ends, with the session handoff if kept]
 ```
 
 ## Hybrid model
@@ -191,7 +191,7 @@ Key references:
 [Inlined: every review rule marked MUST inline; reference the rest]
 
 ## 5. Session protocol
-[How a session starts, proceeds and ends]
+[How a session starts, proceeds and ends, with the session handoff if kept]
 ```
 
 ## Formatting
