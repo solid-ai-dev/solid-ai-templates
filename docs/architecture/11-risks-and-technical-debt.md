@@ -28,8 +28,9 @@ mitigation shows a dash.
 
 | Area | Debt | Source |
 |------|------|--------|
-| Policy | Oversized high-reach templates; too many absolute rules; local incidents generalised globally; procedures mixed into persistent policy | QG-04-02 |
-| Composition | File paths act as identity. An agent writing an inline or hybrid file applies overrides and settles conflicts itself; only the emitter does it in a tool | ADR-058 |
-| Validation | Extensive structural checks, thin evidence that agents follow the rules | QG-01-02 |
+| Policy | Oversized high-reach templates; too many absolute rules; local incidents generalised globally. A root file can outgrow what an agent reads of it | QG-02-02, QG-04-02 |
+| Composition | File paths act as identity. An agent writing an inline or hybrid file applies overrides and settles conflicts itself; only the emitter does it in a tool. Two overrides of one ID are refused, but two rules that contradict each other are not detected | ADR-039, ADR-058 |
+| Generation | Two paths are kept in parallel, the output contract an agent follows and the emitter, and each change to one must be weighed for the other | ADR-052, ADR-058 |
+| Validation | Extensive structural checks, thin evidence that agents follow the rules; every benchmark round so far builds the same app | QG-01-02 |
 | Documentation | Decision records out of proportion to product capability | - |
-| Product | The emitter runs from a clone of the templates; no stable project configuration exists, and no tool shows what a release changes in a project's files. The declaration block is a target | ADR-053, ADR-058 |
+| Product | The emitter runs from a clone of the templates; no stable project configuration exists, and no tool shows what a release changes in a project's files. A regeneration takes every section a newer tag adds unless the project declines it, and the agent fills the project's facts without a check. The declaration block is a target | ADR-053, ADR-058 |
