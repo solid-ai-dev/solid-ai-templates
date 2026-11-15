@@ -22,6 +22,7 @@ mitigation shows a dash.
 | R11 | Unpredictable exceptions | Projects deviate from a shared rule, each in its own way | A project overrides a section or declines it, and a conflict the rules cannot settle goes to the user, whose answer is recorded in the generated file | FR-04-02, FR-06-03, FR-05-03 |
 | R12 | Compliance over need | An agent satisfies every rule and misses what the user needed | The team accepts a change against criteria it defines itself, and an agent's code and tests never redefine the intended behaviour | Chapter 1, Team |
 | R13 | Unloaded skills | An agent never loads a task's skill, so that task's procedure goes unread | Security sections stay in the root file. Whether an agent loads a skill on demand is not yet measured | ADR-058 |
+| R14 | Truncated context | An agent reads only the first part of a large root file, such as Codex's 32 KiB default, and never sees the rest | - | - |
 
 ## 11.2 Technical debt
 
@@ -30,5 +31,5 @@ mitigation shows a dash.
 | Policy | Oversized high-reach templates; too many absolute rules; local incidents generalised globally; procedures mixed into persistent policy | QG-04-02 |
 | Composition | File paths act as identity. An agent writing an inline or hybrid file applies overrides and settles conflicts itself; only the emitter does it in a tool | ADR-058 |
 | Validation | Extensive structural checks, thin evidence that agents follow the rules | QG-01-02 |
-| Documentation | A large audit surface; decision records out of proportion to product capability | - |
+| Documentation | Decision records out of proportion to product capability | - |
 | Product | The emitter runs from a clone of the templates; no stable project configuration exists, and no tool shows what a release changes in a project's files. The declaration block is a target | ADR-053, ADR-058 |

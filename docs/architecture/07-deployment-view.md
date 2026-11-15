@@ -33,9 +33,9 @@ arrow points from the side that opens it.
 
 ## 7.3 Integration models
 
-A project holds the templates by submodule, clone or copy, and its coding
-agent generates the context files from them. A project whose context file
-copies in every rule may keep that file alone, without the templates. A
+A project holds the templates by submodule, clone or copy, and builds its
+context files from them. A project may keep the built files alone, without
+the templates. A
 project may also opt out of the templates and take only the shipped
 checks, with hooks only.
 
@@ -44,7 +44,7 @@ checks, with hooks only.
 | Submodule | The templates | A released tag, in the project's history | Move the submodule to a newer tag | Each commit records the rules that governed it | FR-08-04 |
 | Clone | The templates | A released tag, outside the project's history | Check out a newer tag | Simple, but no commit records which rules governed it | FR-08-04 |
 | Copy | The templates | A released tag, in the project's history as files | Replace the copy with a newer tag's files | No submodule to initialise, but a local edit to the copy is lost on update | - |
-| Generated files only | The inline context files, generated once from the templates at a released tag | None in the repository; the tag is the one the files were generated from | Regenerate from a newer tag | Nothing to hold but the context files. A hybrid file cannot do this, since its references point into the templates | FR-05-04, ADR-052 |
+| Generated files only | The emitted root file and task skills, or an inline context file, built once at a released tag | None in the repository; the tag is the one the files were built from | Rebuild from a newer tag | Nothing to hold but the built files, skills included. A hybrid file cannot do this, since its references point into the templates | FR-05-04, ADR-052, ADR-058 |
 | Hooks only | The shipped checks, run by pre-commit | A released tag, as `rev:` in `.pre-commit-config.yaml` | Move `rev:` to a newer tag | The checks, without the rules | ADR-055 |
 
 ## 7.4 Version updates

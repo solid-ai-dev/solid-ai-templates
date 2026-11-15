@@ -2,8 +2,9 @@
 
 Upstream keeps one set of shared rules and the tools that compose and
 check them, and every stack, platform and team process lives in a fork. A
-project's agent gets every rule whose breach is silent, with no tool to
-catch it, copied into its context; any other rule may stay a reference.
+tool builds each project's root file and task skills from the templates,
+and every rule whose breach is silent, with no tool to catch it, reaches
+the agent in full.
 
 ## 4.1 Decomposition
 
@@ -20,11 +21,13 @@ catch it, copied into its context; any other rule may stay a reference.
 
 ## 4.2 Delivery model
 
-![How one rule is placed: if breaking it is silent and no test, linter or CI step enforces it, it is inlined; if it fails visibly or a tool enforces it, it may be referenced. Inline and hybrid remain; pure reference is deprecated](../diagrams/delivery-model.png)
+![How one rule is placed. If breaking it is silent and no test, linter or CI step enforces it, it is inlined; if it fails visibly or a tool enforces it, it may be referenced. Inline and hybrid remain; pure reference is deprecated](../diagrams/delivery-model.png)
 
 A rule whose breach is silent, with no test, linter or CI step to catch it,
 is copied into the context file. A rule that fails visibly, or that a tool
-enforces, may stay a reference to the file that holds it.
+enforces, may stay a reference to the file that holds it. The emitter
+applies the same rule, and keeps a checked section as a pointer to its
+check.
 
 ## 4.3 Technology decisions
 

@@ -68,7 +68,7 @@ stochastic trials repeated.
 
 | Stimulus | Expected response | Instrument and status | Source |
 |----------|-------------------|-----------------------|--------|
-| A small library requests generated context | Relevant rules present, overridden rules replaced, size recorded | Overrides measured by smoke's TPL checks, and size by the fork's model-limits table. Relevance not measured | FR-04-02, FR-04-03 |
+| A small library requests generated context | Relevant rules present, overridden rules replaced, size recorded | Overrides measured by SYS-26, which emits each chain, and size by chapter 8.10's table. Relevance not measured | FR-04-02, FR-04-03 |
 | An agent receives a bounded code task | Task tests pass; unrelated files and tracker records untouched | Benchmark build task; a trial reaching outside its workspace is voided and reported | QG-01-02 |
 | A consumer starts with uncommitted edits | The edits survive; no unsolicited commit or publication | No fixture; not measured | - |
 | A newer template version is released | Applicability and cost assessed; no automatic compliance work | The adoption boundary in `core/agents.md`; not measured | FR-09-03 |

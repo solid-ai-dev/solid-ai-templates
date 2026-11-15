@@ -16,6 +16,7 @@ out are seen from upstream.
 | solid-ai-dirigent | - | The rules its developer and reviewer agents follow, as a pinned submodule | FR-08-04 |
 | solid-ai-benchmark | Efficacy results for a release | A tagged ref to measure | QG-01-02 |
 | pre-commit, in a project's CI | - | The shipped hooks | FR-07-02, ADR-055 |
+| solid-ai-audits | - | Dated 360 audits and template reviews, filed there | ADR-059 |
 | GitHub | Issues, pull requests and CI runs | The repository | Chapter 2, 2.3 #4 |
 
 ## 3.2 Technical context
