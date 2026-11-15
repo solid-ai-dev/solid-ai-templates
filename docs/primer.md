@@ -19,26 +19,28 @@ and turned into a project's context file by a tool.
 
 ## 2. An analogy
 
-Think of a restaurant franchise. Head office wants every branch's dish to
-taste the same, whoever cooks it. The templates want the same of every
-agent and every session.
+Think of a restaurant franchise. Head office wants every branch to cook to
+the same standards, whoever is on shift. The templates aim for the same of
+every agent and every session.
 
-![The templates as a restaurant franchise. Head office's manual is upstream, the core and the layers. A regional franchise is a fork: it adds local dishes and keeps taking head-office updates. One restaurant is a project, using one dated edition of the manual, its pin. From that edition the cook, the coding agent, reads the rules at the station, AGENTS.md, every shift, and fetches a recipe card, a task skill, when that dish is ordered. The inspector, the hooks and checks, checks the dish](diagrams/primer-franchise.png)
+![The templates as a restaurant franchise. Head office's manual is upstream: the shared rules, the tool and the checks. A regional franchise is a fork: it adds local dishes and merges head-office updates. One restaurant is a project; it pins one dated edition, from head office or from a franchise, and chooses the dishes it serves, its roots. From them it builds the kitchen binder once, with the emitter, at setup or after an update. The binder holds the rules at the station, AGENTS.md, which the cook, the coding agent, has in view on every turn, and the recipe cards, the task skills, each taken out when a matching task comes in. The cook cooks the dishes, the project's files and changes, and the inspector, the hooks, checks named standards in them](diagrams/primer-franchise.png)
 
 | In a franchise | In the templates |
 | -------------- | ---------------- |
-| Head office's operations manual | Upstream, this repository |
-| The basics every branch follows, such as hygiene | The **core tier**: quality, Git, docs, testing and review |
-| The menu sections a restaurant offers | The **roots** a project picks, such as `backend-api` |
-| A regional franchise that adds local dishes and keeps taking head-office updates | A **fork** |
-| A local recipe that adds to or replaces a head-office one | A section that extends or overrides another, by its **ID** |
+| Head office's operations manual | Upstream: the shared rules, the tool that builds the files, and the checks |
+| The basics every branch follows, such as hygiene | The **core tier**, in every chain: quality, Git, docs, testing and review |
+| The dishes a restaurant serves, each bringing the basics it relies on | The **roots** a project picks, such as `backend-api`, with their dependencies |
+| A regional franchise that adds local dishes and merges head-office updates | A **fork** |
+| A local supplement that adds to or replaces a named section of the manual | A section that extends or overrides another, by its **ID** |
 | The dated edition of the manual one restaurant uses | The project's **pin**, a released tag |
-| The rules posted at the station, read every shift | `AGENTS.md`, read on every turn |
-| The recipe card fetched when a dish is ordered | A **task skill**, loaded when its task starts |
-| The inspector who checks the dishes | The shipped checks and **hooks** |
+| The kitchen binder, assembled once for this restaurant's dishes | The **emitter**'s output, rebuilt after an update |
+| The rules posted at the station, in view all the time | `AGENTS.md`, in context on every turn |
+| A recipe card, taken from the binder when a matching order comes in | A **task skill**, loaded when a matching task starts |
+| The inspector, who checks named standards in the dishes | The **hooks** and checks, run on the project's files and changes |
 
 A cook does not read the whole manual before each shift. The restaurant
-picks its menu, and a tool hands the cook the rules that menu needs.
+chooses its dishes from one edition; a tool adds the basics they rely on
+and assembles the binder, placing each rule where the manual says it goes.
 
 ## 3. From roots to files
 
