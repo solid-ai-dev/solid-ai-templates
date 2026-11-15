@@ -55,7 +55,9 @@ on two roots written to a temporary directory that is removed afterwards)
 1. Build a planted base template, a planted layer that extends one of its
    sections, overrides another and names the first in its title's rules,
    and a planted template with rules under its title alone, declining one
-   base section
+   base section; add a three-level override chain, each level declaring an
+   ID of its own, and a template whose extension runs past its heading to
+   the next ID, which names and extends the chain's first ID
 2. Build every root `--roots` lists on its own, as section files and with
    skills inlined
 3. Cut every section file at its headings, keep one copy of each block,
@@ -72,16 +74,20 @@ on two roots written to a temporary directory that is removed afterwards)
    absent, the checked rule is left to its check with its command kept,
    and the procedure is in a section file and not in the root file
 2. Assert a section's file carries its extension after it, and the
-   extension's file carries the section before it
+   extension's file carries the section before it, for every heading the
+   extension's section runs over and for none after the next ID
 3. Assert a file carries the rules under its template's title and every
    section those name, and the bare title gets a file of its own
-4. Assert, for the planted chain and every root, that the lines held equal
+4. Assert each replaced level of the override chain is out, and a section
+   naming or extending its first ID carries the last override, which
+   carries that extension in turn
+5. Assert, for the planted chain and every root, that the lines held equal
    the adopted lines, that two copies of a block never differ, and that a
    file naming a section in backticks carries its rules
-5. Assert the root file maps each section file once, maps no other, holds
+6. Assert the root file maps each section file once, maps no other, holds
    no rule line, and says not to read the files before the work starts
-6. Assert each planted fault is reported
-7. Assert the two runs write the same files with the same bytes
+7. Assert each planted fault is reported
+8. Assert the two runs write the same files with the same bytes
 
 ### Negative controls
 
@@ -93,6 +99,13 @@ on two roots written to a temporary directory that is removed afterwards)
 3. **The planted faults.** A dropped file, an edited copy and a removed
    carried section each fail the counts or the copy comparison; the check
    runs all three on every run
+4. **A relationship tied to its heading.** With an extension or an
+   override given only to the heading whose tags name it, the extension's
+   second heading and the section it extends lack each other's rules, and
+   the check fails
+5. **An override chain cut short.** With an override's relationship read
+   only from the rows that survive, a section naming or extending the
+   chain's first ID lacks the last override, and the check fails
 
 ## Related
 

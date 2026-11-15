@@ -499,7 +499,56 @@ class Topic:
         return any(r["line"].strip() and not r["heading"] for r in self.rows)
 
 
-def _topics(adopted: Iterable[Adopted]) -> list[Topic]:
+def _relate(
+    one: Adopted,
+    by_key: Mapping[tuple[str, Key], Topic],
+    replaced: dict[str, set[str]],
+) -> None:
+    """Give every topic of one file the IDs its section extends and
+    overrides, and record in `replaced` each overridden ID with the IDs the
+    overrides that replace it declare.
+
+    A section runs from its tags to the next `[ID:]`, not to the next
+    heading, so a heading with no tags of its own stays in the section
+    above it. The rows of a replaced section still count here, since an
+    override chain is read through them.
+    """
+    extends: set[str] = set()
+    overrides: set[str] = set()
+    fresh = False
+    declared: str | None = None
+    for row in one.rows:
+        if row["heading"]:
+            fresh, declared = True, None
+            continue
+        line = row["line"].strip()
+        if row["tag"]:
+            for pattern in (ID_TAG, EXTEND_TAG, OVERRIDE_TAG):
+                match = pattern.match(line)
+                if not match:
+                    continue
+
+                # The first relationship under a heading opens a section.
+                if fresh:
+                    extends, overrides, fresh = set(), set(), False
+                if pattern is ID_TAG:
+                    declared = match.group(1)
+                elif pattern is EXTEND_TAG:
+                    extends.add(match.group(1))
+                else:
+                    overrides.add(match.group(1))
+                    if declared:
+                        replaced.setdefault(match.group(1), set()).add(declared)
+            continue
+        if line:
+            fresh = False
+        topic = by_key.get((one.path, tuple(row["path"][:2])))
+        if topic is not None:
+            topic.extends |= extends
+            topic.overrides |= overrides
+
+
+def _topics(adopted: Sequence[Adopted]) -> list[Topic]:
     """The adopted chain's topics, in chain order. One that holds no rule
     gets no file, and a title with none still heads the files below it."""
     topics: list[Topic] = []
@@ -518,17 +567,24 @@ def _topics(adopted: Iterable[Adopted]) -> list[Topic]:
                 # section before, and holds no rule of it.
                 if row["section"] and row["line"].strip() and not row["heading"]:
                     by_key[at].ids.add(row["section"])
-        for row in one.rows:
-            topic = by_key.get((one.path, tuple(row["path"][:2])))
-            if not row["tag"] or topic is None:
-                continue
-            for tag, into in (
-                (EXTEND_TAG, topic.extends),
-                (OVERRIDE_TAG, topic.overrides),
-            ):
-                match = tag.match(row["line"].strip())
-                if match:
-                    into.add(match.group(1))
+    replaced: dict[str, set[str]] = {}
+    for one in adopted:
+        _relate(one, by_key, replaced)
+
+    # An override that declares an ID of its own may be overridden in turn,
+    # and then none of its rows survive to hold the ID it replaced. The last
+    # surviving replacement stands for every ID down the chain, so a rule
+    # that names or extends the first still finds it.
+    for topic in topics:
+        stands = topic.ids | topic.overrides
+        grown = True
+        while grown:
+            grown = False
+            for old, new in replaced.items():
+                if old not in stands and new & stands:
+                    stands.add(old)
+                    grown = True
+        topic.overrides |= stands - topic.ids
     known = {i for topic in topics if topic.content() for i in topic.ids}
     known |= {i for topic in topics for i in topic.overrides}
     for topic in topics:
