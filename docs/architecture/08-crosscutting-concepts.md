@@ -227,7 +227,7 @@ task starts. The root file's count includes its fact slots.
 | `backend-monitoring` | 5616 | 10 | 2094 |
 | `backend-observability` | 5363 | 10 | 2094 |
 | `backend-webhooks` | 8725 | 11 | 2188 |
-| `base-agents` | 4885 | 10 | 3189 |
+| `base-agents` | 4885 | 10 | 3290 |
 | `base-cicd` | 5173 | 10 | 2214 |
 | `base-config` | 5347 | 10 | 2124 |
 | `base-containers` | 5226 | 10 | 2194 |
