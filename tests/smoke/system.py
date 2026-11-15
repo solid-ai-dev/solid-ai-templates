@@ -2565,14 +2565,19 @@ SECTION_BASE = (
     "## Optional\n\n- Declined rule\n\n"
     "## Render\n[ID: demo-render]\n\n- Overridden rule\n\n"
     "## Target\n[ID: demo-target]\n\n- Target rule\n\n"
-    "## Content\n[ID: demo-content]\n\n- Base content rule\n"
+    "## Content\n[ID: demo-content]\n\n- Base content rule\n\n"
+    "## Shared\n[ID: demo-shared]\n\n- Shared first rule\n\n"
+    "## Follow\n\n- Follow the rules of `demo-shared`\n\n"
+    "## Parent\n[ID: demo-parent]\n\n- Parent rule\n\n"
+    "### Child\n[ID: demo-child]\n[EXTEND: demo-naming]\n\n- Child rule\n"
 )
 SECTION_LAYER = (
     "# Layer — Demo\n[ID: layer-demo]\n\n"
     "The layer adds to the naming rules (`demo-naming`).\n\n"
     "## Naming\n[EXTEND: demo-naming]\n\n- Prefix a layer name\n\n"
     "## Render\n[OVERRIDE: demo-render]\n\n- Overriding rule\n\n"
-    "## Paging\n\n- Page every list\n"
+    "## Paging\n\n- Page every list\n\n"
+    "## Child\n[ID: layer-child]\n[OVERRIDE: demo-child]\n\n- Child replaced\n"
 )
 SECTION_TITLE_ONLY = "# Other — Demo\n[ID: other-demo]\n\n- Rule under a bare title\n"
 
@@ -2593,6 +2598,7 @@ SECTION_MORE = (
     "# More — Demo\n[ID: more-demo]\n\n"
     "## First\n[EXTEND: demo-target]\n\n- First extension rule\n\n"
     "## Second\n\n- Second extension rule\n\n"
+    "## Fresh\n\n[ID: more-fresh]\n\n- Fresh rule\n\n"
     "## Later\n[ID: more-later]\n\n- Follow the content rules (`demo-content`)\n\n"
     "## Extra\n[EXTEND: demo-content]\n\n- Extra content rule\n"
 )
@@ -2761,6 +2767,8 @@ def planted_section_findings() -> list[str]:
     target = emitted.get(f"{SECTIONS_DIR}/base-demo/target.md", "")
     second = emitted.get(f"{SECTIONS_DIR}/stack-more/second.md", "")
     later = emitted.get(f"{SECTIONS_DIR}/stack-more/later.md", "")
+    fresh = emitted.get(f"{SECTIONS_DIR}/stack-more/fresh.md", "")
+    follow = emitted.get(f"{SECTIONS_DIR}/base-demo/follow.md", "")
     extra = emitted.get(f"{SECTIONS_DIR}/stack-more/extra.md", "")
     top = emitted.get(f"{SECTIONS_DIR}/stack-top/content.md", "")
     everything = "\n".join(emitted.values())
@@ -2795,6 +2803,18 @@ def planted_section_findings() -> list[str]:
             "Target rule" in second,
         ),
         ("an extension ends at the next ID", "Target rule" not in later),
+        (
+            "a heading whose ID follows a blank line extends nothing",
+            "Target rule" not in fresh and "Fresh rule" not in target,
+        ),
+        (
+            "a heading naming its own section's ID carries its other headings",
+            "Shared first rule" in follow,
+        ),
+        (
+            "a replaced subsection's relationship stays out of its heading",
+            "Parent rule" not in base and "Child rule" not in everything,
+        ),
         (
             "each replaced level of an override chain is out",
             "Base content rule" not in everything

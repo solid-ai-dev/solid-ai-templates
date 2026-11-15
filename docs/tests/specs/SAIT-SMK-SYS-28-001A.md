@@ -57,7 +57,9 @@ on two roots written to a temporary directory that is removed afterwards)
    and a planted template with rules under its title alone, declining one
    base section; add a three-level override chain, each level declaring an
    ID of its own, and a template whose extension runs past its heading to
-   the next ID, which names and extends the chain's first ID
+   the next ID, which names and extends the chain's first ID; add a section
+   whose ID a later heading names, a heading whose ID follows a blank line,
+   and an overridden subsection that carries an extension
 2. Build every root `--roots` lists on its own, as section files and with
    skills inlined
 3. Cut every section file at its headings, keep one copy of each block,
@@ -75,9 +77,12 @@ on two roots written to a temporary directory that is removed afterwards)
    and the procedure is in a section file and not in the root file
 2. Assert a section's file carries its extension after it, and the
    extension's file carries the section before it, for every heading the
-   extension's section runs over and for none after the next ID
+   extension's section runs over and for none after the next ID, nor for
+   a heading whose ID follows a blank line
 3. Assert a file carries the rules under its template's title and every
-   section those name, and the bare title gets a file of its own
+   section those name, a heading naming its own section's ID carries the
+   section's other headings, a replaced subsection's extension stays out of
+   the heading above it, and the bare title gets a file of its own
 4. Assert each replaced level of the override chain is out, and a section
    naming or extending its first ID carries the last override, which
    carries that extension in turn
@@ -106,6 +111,13 @@ on two roots written to a temporary directory that is removed afterwards)
 5. **An override chain cut short.** With an override's relationship read
    only from the rows that survive, a section naming or extending the
    chain's first ID lacks the last override, and the check fails
+6. **A name of its own dropped.** With a heading's own IDs taken out of the
+   IDs it names, a later heading naming its section's ID lacks the
+   section's first heading, and the check fails
+7. **Every row relating.** With a blank row or a replaced row given the
+   current relationship, a heading whose ID follows a blank line, and the
+   heading above a replaced subsection, become extensions, and the check
+   fails
 
 ## Related
 

@@ -510,9 +510,12 @@ def _relate(
 
     A section runs from its tags to the next `[ID:]`, not to the next
     heading, so a heading with no tags of its own stays in the section
-    above it. The rows of a replaced section still count here, since an
-    override chain is read through them.
+    above it. A replaced section's tags still count, since an override
+    chain is read through them, but only a surviving rule line takes a
+    relationship: a blank line under a heading comes before its tags, and a
+    replaced subsection's rows are not its heading's.
     """
+    kept = {id(row) for _, run in one.runs for row in run}
     extends: set[str] = set()
     overrides: set[str] = set()
     fresh = False
@@ -540,10 +543,11 @@ def _relate(
                     if declared:
                         replaced.setdefault(match.group(1), set()).add(declared)
             continue
-        if line:
-            fresh = False
+        if not line:
+            continue
+        fresh = False
         topic = by_key.get((one.path, tuple(row["path"][:2])))
-        if topic is not None:
+        if topic is not None and id(row) in kept:
             topic.extends |= extends
             topic.overrides |= overrides
 
@@ -591,7 +595,11 @@ def _topics(adopted: Sequence[Adopted]) -> list[Topic]:
         for row in topic.rows:
             if not row["fence"]:
                 topic.names.update(NAMED_ID.findall(row["line"]))
-        topic.names = (topic.names & known) - topic.ids
+
+        # An ID can run over several headings, so a heading that names its
+        # own section's ID still needs the others; the topic itself is
+        # already carried.
+        topic.names &= known
     return topics
 
 
