@@ -21,7 +21,7 @@ the agent in full.
 
 ## 4.2 Delivery model
 
-![How one rule is placed. If breaking it is silent and no test, linter or CI step enforces it, it is inlined; if it fails visibly or a tool enforces it, it may be referenced. Inline and hybrid remain; pure reference is deprecated](../diagrams/delivery-model.png)
+![How one rule is placed. If breaking it is silent and no test, linter or CI step enforces it, it is inlined; if it fails visibly or a tool enforces it, it may be referenced. Inline and hybrid remain; the templates no longer generate pure reference, which is not deprecated](../diagrams/delivery-model-current.png)
 
 A rule whose breach is silent, with no test, linter or CI step to catch it,
 is copied into the context file. A rule that fails visibly, or that a tool
