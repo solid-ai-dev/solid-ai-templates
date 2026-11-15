@@ -14,6 +14,11 @@ from collections.abc import Collection, Iterable, Mapping, Sequence
 # so a fork's own key is read here exactly as it is resolved there.
 from emit_context import EmitError
 from emit_context import BUILT_LINE, MAP_HEADER, SECTIONS_DIR, section_rules
+from emit_context import EXTEND_TAG, ID_TAG, OVERRIDE_TAG
+
+# The emitter's line parser, which only reads a template; the reference
+# reading of a chain's relationships in SYS-28 is the check's own.
+from emit_context import _blocks as parse_rows
 from emit_context import build as emit_build
 from emit_context import build_sections as emit_sections
 from emit_context import write as emit_write
@@ -2616,13 +2621,24 @@ SECTION_BRAND = (
     "# Brand — Demo\n[ID: brand-demo]\n\n"
     "## Skin\n[OVERRIDE: skin-demo]\n\n- Brand theme rule\n"
 )
+# A title whose ID a later template overrides, while its headings keep
+# IDs of their own and stay.
+SECTION_FACADE = (
+    "# Facade — Demo\n[ID: facade-demo]\n\nFacade title rule.\n\n"
+    "## Door\n[ID: facade-door]\n\n- Door rule\n"
+)
+SECTION_FRONT = (
+    "# Front — Demo\n[ID: front-demo]\n[OVERRIDE: facade-demo]\n\nFront title rule.\n"
+)
 SECTION_FILES = [
     ("templates/core/demo.md", SECTION_BASE),
     ("templates/backend/layer.md", SECTION_LAYER),
     ("templates/backend/mid.md", SECTION_MID),
     ("templates/fixture/top.md", SECTION_TOP),
+    ("templates/backend/facade.md", SECTION_FACADE),
     ("templates/backend/skin.md", SECTION_SKIN),
     ("templates/fixture/brand.md", SECTION_BRAND),
+    ("templates/fixture/front.md", SECTION_FRONT),
     ("templates/fixture/more.md", SECTION_MORE),
     ("templates/data/other.md", SECTION_TITLE_ONLY),
 ]
@@ -2631,7 +2647,9 @@ SECTION_TEMPLATES = {
     "templates/backend/layer.md": ("backend-layer", "Layer rules"),
     "templates/backend/mid.md": ("backend-mid", "Mid rules"),
     "templates/fixture/top.md": ("stack-top", "Top rules"),
+    "templates/backend/facade.md": ("backend-facade", "Facade rules"),
     "templates/backend/skin.md": ("backend-skin", "Skin rules"),
+    "templates/fixture/front.md": ("stack-front", "Front rules"),
     "templates/fixture/brand.md": ("stack-brand", "Brand rules"),
     "templates/fixture/more.md": ("stack-more", "More rules"),
     "templates/data/other.md": ("base-other", "Other rules"),
@@ -2715,6 +2733,126 @@ def adopted_lines(
     return +lines
 
 
+class _Run:
+    """One override's section: the IDs it replaces, the sections its rows
+    sit in, and the rule lines it delivers."""
+
+    def __init__(self) -> None:
+        self.targets: set[str] = set()
+        self.sections: set[str] = set()
+        self.lines: set[str] = set()
+
+
+def relation_findings(
+    files: Sequence[tuple[str, str]],
+    declined: Iterable[str],
+    owed: Counter[str],
+    sections: Mapping[str, str],
+) -> list[str]:
+    """Each section file that lacks rules a relationship owes it.
+
+    A reference reading, apart from the emitter's: every relationship is
+    read from the unfiltered chain, the rules under a title, each section a
+    heading's section extends, and each ID its prose names, and each owes
+    the rules that survive for it, the ID's own or, where it is replaced,
+    those of the override that replaces it, followed down the chain. A file
+    carries a heading when it holds every rule the heading delivers.
+    """
+    gone_list = set(declined)
+    topics: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
+    extends_of: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
+    names_of: dict[tuple[str, tuple[tuple[int, str], ...]], set[str]] = {}
+    titles: dict[str, set[str]] = {}
+    span: dict[str, set[str]] = {}
+    runs: list[_Run] = []
+    for path, text in files:
+        extends: set[str] = set()
+        run: _Run | None = None
+        fresh = False
+        for row in parse_rows(text):
+            gone = any(f"{path}#{h}" in gone_list for _, h in row["path"])
+            line = row["line"].strip()
+            if row["heading"]:
+                fresh = True
+                if len(row["path"]) == 1 and row["section"]:
+                    titles.setdefault(path, set()).add(row["section"])
+                continue
+            if row["tag"]:
+                for pattern in (ID_TAG, EXTEND_TAG, OVERRIDE_TAG):
+                    match = pattern.match(line)
+                    if not match:
+                        continue
+                    if fresh:
+                        extends, run, fresh = set(), None, False
+                    if pattern is EXTEND_TAG:
+                        extends.add(match.group(1))
+                    elif pattern is OVERRIDE_TAG and not gone:
+                        if run is None:
+                            run = _Run()
+                            runs.append(run)
+                        run.targets.add(match.group(1))
+                        if row["section"]:
+                            run.sections.add(row["section"])
+                continue
+            if not line:
+                continue
+            fresh = False
+            if len(row["path"]) == 1 and row["section"]:
+                titles.setdefault(path, set()).add(row["section"])
+            if run is not None and row["section"]:
+                run.sections.add(row["section"])
+            if gone or not owed[row["line"]]:
+                continue
+            key = (path, tuple(row["path"][:2]))
+            topics.setdefault(key, set()).add(row["line"])
+            extends_of.setdefault(key, set()).update(extends)
+            if not row["fence"]:
+                names_of.setdefault(key, set()).update(
+                    re.findall(r"`([a-z0-9][a-z0-9-]*)`", row["line"])
+                )
+            if row["section"]:
+                span.setdefault(row["section"], set()).add(row["line"])
+            if run is not None:
+                run.lines.add(row["line"])
+
+    def survives(section: str, seen: set[str]) -> set[str]:
+        if section in seen:
+            return set()
+        seen.add(section)
+        found = set(span.get(section, ()))
+        for one in runs:
+            if section in one.targets:
+                found |= one.lines
+                for inner in sorted(one.sections):
+                    found |= survives(inner, seen)
+        return found
+
+    findings: list[str] = []
+    for rel in sorted(sections):
+        lines = set(sections[rel].splitlines())
+        for key, held in topics.items():
+            if not held <= lines:
+                continue
+            path, place = key
+            heading = place[-1][1] if place else path
+            owes: dict[str, set[str]] = {}
+            if len(place) == 2:
+                owes["the rules under its title"] = topics.get((path, place[:1]), set())
+                for title in sorted(titles.get(path, ())):
+                    if not span.get(title):
+                        owes[f"the replacement of `{title}`"] = survives(title, set())
+            for target in sorted(extends_of.get(key, ())):
+                owes[f"`{target}`, which it extends"] = survives(target, set())
+            for target in sorted(names_of.get(key, ())):
+                owes[f"`{target}`, which it names"] = survives(target, set())
+            findings += [
+                f"{rel} carries {heading} and lacks {what}"
+                for what, needed in owes.items()
+                if not needed <= lines
+            ]
+    return findings
+
+
 def section_findings(
     files: Sequence[tuple[str, str]],
     kinds: Mapping[str, str],
@@ -2740,6 +2878,8 @@ def section_findings(
                 held.update(body)
     findings += [f"no section file holds: {line}" for line in owed - held]
     findings += [f"no adopted rule is: {line}" for line in held - owed]
+
+    findings += relation_findings(files, declined, owed, sections)
 
     rules = section_rules(files, declined)
     for rel in sorted(sections):
@@ -2787,6 +2927,7 @@ def planted_section_findings() -> list[str]:
     later = emitted.get(f"{SECTIONS_DIR}/stack-more/later.md", "")
     fresh = emitted.get(f"{SECTIONS_DIR}/stack-more/fresh.md", "")
     kept = emitted.get(f"{SECTIONS_DIR}/stack-more/kept.md", "")
+    door = emitted.get(f"{SECTIONS_DIR}/backend-facade/door.md", "")
     follow = emitted.get(f"{SECTIONS_DIR}/base-demo/follow.md", "")
     extra = emitted.get(f"{SECTIONS_DIR}/stack-more/extra.md", "")
     top = emitted.get(f"{SECTIONS_DIR}/stack-top/content.md", "")
@@ -2833,6 +2974,10 @@ def planted_section_findings() -> list[str]:
             "Brand theme rule" in later
             and "Skin theme rule" not in everything
             and "Base theme rule" not in everything,
+        ),
+        (
+            "a heading under an overridden title carries the title's replacement",
+            "Front title rule." in door and "Facade title rule." not in everything,
         ),
         (
             "a heading whose ID follows a blank line extends nothing",

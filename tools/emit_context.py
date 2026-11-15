@@ -486,8 +486,9 @@ class Topic:
     rules under the title itself: the unit a section file is built around.
 
     `order` is its place in the chain, `ids` the section IDs its rows sit
-    in, `extends` and `overrides` the IDs its tags name, and `names` the
-    adopted IDs its prose names.
+    in, `extends` and `overrides` the IDs its tags name, `names` the
+    adopted IDs its prose names, and `governed` the IDs of its template's
+    title that an override replaces.
     """
 
     order: int
@@ -498,6 +499,7 @@ class Topic:
     extends: set[str] = field(default_factory=set)
     overrides: set[str] = field(default_factory=set)
     names: set[str] = field(default_factory=set)
+    governed: set[str] = field(default_factory=set)
 
     def content(self) -> bool:
         return any(r["line"].strip() and not r["heading"] for r in self.rows)
@@ -582,6 +584,25 @@ def _topics(adopted: Sequence[Adopted]) -> list[Topic]:
     for one in adopted:
         _relate(one, by_key, replaced)
 
+    # The rules under a title govern every heading beneath it, read from the
+    # unfiltered rows: where a later template overrides the title's ID, the
+    # override's rules govern the headings that keep IDs of their own.
+    gone = _overridden(
+        [row for row in one.rows if id(row) not in one.declined] for one in adopted
+    )
+    for one in adopted:
+        title = {
+            row["section"]
+            for row in one.rows
+            if len(row["path"]) == 1
+            and row["section"]
+            and not row["tag"]
+            and row["line"].strip()
+        }
+        for topic in topics:
+            if topic.path == one.path and len(topic.key) == 2:
+                topic.governed = title & gone
+
     # An override that declares an ID of its own may be overridden in turn,
     # and then none of its rows survive to hold the ID it replaced. The last
     # surviving replacement stands for every ID down the chain, so a rule
@@ -631,6 +652,8 @@ def _carried(topics: Sequence[Topic]) -> dict[int, list[Topic]]:
             and len(other.key) < len(topic.key)
             and topic.key[: len(other.key)] == other.key
         ]
+        for i in sorted(topic.governed):
+            found += [(other, False) for other in holding.get(i, [])]
 
         # A section is read with the one it extends or names, since a rule
         # left to a reference is one the agent never reads.
