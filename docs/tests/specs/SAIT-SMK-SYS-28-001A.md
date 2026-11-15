@@ -59,7 +59,9 @@ on two roots written to a temporary directory that is removed afterwards)
    ID of its own, and a template whose extension runs past its heading to
    the next ID, which names and extends the chain's first ID; add a section
    whose ID a later heading names, a heading whose ID follows a blank line,
-   and an overridden subsection that carries an extension
+   and an overridden subsection that carries an extension; decline an
+   extension's first heading, and add a two-level override whose first
+   level sits under a heading inside its title's section
 2. Build every root `--roots` lists on its own, as section files and with
    skills inlined
 3. Cut every section file at its headings, keep one copy of each block,
@@ -77,15 +79,17 @@ on two roots written to a temporary directory that is removed afterwards)
    and the procedure is in a section file and not in the root file
 2. Assert a section's file carries its extension after it, and the
    extension's file carries the section before it, for every heading the
-   extension's section runs over and for none after the next ID, nor for
-   a heading whose ID follows a blank line
+   extension's section runs over, its first heading declined or not, and
+   for none after the next ID, nor for a heading whose ID follows a blank
+   line
 3. Assert a file carries the rules under its template's title and every
    section those name, a heading naming its own section's ID carries the
    section's other headings, a replaced subsection's extension stays out of
    the heading above it, and the bare title gets a file of its own
 4. Assert each replaced level of the override chain is out, and a section
    naming or extending its first ID carries the last override, which
-   carries that extension in turn
+   carries that extension in turn, also where an override sits in a
+   section its heading inherits
 5. Assert, for the planted chain and every root, that the lines held equal
    the adopted lines, that two copies of a block never differ, and that a
    file naming a section in backticks carries its rules
@@ -118,6 +122,10 @@ on two roots written to a temporary directory that is removed afterwards)
    current relationship, a heading whose ID follows a blank line, and the
    heading above a replaced subsection, become extensions, and the check
    fails
+8. **Relationships read after filtering.** With a section's extent read
+   from the declined-filtered rows, or an override recorded only against
+   an ID its own heading declares, the declined heading's sibling and the
+   section naming the overridden ID lack their rules, and the check fails
 
 ## Related
 
