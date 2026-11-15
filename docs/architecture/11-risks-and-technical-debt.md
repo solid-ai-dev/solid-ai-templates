@@ -21,7 +21,7 @@ mitigation shows a dash.
 | R10 | Uniform mistakes | A wrong shared rule is wrong in every project that adopts it | A rule is admitted only for a demonstrated outcome, and a project adopts a release deliberately | Chapter 10, FR-09-03 |
 | R11 | Unpredictable exceptions | Projects deviate from a shared rule, each in its own way | A project overrides a section or declines it, and a conflict the rules cannot settle goes to the user, whose answer is recorded in the generated file | FR-04-02, FR-06-03, FR-05-03 |
 | R12 | Compliance over need | An agent satisfies every rule and misses what the user needed | The team accepts a change against criteria it defines itself, and an agent's code and tests never redefine the intended behaviour | Chapter 1, Team |
-| R13 | Unloaded skills | An agent never loads a task's skill, so that task's procedure goes unread | Security sections stay in the root file, and the benchmark measures whether agents load skills on demand | ADR-058 |
+| R13 | Unloaded skills | An agent never loads a task's skill, so that task's procedure goes unread | Security sections stay in the root file. Whether an agent loads a skill on demand is not yet measured | ADR-058 |
 
 ## 11.2 Technical debt
 
