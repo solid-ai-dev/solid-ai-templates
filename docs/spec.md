@@ -18,7 +18,3 @@ The architecture, one arc42 chapter per file.
 | 12. Glossary | [12-glossary.md](architecture/12-glossary.md) |
 
 Requirements, each with an ID to cite, are in [requirements.md](requirements.md).
-Dated benchmark reports are in
-[solid-ai-benchmark](https://github.com/solid-ai-dev/solid-ai-benchmark/tree/main/docs/reports),
-and dated audits and reviews in
-[solid-ai-audits](https://github.com/solid-ai-dev/solid-ai-audits/tree/main/reports).

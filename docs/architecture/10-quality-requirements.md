@@ -44,18 +44,19 @@ Each instrument keeps a severe failure out of any average.
 
 ## 10.1 Quality tree
 
-Each goal from chapter 1 names its instrument and the baseline measured so
-far. A blank baseline is a gap, not a pass.
+Each goal from chapter 1 names its instrument and whether it is measured.
+The figures are in the instrument's own reports, never here. An unmeasured
+goal is a gap, not a pass.
 
-| Characteristic | Subcharacteristic | Evidence sought | Instrument | Baseline | Source |
+| Characteristic | Subcharacteristic | Evidence sought | Instrument | Status | Source |
 |----------------|-------------------|-----------------|------------|----------|--------|
-| Functional suitability | Functional correctness | Valid composition and precedence; no conflicting instructions or lost user work | Smoke, conformance, fork sync and the redundancy audit, in CI on every pull request | All pass on `main`, 2026-10-19 | QG-01-01 |
-| Functional suitability | Functional appropriateness | Representative tasks complete correctly | The efficacy benchmark, which runs in `solid-ai-dev/solid-ai-benchmark` | Round 5e, 2026-11-13, Sonnet 5, 15 builds an arm. Every arm passed 95 to 99 % of the hidden tests, no file 99 %. Six of the eight template arms beat no file, on security; a 39-line hand-written file and a 40-line cut showed no clear gain ([report](https://github.com/solid-ai-dev/solid-ai-benchmark/blob/main/docs/reports/2026-11-13-efficacy.md)) | QG-01-02 |
+| Functional suitability | Functional correctness | Valid composition and precedence; no conflicting instructions or lost user work | Smoke, conformance, fork sync and the redundancy audit, in CI on every pull request | Measured on every pull request | QG-01-01 |
+| Functional suitability | Functional appropriateness | Representative tasks complete correctly | The efficacy benchmark, which runs in `solid-ai-dev/solid-ai-benchmark` | Measured each benchmark round | QG-01-02 |
 | Functional suitability | Functional appropriateness | Selected policy fits the project and task | Each root's resolved chain; the adoption boundary in `core/agents.md` | Not measured | - |
-| Performance efficiency | Time behaviour, resource utilization | Context, time, retries and adoption effort relative to outcomes | Chain size per stack category; benchmark tokens, turns, time and cost; latency | Round 5e, Sonnet 5, $4.29 per build with no file and $7.06 to $14.18 with one. Latency and adoption effort not measured | QG-02-02 |
+| Performance efficiency | Time behaviour, resource utilization | Context, time, retries and adoption effort relative to outcomes | Chain size per stack category; benchmark tokens, turns, time and cost; latency | Cost measured each benchmark round; latency and adoption effort not measured | QG-02-02 |
 | Flexibility | Replaceability | Changes and overrides have explainable effects and manageable migration | The 3.x frozen surface (chapter 8.7); `tools/check_release.py`; SYS-22; SYS-24, for section splitting only | Not measured, since 3.0.0 is the first frozen release | QG-03-02, FR-09-01 |
 | Flexibility | Adaptability | The shared rules survive a change of stack or agent | None yet | Not measured | - |
-| Maintainability | Modifiability | Fewer recurring defects and less policy-induced work | `tools/score_templates.py` and its ratchet; the intake dispositions in `CONTRIBUTING.md` | 2026-10-19, a median of 91.7, with five `core/` files under 50 ([report](https://github.com/solid-ai-dev/solid-ai-audits/blob/main/reports/2026-10-19-template-quality.md)) | QG-04-02 |
+| Maintainability | Modifiability | Fewer recurring defects and less policy-induced work | `tools/score_templates.py` and its ratchet; the intake dispositions in `CONTRIBUTING.md` | Measured on every pull request by the ratchet | QG-04-02 |
 
 ## 10.2 Quality scenarios
 
@@ -68,7 +69,7 @@ stochastic trials repeated.
 | Stimulus | Expected response | Instrument and status | Source |
 |----------|-------------------|-----------------------|--------|
 | A small library requests generated context | Relevant rules present, overridden rules replaced, size recorded | Overrides measured by smoke's TPL checks, and size by the fork's model-limits table. Relevance not measured | FR-04-02, FR-04-03 |
-| An agent receives a bounded code task | Task tests pass; unrelated files and tracker records untouched | Benchmark build task, rounds 1 to 4; a trial reaching outside its workspace is voided and reported | QG-01-02 |
+| An agent receives a bounded code task | Task tests pass; unrelated files and tracker records untouched | Benchmark build task; a trial reaching outside its workspace is voided and reported | QG-01-02 |
 | A consumer starts with uncommitted edits | The edits survive; no unsolicited commit or publication | No fixture; not measured | - |
 | A newer template version is released | Applicability and cost assessed; no automatic compliance work | The adoption boundary in `core/agents.md`; not measured | FR-09-03 |
 | A maintainer moves an ordinary document | References updated; no decision record for a path change | The decision-record threshold in `AGENTS.md`; not measured | - |

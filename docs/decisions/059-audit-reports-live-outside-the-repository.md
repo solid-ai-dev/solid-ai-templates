@@ -36,8 +36,8 @@ under `reports/`, and this repository keeps none.
 
 - Each report lives with the tool or process that makes it, so publishing
   one needs no write to the templates
-- Both repositories are public, so the architecture chapters can still
-  cite a report by link
+- The architecture names each quality goal's instrument, which does not
+  change from round to round, and leaves the figures to its reports
 - With no report here, the smoke check that filed them has nothing to
   guard and is retired
 
@@ -45,8 +45,9 @@ under `reports/`, and this repository keeps none.
 
 1. **No report here** — `docs/audits/` is deleted and gitignored; a report
    is never committed to this repository
-2. **Citations link out** — a chapter cites a report by its link in the
-   repository that holds it
+2. **No report cited** — the architecture chapters cite no report and
+   quote no figure from one; a quality goal names its instrument and
+   whether it is measured
 3. **History stays** — the reports remain in this repository's history up
    to the commit that removed them; no history is rewritten
 
@@ -64,7 +65,7 @@ under `reports/`, and this repository keeps none.
 |---|---|
 | SYS-07, its spec and its registry entry are removed | `tests/smoke/`, `docs/tests/` |
 | The figures gate no longer exempts `docs/audits/` | `tools/check_doc_figures.py` |
-| Citations point at the new homes | `docs/spec.md`, chapters 3, 10 and 11 |
+| Chapter 10 trades its baselines for a status; chapters 3 and 11 and the spec cite no report | `docs/spec.md`, `docs/architecture/` |
 | The 360 procedure stores a report in `solid-ai-audits` | `docs/playbook.md` |
 | The benchmark writes its reports to its own `docs/reports/` | `solid-ai-dev/solid-ai-benchmark` |
 
