@@ -61,7 +61,8 @@ on two roots written to a temporary directory that is removed afterwards)
    whose ID a later heading names, a heading whose ID follows a blank line,
    and an overridden subsection that carries an extension; decline an
    extension's first heading, and add a two-level override whose first
-   level sits under a heading inside its title's section
+   level sits under a heading inside its title's section, and a title a
+   later template overrides while its headings keep IDs of their own
 2. Build every root `--roots` lists on its own, as section files and with
    skills inlined
 3. Cut every section file at its headings, keep one copy of each block,
@@ -83,7 +84,8 @@ on two roots written to a temporary directory that is removed afterwards)
    for none after the next ID, nor for a heading whose ID follows a blank
    line
 3. Assert a file carries the rules under its template's title and every
-   section those name, a heading naming its own section's ID carries the
+   section those name, a heading under an overridden title carries the
+   override's rules, a heading naming its own section's ID carries the
    section's other headings, a replaced subsection's extension stays out of
    the heading above it, and the bare title gets a file of its own
 4. Assert each replaced level of the override chain is out, and a section
@@ -93,10 +95,15 @@ on two roots written to a temporary directory that is removed afterwards)
 5. Assert, for the planted chain and every root, that the lines held equal
    the adopted lines, that two copies of a block never differ, and that a
    file naming a section in backticks carries its rules
-6. Assert the root file maps each section file once, maps no other, holds
+6. Assert, by a reading of the unfiltered chain apart from the emitter's,
+   that every file carrying a heading holds what each of its relationships
+   owes: the rules under its title, each section its section extends, and
+   each ID its prose names, each resolved to the rules that survive for
+   it, its own or those of the override that replaces it, down the chain
+7. Assert the root file maps each section file once, maps no other, holds
    no rule line, and says not to read the files before the work starts
-7. Assert each planted fault is reported
-8. Assert the two runs write the same files with the same bytes
+8. Assert each planted fault is reported
+9. Assert the two runs write the same files with the same bytes
 
 ### Negative controls
 
@@ -126,6 +133,11 @@ on two roots written to a temporary directory that is removed afterwards)
    from the declined-filtered rows, or an override recorded only against
    an ID its own heading declares, the declined heading's sibling and the
    section naming the overridden ID lack their rules, and the check fails
+9. **The earlier emitters.** Run against each earlier version of the
+   section mode, the reading of the unfiltered chain alone reports every
+   omission later fixed: an extension past its heading, a declined first
+   heading, an override chain, a heading naming its own section's ID, and
+   an overridden title
 
 ## Related
 
