@@ -10,12 +10,9 @@ needs no programming. Each term in **bold** is defined in the
 AI coding agents read a note of house rules before they work, a file named
 `AGENTS.md` or `CLAUDE.md`. Such a note is a **context file**.
 
-Most projects write their note by hand. Over time it drifts: two rules
-disagree, a rule names a tool the project dropped, and no one checks
-whether the code follows any of it.
-
-The templates are a shared library of such rules, written once, reviewed,
-and turned into a project's context file by a tool.
+Most projects write their note by hand, and it drifts. The templates are a
+shared library of such rules, written once, reviewed, and turned into a
+project's context file by a tool.
 
 ## 2. An analogy
 
@@ -64,14 +61,24 @@ and assembles the binder, placing each rule where the manual says it goes.
 
 ### 2.3 What the franchise changes
 
+Each row answers the failure in the same row of 2.1:
+
 | The franchise adds | So that | In the templates |
 | ------------------ | ------- | ---------------- |
 | One written manual for every branch | Every cook follows the same standard, on every shift | Every session reads the same `AGENTS.md` |
-| Reviewed recipes, not each cook's habits | A dish is made the way that was tested, not the way someone remembers | Rules written once, reviewed, and scored for clarity |
-| A dated edition, replaced as a whole | A fix found at head office reaches every branch at its next edition | Moving the pin and rebuilding brings every upstream fix |
-| Local dishes on top of the manual | A branch fits its market without losing head-office updates | A fork adds its stacks and keeps merging upstream |
-| A recipe card handed out per dish | The cook is not buried in recipes for dishes nobody ordered | Task skills load only when their task starts |
+| A new edition that replaces the old pages | No cook works from a page head office withdrew | Rebuilding replaces the whole file, so a rule upstream removed leaves with it |
+| Reviewed recipes, not each cook's habits | One recipe per dish, tested before it is printed | Rules written once, reviewed, and checked for duplicates |
+| The manual on a new cook's first day | A new cook learns the standard, not a colleague's shortcut | A new session starts from the rules, not from whatever the code shows |
+| A dated edition sent to every branch | A fix found at head office reaches every branch | Moving the pin and rebuilding brings every upstream fix |
 | An inspector with a checklist | A slip is caught before the customer sees it | Hooks stop a commit that breaks a checked rule |
+
+Two more gains have no failure above, because a kitchen without a
+franchise never had them:
+
+| The franchise adds | So that | In the templates |
+| ------------------ | ------- | ---------------- |
+| Local menu items on top of the manual | A branch fits its market without losing head-office updates | A fork adds its stacks and keeps merging upstream |
+| A recipe card handed out per order | The cook is not buried in recipes for dishes nobody ordered | Task skills load only when their task starts |
 
 A franchise does not make every cook brilliant. It makes the good result
 the usual one, and the bad one rare and visible. Whether the templates do
