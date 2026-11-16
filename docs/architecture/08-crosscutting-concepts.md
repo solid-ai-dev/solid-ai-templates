@@ -139,13 +139,13 @@ elements, and deprecate one by naming its replacement.
 
 | Element | What is frozen | Source |
 |---------|----------------|--------|
-| Template paths | The file path of every shipped template | ADR-051 |
-| Template IDs | The `id` of every manifest entry | ADR-051 |
-| Section IDs | Every `[ID:]`, in the file that holds it, and the headings its section holds. A section does not move to another file, and a minor adds an ID only on new content, never in front of lines a shipped section holds. SYS-24 checks it against the newest 3.x tag | ADR-051 |
+| Template paths | The file path of every shipped template. SYS-29 checks it against the newest 3.x tag | ADR-051 |
+| Template IDs | The `id` of every manifest entry. SYS-29 checks it against the newest 3.x tag | ADR-051 |
+| Section IDs | Every `[ID:]`, in the file that holds it, and the headings its section holds. A section does not move to another file, and a minor adds an ID only on new content, never in front of lines a shipped section holds. SYS-29 checks that each stays in its file, and SYS-24 that no new ID splits a section, against the newest 3.x tag | ADR-051 |
 | Manifest schema | The fields the header comment of `templates/manifest.yaml` lists, and their meaning; a minor adds only optional fields | ADR-051 |
-| Core-tier membership | The IDs under `core:`; a new template is reached by declaring it, never by joining the core | ADR-051 |
+| Core-tier membership | The IDs under `core:`; a new template is reached by declaring it, never by joining the core. SYS-29 checks it | ADR-051 |
 | Check exit codes | 0 passes, 1 fails, 3 does not apply | ADR-051 |
-| Task kinds | The kinds under the manifest's `tasks:`, which a load directive names | ADR-058 |
+| Task kinds | The kinds under the manifest's `tasks:`, which a load directive names. SYS-29 checks them | ADR-058 |
 | Hooks | A shipped hook ID, its direct exit codes, its `not applicable` line and its violation codes | ADR-055 |
 | Hook arguments | The name and default of each argument a consumer writes into its config, such as `--path`, `--forbid` and `--base`; a minor adds only arguments whose default keeps the hook's behaviour | ADR-051, applied to hooks |
 | Fork entry points | The fork-owned module names (8.6), and the names upstream reads from them, `bind`, `CHECKS`, `TEMPLATE_DIRS`, `CORE_DIRS` and `QUALITY_GATES_EXEMPT_LAYERS` from `fork_checks.py`; `CHECKS` and `SKIP_BUDGET` from `fork_dispositions.py`; `SPEC_CHAIN_EXAMPLES` and `CHAIN_EXAMPLES_DOC` from `fork_examples.py`. The disposition words `tests/conformance` defines for a fork to import | ADR-051, applied to forks |
