@@ -2521,3 +2521,295 @@ def check_sys_27() -> CheckResult:
     for mode in ("skills", "inline"):
         seen.count(f"files emitted, {mode}", emitted[mode])
     return seen.failures() + failures, seen.notes()
+
+
+# ---------------------------------------------------------------------------
+# SYS-29 -- no frozen ID or path leaves the tree inside the major
+# ---------------------------------------------------------------------------
+
+# Chapter 8.7 freezes, from the first release of a major to the next major,
+# the id and file of every manifest entry, every `[ID:]` in the file that
+# holds it, the core tier and the task kinds. A rename reads as a removal
+# plus an addition, so every element present at the baseline must still be
+# present; what a minor adds is free. A deprecated entry keeps its id and
+# file, so it passes. A fork extending a renamed ID fails only after it
+# merges, so upstream checks the removal itself. The baseline is the one
+# SYS-24 reads, and the fixture is exempt for the same reason.
+
+FrozenSide = tuple[Manifest, Mapping[str, str]]
+
+
+def frozen_ids(was: FrozenSide, now: FrozenSide) -> list[str]:
+    """Each frozen element present in `was` and missing from `now`.
+
+    A side is (manifest, {file: text}). Fixture entries of `was` are left
+    out, and so are their files.
+    """
+    (was_manifest, was_texts), (now_manifest, now_texts) = was, now
+    was_entries = {
+        e["id"]: e
+        for key in entry_sections(was_manifest)
+        for e in was_manifest[key]
+        if not is_fixture(e)
+    }
+    now_entries = {
+        e["id"]: e for key in entry_sections(now_manifest) for e in now_manifest[key]
+    }
+    found: list[str] = []
+    for tid, entry in was_entries.items():
+        if tid not in now_entries:
+            found.append(f"template ID {tid} is gone from the manifest")
+            continue
+        if now_entries[tid]["file"] != entry["file"]:
+            found.append(
+                f"template {tid} moved from {entry['file']} "
+                f"to {now_entries[tid]['file']}"
+            )
+            continue
+        rel = entry["file"]
+        held = {sid for sid, _ in iter_id_declarations(now_texts.get(rel, ""))}
+        for sid, _ in iter_id_declarations(was_texts.get(rel, "")):
+            if sid not in held:
+                found.append(f"section ID {sid} is gone from {rel}")
+
+    was_core = list(was_manifest.get("core") or [])
+    now_core = list(now_manifest.get("core") or [])
+    if now_core != was_core:
+        found.append(f"the core tier changed from {was_core} to {now_core}")
+    kept = task_kinds(now_manifest)
+    for kind in task_kinds(was_manifest):
+        if kind not in kept:
+            found.append(f"task kind {kind} is gone from the manifest")
+    return found
+
+
+FROZEN_MANIFEST = """core: [base-a]
+
+tasks:
+  review: Review a change
+
+base:
+  - id: base-a
+    file: templates/core/a.md
+    description: A
+  - id: base-b
+    file: templates/core/b.md
+    description: B
+
+stacks:
+  - id: stack-fixture
+    file: templates/stack/fixture.md
+    description: Fixture
+    fixture: true
+"""
+
+FROZEN_TEXTS = {
+    "templates/core/a.md": "# A\n\n[ID: base-a]\n\n## Two\n\n[ID: base-a-two]\n",
+    "templates/core/b.md": "# B\n\n[ID: base-b]\n",
+    "templates/stack/fixture.md": "# F\n\n[ID: stack-fixture]\n",
+}
+
+
+def _later(manifest: str = FROZEN_MANIFEST, **texts: str) -> FrozenSide:
+    """FROZEN_MANIFEST and FROZEN_TEXTS with the given files replaced; a
+    keyword names the file by its stem, such as `a` for core/a.md."""
+    merged = dict(FROZEN_TEXTS)
+    for stem, text in texts.items():
+        rel = next(r for r in merged if r.endswith(f"/{stem}.md"))
+        merged[rel] = text
+    return parse_manifest(manifest), merged
+
+
+# Each case is a later side and the findings it owes against the frozen
+# one. The additions, the deprecation and the fixture rename are the
+# controls: a check that flagged them would fail what chapter 8.7 allows.
+FROZEN_CASES: list[tuple[str, FrozenSide, list[str]]] = [
+    ("nothing changed", _later(), []),
+    (
+        "a section, a template and a task kind added",
+        _later(
+            FROZEN_MANIFEST.replace(
+                "  review: Review a change\n",
+                "  review: Review a change\n  plan: Plan a change\n",
+            ).replace(
+                "stacks:",
+                "  - id: base-c\n    file: templates/core/c.md\n"
+                "    description: C\n\nstacks:",
+            ),
+            a=FROZEN_TEXTS["templates/core/a.md"] + "\n## New\n\n[ID: base-a-new]\n",
+        ),
+        [],
+    ),
+    (
+        "a template deprecated",
+        _later(
+            FROZEN_MANIFEST.replace(
+                "    description: B\n",
+                "    description: B\n    deprecated: base-a\n",
+            )
+        ),
+        [],
+    ),
+    (
+        "the fixture's IDs renamed",
+        _later(
+            FROZEN_MANIFEST.replace("stack-fixture", "stack-probe"),
+            fixture="# F\n\n[ID: stack-probe]\n",
+        ),
+        [],
+    ),
+    (
+        "a section ID renamed",
+        _later(a=FROZEN_TEXTS["templates/core/a.md"].replace("a-two", "a-2")),
+        ["section ID base-a-two is gone from templates/core/a.md"],
+    ),
+    (
+        "a section moved to another template",
+        _later(
+            a="# A\n\n[ID: base-a]\n",
+            b=FROZEN_TEXTS["templates/core/b.md"] + "\n## Two\n\n[ID: base-a-two]\n",
+        ),
+        ["section ID base-a-two is gone from templates/core/a.md"],
+    ),
+    (
+        "a template ID renamed",
+        _later(FROZEN_MANIFEST.replace("id: base-b", "id: base-bee")),
+        ["template ID base-b is gone from the manifest"],
+    ),
+    (
+        "a template file renamed",
+        _later(FROZEN_MANIFEST.replace("core/b.md", "core/bee.md")),
+        ["template base-b moved from templates/core/b.md to templates/core/bee.md"],
+    ),
+    (
+        "a template joining the core tier",
+        _later(FROZEN_MANIFEST.replace("core: [base-a]", "core: [base-a, base-b]")),
+        ["the core tier changed from ['base-a'] to ['base-a', 'base-b']"],
+    ),
+    (
+        "a task kind removed",
+        _later(FROZEN_MANIFEST.replace("  review: Review a change\n", "")),
+        ["task kind review is gone from the manifest"],
+    ),
+]
+
+
+def frozen_side(repo: str, ref: str | None) -> FrozenSide:
+    """The manifest and the texts of its entries' files at `ref` in `repo`,
+    or in its working tree when `ref` is None. A file missing on that side
+    reads as empty, so its IDs read as gone."""
+    rel = "templates/manifest.yaml"
+
+    def text(path: str) -> str:
+        if ref is None:
+            full = os.path.join(repo, path)
+            if not os.path.isfile(full):
+                return ""
+            with io.open(full, encoding="utf-8") as handle:
+                return handle.read()
+        if _git(repo, "cat-file", "-e", f"{ref}:{path}").returncode != 0:
+            return ""
+        shown = _git(repo, "show", f"{ref}:{path}")
+        if shown.returncode != 0:
+            raise RuntimeError(f"git show {ref}:{path} failed: {shown.stderr.strip()}")
+        return shown.stdout
+
+    manifest = parse_manifest(text(rel))
+    files = {e["file"] for key in entry_sections(manifest) for e in manifest[key]}
+    return manifest, {f: text(f) for f in files}
+
+
+def frozen_findings(
+    repo: str,
+) -> tuple[list[str], str | None, str | None, FrozenSide | None]:
+    """Compare the working tree of `repo` with its frozen baseline.
+
+    Returns (findings, basis, refusal, baseline side), as SYS-24's
+    comparison does; the side is None when nothing is frozen yet.
+    """
+    tag, refused = frozen_baseline(repo)
+    if refused:
+        return [], None, refused, None
+    if tag is None:
+        basis = f"  baseline: no v{FROZEN_MAJOR}.x release is reachable"
+        return [], basis, None, None
+    was = frozen_side(repo, tag)
+    found = frozen_ids(was, frozen_side(repo, None))
+    return found, f"  baseline: the release tag {tag}", None, was
+
+
+def _planted_rename() -> list[str]:
+    """Rename a section ID behind a planted v3 tag; return a failure line
+    unless the comparison through git finds exactly that rename."""
+    owed = ["section ID base-a-two is gone from templates/core/a.md"]
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as repo:
+        for args in (
+            ("init", "-q"),
+            ("config", "core.autocrlf", "false"),
+            ("config", "user.name", "smoke"),
+            ("config", "user.email", "smoke@localhost"),
+        ):
+            _git(repo, *args)
+        later = dict(FROZEN_TEXTS)
+        later["templates/core/a.md"] = later["templates/core/a.md"].replace(
+            "a-two", "a-2"
+        )
+        manifest = {"templates/manifest.yaml": FROZEN_MANIFEST}
+        for texts, message in ((FROZEN_TEXTS, "base"), (later, "rename")):
+            for rel, body in {**manifest, **texts}.items():
+                path = os.path.join(repo, rel)
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+                    f.write(body)
+            _git(repo, "add", "-A")
+            done = _git(repo, "commit", "-q", "-m", message)
+            if done.returncode != 0:
+                raise RuntimeError(
+                    f"planted commit {message!r} failed: {done.stderr.strip()}"
+                )
+            if message == "base":
+                _git(repo, "tag", f"v{FROZEN_MAJOR}.0.0")
+        found, _, refused, _ = frozen_findings(repo)
+    if refused or found != owed:
+        return [
+            f"  planted repository: found {found}, refused {refused!r}, owed {owed}"
+        ]
+    return []
+
+
+def check_sys_29() -> CheckResult:
+    seen = Inspected()
+    failures: list[str] = []
+
+    seen.count("planted cases", FROZEN_CASES)
+    frozen = parse_manifest(FROZEN_MANIFEST), FROZEN_TEXTS
+    for label, later, want in FROZEN_CASES:
+        got = frozen_ids(frozen, later)
+        if got != want:
+            failures.append(f"  planted, {label}: found {got}, owed {want}")
+    failures += _planted_rename()
+
+    found, basis, refused, was = frozen_findings(ROOT)
+    if refused is not None:
+        failures.append(f"  {refused}")
+        return seen.failures() + failures, seen.notes()
+
+    # Zero until the first release of the major is tagged, as in SYS-24.
+    manifest, texts = was or ({}, {})
+    entries = [
+        e
+        for key in entry_sections(manifest)
+        for e in manifest[key]
+        if not is_fixture(e)
+    ]
+    seen.count("frozen template IDs", len(entries), floor=0)
+    declared = sum(
+        len(list(iter_id_declarations(texts.get(e["file"], "")))) for e in entries
+    )
+    seen.count("frozen section IDs", declared, floor=0)
+    for finding in found:
+        failures.append(
+            f"  {finding}: a 3.x release keeps every frozen element and "
+            f"deprecates one by naming its replacement"
+        )
+    return seen.failures() + failures, seen.notes() + [str(basis)]

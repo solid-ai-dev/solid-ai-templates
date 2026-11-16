@@ -38,6 +38,7 @@ from .system import (
     check_sys_25,
     check_sys_26,
     check_sys_27,
+    check_sys_29,
 )
 from .templates import (
     check_tpl_01,
@@ -289,5 +290,11 @@ CHECKS: list[Check] = [
         "spec": "SAIT-SMK-SYS-27-001A",
         "title": "An emitted file names no template file",
         "fn": check_sys_27,
+    },
+    {
+        "id": "SYS-29",
+        "spec": "SAIT-SMK-SYS-29-001A",
+        "title": "No frozen ID or path leaves the tree inside the major",
+        "fn": check_sys_29,
     },
 ]

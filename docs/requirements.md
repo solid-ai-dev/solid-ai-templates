@@ -92,7 +92,7 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 
 | ID | Requirement | Source | Checked by |
 |----|-------------|--------|------------|
-| FR-09-01 | The system shall not remove, rename or change the meaning of a frozen element in a 3.x release, except for a security fix. | Chapter 8.7, ADR-051 | SYS-24, partial, for section splitting only |
+| FR-09-01 | The system shall not remove, rename or change the meaning of a frozen element in a 3.x release, except for a security fix. | Chapter 8.7, ADR-051 | SYS-24, for section splitting; SYS-29, for template IDs and paths, section IDs, the core tier and task kinds |
 | FR-09-02 | The system shall keep a deprecated template resolving until the next major, naming a live replacement. | Chapter 8.8 | SYS-22, partial, for a live replacement |
 | FR-09-03 | The system shall change nothing in an existing context file when a project moves its pin. | Chapter 6.5 | - |
 | FR-09-04 | The system shall write each release's changelog entries from the labels of the pull requests merged since the previous tag. | Chapter 6.6 | changelog-label gate, `cut_changelog.py --self-test`, partial: the tag range is untested |
