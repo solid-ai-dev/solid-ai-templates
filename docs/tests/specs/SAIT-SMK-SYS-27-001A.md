@@ -17,7 +17,8 @@ tags: [tooling, composition, delivery]
 ## Short description
 
 > **Given** every root a project can pick
-> **When** the emitter builds each root on its own, with skills and inlined
+> **When** the emitter builds each root on its own, with skills, inlined
+> and as section files
 > **Then** no line of an emitted file names a template file, because an
 > emitted project carries the rules and not the templates, so a named
 > template is a file the agent cannot open and the rules it stands for
@@ -31,7 +32,7 @@ names a template in, and the path goes unseen.
 
 | Result | Condition |
 |--------|-----------|
-| PASSED | The planted template's two named paths are both found in each mode, the planted override hides one only when the roots are built together, and no file emitted from any root alone, in either mode, names a template file |
+| PASSED | The planted template's two named paths are both found in each mode, the planted override hides one only when the roots are built together, and no file emitted from any root alone, in any mode, names a template file |
 | FAILED | An emitted line names a template file, with or without its `templates/` prefix, or the planted scan misses a form |
 | SKIPPED | — |
 | BLOCKED | — |
@@ -55,8 +56,8 @@ file is written)
    `templates/` prefix, in a skill, and once without, in a section a
    second planted root overrides
 2. Build the planted roots together, then each on its own
-3. Build every root `--roots` lists on its own, with skills and then with
-   skills inlined
+3. Build every root `--roots` lists on its own, with skills, with skills
+   inlined, and as section files
 4. Scan every emitted line for the path of every template file
 
 ### Assertions
@@ -65,7 +66,7 @@ file is written)
    each mode
 2. Assert the planted roots built together show one of the two paths, and
    built each on its own show both
-3. Assert no line emitted from any root, in either mode, names a template
+3. Assert no line emitted from any root, in any mode, names a template
    file
 
 ### Negative controls

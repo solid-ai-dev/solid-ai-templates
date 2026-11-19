@@ -38,6 +38,7 @@ from .system import (
     check_sys_25,
     check_sys_26,
     check_sys_27,
+    check_sys_28,
     check_sys_29,
 )
 from .templates import (
@@ -290,6 +291,12 @@ CHECKS: list[Check] = [
         "spec": "SAIT-SMK-SYS-27-001A",
         "title": "An emitted file names no template file",
         "fn": check_sys_27,
+    },
+    {
+        "id": "SYS-28",
+        "spec": "SAIT-SMK-SYS-28-001A",
+        "title": "Section files hold every adopted rule, read on demand from a map",
+        "fn": check_sys_28,
     },
     {
         "id": "SYS-29",

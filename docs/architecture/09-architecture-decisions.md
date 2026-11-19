@@ -43,6 +43,7 @@ What a project's generated files hold, and how the rules reach them.
 | [ADR-052](../decisions/052-hybrid-is-the-delivery-floor.md) | A context file delivers rules inline or hybrid, never by reference alone, and inlines every rule whose breach is silent and which no tool enforces | Accepted |
 | [ADR-053](../decisions/053-declaration-block-is-a-target.md) | The declaration block leaves the frozen surface until a release ships a tool that writes it and one that reads it | Accepted |
 | [ADR-058](../decisions/058-task-procedures-load-on-demand.md) | Each section declares where its rules load, and a tool builds the root file and one skill per kind of task from the adopted rules | Accepted |
+| [ADR-060](../decisions/060-section-files-load-on-demand.md) | The emitter can build one file per topic, each with every rule it depends on, and a root file that maps each topic to its file, read on demand | Accepted |
 
 ## 9.3 Template content
 

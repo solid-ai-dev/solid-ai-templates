@@ -70,6 +70,8 @@ Status: skeleton. Each cluster holds a few requirements until its fill
 | FR-06-05 | The system shall reference a section marked `check` by its command and pass condition, never by copying the script body. | ADR-058 | SYS-26, partial, on a planted fixture |
 | FR-06-06 | The system shall build byte-identical files from the same input. | ADR-058 | SYS-26 |
 | FR-06-07 | The system shall build files that name no template file, since an emitted project carries no templates. | `AGENTS.md` 4.2 | SYS-27 |
+| FR-06-08 | Where the project asks for section files, the system shall build one file per heading under a template's title, carrying the rules under that title, each section it extends or names by ID or by heading, and each extension of its own, each resolved through overrides to the rules that survive, so the files together hold every adopted rule and every copy matches its source. | ADR-060 | SYS-28 |
+| FR-06-09 | Where the project asks for section files, the system shall map each file in the root file to its topic, to be read when the work first touches it, and hold no rule in the root file. | ADR-060 | SYS-28 |
 
 ### 07. Shipped checks
 
