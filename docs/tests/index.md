@@ -51,6 +51,7 @@ restated in each.
 | `SAIT-SMK-SYS-26-001A` | SMK | P1 | The emitter places each section by its load, the same every run |
 | `SAIT-SMK-SYS-27-001A` | SMK | P1 | An emitted file names no template file |
 | `SAIT-SMK-SYS-28-001A` | SMK | P1 | Section files hold every adopted rule, read on demand from a map |
+| `SAIT-SMK-SYS-29-001A` | SMK | P1 | No frozen ID or path leaves the tree inside the major |
 | `SAIT-SMK-TPL-04-001A` | SMK | P1 | All EXTEND and OVERRIDE directives reference existing IDs |
 | `SAIT-INT-TPL-01-001A` | INT | P0 | DEPENDS ON chain assembles a complete rule set |
 | `SAIT-INT-TPL-02-001A` | INT | P1 | EXTEND adds rules without removing base rules |

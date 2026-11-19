@@ -39,6 +39,7 @@ from .system import (
     check_sys_26,
     check_sys_27,
     check_sys_28,
+    check_sys_29,
 )
 from .templates import (
     check_tpl_01,
@@ -296,5 +297,11 @@ CHECKS: list[Check] = [
         "spec": "SAIT-SMK-SYS-28-001A",
         "title": "Section files hold every adopted rule, read on demand from a map",
         "fn": check_sys_28,
+    },
+    {
+        "id": "SYS-29",
+        "spec": "SAIT-SMK-SYS-29-001A",
+        "title": "No frozen ID or path leaves the tree inside the major",
+        "fn": check_sys_29,
     },
 ]
